@@ -42,7 +42,10 @@ body {
   }
 
   .primary-gradient {
-    background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+    background: linear-gradient(129deg, #1da1f2 0%, #0849ac 100%);
+  }
+  .secondary-gradient {
+    background: linear-gradient(45deg, #1da1f2 0%, #0849ac 100%);
   }
 
   .dark-gradient {
@@ -63,8 +66,8 @@ body {
 }
 
 .active-theme {
-  filter: invert(53%) sepia(98%) saturate(3332%) hue-rotate(0deg)
-    brightness(104%) contrast(106%) !important;
+  filter: invert(42%) sepia(95%) saturate(1750%) hue-rotate(163deg)
+    brightness(97%) contrast(101%) !important;
 }
 
 .light-gradient {
