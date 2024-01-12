@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import url("https://cdn.syncfusion.com/ej2/material.css");
 @import url("../styles/theme.css");
 
 body {
@@ -9,6 +9,15 @@ body {
 }
 
 @layer utilities {
+  .form_item {
+    @apply flex flex-row items-center gap-4 min-w-[400px] justify-center;
+  }
+  .form_input {
+    @apply no-focus   min-h-[56px] border font-noto_sans;
+  }
+  .form_label {
+    @apply min-w-[100px] font-semibold text-[20px];
+  }
   .flex-center {
     @apply flex justify-center items-center;
   }
@@ -24,7 +33,18 @@ body {
   .card-wrapper {
     @apply bg-light-900 dark:dark-gradient shadow-light-100 dark:shadow-dark-100;
   }
-
+  .auth_btn {
+    @apply dark-gradient dark:primary-gradient max-w-[100px] object-contain p-4 text-center  font-noto_sans text-[1em] font-extrabold text-white hover:scale-105 hover:animate-pulse hover:text-[1.05em] dark:text-dark-300 tracking-widest !important;
+  }
+  .drawer_btn {
+    @apply dark-gradient dark:primary-gradient max-w-[100px]  p-4 text-center  font-noto_sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
+  }
+  .dialog_btn {
+    @apply dark-gradient dark:primary-gradient max-w-[120px]  p-4 text-center  font-noto_sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
+  }
+  .drawer_btn_close {
+    @apply bg-red-dark max-w-[100px]  p-4 text-center  font-noto_sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
+  }
   .btn {
     @apply bg-light-800 dark:bg-dark-300 !important;
   }
@@ -36,6 +56,9 @@ body {
   .btn-tertiary {
     @apply bg-light-700 dark:bg-dark-300 !important;
   }
+  .form-button {
+    @apply bg-dark-400 text-white dark:bg-slate-300 dark:text-black;
+  }
 
   .markdown {
     @apply max-w-full prose dark:prose-p:text-light-700 dark:prose-ol:text-light-700 dark:prose-ul:text-light-500 dark:prose-strong:text-white dark:prose-headings:text-white prose-headings:text-dark-400 prose-h1:text-dark-300 prose-h2:text-dark-300 prose-p:text-dark-500 prose-ul:text-dark-500 prose-ol:text-dark-500;
@@ -45,14 +68,15 @@ body {
     background: linear-gradient(129deg, #1da1f2 0%, #0849ac 100%);
   }
   .secondary-gradient {
-    background: linear-gradient(45deg, #1da1f2 0%, #0849ac 100%);
+    background: linear-gradient(45deg, #1da1f2 0%, #9c88ff 100%);
   }
 
   .dark-gradient {
     background: linear-gradient(
       232deg,
-      rgba(23, 28, 35, 0.41) 0%,
-      rgba(19, 22, 28, 0.7) 100%
+      rgba(0, 0, 0, 1) 0%,
+      /* Darker black color */ rgba(77, 76, 76, 0.7) 100%
+        /* Darker grey color with 0.7 opacity */
     );
   }
 

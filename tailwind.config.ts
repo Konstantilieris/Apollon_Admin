@@ -17,6 +17,10 @@ module.exports = {
     },
     extend: {
       colors: {
+        "celtic-green": "#006400",
+        "red-dark": " #8B0000",
+        "light-blue": "#8661a6",
+        "contrast-text": "#FFD700",
         primary: {
           500: "#FF7000",
           100: "#FFF1E6",
@@ -41,6 +45,9 @@ module.exports = {
       fontFamily: {
         inter: ["var(--font-inter)"],
         changa: ["var(--font-changa)"],
+        noto_sans: ["var(--font-noto_sans)"],
+        chakra: ["var(--font-chakra)"],
+        rubik: ["var(--font-rubik_moonrocks)"],
       },
       boxShadow: {
         "light-100":

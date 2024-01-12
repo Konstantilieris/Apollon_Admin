@@ -10,10 +10,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { sidebarLinks } from "@/constants";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 const NavContent = () => {
   const pathname = usePathname();
   return (
-    <section className="flex h-full flex-col gap-6 pt-16">
+    <section className="flex h-full flex-col  justify-evenly gap-6 pt-16 ">
       {sidebarLinks.map((item) => {
         const isActive =
           (pathname.includes(item.route) && item.route.length > 1) ||
@@ -31,11 +32,15 @@ const NavContent = () => {
               <Image
                 src={item.imgURL}
                 alt={item.label}
-                width={20}
-                height={20}
+                width={25}
+                height={25}
                 className={`${isActive ? "" : "invert-colors"}`}
               />
-              <p className={`${isActive ? "base-bold" : "base-medium"}`}>
+              <p
+                className={`font-chakra text-[30px] font-semibold ${
+                  isActive ? "font-extrabold" : ""
+                }`}
+              >
                 {item.label}
               </p>
             </Link>
@@ -46,40 +51,49 @@ const NavContent = () => {
   );
 };
 const MobileNav = () => {
-  return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Image
-          src={"/assets/icons/hamburger.svg"}
-          width={38}
-          height={36}
-          alt="menu"
-          className="invert-colors cursor-pointer sm:hidden"
-        />
-      </SheetTrigger>
-      <SheetContent
-        side="left"
-        className="background-light900_dark200 border-none"
-      >
-        <Link href="/" className="flex items-center gap-1">
+  const { status } = useSession();
+  if (status !== "authenticated") {
+    return <></>;
+  } else {
+    return (
+      <Sheet>
+        <SheetTrigger asChild>
           <Image
-            src="/assets/images/site-logo.svg"
-            width={23}
-            height={23}
-            alt="NextFlow"
+            src={"/assets/icons/hamburger.svg"}
+            width={38}
+            height={36}
+            alt="menu"
+            className="invert-colors cursor-pointer sm:hidden"
           />
-          <p className="h2-bold text-dark100_light900">
-            <span className="text-sky-blue">Apollo Guard </span>
-          </p>
-        </Link>
-        <div>
-          <SheetClose asChild>
-            <NavContent />
-          </SheetClose>
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
+        </SheetTrigger>
+        <SheetContent
+          side="left"
+          className="background-light900_dark200 border-none max-w-[300px]"
+        >
+          <Link
+            href="/main"
+            className=" flex items-center gap-1 hover:animate-pulse"
+          >
+            <Image
+              src="/assets/icons/bone.svg"
+              width={40}
+              height={40}
+              alt="Bone"
+            />
+
+            <span className="ml-4 font-noto_sans text-[35px] font-bold text-sky-blue">
+              Apollo Guard{" "}
+            </span>
+          </Link>
+          <div>
+            <SheetClose asChild>
+              <NavContent />
+            </SheetClose>
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
 };
 
 export default MobileNav;

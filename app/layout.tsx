@@ -1,9 +1,20 @@
+/* eslint-disable camelcase */
 import type { Metadata } from "next";
-import { Inter, Changa } from "next/font/google";
+// eslint-disable-next-line camelcase
+import {
+  Inter,
+  Changa,
+  Noto_Sans_Display,
+  Chakra_Petch,
+  Rubik_Moonrocks,
+} from "next/font/google";
 import React from "react";
 import Navbar from "@/components/navbar/Navbar";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeProvider";
+import AuthProvider from "@/context/AuthProvider";
+import { Toaster } from "@/components/ui/toaster";
+
 const inter = Inter({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -14,7 +25,21 @@ const changa = Changa({
   weight: ["200", "300", "400", "500", "600", "700", "800"],
   variable: "--font-changa",
 });
-
+const chakra = Chakra_Petch({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-chakra",
+});
+const noto_sans = Noto_Sans_Display({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-noto_sans",
+});
+const rubik = Rubik_Moonrocks({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-rubik_moonrocks",
+});
 export const metadata: Metadata = {
   title: "Apollo dashboard Next js",
   description: "Web App",
@@ -26,15 +51,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${changa.variable}`}>
-        <ThemeProvider>
-          <header className="background-light850_dark100 relative flex w-full">
+    <AuthProvider>
+      <html lang="en">
+        <body
+          className={`${inter.variable} ${changa.variable} ${noto_sans.variable} ${chakra.variable} ${rubik.variable} custom-scrollbar`}
+        >
+          <ThemeProvider>
             <Navbar />
-          </header>
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
+
+            {children}
+          </ThemeProvider>
+          <Toaster />
+        </body>
+      </html>
+    </AuthProvider>
   );
 }
