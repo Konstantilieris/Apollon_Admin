@@ -238,6 +238,28 @@ export function getDatesInRange(
 
   return dateArray;
 }
+export function getDatesInRangeVal(
+  startDate: Date | undefined,
+  endDate: Date | undefined
+): string[] | undefined {
+  if (!startDate || !endDate) {
+    return;
+  }
+
+  const dateArray: string[] = [];
+
+  const currentDate = new Date(startDate);
+  dateArray.push(currentDate.toISOString().split("T")[0]);
+  let tempDate;
+  // eslint-disable-next-line no-unmodified-loop-condition
+  while (currentDate < endDate) {
+    currentDate.setDate(currentDate.getDate() + 1);
+    tempDate = new Date(currentDate);
+    dateArray.push(tempDate.toISOString().split("T")[0]);
+  }
+
+  return dateArray;
+}
 
 export function isRoomAvailable(
   roomUnavailableDates: String[] | undefined,

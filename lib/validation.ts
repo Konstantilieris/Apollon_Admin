@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { getDatesInRange, isRoomAvailable } from "./utils";
+import { getDatesInRangeVal, isRoomAvailable } from "./utils";
 
 export const AdminValidation = z
   .object({
@@ -68,13 +68,13 @@ export const BookingValidation = z
       id: z.string(),
     }),
     price: z.string(),
-    unavailableDates: z.date().array().optional(),
+    unavailableDates: z.string().array().optional(),
   })
   .refine(
     (data) => {
       return isRoomAvailable(
         data.unavailableDates,
-        getDatesInRange(data.rangeDate.from, data.rangeDate.to)
+        getDatesInRangeVal(data.rangeDate.from, data.rangeDate.to)
       );
     },
     { message: "Μη διαθέσιμες ημερομηνίες", path: ["rangeDate"] }
