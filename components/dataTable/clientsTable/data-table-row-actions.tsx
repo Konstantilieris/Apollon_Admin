@@ -1,7 +1,6 @@
 "use client";
 
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { Row } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,16 +13,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
-interface DataTableRowActionsProps<TData> {
-  row: Row<TData>;
-}
 
-export function DataTableRowActions<TData>({
-  row,
-}: DataTableRowActionsProps<TData>) {
+export function DataTableRowActions({ row }: any) {
   const router = useRouter();
+
   const handleProfile = () => {
-    router.push(`/clients/${row.original?._id}`);
+    router.push(`/clients/${row?.original?._id ?? ""}`);
   };
   return (
     <DropdownMenu>
