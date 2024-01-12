@@ -27,9 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/(dashboard)/training/page.tsx",
-    "components/datepicker/timepicker/DateSegment.tsx",
-    "components/datepicker/timepicker/TimeField.tsx"
+    "app/(dashboard)/training/page.tsx"
   ],
   "exclude": ["node_modules"]
 }
