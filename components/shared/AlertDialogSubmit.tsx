@@ -63,6 +63,8 @@ export function AlertDialogSubmit({
         rangeDate,
         totalprice: totalPrice,
         path,
+        timeArrival: formatTime(timeArrival, "el"),
+        timeDeparture: formatTime(timeDeparture, "el"),
       });
       if (booking) {
         toast({

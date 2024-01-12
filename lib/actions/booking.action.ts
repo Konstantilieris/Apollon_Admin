@@ -15,6 +15,8 @@ interface ICreateBooking {
   rangeDate: { from: Date; to: Date };
   totalprice: number | undefined;
   path: string;
+  timeArrival: string;
+  timeDeparture: string;
 }
 
 export async function CreateBooking({
@@ -23,6 +25,8 @@ export async function CreateBooking({
   roomId,
   totalprice,
   path,
+  timeArrival,
+  timeDeparture,
 }: ICreateBooking) {
   try {
     connectToDatabase();

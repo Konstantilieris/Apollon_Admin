@@ -7,6 +7,8 @@ export interface IBooking {
   toDate: Date;
   totalDays: number;
   totalAmount: number;
+  timeArrival: string;
+  timeDeparture: string;
 }
 const BookingSchema = new Schema<IBooking>(
   {
@@ -16,6 +18,8 @@ const BookingSchema = new Schema<IBooking>(
     toDate: { type: Date, required: true },
     totalDays: { type: Number, required: true },
     totalAmount: { type: Number, required: true },
+    timeArrival: { type: String },
+    timeDeparture: { type: String },
   },
   { timestamps: true }
 );
