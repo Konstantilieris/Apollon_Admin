@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import Editbooking from "@/components/booking/editbooking";
 import { getAllRooms } from "@/lib/actions/room.action";
-const page = async ({ params }: any) => {
+const Page = async ({ params }: any) => {
   const booking = JSON.parse(await getBookingById(params.id));
   const rooms = JSON.parse(await getAllRooms());
   return (
@@ -54,4 +54,4 @@ const page = async ({ params }: any) => {
   );
 };
 
-export default page;
+export default Page;
