@@ -12,7 +12,7 @@ import {
 
 import { getAllRooms } from "@/lib/actions/room.action";
 import EditbookingChange from "@/components/booking/EditBookingChange";
-const page = async ({ params }: any) => {
+const EditChange = async ({ params }: any) => {
   const booking = JSON.parse(await getBookingById(params.id));
   const rooms = JSON.parse(await getAllRooms());
   return (
@@ -57,4 +57,4 @@ const page = async ({ params }: any) => {
   );
 };
 
-export default page;
+export default EditChange;
