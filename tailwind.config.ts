@@ -20,7 +20,10 @@ module.exports = {
         "celtic-green": "#006400",
         "red-dark": " #8B0000",
         "light-blue": "#8661a6",
+        "deep-purple": "#6610f2",
         "contrast-text": "#FFD700",
+        "warm-coral": "#ff6f61",
+        "soothing-aqua": "#5f9ea0",
         primary: {
           500: "#FF7000",
           100: "#FFF1E6",

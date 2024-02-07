@@ -18,8 +18,8 @@ const BookingSchema = new Schema<IBooking>(
     toDate: { type: Date, required: true },
     totalDays: { type: Number, required: true },
     totalAmount: { type: Number, required: true },
-    timeArrival: { type: String },
-    timeDeparture: { type: String },
+    timeArrival: { type: String, required: true },
+    timeDeparture: { type: String, required: true },
   },
   { timestamps: true }
 );

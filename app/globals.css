@@ -31,7 +31,7 @@ body {
   }
 
   .card-wrapper {
-    @apply bg-light-900 dark:dark-gradient shadow-light-100 dark:shadow-dark-100;
+    @apply bg-light-900 dark:dark-gradient shadow-light-400 dark:shadow-dark-100 drop-shadow-2xl;
   }
   .auth_btn {
     @apply dark-gradient dark:primary-gradient max-w-[100px] object-contain p-4 text-center  font-noto_sans text-[1em] font-extrabold text-white hover:scale-105 hover:animate-pulse hover:text-[1.05em] dark:text-dark-300 tracking-widest !important;
@@ -47,6 +47,9 @@ body {
   }
   .btn {
     @apply bg-light-800 dark:bg-dark-300 !important;
+  }
+  .form-button2 {
+    @apply bg-deep-purple text-white !important;
   }
 
   .btn-secondary {

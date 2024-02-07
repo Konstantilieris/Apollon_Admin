@@ -15,7 +15,7 @@ import {
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
-  options: { label: string; value: string | string[] }[];
+  options: { label: string; title: string; value: string | string[] }[];
 }
 
 export function DataTableViewOptions<TData>({
@@ -30,12 +30,11 @@ export function DataTableViewOptions<TData>({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="outline"
           size="sm"
-          className="ml-auto hidden h-8 lg:flex"
+          className="ml-auto hidden h-8 border border-black font-noto_sans font-bold hover:scale-110 dark:border-white lg:flex"
         >
           <MixerHorizontalIcon className="mr-2 h-4 w-4" />
-          View
+          Όψη
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -43,7 +42,7 @@ export function DataTableViewOptions<TData>({
         className="background-light900_dark300 text-dark200_light800 w-[150px]"
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+        <DropdownMenuLabel>Εναλλαγή Στηλών</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
@@ -56,7 +55,9 @@ export function DataTableViewOptions<TData>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => checkHandler(value, column)}
               >
-                {column.id}
+                {column.id === options[0].label
+                  ? options[0].title
+                  : options[1].title}
               </DropdownMenuCheckboxItem>
             );
           })}

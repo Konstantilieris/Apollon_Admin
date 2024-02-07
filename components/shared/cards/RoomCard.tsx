@@ -42,7 +42,7 @@ const RoomCard = ({ room, date, clients }: any) => {
     <>
       <div className="card-wrapper text-dark200_light800 flex max-h-[140px] w-full max-w-[200px] flex-col rounded-lg p-4 font-noto_sans max-xs:min-w-full xs:w-[260px]">
         <div className="flex flex-row justify-between">
-          <h1 className="font-noto_sans font-bold">{room.name}</h1>
+          <h1 className="ml-2 font-noto_sans text-lg font-bold">{room.name}</h1>
           <Badge
             className={`max-h-[30px] min-h-[30px] font-noto_sans font-bold ${
               availability ? "bg-celtic-green text-white" : ""
@@ -54,9 +54,11 @@ const RoomCard = ({ room, date, clients }: any) => {
         </div>
         <div className="self-center">
           <Image
-            onClick={handleOpenDrawer}
-            className="hover:animate-pulse hover:cursor-pointer"
-            width={90}
+            onClick={availability ? handleOpenDrawer : () => {}}
+            className={`hover:animate-pulse hover:cursor-pointer ${
+              availability ? "" : "mt-2"
+            }`}
+            width={availability ? 90 : 70}
             height={90}
             src={
               availability

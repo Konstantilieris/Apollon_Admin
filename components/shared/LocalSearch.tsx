@@ -31,13 +31,11 @@ const LocalSearch = ({
         });
         router.push(newUrl, { scroll: false });
       } else {
-        if (pathname === route) {
-          const newUrl = removeKeysFromQuery({
-            params: searchParams.toString(),
-            keysToRemove: ["q"],
-          });
-          router.push(newUrl, { scroll: false });
-        }
+        const newUrl = removeKeysFromQuery({
+          params: searchParams.toString(),
+          keysToRemove: ["q"],
+        });
+        router.push(newUrl, { scroll: false });
       }
     }, 500);
 
@@ -53,7 +51,7 @@ const LocalSearch = ({
         placeholder={placeholder}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="paragraph-regular no-focus placeholder border-none bg-transparent font-noto_sans shadow-none outline-none "
+        className="paragraph-regular no-focus placeholder text-dark400_light800 border-none bg-transparent font-noto_sans shadow-none outline-none"
       />
     </div>
   );

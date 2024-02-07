@@ -1,35 +1,64 @@
 import { Schema, models, model } from "mongoose";
-
+export interface IService {
+  service: Schema.Types.ObjectId;
+  amount: number;
+  date: Date;
+  serviceType: "Booking" | "Transportation" | "OtherService" | string;
+}
+export interface ILocation {
+  residence: String;
+  address: String;
+  city: String;
+}
+export interface IDog {
+  name: string;
+  gender: string;
+  birthdate: Date;
+  food: string;
+  breed: string;
+  behavior: string;
+  vet: string;
+  vetNumber: string;
+}
 export interface IClient {
   firstName: string;
   lastName: string;
   email: string;
-  profession?: string;
-  birthdate?: Date;
-  location?: {
-    residence: string;
-    address?: string;
-    city?: string;
-  };
-  phone?: {
-    telephone?: string;
-    mobile?: string;
+  profession: string;
+  birthdate: Date;
+  location: ILocation;
+  phone: {
+    telephone: string;
+    mobile: string;
   };
   _id?: string;
   createdAt?: Date;
-  owes?: number;
+  owes?: IService[];
   totalSpent?: number;
-  dog?: {
-    name?: string;
-    gender?: string;
-    birthdate?: Date;
-    food?: string;
-    breed?: string;
-    behavior?: string;
-    vet?: string;
-    vetNumber?: string;
-  };
+  dog?: IDog;
 }
+
+const ServiceSchema = new Schema<IService>({
+  service: {
+    type: Schema.Types.ObjectId,
+    refPath: "owes.serviceType",
+    required: true,
+  },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+    required: true,
+  },
+  serviceType: {
+    type: String,
+    required: true,
+    enum: ["Booking", "Transportation", "Grooming", "OtherService"],
+  },
+});
 const ClientSchema = new Schema<IClient>({
   firstName: {
     type: String,
@@ -53,12 +82,15 @@ const ClientSchema = new Schema<IClient>({
   location: {
     residence: {
       type: String,
+      required: true,
     },
     address: {
       type: String,
+      required: true,
     },
     city: {
       type: String,
+      required: true,
     },
   },
   phone: {
@@ -73,40 +105,44 @@ const ClientSchema = new Schema<IClient>({
     type: Date,
     default: Date.now,
   },
-  owes: {
-    type: Number,
-    default: 0,
+  owes: [ServiceSchema],
+  dog: {
+    name: {
+      type: String,
+      required: true,
+    },
+    gender: {
+      type: String,
+      required: true,
+    },
+    birthdate: {
+      type: Date,
+      required: true,
+    },
+    food: {
+      type: String,
+      required: true,
+    },
+    breed: {
+      type: String,
+      required: true,
+    },
+    behavior: {
+      type: String,
+      required: true,
+    },
+    vet: {
+      type: String,
+      required: true,
+    },
+    vetNumber: {
+      type: String,
+      required: true,
+    },
   },
   totalSpent: {
     type: Number,
     default: 0,
-  },
-
-  dog: {
-    name: {
-      type: String,
-    },
-    gender: {
-      type: String,
-    },
-    birthdate: {
-      type: Date,
-    },
-    food: {
-      type: String,
-    },
-    breed: {
-      type: String,
-    },
-    behavior: {
-      type: String,
-    },
-    vet: {
-      type: String,
-    },
-    vetNumber: {
-      type: String,
-    },
   },
 });
 const Client = models.Client || model<IClient>("Client", ClientSchema);

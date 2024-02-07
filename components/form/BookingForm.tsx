@@ -21,7 +21,7 @@ import { SearchCommand } from "../shared/SearchCommand";
 import { AlertDialogSubmit } from "../shared/AlertDialogSubmit";
 import { TimePicker } from "../shared/timepicker/TimePicker";
 
-const BookingForm = ({ room, rangeDate, clients }: any) => {
+const BookingForm = ({ room, rangeDate, clients, open }: any) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -30,7 +30,6 @@ const BookingForm = ({ room, rangeDate, clients }: any) => {
     defaultValues: {
       rangeDate: { from: rangeDate?.from, to: rangeDate?.to },
       price: room?.price.toString(),
-      unavailableDates: room?.unavailableDates,
     },
   });
 
@@ -160,7 +159,7 @@ const BookingForm = ({ room, rangeDate, clients }: any) => {
           rangeDate={form?.getValues("rangeDate")}
           timeArrival={form?.getValues("time_arrival")}
           timeDeparture={form?.getValues("time_departure")}
-          roomId={room._id}
+          roomId={room?._id}
           roomName={room.name}
           price={form?.getValues("price")}
           form={form}

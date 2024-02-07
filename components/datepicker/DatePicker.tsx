@@ -30,12 +30,12 @@ export function DatePicker({ date, setDate }: any) {
   };
 
   return (
-    <div className="mt-8 flex max-h-[50px] max-w-[245px] flex-row items-center rounded-lg bg-white dark:bg-black">
+    <div className="background-light900_dark300 mt-8 flex max-h-[50px] max-w-[245px] flex-row items-center  rounded-lg">
       <Popover>
         <PopoverTrigger asChild>
           <Button
             className={cn(
-              " w-[200px]  justify-start text-left  dark:bg-black bg-white font-noto_sans font-bold dark:text-white"
+              " w-[200px]  justify-start text-left   background-light900_dark300 font-noto_sans font-bold dark:text-white"
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />

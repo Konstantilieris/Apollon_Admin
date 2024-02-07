@@ -18,7 +18,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
 import { cn } from "@/lib/utils";
-import { revalidatePath } from "next/cache";
+
 const LogInForm = () => {
   // eslint-disable-next-line no-unused-vars
   const router = useRouter();

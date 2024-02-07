@@ -5,9 +5,6 @@ import { CreateClientParams } from "@/types";
 import { connectToDatabase } from "../mongoose";
 import Client from "@/database/models/client.model";
 
-interface GetClientsParams {
-  searchQuery?: string;
-}
 export async function CreateClient(params: CreateClientParams) {
   try {
     connectToDatabase();
@@ -22,15 +19,16 @@ export async function CreateClient(params: CreateClientParams) {
       city,
       telephone,
       mobile,
-      dog_name,
-      dog_gender,
-      dog_food,
-      dog_breed,
-      dog_behavior,
-      dog_vet,
-      dog_vetNumber,
+      name,
+      gender,
+      food,
+      breed,
+      behavior,
+      vet,
+      vetNumber,
       dog_birthdate,
     } = params;
+
     const client = await Client.create({
       firstName,
       lastName,
@@ -40,17 +38,17 @@ export async function CreateClient(params: CreateClientParams) {
       location: { residence, address, city },
       phone: { telephone, mobile },
       dog: {
-        name: dog_name,
-        gender: dog_gender,
-        food: dog_food,
-        breed: dog_breed,
-        behavior: dog_behavior,
-        vet: dog_vet,
-        vetNumber: dog_vetNumber,
+        name,
+        gender,
         birthdate: dog_birthdate,
+        food,
+        breed,
+        behavior,
+        vet,
+        vetNumber,
       },
     });
-    return { client };
+    return JSON.stringify(client);
   } catch (error) {
     console.log("Failed to create client", error);
     throw error;
@@ -78,10 +76,9 @@ export async function getClientById(id: string) {
     throw error;
   }
 }
-export async function getAllClientsByQuery(params: GetClientsParams) {
+export async function getAllClientsByQuery(searchQuery: string | undefined) {
   try {
     connectToDatabase();
-    const { searchQuery } = params;
 
     if (!searchQuery) {
       const clients = await Client.find();
@@ -91,7 +88,7 @@ export async function getAllClientsByQuery(params: GetClientsParams) {
     const clients = await Client.find({
       $expr: {
         $regexMatch: {
-          input: { $concat: ["$firstName", "", "$lastName"] },
+          input: { $concat: ["$firstName", " ", "$lastName"] },
           regex: searchQuery,
           options: "i",
         },

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/popover";
 
 interface Props {
-  className?: React.HTMLAttributes<HTMLDivElement>;
+  className?: string;
   rangeDate: any;
   setRangeDate: any;
 }
@@ -31,7 +31,7 @@ export function DatePickerWithRange({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-noto_sans font-semibold background-light900_dark300 text-dark300_light700  ",
+              "w-[300px] justify-start text-left font-noto_sans font-bold background-light800_dark300 text-dark300_light700 hover:scale-105  ",
               !rangeDate && "text-muted-foreground"
             )}
           >

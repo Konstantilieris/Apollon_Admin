@@ -17,11 +17,11 @@ export function SearchCommand({
   return (
     <>
       <LocalSearch
-        route={"/rooms"}
+        route={"/createbooking"}
         placeholder="Επώνυμο πελάτη"
         otherClasses="max-w-[280px]"
       />
-      <ScrollArea className="custom-scrollbar h-72 w-[280px] rounded-md border">
+      <ScrollArea className="custom-scrollbar background-light900_dark300 text-dark300_light700 h-72 w-[280px]  rounded-md border">
         <div className="p-4">
           {clients.map((client: any) => (
             <div key={client._id}>
@@ -38,7 +38,7 @@ export function SearchCommand({
                 ${
                   selectedClient?.email === client.email
                     ? "bg-celtic-green text-white"
-                    : "hover:bg-light-blue"
+                    : "hover:bg-light-blue "
                 }
               `)}
               >

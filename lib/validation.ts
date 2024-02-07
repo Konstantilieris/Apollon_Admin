@@ -1,5 +1,4 @@
 import * as z from "zod";
-import { getDatesInRangeVal, isRoomAvailable } from "./utils";
 
 export const AdminValidation = z
   .object({
@@ -30,52 +29,79 @@ export const ClientValidation = z.object({
   city: z.string().min(2).max(20),
   telephone: z.string().min(2).max(20),
   mobile: z.string().min(2).max(20),
-  dog_name: z.string().min(2).max(20),
-  dog_gender: z.string().min(2).max(20),
+  name: z.string().min(2).max(20),
+  gender: z.string().min(2).max(20),
   dog_birthdate: z.date({
     required_error: "Please select a date and time",
     invalid_type_error: "That's not a date!",
   }),
-  dog_food: z.string().min(2).max(20),
-  dog_breed: z.string().min(2).max(20),
-  dog_behavior: z.string().min(2).max(20),
-  dog_vet: z.string().min(2).max(20),
-  dog_vetNumber: z.string().min(2).max(20),
+  food: z.string().min(2).max(30),
+  breed: z.string().min(2).max(40),
+  behavior: z.string().min(2).max(20),
+  vet: z.string().min(2).max(20),
+  vetNumber: z.string().min(2).max(20),
 });
 
-export const BookingValidation = z
-  .object({
-    time_arrival: z.custom(
-      (value) => value === undefined || value instanceof Date
-    ) as z.ZodType<Date | undefined>,
-    time_departure: z.custom(
-      (value) => value === undefined || value instanceof Date
-    ) as z.ZodType<Date | undefined>,
-    rangeDate: z.object({
-      from: z.date({
-        required_error: "Please select a date and time",
-        invalid_type_error: "That's not a date!",
-      }),
-      to: z.date({
-        required_error: "Please select a date and time",
-        invalid_type_error: "That's not a date!",
-      }),
+export const BookingValidation = z.object({
+  time_arrival: z.custom(
+    (value) => value === undefined || value instanceof Date
+  ) as z.ZodType<Date | undefined>,
+  time_departure: z.custom(
+    (value) => value === undefined || value instanceof Date
+  ) as z.ZodType<Date | undefined>,
+  rangeDate: z.object({
+    from: z.date({
+      required_error: "Please select a date and time",
+      invalid_type_error: "That's not a date!",
     }),
-    client: z.object({
-      firstName: z.string(),
-      lastName: z.string(),
-      email: z.string(),
-      id: z.string(),
+    to: z.date({
+      required_error: "Please select a date and time",
+      invalid_type_error: "That's not a date!",
     }),
-    price: z.string(),
-    unavailableDates: z.string().array().optional(),
-  })
-  .refine(
-    (data) => {
-      return isRoomAvailable(
-        data.unavailableDates,
-        getDatesInRangeVal(data.rangeDate.from, data.rangeDate.to)
-      );
-    },
-    { message: "Μη διαθέσιμες ημερομηνίες", path: ["rangeDate"] }
-  );
+  }),
+  client: z.object({
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+    id: z.string(),
+  }),
+  price: z.string(),
+});
+
+export const searchRoomValidation = z.object({
+  rangeDate: z.object({
+    from: z.date({
+      required_error: "Please select a date and time",
+      invalid_type_error: "That's not a date!",
+    }),
+    to: z.date({
+      required_error: "Please select a date and time",
+      invalid_type_error: "That's not a date!",
+    }),
+  }),
+  client: z.object({
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+    id: z.string(),
+  }),
+});
+
+export const TrainingValidation = z.object({
+  name: z.string().min(1).max(20),
+  client: z.object({
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+    id: z.string(),
+  }),
+  date: z.date(),
+  durationHours: z.number(),
+  pricePerHour: z.number(),
+  notes: z.string().min(1).max(30),
+});
+export const TaskValidation = z.object({
+  title: z.string().min(1).max(20),
+  description: z.string().min(8).max(40),
+  priority: z.string(),
+});

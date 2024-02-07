@@ -6,20 +6,31 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/dataTable/clientsTable/data-table-view.options";
-import { TypesOfBehavior } from "@/constants";
 
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { viewClientOptions } from "@/lib/utils";
+
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   filtering: string;
   setFiltering: any;
+  facetedFilteringOptions?: {
+    column_name: string;
+    title: string;
+    options: string[];
+  };
+  viewOptions?: {
+    label: string;
+    title: string;
+    value: string[];
+  }[];
 }
 
 export function DataTableToolbar<TData>({
   table,
   filtering,
   setFiltering,
+  facetedFilteringOptions,
+  viewOptions,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -27,19 +38,20 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between p-2">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Search"
+          placeholder="Αναζήτηση"
           value={filtering}
           onChange={(event) => setFiltering(event.target.value)}
           className="background-light900_dark300 text-dark200_light800 h-8 w-[150px] font-noto_sans font-semibold lg:w-[250px]"
         />
 
-        {table.getColumn("dog_behavior") && (
-          <DataTableFacetedFilter
-            column={table.getColumn("dog_behavior")}
-            title="behavior"
-            options={TypesOfBehavior}
-          />
-        )}
+        {facetedFilteringOptions &&
+          table.getColumn(facetedFilteringOptions.column_name) && (
+            <DataTableFacetedFilter
+              column={table.getColumn(facetedFilteringOptions.column_name)}
+              title={facetedFilteringOptions.title}
+              options={facetedFilteringOptions.options}
+            />
+          )}
 
         {isFiltered && (
           <Button
@@ -47,11 +59,13 @@ export function DataTableToolbar<TData>({
             onClick={() => table.resetColumnFilters()}
             className="h-8 px-2 lg:px-3"
           >
-            Reset
+            Εκκαθάριση
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
-        <DataTableViewOptions table={table} options={viewClientOptions} />
+        {viewOptions && (
+          <DataTableViewOptions table={table} options={viewOptions} />
+        )}
       </div>
     </div>
   );

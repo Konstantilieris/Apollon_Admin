@@ -14,17 +14,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import Image from "next/image";
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
   title: string;
+  imgurl?: string;
 }
 
 export function DataTableColumnHeader<TData, TValue>({
   column,
   title,
   className,
+  imgurl,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
@@ -39,6 +41,9 @@ export function DataTableColumnHeader<TData, TValue>({
             size="sm"
             className="data-[state=open]:bg-accent ml-3 h-8"
           >
+            {imgurl && (
+              <Image src={imgurl} alt={"image"} height={26} width={30} />
+            )}
             <span className="font-noto_sans text-[22px] font-extrabold">
               {title}
             </span>

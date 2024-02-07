@@ -75,6 +75,7 @@ export function AlertDialogSubmit({
           description: "Η κράτηση δημιουργήθηκε",
         });
       }
+      window.location.reload();
     } catch (error) {
       toast({
         className: cn(

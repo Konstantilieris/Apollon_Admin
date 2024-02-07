@@ -1,11 +1,15 @@
-"use client"
+"use client";
 
 import {
   ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -14,32 +18,47 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
+import React from "react";
+import { DataTablePagination } from "../dataTable/clientsTable/data-table-pagination";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const finalData = React.useMemo(() => data, [data]);
+  const finalColumnDef = React.useMemo(() => columns, [columns]);
   const table = useReactTable({
-    data,
-    columns,
+    data: finalData,
+    columns: finalColumnDef,
+
+    state: {
+      sorting,
+    },
+
+    onSortingChange: setSorting,
+
     getCoreRowModel: getCoreRowModel(),
-  })
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
 
   return (
-    <div className="rounded-lg  border-2  border-slate-700  w-full background-light700_dark300 text-dark200_light800 max-w-[1500px] gap-2">
-      <Table >
-        <TableHeader className="font-extrabold font-noto_sans text-[18px] p-4" >
+    <div className="background-light700_dark300  text-dark200_light800 custom-scrollbar  max-h-[1200px]  w-full max-w-[1500px] gap-2 space-y-4 rounded-lg border-2 border-slate-700 ">
+      <Table>
+        <TableHeader className="border-b-2 border-black p-4 font-noto_sans text-[22px] font-extrabold">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} >
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} >
+                  <TableHead key={header.id} className="font-extrabold">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -47,17 +66,18 @@ export function DataTable<TData, TValue>({
                           header.getContext()
                         )}
                   </TableHead>
-                )
+                );
               })}
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="font-noto_sans text-center">
+        <TableBody className="text-center font-noto_sans">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
+                className="border-black"
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -75,6 +95,7 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
+      <DataTablePagination table={table} />
     </div>
-  )
+  );
 }

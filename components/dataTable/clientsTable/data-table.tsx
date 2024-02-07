@@ -31,11 +31,23 @@ import { DataTableToolbar } from "@/components/dataTable/clientsTable/data-table
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  facetedFilteringOptions?: {
+    column_name: string;
+    title: string;
+    options: string[];
+  };
+  viewOptions?: {
+    label: string;
+    title: string;
+    value: string[];
+  }[];
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  facetedFilteringOptions,
+  viewOptions,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -72,11 +84,13 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="background-light700_dark300 text-dark200_light800  custom-scrollbar  max-h-[1000px]  w-full max-w-[1500px] gap-2 space-y-4 rounded-lg border-2 border-slate-700 ">
+    <div className="background-light700_dark300 text-dark200_light800  custom-scrollbar  max-h-[1200px]  w-full max-w-[1500px] gap-2 space-y-4 rounded-lg border-2 border-slate-700 ">
       <DataTableToolbar
         table={table}
         filtering={filtering}
         setFiltering={setFiltering}
+        facetedFilteringOptions={facetedFilteringOptions}
+        viewOptions={viewOptions}
       />
       <div className="rounded-md border border-black font-noto_sans font-semibold">
         <Table>
@@ -102,7 +116,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody className="text-center font-noto_sans">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow

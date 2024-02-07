@@ -27,7 +27,6 @@ export const columns: ColumnDef<IClient>[] = [
           <DataTableColumnHeader column={column} title="Όνομα" />
         ),
         cell: ({ row }) => {
-          console.log(row);
           return (
             <Link href={`/clients/${row.original?._id}`}>
               <div>{row.getValue("grouped&sorted")}</div>{" "}
@@ -71,27 +70,6 @@ export const columns: ColumnDef<IClient>[] = [
       {
         accessorKey: "phone.mobile",
         header: "Κινητό",
-      },
-
-      {
-        accessorKey: "owes",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Οφειλές" />
-        ),
-        cell: ({ row }) => {
-          return <div className="text-center">{row.getValue("owes")} </div>;
-        },
-      },
-      {
-        accessorKey: "totalSpent",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Σύνολο Δαπανών" />
-        ),
-        cell: ({ row }) => {
-          return (
-            <div className="text-center">{row.getValue("totalSpent")} </div>
-          );
-        },
       },
     ],
   },

@@ -117,6 +117,7 @@ export const priorities = [
 export const viewClientOptions = [
   {
     label: "Client",
+    title: "Πελάτες",
     value: [
       "grouped&sorted",
       "email",
@@ -127,12 +128,11 @@ export const viewClientOptions = [
       "location_city",
       "phone_telephone",
       "phone_mobile",
-      "owes",
-      "totalSpent",
     ],
   },
   {
     label: "Dog",
+    title: "Και Σκύλοι",
     value: [
       "dog_name",
       "dog_gender",
@@ -144,71 +144,16 @@ export const viewClientOptions = [
       "dog_vetNumber",
     ],
   },
-  {
-    label: "Extended",
-    value: [
-      "grouped&sorted",
-      "email",
-      "profession",
-      "birthdate",
-      "location_residence",
-      "location_address",
-      "location_city",
-      "phone_telephone",
-      "phone_mobile",
-      "owes",
-      "totalSpent",
-      "dog_name",
-      "dog_gender",
-      "Dog Birthdate",
-      "dog_food",
-      "dog_breed",
-      "dog_behavior",
-      "dog_vet",
-      "dog_vetNumber",
-    ],
-  },
 ];
-export const Rooms = [
-  { name: "Room I" },
-  { name: "Room II" },
-  { name: "Room III" },
-  { name: "Room IV" },
-  { name: "Room V" },
-  { name: "Room VI" },
-  { name: "Room VII" },
-  { name: "Room VIII" },
-  { name: "Room IX" },
-  { name: "Room X" },
-  { name: "Room XI" },
-  { name: "Room XII" },
-  { name: "Room XIII" },
-  { name: "Room XIV" },
-  { name: "Room XV" },
-  { name: "Room XVI" },
-  { name: "Room XVII" },
-  { name: "Room XVIII" },
-  { name: "Room XIX" },
-  { name: "Room XX" },
-  { name: "Room XXI" },
-  { name: "Room XXII" },
-  { name: "Room XXIII" },
-  { name: "Room XXIV" },
-  { name: "Room XXV" },
-  { name: "Room XXVI" },
-  { name: "Room XXVII" },
-  { name: "Room XXVIII" },
-  { name: "Room XXIX" },
-  { name: "Room XXX" },
-];
+
 export function formatDate(date: Date, language: string) {
   return new Intl.DateTimeFormat(language, {
     weekday: "short",
-    year: "numeric",
     month: "long",
     day: "numeric",
   }).format(date);
 }
+
 export function formatTime(date: Date | undefined, language: string) {
   return new Intl.DateTimeFormat(language, {
     hour: "numeric",
@@ -288,7 +233,7 @@ export function getTotalDays(
 
   return totalDays;
 }
-export function replacePercent20(inputString: string | undefined) {
+export function replacePercent20(inputString: string | null) {
   // Use regular expression to replace all occurrences of %20 with a space
   if (!inputString) {
     return;
@@ -346,4 +291,23 @@ export function calculateTotal(
   const totalCost = numberOfNights * dailyPrice;
 
   return totalCost;
+}
+export function ManageAvailability(
+  roomUnavailableDates: string[] | undefined,
+  rangeDate: { from: Date | undefined; to: Date | undefined }
+) {
+  if (!rangeDate.from || !rangeDate.to) return false; // if no range date provided, room is not available
+  if (!roomUnavailableDates || roomUnavailableDates.length === 0) return true; // if no unavailable dates, room is available
+
+  const fromISO = rangeDate.from.toISOString().split("T")[0];
+  const toISO = rangeDate.to.toISOString().split("T")[0];
+
+  return !roomUnavailableDates.some((date) => {
+    return date >= fromISO || date <= toISO;
+  });
+}
+export function resetHours(date: Date): Date {
+  const newDate = new Date(date);
+  newDate.setHours(0, 0, 0, 0); // Resetting hours, minutes, seconds, and milliseconds to 0
+  return newDate;
 }
