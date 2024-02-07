@@ -9,8 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Editbooking from "@/components/booking/editbooking";
+
 import { getAllRooms } from "@/lib/actions/room.action";
+import EditbookingChange from "@/components/booking/EditBookingChange";
 const Page = async ({ params }: any) => {
   const booking = JSON.parse(await getBookingById(params.id));
   const rooms = JSON.parse(await getAllRooms());
@@ -49,7 +50,7 @@ const Page = async ({ params }: any) => {
           Προχωρήστε παρακάτω για τις εξής ενέργειες {"->"}
         </CardFooter>
       </Card>
-      <Editbooking booking={booking} rooms={rooms} />
+      <EditbookingChange booking={booking} rooms={rooms} />
     </section>
   );
 };

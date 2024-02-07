@@ -28,7 +28,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@radix-ui/react-menubar";
 
-const Editbooking = ({ booking, rooms }: any) => {
+const EditbookingChange = ({ booking, rooms }: any) => {
   const [edit, setEdit] = useState(false);
   const [modeDelete, setModeDelete] = useState(false);
   const [editTime, setEditTime] = useState(false);
@@ -195,4 +195,4 @@ const Editbooking = ({ booking, rooms }: any) => {
   }
 };
 
-export default Editbooking;
+export default EditbookingChange;
