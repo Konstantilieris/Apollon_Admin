@@ -24,47 +24,153 @@ import {
 import { TimePicker } from "../shared/timepicker/TimePicker";
 import { DateRange } from "react-day-picker";
 import { DatePickerWithRange } from "../datepicker/DateRangePicker";
-import { ScrollArea } from "../ui/scroll-area";
-import { cn } from "@/lib/utils";
-import { Separator } from "@radix-ui/react-menubar";
+
+import {
+  cn,
+  formatDate,
+  formatDateUndefined,
+  formatTime,
+  options,
+} from "@/lib/utils";
+
+import {
+  editBookingArrival,
+  editBookingDate,
+  editBookingDeparture,
+} from "@/lib/actions/booking.action";
+import { useToast } from "../ui/use-toast";
+
+import dynamic from "next/dynamic";
+const DynamicRoomChange = dynamic(() => import("./RoomChange"));
 
 const EditbookingChange = ({ booking, rooms }: any) => {
   const [edit, setEdit] = useState(false);
+  const [submitEditDate, setSubmitEditDate] = useState(false);
+  const [submitArrival, setSubmitArrival] = useState(false);
+  const [submitDeparture, setSubmitDeparture] = useState(false);
   const [modeDelete, setModeDelete] = useState(false);
-  const [editTime, setEditTime] = useState(false);
+  const [editTimeArrival, setEditTimeArrival] = useState(false);
+  const [editTimeDeparture, setEditTimeDeparture] = useState(false);
   const [timeArrival, setTimeArrival] = useState<Date>();
+  const inputDateFrom = new Date(booking.fromDate).toLocaleString(
+    "en-US",
+    options as Intl.DateTimeFormatOptions
+  );
+  const inputDateTo = new Date(booking.toDate).toLocaleString(
+    "en-US",
+    options as Intl.DateTimeFormatOptions
+  );
   const [dateBooking, setDateBooking] = useState<DateRange>({
-    from: booking.fromDate,
-    to: booking.toDate,
+    from: new Date(inputDateFrom),
+    to: new Date(inputDateTo),
   });
+  const { toast } = useToast();
   const [timeDeparture, setTimeDeparture] = useState<Date>();
   const [editDate, setEditDate] = useState(false);
   const [editRoom, setEditRoom] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState();
-  const handleDelete = () => {
-    setModeDelete(true);
-  };
-  const handleEdit = () => {
-    setEdit(true);
-  };
-  const cancelEdit = () => {
-    setEdit(false);
-  };
-  const setTime = () => {
-    setEditTime(true);
-  };
 
   if (!edit && !modeDelete)
     return (
       <div className="flex flex-row gap-2">
-        <Button className="btn" onClick={handleDelete}>
-          Διαγραφή
+        <Button
+          className="btn border-2 border-red-500 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+          onClick={() => setModeDelete(true)}
+        >
+          ΔΙΑΓΡΑΦΗ
         </Button>
-        <Button className="btn" onClick={handleEdit}>
-          Αλλαγή
+        <Button
+          className="btn border-2 border-purple-500 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+          onClick={() => setEdit(true)}
+        >
+          ΑΛΛΑΓΗ
         </Button>
       </div>
     );
+
+  const submitDateChange = async () => {
+    try {
+      const updatedBooking = await editBookingDate(booking._id, dateBooking);
+      if (updatedBooking) {
+        toast({
+          className: cn(
+            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          ),
+          title: "Επιτυχία",
+          description: `το booking του πελάτη ${booking.clientId.lastName} τροποποιήθηκε`,
+        });
+      }
+    } catch (error) {
+      toast({
+        className: cn(
+          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+        ),
+        title: "Αποτυχία τροποποιήσης",
+        description: `${error}`,
+      });
+    } finally {
+      window.location.reload();
+      setSubmitEditDate(false);
+      setEditDate(false);
+      setEdit(false);
+    }
+  };
+  const submitArrivalChange = async () => {
+    try {
+      const updatedBooking = await editBookingArrival(booking._id, timeArrival);
+      if (updatedBooking) {
+        toast({
+          className: cn(
+            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          ),
+          title: "Επιτυχία",
+          description: `το booking του πελάτη ${booking.clientId.lastName} τροποποιήθηκε`,
+        });
+      }
+    } catch (error) {
+      toast({
+        className: cn(
+          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+        ),
+        title: "Αποτυχία τροποποιήσης",
+        description: `${error}`,
+      });
+    } finally {
+      window.location.reload();
+      setSubmitArrival(false);
+      setEditTimeArrival(false);
+      setEdit(false);
+    }
+  };
+  const submitDepartureChange = async () => {
+    try {
+      const updatedBooking = await editBookingDeparture(
+        booking._id,
+        timeDeparture
+      );
+      if (updatedBooking) {
+        toast({
+          className: cn(
+            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          ),
+          title: "Επιτυχία",
+          description: `το booking του πελάτη ${booking.clientId.lastName} τροποποιήθηκε`,
+        });
+      }
+    } catch (error) {
+      toast({
+        className: cn(
+          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+        ),
+        title: "Αποτυχία τροποποιήσης",
+        description: `${error}`,
+      });
+    } finally {
+      window.location.reload();
+      setSubmitDeparture(false);
+      setEditTimeDeparture(false);
+      setEdit(false);
+    }
+  };
   if (modeDelete) {
     return (
       <AlertDialog open={modeDelete} onOpenChange={setModeDelete}>
@@ -92,7 +198,115 @@ const EditbookingChange = ({ booking, rooms }: any) => {
       </AlertDialog>
     );
   }
-  if (edit && !editTime && !editDate && !editRoom) {
+  if (submitEditDate) {
+    return (
+      <AlertDialog open={submitEditDate} onOpenChange={setSubmitEditDate}>
+        <AlertDialogTrigger></AlertDialogTrigger>
+        <AlertDialogContent className="background-light900_dark300 text-dark200_light900">
+          <AlertDialogHeader>
+            <AlertDialogTitle className=" text-[24px]">
+              Πραγματοποιείται αλλαγή στην ημερομηνία της κράτησης του{" "}
+              {booking.clientId.lastName}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+              &bull; Αρχική κράτηση απο{" "}
+              {formatDate(new Date(booking.fromDate), "el")}
+              {" μεχρι "}
+              {formatDate(new Date(booking.toDate), "el")}
+              <br />
+              &bull; Τελική Κράτηση απο{" "}
+              {formatDateUndefined(dateBooking?.from, "el")} μεχρι{" "}
+              {formatDateUndefined(dateBooking?.to, "el")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+              ΑΚΥΡΩΣΗ
+            </AlertDialogCancel>
+            <Button
+              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              onClick={submitDateChange}
+            >
+              ΣΥΝΕΧΕΙΑ
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
+  if (submitArrival) {
+    return (
+      <AlertDialog open={submitArrival} onOpenChange={setSubmitArrival}>
+        <AlertDialogTrigger></AlertDialogTrigger>
+        <AlertDialogContent className="background-light900_dark300 text-dark200_light900 min-h-[300px] min-w-[600px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className=" text-[24px]">
+              Η ώρα άφιξης για την κράτησή του {booking.clientId.lastName} θα
+              τροποποιηθεί.
+            </AlertDialogTitle>
+            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+              Στοιχέια Κρατησης
+              <br /> &bull; ID : {booking._id} <br />
+              &bull; Αρχική ώρα άφιξης : {booking.timeArrival}
+              <br />
+              &bull; Τελική ώρα άφιξης : {formatTime(timeArrival, "el")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+              ΑΚΥΡΩΣΗ
+            </AlertDialogCancel>
+            <Button
+              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              onClick={submitArrivalChange}
+            >
+              ΣΥΝΕΧΕΙΑ
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
+  if (submitDeparture) {
+    return (
+      <AlertDialog open={submitDeparture} onOpenChange={setSubmitDeparture}>
+        <AlertDialogTrigger></AlertDialogTrigger>
+        <AlertDialogContent className="background-light900_dark300 text-dark200_light900 min-h-[300px] min-w-[600px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className=" text-[24px]">
+              Η ώρα άφιξης για την κράτησή του {booking.clientId.lastName} θα
+              τροποποιηθεί.
+            </AlertDialogTitle>
+            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+              Στοιχέια Κρατησης
+              <br /> &bull; ID : {booking._id} <br />
+              &bull; Αρχική ώρα άφιξης : {booking.timeDeparture}
+              <br />
+              &bull; Τελική ώρα άφιξης : {formatTime(timeDeparture, "el")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+              ΑΚΥΡΩΣΗ
+            </AlertDialogCancel>
+            <Button
+              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              onClick={submitDepartureChange}
+            >
+              ΣΥΝΕΧΕΙΑ
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
+  if (
+    edit &&
+    !editTimeArrival &&
+    !editTimeDeparture &&
+    !editDate &&
+    !editRoom
+  ) {
     return (
       <div className="text-dark200_light900 background-light900_dark300 flex max-w-[600px] rounded-lg border-2 font-noto_sans font-bold">
         <Command>
@@ -106,8 +320,17 @@ const EditbookingChange = ({ booking, rooms }: any) => {
               >
                 ΑΛΛΑΓΗ ΗΜΕΡΟΜΗΝΙΑΣ
               </CommandItem>
-              <CommandItem className="hover:bg-purple-400" onSelect={setTime}>
-                ΑΛΛΑΓΗ ΩΡΑΣ
+              <CommandItem
+                className="hover:bg-purple-400"
+                onSelect={() => setEditTimeArrival(true)}
+              >
+                ΑΛΛΑΓΗ ΩΡΑΣ ΑΦΙΞΗΣ
+              </CommandItem>
+              <CommandItem
+                className="hover:bg-purple-400"
+                onSelect={() => setEditTimeDeparture(true)}
+              >
+                ΑΛΛΑΓΗ ΩΡΑΣ ΑΝΑΧΩΡΗΣΗΣ
               </CommandItem>
               <CommandItem
                 className="hover:bg-purple-400"
@@ -118,7 +341,10 @@ const EditbookingChange = ({ booking, rooms }: any) => {
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="ΡΥθΜΙΣΕΙΣ">
-              <CommandItem className="hover:bg-red-dark" onSelect={cancelEdit}>
+              <CommandItem
+                className="hover:bg-red-dark"
+                onSelect={() => setEdit(false)}
+              >
                 ΑΚΥΡΩΣΗ
               </CommandItem>
             </CommandGroup>
@@ -127,16 +353,48 @@ const EditbookingChange = ({ booking, rooms }: any) => {
       </div>
     );
   }
-  if (editTime) {
+  if (editTimeArrival) {
     return (
-      <div className="flex flex-row items-end justify-center gap-4 font-noto_sans text-lg font-bold ">
-        <span>ΑΛΛΑΓΗ στην ώρα άφιξης και αναχώρησης</span>
+      <div className="flex flex-row items-end justify-start gap-4 font-noto_sans text-lg font-bold ">
+        <span>ΑΛΛΑΓΗ ΣΤΗΝ ΩΡΑ ΑΦΙΞΗΣ </span>
         <TimePicker date={timeArrival} setDate={setTimeArrival} />{" "}
-        <TimePicker date={timeDeparture} setDate={setTimeDeparture} />
-        <Button className="btn hover:scale-105 hover:animate-pulse">
+        <Button
+          className="btn hover:scale-105 hover:animate-pulse"
+          onClick={() => {
+            setEditTimeArrival(false);
+            setEdit(false);
+          }}
+        >
           Cancel
         </Button>
-        <Button className="btn hover:scale-105 hover:animate-pulse">
+        <Button
+          className="btn hover:scale-105 hover:animate-pulse "
+          onClick={() => setSubmitArrival(true)}
+        >
+          Submit
+        </Button>
+      </div>
+    );
+  }
+  if (editTimeDeparture) {
+    return (
+      <div className="flex flex-row items-end justify-start gap-4 font-noto_sans text-lg font-bold ">
+        <span>ΑΛΛΑΓΗ ΣΤΗΝ ΩΡΑ ΑΝΑΧΩΡΗΣΗΣ</span>
+
+        <TimePicker date={timeDeparture} setDate={setTimeDeparture} />
+        <Button
+          className="btn hover:scale-105 hover:animate-pulse"
+          onClick={() => {
+            setEditTimeDeparture(false);
+            setEdit(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          className="btn hover:scale-105 hover:animate-pulse"
+          onClick={() => setSubmitDeparture(true)}
+        >
           Submit
         </Button>
       </div>
@@ -144,16 +402,27 @@ const EditbookingChange = ({ booking, rooms }: any) => {
   }
   if (editDate) {
     return (
-      <div className="flex flex-row items-end justify-center gap-4 font-noto_sans text-lg font-bold ">
-        <span>ΑΛΛΑΓΗ στην ημερομηνία άφιξης και αναχώρησης</span>
+      <div className="flex flex-row items-center justify-start gap-4 font-noto_sans text-lg font-bold ">
+        <span>ΑΛΛΑΓΗ ΣΤΙΣ ΗΜΕΡΟΜΗΝΙΕΣ</span>
         <DatePickerWithRange
           rangeDate={dateBooking}
           setRangeDate={setDateBooking}
         />
-        <Button className="btn hover:scale-105 hover:animate-pulse">
+        <Button
+          className="btn border-2 border-red-500 font-bold hover:scale-105 hover:animate-pulse "
+          onClick={() => setEditDate(false)}
+        >
           Cancel
         </Button>
-        <Button className="btn hover:scale-105 hover:animate-pulse">
+        <Button
+          className="btn border-2 border-purple-500 font-bold hover:scale-105 hover:animate-pulse"
+          onClick={() => setSubmitEditDate(true)}
+          disabled={
+            !dateBooking ||
+            dateBooking.from === undefined ||
+            dateBooking.to === undefined
+          }
+        >
           Submit
         </Button>
       </div>
@@ -162,34 +431,20 @@ const EditbookingChange = ({ booking, rooms }: any) => {
   if (editRoom) {
     return (
       <div className=" flex flex-col items-center justify-center gap-4 font-noto_sans text-lg font-bold ">
-        <span>ΑΛΛΑΓΗ στο δωμάτιο του Σκύλου</span>
-        <ScrollArea className="custom-scrollbar background-light900_dark300 text-dark300_light700 h-72 w-[280px]  rounded-md border">
-          <div className="p-4">
-            {rooms.map((room: any) => (
-              <div key={room._id}>
-                <div
-                  onClick={() => setSelectedRoom(room._id)}
-                  className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1 font-noto_sans
-                ${
-                  selectedRoom === room._id
-                    ? "bg-celtic-green text-white"
-                    : "hover:bg-light-blue "
-                }
-              `)}
-                >
-                  <span className="font-bold"> ΔΩΜΑΤΙΟ {room.name}</span>
-                </div>
-                <Separator className="my-2" />
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-        <Button className="btn max-w-[80px] self-center hover:scale-105 hover:animate-pulse">
-          Cancel
-        </Button>
-        <Button className="btn max-w-[80px] self-center hover:scale-105 hover:animate-pulse">
-          Submit
-        </Button>
+        <div className="mt-8 flex flex-row items-center gap-8 self-start">
+          <span className="self-start">ΑΛΛΑΓΗ ΣΤΑ ΔΩΜΑΤΙΑ ΤΩΝ ΣΚΥΛΩΝ</span>
+          <Button
+            className="btn self-start border-2 border-red-500 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+            onClick={() => setEditRoom(false)}
+          >
+            ΑΚΥΡΩΣΗ
+          </Button>
+        </div>
+        <DynamicRoomChange
+          booking={booking}
+          rooms={rooms}
+          setEditRoom={setEditRoom}
+        />
       </div>
     );
   }

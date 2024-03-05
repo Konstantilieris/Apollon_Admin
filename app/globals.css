@@ -1,9 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url("https://cdn.syncfusion.com/ej2/material.css");
 @import url("../styles/theme.css");
-
+@import url("https://cdn.syncfusion.com/ej2/material.css");
+@import "node_modules/@syncfusion/ej2-base/styles/tailwind-dark.css";
+@import "node_modules/@syncfusion/ej2-buttons/styles/tailwind-dark.css";
+@import "node_modules/@syncfusion/ej2-calendars/styles/tailwind-dark.css";
+@import "node_modules/@syncfusion/ej2-dropdowns/styles/tailwind-dark.css";
+@import "node_modules/@syncfusion/ej2-inputs/styles/tailwind-dark.css";
+@import "node_modules/@syncfusion/ej2-lists/styles/tailwind-dark.css";
+@import "node_modules/@syncfusion/ej2-navigations/styles/tailwind-dark.css";
+@import "node_modules/@syncfusion/ej2-popups/styles/tailwind-dark.css";
+@import "node_modules/@syncfusion/ej2-splitbuttons/styles/tailwind-dark.css";
+@import "node_modules/@syncfusion/ej2-react-schedule/styles/tailwind-dark.css";
 body {
   font-family: "Inter", sans-serif;
 }
@@ -123,7 +132,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #888;
+  background: #6202cfea;
   border-radius: 50px;
 }
 
@@ -192,4 +201,10 @@ code {
 .no-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+.custom-schedule {
+  /* Add your custom styles here */
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }

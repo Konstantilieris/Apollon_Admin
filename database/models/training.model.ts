@@ -3,10 +3,12 @@ import { Schema, models, model, Date } from "mongoose";
 export interface ITraining {
   name: string;
   clientId: Schema.Types.ObjectId;
-  pricePerHour: number;
+  price: number;
   date: Date;
-  durationHours: number;
+  dogs: Object[];
   notes: string;
+  timeArrival: string;
+  timeDeparture: string;
 }
 const TrainingSchema = new Schema<ITraining>(
   {
@@ -19,7 +21,15 @@ const TrainingSchema = new Schema<ITraining>(
       ref: "Client",
       required: true,
     },
-    pricePerHour: {
+    dogs: [
+      {
+        dogId: { type: Schema.Types.ObjectId, ref: "Dog", required: true },
+        dogName: { type: String, required: true },
+      },
+    ],
+    timeArrival: { type: String, required: true },
+    timeDeparture: { type: String, required: true },
+    price: {
       type: Number,
       required: true,
     },
@@ -27,10 +37,7 @@ const TrainingSchema = new Schema<ITraining>(
       type: Date,
       required: true,
     },
-    durationHours: {
-      type: Number,
-      required: true,
-    },
+
     notes: {
       type: String,
     },

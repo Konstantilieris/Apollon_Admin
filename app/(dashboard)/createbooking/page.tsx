@@ -2,18 +2,19 @@
 
 import { roomColumns } from "@/components/dataTable/bookingsTable/bookingColumn";
 import { DatePickerWithRange } from "@/components/datepicker/DateRangePicker";
-
-import RoomDrawer from "@/components/shared/RoomDrawer";
-import { DataTable } from "@/components/ui/data-table";
+import dynamic from "next/dynamic";
 
 import { getAllClientsByQuery } from "@/lib/actions/client.action";
-import { getAllRoomsAndBookings } from "@/lib/actions/room.action";
+import { getAllRooms, getAllRoomsAndBookings } from "@/lib/actions/room.action";
 import { removeKeysFromQuery, replacePercent20, resetHours } from "@/lib/utils";
 import { addDays } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
+import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table";
 
+const DynamicDrawer = dynamic(() => import("@/components/shared/RoomDrawer"));
 const Page = () => {
   const [rangeDate, setRangeDate] = useState<DateRange>({
     from: resetHours(new Date()),
@@ -23,12 +24,11 @@ const Page = () => {
   const [clients, setClients] = useState();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rooms, setRooms] = useState<any>([]);
-  const [room, setRoom] = useState();
-  const [roomId, setRoomId] = useState<any>();
+
+  const [bookings, setBookings] = useState([]);
+
   const router = useRouter();
-  const handleRoomId = (roomId: any) => {
-    setRoomId(roomId);
-  };
+
   useEffect(() => {
     if (!openDrawer) {
       const newUrl = removeKeysFromQuery({
@@ -44,8 +44,8 @@ const Page = () => {
     const fetchData = async () => {
       try {
         if (!rangeDate) return;
-        const roomsData = await getAllRoomsAndBookings(rangeDate);
-        setRooms(JSON.parse(roomsData));
+        const allrooms = await getAllRoomsAndBookings(rangeDate);
+        setBookings(JSON.parse(allrooms));
       } catch (error) {
         console.error("Error fetching rooms:", error);
       }
@@ -69,8 +69,16 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.get("q")]);
   useEffect(() => {
-    setRoom(rooms.find((item: any) => item._id === roomId));
-  }, [roomId, rooms]);
+    const fetchRooms = async () => {
+      try {
+        const allRooms = await getAllRooms();
+        setRooms(JSON.parse(allRooms));
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
+    fetchRooms();
+  }, []);
 
   return (
     <section className="flex flex-col gap-8 p-4">
@@ -79,20 +87,24 @@ const Page = () => {
         ΔΙΑΧΕΙΡΗΣΗ ΚΡΑΤΗΣΕΩΝ
       </h1>
       <div className="flex flex-col items-center gap-4">
-        <DatePickerWithRange
-          rangeDate={rangeDate}
-          setRangeDate={setRangeDate}
-          className={"self-start"}
-        />
-
-        {!openDrawer ? (
-          <DataTable
-            data={rooms}
-            columns={roomColumns(handleRoomId, setOpenDrawer)}
+        <div className="flex flex-row gap-2 self-start">
+          <DatePickerWithRange
+            rangeDate={rangeDate}
+            setRangeDate={setRangeDate}
+            className={"self-start"}
           />
+          <Button
+            className="btn  font-noto_sans font-bold hover:scale-105 dark:text-white"
+            onClick={() => setOpenDrawer(true)}
+          >
+            RESERVATION
+          </Button>
+        </div>
+        {!openDrawer && rooms ? (
+          <DataTable data={bookings} columns={roomColumns()} />
         ) : (
-          <RoomDrawer
-            room={room}
+          <DynamicDrawer
+            rooms={rooms}
             open={openDrawer}
             setOpen={setOpenDrawer}
             clients={clients}

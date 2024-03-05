@@ -12,8 +12,9 @@ import { Button } from "@/components/ui/button";
 import { CreateBooking } from "@/lib/actions/booking.action";
 import { calculateTotal, cn, formatDate, formatTime } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { useToast } from "../ui/use-toast";
+import { Input } from "../ui/input";
 
 interface SelectedClient {
   firstName: string;
@@ -24,48 +25,47 @@ interface SelectedClient {
 interface Params {
   selectedClient: SelectedClient;
   rangeDate: { from: Date; to: Date };
-  roomId: string;
-  roomName: string;
-  price: string;
+
   open: boolean;
   setOpen: any;
-  form: any;
-  timeArrival: Date | undefined;
-  timeDeparture: Date | undefined;
+  bookingData: any;
+  timeArrival: Date;
+  timeDeparture: Date;
 }
-export function AlertDialogSubmit({
+const AlertDialogSubmit = ({
   open,
   setOpen,
   selectedClient,
   rangeDate,
-  roomId,
-  roomName,
-  price,
-  form,
+  bookingData,
+
   timeArrival,
   timeDeparture,
-}: Params) {
-  const totalPrice = calculateTotal(
-    rangeDate?.from,
-    timeArrival,
-    rangeDate?.to,
-    timeDeparture,
-    parseInt(price)
-  );
+}: Params) => {
   const { toast } = useToast();
   const path = usePathname();
 
+  const [price, setPrice] = useState(
+    calculateTotal(
+      rangeDate?.from,
+      timeArrival,
+      rangeDate?.to,
+      timeDeparture,
+      30
+    ) * bookingData.length
+  );
   const handleBookingAction = async () => {
     try {
       const booking = await CreateBooking({
-        roomId,
         clientId_string: selectedClient.id,
         rangeDate,
-        totalprice: totalPrice,
+        totalprice: price,
         path,
+        bookingData,
         timeArrival: formatTime(timeArrival, "el"),
         timeDeparture: formatTime(timeDeparture, "el"),
       });
+
       if (booking) {
         toast({
           className: cn(
@@ -75,7 +75,6 @@ export function AlertDialogSubmit({
           description: "Η κράτηση δημιουργήθηκε",
         });
       }
-      window.location.reload();
     } catch (error) {
       toast({
         className: cn(
@@ -86,6 +85,7 @@ export function AlertDialogSubmit({
       });
     }
   };
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent className="text-dark200_light800 background-light850_dark100 flex  min-w-[400px] flex-col">
@@ -94,10 +94,16 @@ export function AlertDialogSubmit({
             Γίνεται κράτηση:
           </AlertDialogTitle>
           <AlertDialogDescription className="flex flex-col font-noto_sans text-lg">
-            <span>Δωμάτιο: {roomName}</span>
             <span>
               Όνομα Πελάτη: {selectedClient?.firstName}{" "}
               {selectedClient?.lastName}
+            </span>
+            <span className="flex flex-col gap-2">
+              {bookingData.map((item: any) => (
+                <span key={item.dogId}>
+                  &bull; {item.dogName} στο Δωμάτιο {item.roomName}{" "}
+                </span>
+              ))}
             </span>
             <span>
               {!rangeDate?.from && !timeArrival
@@ -115,18 +121,16 @@ export function AlertDialogSubmit({
                     "el"
                   )}.`}
             </span>
-
-            <span>
-              Συνολική Τιμή :{" "}
-              {calculateTotal(
-                rangeDate?.from,
-                timeArrival,
-                rangeDate?.to,
-                timeDeparture,
-                parseInt(price)
-              )?.toString()}{" "}
-              Ευρώ
+            <span className="flex flex-row items-center gap-2">
+              Τροποποίησε την τιμή :
+              <Input
+                className="background-light800_dark400 max-w-[80px]"
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(parseInt(e.target.value))}
+              />
             </span>
+            <span>Συνολική Τιμή : {price?.toString()} Ευρώ</span>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -150,4 +154,5 @@ export function AlertDialogSubmit({
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+};
+export default AlertDialogSubmit;

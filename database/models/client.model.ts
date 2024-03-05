@@ -17,8 +17,6 @@ export interface IDog {
   food: string;
   breed: string;
   behavior: string;
-  vet: string;
-  vetNumber: string;
 }
 export interface IClient {
   firstName: string;
@@ -36,13 +34,39 @@ export interface IClient {
   owes?: IService[];
   totalSpent?: number;
   dog?: IDog;
+  vet: string;
+  vetNumber: string;
 }
-
+export const DogSchema = new Schema<IDog>({
+  name: {
+    type: String,
+    required: true,
+  },
+  gender: {
+    type: String,
+    required: true,
+  },
+  birthdate: {
+    type: Date,
+    required: true,
+  },
+  food: {
+    type: String,
+    required: true,
+  },
+  breed: {
+    type: String,
+    required: true,
+  },
+  behavior: {
+    type: String,
+    required: true,
+  },
+});
 const ServiceSchema = new Schema<IService>({
   service: {
     type: Schema.Types.ObjectId,
     refPath: "owes.serviceType",
-    required: true,
   },
   amount: {
     type: Number,
@@ -56,7 +80,6 @@ const ServiceSchema = new Schema<IService>({
   serviceType: {
     type: String,
     required: true,
-    enum: ["Booking", "Transportation", "Grooming", "OtherService"],
   },
 });
 const ClientSchema = new Schema<IClient>({
@@ -106,39 +129,13 @@ const ClientSchema = new Schema<IClient>({
     default: Date.now,
   },
   owes: [ServiceSchema],
-  dog: {
-    name: {
-      type: String,
-      required: true,
-    },
-    gender: {
-      type: String,
-      required: true,
-    },
-    birthdate: {
-      type: Date,
-      required: true,
-    },
-    food: {
-      type: String,
-      required: true,
-    },
-    breed: {
-      type: String,
-      required: true,
-    },
-    behavior: {
-      type: String,
-      required: true,
-    },
-    vet: {
-      type: String,
-      required: true,
-    },
-    vetNumber: {
-      type: String,
-      required: true,
-    },
+  dog: [DogSchema],
+  vet: {
+    type: String,
+    required: true,
+  },
+  vetNumber: {
+    type: String,
   },
   totalSpent: {
     type: Number,

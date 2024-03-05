@@ -13,11 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 
-export function DataTableBookingRowActions({
-  row,
-  handleRoomId,
-  setOpenDrawer,
-}: any) {
+export function DataTableBookingRowActions({ row }: any) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -33,20 +29,10 @@ export function DataTableBookingRowActions({
         align="center"
         className="background-light900_dark300 text-dark200_light800 w-[160px] font-noto_sans font-bold"
       >
-        <DropdownMenuItem
-          onClick={() => {
-            handleRoomId(row?.original._id);
-            setOpenDrawer(true);
-          }}
-          className="rounded-lg hover:scale-105 hover:bg-sky-300 hover:dark:bg-deep-purple"
-        >
-          Δημιούργησε Κράτηση
-        </DropdownMenuItem>
-
         <DropdownMenuSeparator />
         <DropdownMenuSub></DropdownMenuSub>
         <DropdownMenuSeparator />
-        {row.original.currentBookings.length > 0 && (
+        {row.original.currentBookings.length > 0 ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -77,6 +63,10 @@ export function DataTableBookingRowActions({
               })}
             </DropdownMenuContent>
           </DropdownMenu>
+        ) : (
+          <span className="justify-center font-noto_sans font-bold">
+            No Actions
+          </span>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

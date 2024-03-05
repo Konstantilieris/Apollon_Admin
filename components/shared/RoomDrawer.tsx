@@ -3,7 +3,6 @@ import React, { Suspense } from "react";
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -14,7 +13,7 @@ import { Button } from "../ui/button";
 
 import LoadingSkeleton from "./LoadingSkeleton";
 
-const RoomDrawer = ({ open, setOpen, room, clients, rangeDate }: any) => {
+const RoomDrawer = ({ open, setOpen, rooms, clients, rangeDate }: any) => {
   return (
     <Suspense
       fallback={<LoadingSkeleton size={20} animation="animation-spin" />}
@@ -22,25 +21,18 @@ const RoomDrawer = ({ open, setOpen, room, clients, rangeDate }: any) => {
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent className="text-dark200_light800 background-light850_dark100  flex max-h-[800px] px-8">
           <DrawerHeader className="  self-start font-noto_sans">
-            {room && (
-              <DrawerTitle className=" text-xl">
-                Κάνετε Κράτηση στο {room?.name}
-              </DrawerTitle>
-            )}
-            <DrawerDescription className=" text-lg leading-8 ">
-              {" "}
+            <DrawerTitle className=" text-xl">
               Επιλέγοντας απλά τις ημερομηνίες που επιθυμείτε. Εξασφαλίστε την
               ιδανική διαμονή για τον σκύλο σε λίγα κλικ!
-            </DrawerDescription>
+            </DrawerTitle>
           </DrawerHeader>
-          {room && (
-            <BookingForm
-              room={room}
-              rangeDate={rangeDate}
-              clients={clients}
-              open={open}
-            />
-          )}
+
+          <BookingForm
+            rooms={rooms}
+            rangeDate={rangeDate}
+            clients={clients}
+            open={open}
+          />
 
           <DrawerFooter>
             <Button

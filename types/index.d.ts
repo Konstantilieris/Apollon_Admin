@@ -45,3 +45,14 @@ export interface updateTaskProps {
   id: string;
   path: string;
 }
+export interface CreateTrainingParams {
+  name: string;
+  clientId: string;
+  price: number;
+  date: Date;
+  dogs: { dogId: any; dogName: any }[];
+  timeArrival: string;
+  timeDeparture: string;
+  notes: string;
+  path: string;
+}

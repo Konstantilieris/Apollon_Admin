@@ -6,31 +6,24 @@ import Link from "next/link";
 import { DataTableColumnHeader } from "../clientsTable/data-table-column-header";
 
 import { Badge } from "@/components/ui/badge";
-import { DataTableBookingRowActions } from "./data-table-booking-actions";
+
 import { formatDate } from "@/lib/utils";
 import Image from "next/image";
+import { DataTableBookingRowActions } from "./data-table-booking-actions";
 
-export const roomColumns = (
-  handleRoomId: (roomId: any) => void,
-  setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>
-): ColumnDef<any>[] => [
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => (
-      <DataTableBookingRowActions
-        row={row}
-        handleRoomId={handleRoomId}
-        setOpenDrawer={setOpenDrawer}
-      />
-    ),
-  },
+export const roomColumns = (): ColumnDef<any>[] => [
   {
     id: "Room",
     header: ({ column }) => <div className="">ΣΥΣΤΗΜΑ ΚΡΑΤΗΣΕΩΝ</div>,
     enableSorting: true,
     enableGlobalFilter: true,
     columns: [
+      {
+        id: "actions",
+        enableHiding: false,
+
+        cell: ({ row }) => <DataTableBookingRowActions row={row} />,
+      },
       {
         id: "name",
         accessorKey: "name",
@@ -75,7 +68,11 @@ export const roomColumns = (
         accessorFn: (row) => {
           if (row.currentBookings) {
             const names = row.currentBookings.map((booking: any) => {
-              return booking.clientId.dog.name;
+              return booking.dogs.map((dog: any) => {
+                if (dog.roomId === row._id) {
+                  return dog.dogName;
+                } else return null;
+              });
             });
             return names;
           } else {
@@ -84,6 +81,7 @@ export const roomColumns = (
         },
         cell: ({ row }) => {
           const see: Array<String> = row.getValue("Status");
+
           if (see.length === 0) {
             return (
               <div className="flex items-center justify-center gap-2 text-start font-noto_sans font-bold">
@@ -91,17 +89,22 @@ export const roomColumns = (
                 ΔΙΑθΕΣΙΜΟ
               </div>
             );
-          }
-          return (
-            <div className=" flex items-center justify-center  gap-4 font-noto_sans text-lg font-bold">
-              <Badge className="h-6 w-6 rounded-full bg-red-dark" />
-              <div className="flex flex-col">
-                {see.map((name, index) => (
-                  <h1 key={index}> {name}</h1>
-                ))}
+          } else {
+            return (
+              <div className=" flex flex-row items-center justify-center  gap-4 font-noto_sans text-sm font-bold">
+                <Badge className="h-6 w-6 rounded-full bg-red-dark" />
+                <div className="flex flex-col gap-2 ">
+                  {see.map((name, index) => (
+                    <h1 key={index}>
+                      {" "}
+                      {name}
+                      <br />
+                    </h1>
+                  ))}
+                </div>
               </div>
-            </div>
-          );
+            );
+          }
         },
       },
       {
@@ -142,6 +145,44 @@ export const roomColumns = (
             <div className=" ml-2 flex flex-col justify-center gap-2 font-noto_sans text-lg font-bold ">
               {see.map((name, index) => (
                 <h1 key={index}> {name}</h1>
+              ))}
+            </div>
+          );
+        },
+      },
+      {
+        id: "ReservationsStart",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            imgurl="/assets/icons/departure.svg"
+            column={column}
+            title="Αρχή Κράτησης"
+            className="text-start"
+          />
+        ),
+        accessorFn: (row) => {
+          if (row.currentBookings) {
+            const dates = row.currentBookings.map((booking: any) => {
+              return booking.fromDate;
+            });
+            return dates;
+          } else {
+            return null;
+          }
+        },
+        cell: ({ row }) => {
+          const see: Array<string> = row.getValue("ReservationsStart");
+          if (see.length === 0) {
+            return (
+              <div className="ml-8 flex justify-center gap-2 text-center font-noto_sans font-bold">
+                -
+              </div>
+            );
+          }
+          return (
+            <div className=" ml-8 flex flex-col gap-2 text-start font-noto_sans text-lg font-bold ">
+              {see.map((date, index) => (
+                <h1 key={index}>{formatDate(new Date(date), "el")}</h1>
               ))}
             </div>
           );
@@ -235,7 +276,7 @@ export const roomColumns = (
         header: ({ column }) => (
           <DataTableColumnHeader
             column={column}
-            title="Άφιξη Κράτησης"
+            title="Άφιξη Σκύλου"
             className="text-start"
             imgurl="/assets/icons/arrival.svg"
           />

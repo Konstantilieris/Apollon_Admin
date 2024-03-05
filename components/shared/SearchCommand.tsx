@@ -6,14 +6,24 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "@radix-ui/react-menubar";
 import { cn } from "@/lib/utils";
 
+interface Params {
+  firstName: string;
+  lastName: string;
+  id: string;
+  email: string;
+  dogs?: any;
+}
 export function SearchCommand({
   clients,
   selectedClient,
   setSelectedClient,
+  setDogs,
 }: any) {
-  const handleClick = ({ firstName, lastName, id, email }: any) => {
+  const handleClick = ({ firstName, lastName, id, email, dogs }: Params) => {
     setSelectedClient({ firstName, lastName, id, email });
+    setDogs(dogs);
   };
+  console.log(clients);
   return (
     <>
       <LocalSearch
@@ -32,6 +42,7 @@ export function SearchCommand({
                     lastName: client.lastName,
                     id: client._id,
                     email: client.email,
+                    dogs: client.dog,
                   })
                 }
                 className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1 font-noto_sans

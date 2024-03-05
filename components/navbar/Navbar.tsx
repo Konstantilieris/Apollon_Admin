@@ -20,7 +20,7 @@ const Navbar = async () => {
           className="animate-on-hover-image invert-colors  "
         />
         <p className="  ml-10  max-sm:hidden">
-          <span className=" text-dark300_light900   font-noto_sans text-[30px] font-extrabold lg:text-[40px]">
+          <span className=" text-dark300_light900   font-noto_sans text-[36px] font-extrabold lg:text-[50px]">
             Apollon Admin
           </span>
         </p>

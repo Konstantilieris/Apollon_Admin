@@ -30,7 +30,7 @@ export function DatePicker({ date, setDate }: any) {
   };
 
   return (
-    <div className="background-light900_dark300 mt-8 flex max-h-[50px] max-w-[245px] flex-row items-center  rounded-lg">
+    <div className="background-light900_dark300 flex max-h-[50px] max-w-[245px] flex-row items-center  rounded-lg">
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -52,7 +52,7 @@ export function DatePicker({ date, setDate }: any) {
         </PopoverContent>
       </Popover>
       <ChevronLeft
-        className="h-4 w-4 hover:scale-125"
+        className="h-4 w-4 hover:scale-125 "
         onClick={handleDayBefore}
       />
       <ChevronRight

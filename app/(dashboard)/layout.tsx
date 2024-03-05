@@ -1,4 +1,6 @@
 import Sidebar from "@/components/dashboard/sidebar/Sidebar";
+import { Toaster } from "@/components/ui/toaster";
+
 import React from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -8,6 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <section className="background-lightgrad_darkgrad custom-scrollbar min-h-screen  w-full p-6 max-md:pb-14 sm:px-14">
         {children}
       </section>
+      <Toaster />
     </main>
   );
 }

@@ -23,13 +23,13 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className="flex items-center justify-between px-2 font-noto_sans font-bold">
-      <div className="text-muted-foreground flex-1 text-sm">
+    <div className=" flex   justify-between px-2 font-noto_sans font-bold">
+      <div className="text-muted-foreground flex-1 self-center text-sm">
         {table.getFilteredSelectedRowModel().rows.length} απο{" "}
         {table.getFilteredRowModel().rows.length} σειρές επιλεγμένες.
       </div>
-      <div className="flex items-center space-x-6 lg:space-x-8">
-        <div className="flex items-center space-x-2">
+      <div className="m-4  flex space-x-6 lg:space-x-8 ">
+        <div className=" flex items-center space-x-2">
           <p className="text-sm font-medium">Σειρές ανά σελίδα</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
@@ -49,7 +49,7 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+        <div className=" flex w-[100px] items-center justify-center text-sm font-medium">
           Σελίδα {table.getState().pagination.pageIndex + 1} από{" "}
           {table.getPageCount()}
         </div>

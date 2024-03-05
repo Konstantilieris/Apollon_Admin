@@ -59,6 +59,8 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const finalData = React.useMemo(() => data, [data]);
   const finalColumnDef = React.useMemo(() => columns, [columns]);
+  // ho
+
   const table = useReactTable({
     data: finalData,
     columns: finalColumnDef,
@@ -71,6 +73,7 @@ export function DataTable<TData, TValue>({
     },
     enableRowSelection: true,
     onGlobalFilterChange: setFiltering,
+
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -83,8 +86,9 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const headerGroup = table.getHeaderGroups()[1];
   return (
-    <div className="background-light700_dark300 text-dark200_light800  custom-scrollbar  max-h-[1200px]  w-full max-w-[1500px] gap-2 space-y-4 rounded-lg border-2 border-slate-700 ">
+    <div className="background-light700_dark300 text-dark200_light800 custom-scrollbar relative  max-h-[1200px]  w-full  gap-2 space-y-4 rounded-lg border-2 border-purple-500">
       <DataTableToolbar
         table={table}
         filtering={filtering}
@@ -95,26 +99,24 @@ export function DataTable<TData, TValue>({
       <div className="rounded-md border border-black font-noto_sans font-semibold">
         <Table>
           <TableHeader className="p-4 font-noto_sans text-[22px] font-extrabold">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      className="font-extrabold"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    className="font-extrabold"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
           </TableHeader>
           <TableBody className="text-center font-noto_sans">
             {table.getRowModel().rows?.length ? (

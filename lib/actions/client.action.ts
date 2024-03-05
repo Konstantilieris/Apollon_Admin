@@ -1,56 +1,50 @@
 /* eslint-disable camelcase */
 "use server";
 
-import { CreateClientParams } from "@/types";
 import { connectToDatabase } from "../mongoose";
-import Client from "@/database/models/client.model";
-
-export async function CreateClient(params: CreateClientParams) {
+import Client, { IClient } from "@/database/models/client.model";
+export async function getDogsForClient(clientId: string) {
   try {
     connectToDatabase();
-    const {
-      firstName,
-      lastName,
-      email,
-      profession,
-      birthdate,
-      residence,
-      address,
-      city,
-      telephone,
-      mobile,
-      name,
-      gender,
-      food,
-      breed,
-      behavior,
-      vet,
-      vetNumber,
-      dog_birthdate,
-    } = params;
+    const client = await Client.findById(clientId).select("dog");
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    return JSON.stringify(client.dog);
+  } catch (error) {
+    console.error("Error retrieving dogs for client:", error);
+    throw error;
+  }
+}
+export async function CreateClient({ clientData, dogs }: any) {
+  const clientPayload: IClient = {
+    firstName: clientData.firstName,
+    lastName: clientData.lastName,
+    email: clientData.email,
+    profession: clientData.profession,
+    birthdate: clientData.birthdate,
+    location: {
+      residence: clientData.residence,
+      address: clientData.address,
+      city: clientData.city,
+    },
+    phone: {
+      telephone: clientData.telephone,
+      mobile: clientData.mobile,
+    },
+    vet: clientData.vet,
+    vetNumber: clientData.vetNumber,
+  };
+  try {
+    connectToDatabase();
 
     const client = await Client.create({
-      firstName,
-      lastName,
-      email,
-      profession,
-      birthdate,
-      location: { residence, address, city },
-      phone: { telephone, mobile },
-      dog: {
-        name,
-        gender,
-        birthdate: dog_birthdate,
-        food,
-        breed,
-        behavior,
-        vet,
-        vetNumber,
-      },
+      ...clientPayload,
+      dog: dogs.dogs,
     });
-    return JSON.stringify(client);
+    if (client) return JSON.stringify(client);
   } catch (error) {
-    console.log("Failed to create client", error);
+    console.log(error);
     throw error;
   }
 }
@@ -94,7 +88,7 @@ export async function getAllClientsByQuery(searchQuery: string | undefined) {
         },
       },
     });
-    return JSON.stringify(clients);
+    return JSON.parse(JSON.stringify(clients));
   } catch (error) {
     console.log(error);
     throw error;

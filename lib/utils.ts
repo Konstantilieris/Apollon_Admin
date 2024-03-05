@@ -41,6 +41,16 @@ interface removeUrlQueryParams {
   params: string;
   keysToRemove: string[];
 }
+export const constructDogsArray = (selectedDogs: any, selectedRoom: any) => {
+  // Construct an array of objects with dogId and roomId
+  const dogsArray = selectedDogs.map((dog: any) => ({
+    dogId: dog._id,
+    dogName: dog.name,
+    roomId: selectedRoom._id,
+    roomName: selectedRoom.name, // Assuming _id is the identifier for rooms
+  }));
+  return dogsArray;
+};
 export function removeKeysFromQuery({
   params,
   keysToRemove,
@@ -153,7 +163,14 @@ export function formatDate(date: Date, language: string) {
     day: "numeric",
   }).format(date);
 }
-
+export function formatDateUndefined(date: Date | undefined, language: string) {
+  if (!date) return "";
+  return new Intl.DateTimeFormat(language, {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+}
 export function formatTime(date: Date | undefined, language: string) {
   return new Intl.DateTimeFormat(language, {
     hour: "numeric",
@@ -242,13 +259,11 @@ export function replacePercent20(inputString: string | null) {
 }
 export function calculateTotal(
   fromDate: Date,
-  timeOfArrival: Date | undefined,
+  timeOfArrival: Date,
   toDate: Date,
-  timeOfDeparture: Date | undefined,
+  timeOfDeparture: Date,
   dailyPrice: number
-): number | undefined {
-  if (!timeOfArrival || !timeOfDeparture) return;
-
+): number {
   // Combine the date and time parts
   const arrivalDateTime = new Date(fromDate);
   arrivalDateTime.setHours(
@@ -279,7 +294,7 @@ export function calculateTotal(
   }
 
   // Ensure the arrivalDateTime is before the departureDateTime
-  if (arrivalDateTime >= departureDateTime) return;
+  if (arrivalDateTime >= departureDateTime) return 0;
 
   // Calculate the number of nights based on the 14:00 start and end time
   const numberOfNights = Math.floor(
@@ -310,4 +325,21 @@ export function resetHours(date: Date): Date {
   const newDate = new Date(date);
   newDate.setHours(0, 0, 0, 0); // Resetting hours, minutes, seconds, and milliseconds to 0
   return newDate;
+}
+export function isIdIncluded(dogs: any, id: any) {
+  return dogs.some((dog: any) => dog._id === id);
+}
+export const options = {
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+  timeZoneName: "short",
+};
+export function findRoomNameById(id: string, rooms: any) {
+  const room = rooms.find((room: any) => room._id === id);
+  return room ? room.name : "Room not found"; // Return room name if found, otherwise a default message
 }
