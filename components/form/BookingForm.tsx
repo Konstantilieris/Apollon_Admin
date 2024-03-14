@@ -25,8 +25,9 @@ import dynamic from "next/dynamic";
 import { Separator } from "../ui/separator";
 import { cn, constructDogsArray, isIdIncluded } from "@/lib/utils";
 import { ScrollArea } from "../ui/scroll-area";
+
 const DynamicDialog = dynamic(() => import("../shared/AlertDialogSubmit"));
-const BookingForm = ({ rooms, rangeDate, clients, open }: any) => {
+const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [stage, setStage] = useState(0);
@@ -34,6 +35,7 @@ const BookingForm = ({ rooms, rangeDate, clients, open }: any) => {
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
   const [selectedDogs, setSelectedDogs] = useState<any>([]);
   const [bookingData, setBookingData] = useState<any>([]);
+  const [flag, setFlag] = useState(false);
   const form1 = useForm<z.infer<typeof BookingValidation1>>({
     resolver: zodResolver(BookingValidation1),
     defaultValues: {
@@ -47,6 +49,7 @@ const BookingForm = ({ rooms, rangeDate, clients, open }: any) => {
       time_departure: new Date(),
     },
   });
+
   const handleBooking2 = (values: z.infer<typeof BookingValidation2>) => {
     try {
       setIsSubmitting(true);
@@ -120,7 +123,7 @@ const BookingForm = ({ rooms, rangeDate, clients, open }: any) => {
 
   return (
     <div className="">
-      {stage === 0 ? (
+      {stage === 0 && (
         <Form {...form1}>
           <form
             onSubmit={form1.handleSubmit(handleBooking1)}
@@ -178,7 +181,32 @@ const BookingForm = ({ rooms, rangeDate, clients, open }: any) => {
             </div>
           </form>
         </Form>
-      ) : (
+      )}
+      {stage === 1 && (
+        <div className="ml-8 flex flex-row items-center justify-start gap-8">
+          <h1 className=" text-center font-noto_sans text-[24px] font-bold">
+            Επιθυμείτε μεταφορά;
+          </h1>
+          <Button
+            className="border-2 border-red-600 bg-red-300 font-noto_sans font-extrabold text-black hover:scale-105 hover:animate-pulse"
+            onClick={() => setStage(2)}
+          >
+            ΟΧΙ
+          </Button>
+          <Button
+            className="border-2 border-white bg-purple-500 font-noto_sans font-extrabold text-black hover:scale-105 hover:animate-pulse"
+            onClick={() => {
+              setFlag(true);
+              setStage(2);
+            }}
+          >
+            {" "}
+            ΝΑΙ
+          </Button>
+        </div>
+      )}
+
+      {stage === 2 && (
         <div>
           {dogs && (
             <div className="mb-2 flex flex-row justify-center gap-20">
@@ -281,7 +309,9 @@ const BookingForm = ({ rooms, rangeDate, clients, open }: any) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="  font-noto_sans text-lg font-bold">
-                          Διάλεξε χρόνο άφιξης
+                          {flag
+                            ? "Διάλεξε χρόνο παραλαβής"
+                            : "Διάλεξε χρόνο άφιξης"}
                         </FormLabel>
                         <FormControl>
                           <TimePicker
@@ -299,7 +329,9 @@ const BookingForm = ({ rooms, rangeDate, clients, open }: any) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="  font-noto_sans text-lg font-bold">
-                          Διάλεξε χρόνο αναχώρησης
+                          {flag
+                            ? "Διάλεξε χρόνο παράδοσης"
+                            : "Διάλεξε χρόνο αναχώρησης"}
                         </FormLabel>
                         <FormControl>
                           <TimePicker
@@ -328,6 +360,8 @@ const BookingForm = ({ rooms, rangeDate, clients, open }: any) => {
 
       {openDialog && (
         <DynamicDialog
+          close={close}
+          flag={flag}
           open={openDialog}
           setOpen={setOpenDialog}
           selectedClient={form1?.getValues("client")}

@@ -126,23 +126,8 @@ export const priorities = [
 ];
 export const viewClientOptions = [
   {
-    label: "Client",
-    title: "Πελάτες",
-    value: [
-      "grouped&sorted",
-      "email",
-      "profession",
-      "birthdate",
-      "location_residence",
-      "location_address",
-      "location_city",
-      "phone_telephone",
-      "phone_mobile",
-    ],
-  },
-  {
     label: "Dog",
-    title: "Και Σκύλοι",
+    title: "Σκύλοι",
     value: [
       "dog_name",
       "dog_gender",
@@ -342,4 +327,25 @@ export const options = {
 export function findRoomNameById(id: string, rooms: any) {
   const room = rooms.find((room: any) => room._id === id);
   return room ? room.name : "Room not found"; // Return room name if found, otherwise a default message
+}
+export function isBookingLive(booking: any) {
+  const currentDate = Date.now();
+  const fromDate = booking.fromDate.getTime();
+  const toDate = booking.toDate.getTime();
+
+  return currentDate >= fromDate && currentDate <= toDate;
+}
+export function sumTotalOwesAndSpent(transactions: any[]) {
+  let totalOwes = 0;
+  let totalSpent = 0;
+
+  for (const transaction of transactions) {
+    if (transaction.paid === false) {
+      totalOwes += transaction.amount;
+    } else {
+      totalSpent += transaction.amount;
+    }
+  }
+
+  return { totalOwes, totalSpent };
 }

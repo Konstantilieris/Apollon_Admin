@@ -9,6 +9,7 @@ export interface IBooking {
   timeArrival: string;
   timeDeparture: string;
   dogs: Object[];
+  flag: boolean;
 }
 const BookingSchema = new Schema<IBooking>(
   {
@@ -26,6 +27,7 @@ const BookingSchema = new Schema<IBooking>(
         roomId: { type: Schema.Types.ObjectId, ref: "Room", required: true },
       },
     ],
+    flag: { type: Boolean, default: false, required: true },
   },
   { timestamps: true }
 );

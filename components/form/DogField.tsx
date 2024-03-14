@@ -52,7 +52,7 @@ const DogField = ({ form, index }: any) => {
             <Select onValueChange={field.onChange}>
               <FormControl>
                 <SelectTrigger className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] min-w-[265px] rounded-lg p-2 font-noto_sans font-bold">
-                  <SelectValue placeholder="Select Gender" />
+                  <SelectValue placeholder="Διάλεξε Φύλο" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 ">
@@ -110,7 +110,7 @@ const DogField = ({ form, index }: any) => {
             <Select onValueChange={field.onChange}>
               <FormControl>
                 <SelectTrigger className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] min-w-[235px] rounded-lg p-2 font-noto_sans font-bold">
-                  <SelectValue placeholder="Behavior" />
+                  <SelectValue placeholder="Συμπεριφορά" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 ">

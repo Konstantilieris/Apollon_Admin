@@ -20,12 +20,13 @@ interface ICreateBooking {
   timeArrival: string;
   timeDeparture: string;
   bookingData: any;
+  flag: boolean;
 }
 
 export async function CreateBooking({
   clientId_string,
   rangeDate,
-
+  flag,
   totalprice,
   path,
   timeArrival,
@@ -49,6 +50,7 @@ export async function CreateBooking({
       toDate: rangeDate.to,
       totalDays: totalDays?.length,
       totalAmount: totalprice,
+      flag,
       dogs: selectedDogsFiltered,
       timeArrival,
       timeDeparture,
@@ -103,7 +105,103 @@ export async function CreateBooking({
         StartTime: startTime,
         EndTime: endTime,
       });
+      if (flag) {
+        const pickUpStartTime = new Date(rangeDate.from);
+        const pickUpEndTime = new Date(rangeDate.from);
+        const deliveryStartTime = new Date(rangeDate.to);
+        const deliverEndTime = new Date(rangeDate.to);
+        pickUpStartTime.setHours(
+          parseInt(timeArrival.split(":")[0], 10),
+          parseInt(timeArrival.split(":")[1], 10)
+        );
+        pickUpEndTime.setHours(
+          parseInt(timeArrival.split(":")[0], 10),
+          parseInt(timeArrival.split(":")[1], 10)
+        );
+        deliveryStartTime.setHours(
+          parseInt(timeDeparture.split(":")[0], 10),
+          parseInt(timeDeparture.split(":")[1], 10)
+        );
+        deliverEndTime.setHours(
+          parseInt(timeDeparture.split(":")[0], 10),
+          parseInt(timeDeparture.split(":")[1], 10)
+        );
+        const pickUpDescription = `${
+          client.location.address
+        } - ${selectedDogsFiltered
+          .map(({ dogName }: any) => `${dogName}`)
+          .join(", ")} - ΠΑΡΑΛΑΒΗ`;
+        await Appointment.create({
+          Id: booking._id, // Use the training _id as the event Id
+          Type: "ΠΑΡΑΛΑΒΗ",
+          Subject: `${client.lastName} - ΜΕΤΑΦΟΡΑ`,
+          Description: pickUpDescription,
+          StartTime: pickUpStartTime,
+          EndTime: pickUpEndTime,
+        });
+        const deliveryDescription = `${
+          client.location.address
+        } - ${selectedDogsFiltered
+          .map(({ dogName }: any) => `${dogName}`)
+          .join(", ")} - ΠΑΡΑΔΟΣΗ`;
+        await Appointment.create({
+          Id: booking._id,
+          Type: "ΠΑΡΑΔΟΣΗ",
+          Subject: `${client.lastName} - ΜΕΤΑΦΟΡΑ`,
+          Description: deliveryDescription,
+          StartTime: deliveryStartTime,
+          EndTime: deliverEndTime,
+        });
+      } else {
+        const ArrivalStartTime = new Date(rangeDate.from);
+        const ArrivalEndTime = new Date(rangeDate.from);
+        ArrivalStartTime.setHours(
+          parseInt(timeArrival.split(":")[0], 10),
+          parseInt(timeArrival.split(":")[1], 10)
+        );
+        ArrivalEndTime.setHours(
+          parseInt(timeArrival.split(":")[0], 10),
+          parseInt(timeArrival.split(":")[1], 10)
+        );
+        const appointmentDescription = `${
+          client.lastName + client.firstName
+        } - ${selectedDogsFiltered
+          .map(({ dogName }: any) => `${dogName}`)
+          .join(", ")} - ΑΦΙΞΗ`;
+        await Appointment.create({
+          Id: booking._id, // Use the training _id as the event Id
+          Type: "ΑΦΙΞΗ",
+          Subject: `${client.lastName} -AΦΙΞΗ`,
+          Description: appointmentDescription,
+          StartTime: ArrivalStartTime,
+          EndTime: ArrivalEndTime,
+        });
+        const DepartureStartTime = new Date(rangeDate.to);
+        const DepartureEndTime = new Date(rangeDate.to);
+        DepartureStartTime.setHours(
+          parseInt(timeDeparture.split(":")[0], 10),
+          parseInt(timeDeparture.split(":")[1], 10)
+        );
+        DepartureEndTime.setHours(
+          parseInt(timeDeparture.split(":")[0], 10),
+          parseInt(timeDeparture.split(":")[1], 10)
+        );
+        const departureDescription = `${
+          client.lastName + client.firstName
+        } - ${selectedDogsFiltered
+          .map(({ dogName }: any) => `${dogName}`)
+          .join(", ")} - ΑΝΑΧΩΡΗΣΗ`;
+        await Appointment.create({
+          Id: booking._id, // Use the training _id as the event Id
+          Type: "ΑΝΑΧΩΡΗΣΗ",
+          Subject: `${client.lastName} - ΑΝΑΧΩΡΗΣΗ`,
+          Description: departureDescription,
+          StartTime: DepartureStartTime,
+          EndTime: DepartureEndTime,
+        });
+      }
       revalidatePath(path);
+      revalidatePath("/calendar");
       return JSON.parse(JSON.stringify(booking));
     }
   } catch (error) {
@@ -129,7 +227,9 @@ export async function editBookingDate(id: string, rangeDate: DateRange) {
       throw new Error("Booking not found");
     } else {
       const appointment = JSON.parse(
-        JSON.stringify(await Appointment.findOne({ Id: updatedBooking._id }))
+        JSON.stringify(
+          await Appointment.findOne({ Id: updatedBooking._id, Type: "Booking" })
+        )
       );
       if (appointment) {
         const startTime = new Date(rangeDate.from);
@@ -147,7 +247,101 @@ export async function editBookingDate(id: string, rangeDate: DateRange) {
           EndTime: endTime,
         });
       }
+      if (updatedBooking.flag) {
+        const pickUpAppointment = JSON.parse(
+          JSON.stringify(
+            await Appointment.findOne({
+              Id: updatedBooking._id,
+              Type: "ΠΑΡΑΛΑΒΗ",
+            })
+          )
+        );
+        const deliveryAppointment = JSON.parse(
+          JSON.stringify(
+            await Appointment.findOne({
+              Id: updatedBooking._id,
+              Type: "ΠΑΡΑΔΟΣΗ",
+            })
+          )
+        );
+        if (pickUpAppointment && deliveryAppointment) {
+          const pickUpStartTime = new Date(rangeDate.from);
+          const pickUpEndTime = new Date(rangeDate.from);
+          const deliveryStartTime = new Date(rangeDate.to);
+          const deliverEndTime = new Date(rangeDate.to);
+          pickUpStartTime.setHours(
+            parseInt(updatedBooking.timeArrival.split(":")[0], 10),
+            parseInt(updatedBooking.timeArrival.split(":")[1], 10)
+          );
+          pickUpEndTime.setHours(
+            parseInt(updatedBooking.timeArrival.split(":")[0], 10),
+            parseInt(updatedBooking.timeArrival.split(":")[1], 10)
+          );
+          deliveryStartTime.setHours(
+            parseInt(updatedBooking.timeDeparture.split(":")[0], 10),
+            parseInt(updatedBooking.timeDeparture.split(":")[1], 10)
+          );
+          deliverEndTime.setHours(
+            parseInt(updatedBooking.timeDeparture.split(":")[0], 10),
+            parseInt(updatedBooking.timeDeparture.split(":")[1], 10)
+          );
+          await Appointment.findByIdAndUpdate(pickUpAppointment._id, {
+            StartTime: pickUpStartTime,
+            EndTime: pickUpEndTime,
+          });
+          await Appointment.findByIdAndUpdate(deliveryAppointment._id, {
+            StartTime: deliveryStartTime,
+            EndTime: deliverEndTime,
+          });
+        }
+      } else {
+        const ArrivalAppointment = JSON.parse(
+          JSON.stringify(
+            await Appointment.findOne({ Id: updatedBooking._id, Type: "ΑΦΙΞΗ" })
+          )
+        );
+        const DepartureAppointment = JSON.parse(
+          JSON.stringify(
+            await Appointment.findOne({
+              Id: updatedBooking._id,
+              Type: "ΑΝΑΧΩΡΗΣΗ",
+            })
+          )
+        );
+        if (ArrivalAppointment && DepartureAppointment) {
+          const ArrivalStartTime = new Date(rangeDate.from);
+          const ArrivalEndTime = new Date(rangeDate.from);
+          ArrivalStartTime.setHours(
+            parseInt(updatedBooking.timeArrival.split(":")[0], 10),
+            parseInt(updatedBooking.timeArrival.split(":")[1], 10)
+          );
+          ArrivalEndTime.setHours(
+            parseInt(updatedBooking.timeArrival.split(":")[0], 10),
+            parseInt(updatedBooking.timeArrival.split(":")[1], 10)
+          );
+          const DepartureStartTime = new Date(rangeDate.to);
+          const DepartureEndTime = new Date(rangeDate.to);
+          DepartureStartTime.setHours(
+            parseInt(updatedBooking.timeDeparture.split(":")[0], 10),
+            parseInt(updatedBooking.timeDeparture.split(":")[1], 10)
+          );
+          DepartureEndTime.setHours(
+            parseInt(updatedBooking.timeDeparture.split(":")[0], 10),
+            parseInt(updatedBooking.timeDeparture.split(":")[1], 10)
+          );
+          await Appointment.findByIdAndUpdate(ArrivalAppointment._id, {
+            StartTime: ArrivalStartTime,
+            EndTime: ArrivalEndTime,
+          });
+          await Appointment.findByIdAndUpdate(DepartureAppointment._id, {
+            StartTime: DepartureStartTime,
+            EndTime: DepartureEndTime,
+          });
+        }
+      }
     }
+    revalidatePath("/calendar");
+    revalidatePath("/createbooking");
     return JSON.stringify(updatedBooking);
   } catch (error) {
     console.log(error);
@@ -171,7 +365,9 @@ export async function editBookingArrival(
       throw new Error("Booking not found");
     } else {
       const appointment = JSON.parse(
-        JSON.stringify(await Appointment.findOne({ Id: updatedBooking._id }))
+        JSON.stringify(
+          await Appointment.findOne({ Id: updatedBooking._id, Type: "Booking" })
+        )
       );
       if (appointment) {
         const startTime = new Date(updatedBooking.fromDate);
@@ -184,6 +380,67 @@ export async function editBookingArrival(
         });
       }
     }
+    if (updatedBooking.flag) {
+      const pickUpAppointment = JSON.parse(
+        JSON.stringify(
+          await Appointment.findOne({
+            Id: updatedBooking._id,
+            Type: "ΠΑΡΑΛΑΒΗ",
+          })
+        )
+      );
+      const deliveryAppointment = JSON.parse(
+        JSON.stringify(
+          await Appointment.findOne({
+            Id: updatedBooking._id,
+            Type: "ΠΑΡΑΔΟΣΗ",
+          })
+        )
+      );
+      if (pickUpAppointment && deliveryAppointment) {
+        const pickUpStartTime = new Date(updatedBooking.fromDate);
+        const pickUpEndTime = new Date(updatedBooking.fromDate);
+
+        pickUpStartTime.setHours(
+          parseInt(formatTime(timeArrival, "el").split(":")[0], 10),
+          parseInt(formatTime(timeArrival, "el").split(":")[1], 10)
+        );
+        pickUpEndTime.setHours(
+          parseInt(formatTime(timeArrival, "el").split(":")[0], 10),
+          parseInt(formatTime(timeArrival, "el").split(":")[1], 10)
+        );
+
+        await Appointment.findByIdAndUpdate(pickUpAppointment._id, {
+          StartTime: pickUpStartTime,
+          EndTime: pickUpEndTime,
+        });
+      }
+    } else {
+      const ArrivalAppointment = JSON.parse(
+        JSON.stringify(
+          await Appointment.findOne({ Id: updatedBooking._id, Type: "ΑΦΙΞΗ" })
+        )
+      );
+
+      if (ArrivalAppointment) {
+        const ArrivalStartTime = new Date(updatedBooking.fromDate);
+        const ArrivalEndTime = new Date(updatedBooking.fromDate);
+        ArrivalStartTime.setHours(
+          parseInt(formatTime(timeArrival, "el").split(":")[0], 10),
+          parseInt(formatTime(timeArrival, "el").split(":")[1], 10)
+        );
+        ArrivalEndTime.setHours(
+          parseInt(formatTime(timeArrival, "el").split(":")[0], 10),
+          parseInt(formatTime(timeArrival, "el").split(":")[1], 10)
+        );
+        await Appointment.findByIdAndUpdate(ArrivalAppointment._id, {
+          StartTime: ArrivalStartTime,
+          EndTime: ArrivalEndTime,
+        });
+      }
+    }
+    revalidatePath("/calendar");
+    revalidatePath("/createbooking");
     return JSON.stringify(updatedBooking);
   } catch (error) {
     console.log(error);
@@ -207,7 +464,9 @@ export async function editBookingDeparture(
       throw new Error("Booking not found");
     } else {
       const appointment = JSON.parse(
-        JSON.stringify(await Appointment.findOne({ Id: updatedBooking._id }))
+        JSON.stringify(
+          await Appointment.findOne({ Id: updatedBooking._id, Type: "Booking" })
+        )
       );
       if (appointment) {
         const endTime = new Date(updatedBooking.toDate);
@@ -220,6 +479,60 @@ export async function editBookingDeparture(
         });
       }
     }
+    if (updatedBooking.flag) {
+      const deliveryAppointment = JSON.parse(
+        JSON.stringify(
+          await Appointment.findOne({
+            Id: updatedBooking._id,
+            Type: "ΠΑΡΑΔΟΣΗ",
+          })
+        )
+      );
+
+      if (deliveryAppointment) {
+        const deliveryStartTime = new Date(updatedBooking.toDate);
+        const deliverEndTime = new Date(updatedBooking.toDate);
+        deliveryStartTime.setHours(
+          parseInt(formatTime(timeDeparture, "el").split(":")[0], 10),
+          parseInt(formatTime(timeDeparture, "el").split(":")[1], 10)
+        );
+        deliverEndTime.setHours(
+          parseInt(formatTime(timeDeparture, "el").split(":")[0], 10),
+          parseInt(formatTime(timeDeparture, "el").split(":")[1], 10)
+        );
+        await Appointment.findByIdAndUpdate(deliveryAppointment._id, {
+          StartTime: deliveryStartTime,
+          EndTime: deliverEndTime,
+        });
+      }
+    } else {
+      const DepartureAppointment = JSON.parse(
+        JSON.stringify(
+          await Appointment.findOne({
+            Id: updatedBooking._id,
+            Type: "ΑΝΑΧΩΡΗΣΗ",
+          })
+        )
+      );
+      if (DepartureAppointment) {
+        const DepartureStartTime = new Date(updatedBooking.toDate);
+        const DepartureEndTime = new Date(updatedBooking.toDate);
+        DepartureStartTime.setHours(
+          parseInt(formatTime(timeDeparture, "el").split(":")[0], 10),
+          parseInt(formatTime(timeDeparture, "el").split(":")[1], 10)
+        );
+        DepartureEndTime.setHours(
+          parseInt(formatTime(timeDeparture, "el").split(":")[0], 10),
+          parseInt(formatTime(timeDeparture, "el").split(":")[1], 10)
+        );
+        await Appointment.findByIdAndUpdate(DepartureAppointment._id, {
+          StartTime: DepartureStartTime,
+          EndTime: DepartureEndTime,
+        });
+      }
+    }
+    revalidatePath("/calendar");
+    revalidatePath("/createbooking");
     return JSON.stringify(updatedBooking);
   } catch (error) {
     console.log(error);
@@ -329,5 +642,16 @@ export async function editBookingRooms(id: string, bookingData: any) {
   } catch (error) {
     console.log(error);
     return { error: "An error occurred while updating the booking." };
+  }
+}
+
+export async function clientBookings(clientId: string) {
+  try {
+    connectToDatabase();
+    const bookings = await Booking.find({ clientId });
+    return bookings;
+  } catch (error) {
+    console.error("Error retrieving bookings for client:", error);
+    throw error;
   }
 }

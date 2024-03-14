@@ -21,7 +21,7 @@ const AuthSwitch = () => {
         className="auth_btn"
       >
         <Image
-          src={"assets/icons/logout.svg"}
+          src={"/assets/icons/logout.svg"}
           width={28}
           height={28}
           alt="logout"
@@ -34,7 +34,7 @@ const AuthSwitch = () => {
     return (
       <Button className="auth_btn" onClick={() => router.replace("/sign-in")}>
         <Image
-          src={"assets/icons/login.svg"}
+          src={"/assets/icons/login.svg"}
           width={28}
           height={28}
           alt="logout"

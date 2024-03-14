@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Pdf from "@/components/shared/Pdf";
 const Page = () => {
   const [stage, setStage] = useState(25);
   const [client, setClient] = useState<any>({});
@@ -26,6 +27,7 @@ const Page = () => {
   const [number, setNumber] = useState("");
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
+
   const handleCreate = async () => {
     setIsCreating(true);
     try {
@@ -52,6 +54,7 @@ const Page = () => {
       });
     } finally {
       setIsCreating(false);
+      window.location.reload();
     }
   };
 
@@ -62,8 +65,9 @@ const Page = () => {
         <div className="flex flex-col gap-8">
           <div className="mt-20 flex flex-row items-center justify-center gap-8">
             <h1 className=" text-center font-noto_sans text-[26px] font-bold">
-              Ας ξεκινήσουμε τη διαδικασία εγγραφής του πελάτη.{" "}
+              Ας ξεκινήσουμε τη διαδικασία εγγραφής του πελάτη{" "}
             </h1>
+            <Pdf />
             <Button
               className="bg-primary-500 font-noto_sans font-extrabold text-black hover:scale-105 hover:animate-pulse"
               onClick={() => setStage(50)}
@@ -92,6 +96,7 @@ const Page = () => {
           <ClientForm setStage={setStage} setClient={setClient} />
         </div>
       )}
+
       {stage === 65 && (
         <div className="flex flex-col gap-2">
           <div className="mt-20 flex flex-row items-center justify-center gap-8">

@@ -36,10 +36,9 @@ export function DataTableRowActions({ row }: any) {
         className="background-light900_dark300 text-dark200_light800 w-[160px] "
       >
         <DropdownMenuItem onClick={handleProfile} className="hover:scale-105">
-          Open Profile
+          Άνοιγμα Προφίλ
         </DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
+
         <DropdownMenuSeparator />
         <DropdownMenuSub></DropdownMenuSub>
         <DropdownMenuSeparator />

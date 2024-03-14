@@ -19,7 +19,7 @@ const RoomDrawer = ({ open, setOpen, rooms, clients, rangeDate }: any) => {
       fallback={<LoadingSkeleton size={20} animation="animation-spin" />}
     >
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerContent className="text-dark200_light800 background-light850_dark100  flex max-h-[800px] px-8">
+        <DrawerContent className="text-dark200_light800 background-light850_dark100  flex max-h-[800px] min-h-[500px] px-8">
           <DrawerHeader className="  self-start font-noto_sans">
             <DrawerTitle className=" text-xl">
               Επιλέγοντας απλά τις ημερομηνίες που επιθυμείτε. Εξασφαλίστε την
@@ -32,6 +32,7 @@ const RoomDrawer = ({ open, setOpen, rooms, clients, rangeDate }: any) => {
             rangeDate={rangeDate}
             clients={clients}
             open={open}
+            close={setOpen}
           />
 
           <DrawerFooter>

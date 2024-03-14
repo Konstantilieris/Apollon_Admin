@@ -33,6 +33,7 @@ const Sidebar = () => {
             >
               <Link
                 href={item.route}
+                onClick={() => scrollTo(0, 0)}
                 className={`${
                   isActive
                     ? "secondary-gradient rounded-lg text-light-900"

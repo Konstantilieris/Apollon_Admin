@@ -55,7 +55,7 @@ const Page = () => {
   }, [rangeDate]);
   useEffect(() => {
     const searchQuery = replacePercent20(searchParams.get("q"));
-
+    console.log(searchQuery);
     const fetchData = async () => {
       try {
         // Call getAllRoomsAndBookings and wait for the result
@@ -94,10 +94,10 @@ const Page = () => {
             className={"self-start"}
           />
           <Button
-            className="btn  font-noto_sans font-bold hover:scale-105 dark:text-white"
+            className="btn  border-2 border-purple-600 font-noto_sans font-extrabold hover:scale-105 dark:text-white"
             onClick={() => setOpenDrawer(true)}
           >
-            RESERVATION
+            ΚΡΑΤΗΣΗ
           </Button>
         </div>
         {!openDrawer && rooms ? (

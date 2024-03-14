@@ -27,6 +27,7 @@ export async function CreateClient({ clientData, dogs }: any) {
       residence: clientData.residence,
       address: clientData.address,
       city: clientData.city,
+      postalCode: clientData.postalCode,
     },
     phone: {
       telephone: clientData.telephone,
@@ -34,13 +35,15 @@ export async function CreateClient({ clientData, dogs }: any) {
     },
     vet: clientData.vet,
     vetNumber: clientData.vetNumber,
+    emergencyContact: clientData.emergencyContact,
+    emergencyMobile: clientData.emergencyMobile,
   };
   try {
     connectToDatabase();
 
     const client = await Client.create({
       ...clientPayload,
-      dog: dogs.dogs,
+      dog: dogs,
     });
     if (client) return JSON.stringify(client);
   } catch (error) {
@@ -60,16 +63,6 @@ export async function getAllClients() {
   }
 }
 
-export async function getClientById(id: string) {
-  try {
-    connectToDatabase();
-    const client = await Client.findById(id);
-    return client;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
 export async function getAllClientsByQuery(searchQuery: string | undefined) {
   try {
     connectToDatabase();
@@ -82,13 +75,23 @@ export async function getAllClientsByQuery(searchQuery: string | undefined) {
     const clients = await Client.find({
       $expr: {
         $regexMatch: {
-          input: { $concat: ["$firstName", " ", "$lastName"] },
+          input: { $concat: ["$firstName", "", "$lastName"] },
           regex: searchQuery,
           options: "i",
         },
       },
     });
-    return JSON.parse(JSON.stringify(clients));
+    return JSON.stringify(clients);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function getClientById(id: string) {
+  try {
+    connectToDatabase();
+    const client = await Client.findById(id);
+    return client;
   } catch (error) {
     console.log(error);
     throw error;

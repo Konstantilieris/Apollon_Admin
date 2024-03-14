@@ -4,11 +4,13 @@ export interface IService {
   amount: number;
   date: Date;
   serviceType: "Booking" | "Transportation" | "OtherService" | string;
+  paid: boolean;
 }
 export interface ILocation {
-  residence: String;
-  address: String;
-  city: String;
+  residence?: String;
+  address?: String;
+  city?: String;
+  postalCode?: String;
 }
 export interface IDog {
   name: string;
@@ -17,30 +19,36 @@ export interface IDog {
   food: string;
   breed: string;
   behavior: string;
+  microchip?: string;
 }
 export interface IClient {
   firstName: string;
   lastName: string;
-  email: string;
-  profession: string;
-  birthdate: Date;
-  location: ILocation;
+  email?: string;
+  profession?: string;
+  birthdate?: Date;
+  location?: ILocation;
   phone: {
-    telephone: string;
+    telephone?: string;
     mobile: string;
   };
   _id?: string;
   createdAt?: Date;
   owes?: IService[];
-  totalSpent?: number;
+
   dog?: IDog;
-  vet: string;
-  vetNumber: string;
+  vet?: string;
+  vetNumber?: string;
+  emergencyContact?: string;
+  emergencyMobile?: string;
 }
 export const DogSchema = new Schema<IDog>({
   name: {
     type: String,
     required: true,
+  },
+  microchip: {
+    type: String,
   },
   gender: {
     type: String,
@@ -48,19 +56,15 @@ export const DogSchema = new Schema<IDog>({
   },
   birthdate: {
     type: Date,
-    required: true,
   },
   food: {
     type: String,
-    required: true,
   },
   breed: {
     type: String,
-    required: true,
   },
   behavior: {
     type: String,
-    required: true,
   },
 });
 const ServiceSchema = new Schema<IService>({
@@ -81,6 +85,10 @@ const ServiceSchema = new Schema<IService>({
     type: String,
     required: true,
   },
+  paid: {
+    type: Boolean,
+    default: false,
+  },
 });
 const ClientSchema = new Schema<IClient>({
   firstName: {
@@ -93,8 +101,6 @@ const ClientSchema = new Schema<IClient>({
   },
   email: {
     type: String,
-    required: true,
-    unique: true,
   },
   profession: {
     type: String,
@@ -105,15 +111,15 @@ const ClientSchema = new Schema<IClient>({
   location: {
     residence: {
       type: String,
-      required: true,
     },
     address: {
       type: String,
-      required: true,
     },
     city: {
       type: String,
-      required: true,
+    },
+    postalCode: {
+      type: String,
     },
   },
   phone: {
@@ -132,14 +138,15 @@ const ClientSchema = new Schema<IClient>({
   dog: [DogSchema],
   vet: {
     type: String,
-    required: true,
   },
   vetNumber: {
     type: String,
   },
-  totalSpent: {
-    type: Number,
-    default: 0,
+  emergencyContact: {
+    type: String,
+  },
+  emergencyMobile: {
+    type: String,
   },
 });
 const Client = models.Client || model<IClient>("Client", ClientSchema);

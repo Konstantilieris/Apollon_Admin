@@ -95,10 +95,9 @@ export const roomColumns = (): ColumnDef<any>[] => [
                 <Badge className="h-6 w-6 rounded-full bg-red-dark" />
                 <div className="flex flex-col gap-2 ">
                   {see.map((name, index) => (
-                    <h1 key={index}>
+                    <h1 key={index} className="flex flex-col">
                       {" "}
                       {name}
-                      <br />
                     </h1>
                   ))}
                 </div>
@@ -163,7 +162,11 @@ export const roomColumns = (): ColumnDef<any>[] => [
         accessorFn: (row) => {
           if (row.currentBookings) {
             const dates = row.currentBookings.map((booking: any) => {
-              return booking.fromDate;
+              return {
+                fromDate: booking.fromDate,
+                timeArrival: booking.timeArrival,
+                flag: booking.flag,
+              };
             });
             return dates;
           } else {
@@ -171,7 +174,7 @@ export const roomColumns = (): ColumnDef<any>[] => [
           }
         },
         cell: ({ row }) => {
-          const see: Array<string> = row.getValue("ReservationsStart");
+          const see: Array<any> = row.getValue("ReservationsStart");
           if (see.length === 0) {
             return (
               <div className="ml-8 flex justify-center gap-2 text-center font-noto_sans font-bold">
@@ -181,15 +184,25 @@ export const roomColumns = (): ColumnDef<any>[] => [
           }
           return (
             <div className=" ml-8 flex flex-col gap-2 text-start font-noto_sans text-lg font-bold ">
-              {see.map((date, index) => (
-                <h1 key={index}>{formatDate(new Date(date), "el")}</h1>
+              {see.map((item, index) => (
+                <h1 key={index} className="flex">
+                  {formatDate(new Date(item.fromDate), "el")} {item.timeArrival}
+                  {item.flag ? (
+                    <Image
+                      alt="car"
+                      width={25}
+                      height={15}
+                      src="/assets/icons/car.svg"
+                    />
+                  ) : null}
+                </h1>
               ))}
             </div>
           );
         },
       },
       {
-        id: "Reservations",
+        id: "ReservationEnd",
         header: ({ column }) => (
           <DataTableColumnHeader
             imgurl="/assets/icons/departure.svg"
@@ -201,7 +214,11 @@ export const roomColumns = (): ColumnDef<any>[] => [
         accessorFn: (row) => {
           if (row.currentBookings) {
             const dates = row.currentBookings.map((booking: any) => {
-              return booking.toDate;
+              return {
+                toDate: booking.toDate,
+                timeDeparture: booking.timeDeparture,
+                flag: booking.flag,
+              };
             });
             return dates;
           } else {
@@ -209,7 +226,7 @@ export const roomColumns = (): ColumnDef<any>[] => [
           }
         },
         cell: ({ row }) => {
-          const see: Array<string> = row.getValue("Reservations");
+          const see: Array<any> = row.getValue("ReservationEnd");
           if (see.length === 0) {
             return (
               <div className="ml-8 flex justify-center gap-2 text-center font-noto_sans font-bold">
@@ -219,8 +236,19 @@ export const roomColumns = (): ColumnDef<any>[] => [
           }
           return (
             <div className=" ml-8 flex flex-col gap-2 text-start font-noto_sans text-lg font-bold ">
-              {see.map((date, index) => (
-                <h1 key={index}>{formatDate(new Date(date), "el")}</h1>
+              {see.map((item, index) => (
+                <h1 key={index} className="flex">
+                  {" "}
+                  {formatDate(new Date(item.toDate), "el")} {item.timeDeparture}
+                  {item.flag ? (
+                    <Image
+                      alt="car"
+                      width={25}
+                      height={15}
+                      src="/assets/icons/car.svg"
+                    />
+                  ) : null}
+                </h1>
               ))}
             </div>
           );
@@ -259,82 +287,6 @@ export const roomColumns = (): ColumnDef<any>[] => [
                   width={30}
                   height={20}
                 />
-              </div>
-            );
-          }
-          return (
-            <div className="flex flex-col justify-center gap-2 font-noto_sans text-lg font-bold">
-              {see.map((total, index) => (
-                <h1 key={index}>{total}</h1>
-              ))}
-            </div>
-          );
-        },
-      },
-      {
-        id: "Arrival",
-        header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            title="Άφιξη Σκύλου"
-            className="text-start"
-            imgurl="/assets/icons/arrival.svg"
-          />
-        ),
-        accessorFn: (row) => {
-          if (row.currentBookings) {
-            const arrivals = row.currentBookings.map((arrival: any) => {
-              return arrival.timeArrival;
-            });
-            return arrivals;
-          } else {
-            return null;
-          }
-        },
-        cell: ({ row }) => {
-          const see: Array<string> = row.getValue("Arrival");
-          if (see.length === 0) {
-            return (
-              <div className=" flex items-center justify-center gap-2 font-noto_sans font-bold">
-                -
-              </div>
-            );
-          }
-          return (
-            <div className="flex flex-col justify-center gap-2 font-noto_sans text-lg font-bold">
-              {see.map((total, index) => (
-                <h1 key={index}>{total}</h1>
-              ))}
-            </div>
-          );
-        },
-      },
-      {
-        id: "Departure",
-        header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            title="Αναχώρηση Σκύλου"
-            className="text-start"
-            imgurl="/assets/icons/departure.svg"
-          />
-        ),
-        accessorFn: (row) => {
-          if (row.currentBookings) {
-            const departures = row.currentBookings.map((arrival: any) => {
-              return arrival.timeDeparture;
-            });
-            return departures;
-          } else {
-            return null;
-          }
-        },
-        cell: ({ row }) => {
-          const see: Array<string> = row.getValue("Departure");
-          if (see.length === 0) {
-            return (
-              <div className=" flex items-center justify-center gap-2 font-noto_sans font-bold">
-                -
               </div>
             );
           }

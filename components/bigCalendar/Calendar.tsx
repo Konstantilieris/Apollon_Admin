@@ -13,9 +13,8 @@ import {
 } from "@syncfusion/ej2-react-schedule";
 import { registerLicense } from "@syncfusion/ej2-base";
 
-registerLicense(
-  "Ngo9BigBOggjHTQxAR8/V1NAaF1cXmhIfEx1RHxQdld5ZFRHallYTnNWUj0eQnxTdEFjW31fcXVRR2JcUUdxXg=="
-);
+const registerKey = process.env.NEXT_PUBLIC_REGISTER_KEY || ""; // Set a default value if the key is undefined
+registerLicense(registerKey);
 
 const Scheduler = ({ appointments }: any) => {
   const eventSettings = { dataSource: appointments };
@@ -23,9 +22,9 @@ const Scheduler = ({ appointments }: any) => {
     <ScheduleComponent
       height={900}
       className=" w-full"
+      readonly={true}
       eventSettings={eventSettings}
       selectedDate={new Date()}
-      readonly={true}
       quickInfoTemplates={{ footer: "Admin" }}
     >
       <ViewsDirective>

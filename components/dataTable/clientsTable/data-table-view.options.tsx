@@ -3,7 +3,7 @@
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { MixerHorizontalIcon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
-
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -39,7 +39,7 @@ export function DataTableViewOptions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="center"
-        className="background-light900_dark300 text-dark200_light800 w-[150px]"
+        className="background-light900_dark300 text-dark200_light800 w-[150px] text-center"
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <DropdownMenuLabel>Εναλλαγή Στηλών</DropdownMenuLabel>
@@ -51,13 +51,17 @@ export function DataTableViewOptions<TData>({
             return (
               <DropdownMenuCheckboxItem
                 key={column.id}
-                className="capitalize "
+                className=" flex items-center gap-2 capitalize hover:bg-fuchsia-500"
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => checkHandler(value, column)}
               >
-                {column.id === options[0].label
-                  ? options[0].title
-                  : options[1].title}
+                {column.id === options[0].label && options[0].title}
+                <Image
+                  src={"/assets/icons/dog.svg"}
+                  width={20}
+                  height={20}
+                  alt="dog"
+                />
               </DropdownMenuCheckboxItem>
             );
           })}

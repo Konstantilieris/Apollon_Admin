@@ -3,10 +3,10 @@ import { TypesOfBehavior } from "@/constants";
 import { columns } from "@/components/dataTable/clientsTable/columns";
 import { DataTable } from "@/components/dataTable/clientsTable/data-table";
 import { viewClientOptions } from "@/lib/utils";
-import { getClients } from "@/lib/utils/get-clients";
+import { getAllClients } from "@/lib/actions/client.action";
 
 const Clients = async () => {
-  const newClients = await getClients();
+  const newClients = JSON.parse(await getAllClients());
 
   const facetedFilteringOptions = {
     column_name: "dogBehavior",
@@ -25,7 +25,7 @@ const Clients = async () => {
           data={newClients}
           facetedFilteringOptions={facetedFilteringOptions}
           viewOptions={viewClientOptions}
-        ></DataTable>
+        />
       </div>
     </section>
   );

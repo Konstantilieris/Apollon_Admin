@@ -51,7 +51,7 @@ export function DateInput({ field }: any) {
           </Button>
         </PopoverTrigger>
       </div>
-      <PopoverContent className="background-light900_dark300 text-dark300_light700 w-auto p-0 font-changa">
+      <PopoverContent className="background-light900_dark300 text-dark300_light700 absolute right-[-30px] top-0 w-auto p-0 font-changa">
         <Calendar
           className="rounded-md border shadow"
           mode="single"

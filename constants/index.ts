@@ -52,14 +52,9 @@ export const sidebarLinks: SidebarLink[] = [
     route: "/training",
     label: "Εκπαίδευση",
   },
-  {
-    imgURL: "/assets/icons/transport.svg",
-    route: "/transport",
-    label: "Μεταφορά",
-  },
 ];
 export const Priority = [1, 2, 3];
-export const TypesOfGender = ["Αρσενικό", "Θηλυκό", "Ζευγάρι"];
+export const TypesOfGender = ["Αρσενικό", "Θηλυκό"];
 export const TypesOfFood = [
   "Acana",
   "Blue Buffalo",
@@ -82,7 +77,16 @@ export const TypesOfFood = [
   "Artemis",
   "Diamond",
 ];
-export const TypesOfResidence = ["Πολυκατοικία", "Μονοκατοικία"];
+export const TypesOfResidence = [
+  "Κατοικία",
+  "Πρώτος Όροφος",
+  "Δεύτερος Όροφος",
+  "Τρίτος Όροφος",
+  "Τέταρτος Όροφος",
+  "Πέμπτος Όροφος",
+  "Έκτος Όροφος",
+  "Έβδομος Όροφος",
+];
 export const TypesOfBehavior = [
   "Γαυγίζοντας",
   "Ανακουνώντας την ουρά",

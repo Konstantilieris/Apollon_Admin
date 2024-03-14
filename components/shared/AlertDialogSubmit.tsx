@@ -25,20 +25,22 @@ interface SelectedClient {
 interface Params {
   selectedClient: SelectedClient;
   rangeDate: { from: Date; to: Date };
-
+  flag: boolean;
   open: boolean;
   setOpen: any;
   bookingData: any;
   timeArrival: Date;
   timeDeparture: Date;
+  close: any;
 }
 const AlertDialogSubmit = ({
   open,
+  close,
   setOpen,
   selectedClient,
   rangeDate,
   bookingData,
-
+  flag,
   timeArrival,
   timeDeparture,
 }: Params) => {
@@ -61,6 +63,7 @@ const AlertDialogSubmit = ({
         rangeDate,
         totalprice: price,
         path,
+        flag,
         bookingData,
         timeArrival: formatTime(timeArrival, "el"),
         timeDeparture: formatTime(timeDeparture, "el"),
@@ -83,6 +86,9 @@ const AlertDialogSubmit = ({
         title: "Failed to create Booking",
         description: `${error}`,
       });
+    } finally {
+      setOpen(!open);
+      close(false);
     }
   };
 
@@ -108,18 +114,16 @@ const AlertDialogSubmit = ({
             <span>
               {!rangeDate?.from && !timeArrival
                 ? "Δεν εχέτε επιλέξει ημερές"
-                : `Απο : ${formatDate(
-                    rangeDate?.from,
-                    "el"
-                  )}, και ώρα άφιξης ${formatTime(timeArrival, "el")}.`}
+                : `Απο : ${formatDate(rangeDate?.from, "el")}, ${
+                    flag ? "και ώρα παραλαβής" : "και ώρα άφιξης"
+                  } ${formatTime(timeArrival, "el")}.`}
             </span>
             <span>
               {!rangeDate?.to && !timeDeparture
                 ? "Δεν εχέτε επιλέξει ημερές"
-                : `Μέχρι: ${formatDate(rangeDate?.to, "el")}, ${formatTime(
-                    timeDeparture,
-                    "el"
-                  )}.`}
+                : `Μέχρι: ${formatDate(rangeDate?.to, "el")}, ${
+                    flag ? "και ώρα παράδοσης" : "και ώρα αναχώρησης"
+                  } ${formatTime(timeDeparture, "el")}.`}
             </span>
             <span className="flex flex-row items-center gap-2">
               Τροποποίησε την τιμή :

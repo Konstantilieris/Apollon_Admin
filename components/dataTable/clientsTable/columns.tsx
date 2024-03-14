@@ -17,7 +17,7 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     id: "Client",
-    enableHiding: true,
+    enableHiding: false,
     enableGlobalFilter: true,
     columns: [
       {

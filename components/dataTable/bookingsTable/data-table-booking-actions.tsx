@@ -44,18 +44,19 @@ export function DataTableBookingRowActions({ row }: any) {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="center"
-              className="background-light900_dark300 text-dark200_light800 w-[160px] font-noto_sans font-bold"
+              className="background-light900_dark300 text-dark200_light800 w-[180px] font-noto_sans font-bold"
             >
               {row.original.currentBookings.map((booking: any) => {
+                console.log(booking);
                 return (
                   <DropdownMenuItem
                     key={booking._id}
                     className="hover:bg-sky-200 hover:dark:bg-deep-purple"
                   >
                     <Link href={`/createbooking/${booking._id}`}>
-                      <span>
-                        {booking.clientId.firstName + " "}
-                        <h1>{booking.clientId.lastName}</h1>
+                      <span className="flex ">
+                        {booking.dogs.map((dog: any) => dog.dogName)}
+                        <h1>-{booking.clientId.lastName}</h1>
                       </span>{" "}
                     </Link>
                   </DropdownMenuItem>

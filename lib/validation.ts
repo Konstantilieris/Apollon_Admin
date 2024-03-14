@@ -15,37 +15,55 @@ export const LogInValidation = z.object({
   name: z.string().min(2).max(20),
   password: z.string().min(2).max(15),
 });
+const validateEmail = (value: any) => {
+  // If the value is empty, it's considered valid
+  if (value === "") return true;
+  // Otherwise, check if it's a valid email
+  return z.string().email().safeParse(value).success;
+};
 export const ClientValidation = z.object({
-  firstName: z.string().min(2).max(20),
-  lastName: z.string().min(2).max(20),
-  email: z.coerce.string().email().min(5),
-  profession: z.string().min(2).max(20),
-  birthdate: z.date({
-    required_error: "Please select a date and time",
-    invalid_type_error: "That's not a date!",
+  firstName: z
+    .string()
+    .min(2, { message: "Το επίθετο πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
+    .max(20),
+  lastName: z
+    .string()
+    .min(2, { message: "Το επίθετο πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
+    .max(20),
+  email: z.string().refine(validateEmail).optional(),
+  profession: z.string().optional(),
+  birthdate: z
+    .date({
+      required_error: "Διάλεξε ημερομηνία",
+      invalid_type_error: "That's not a date!",
+    })
+    .optional(),
+  residence: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  postalCode: z.string().optional(),
+  telephone: z.string().optional(),
+  mobile: z.string().min(6, {
+    message: "Το τηλέφωνο πρέπει να είναι τουλάχιστον 6 χαρακτήρες",
   }),
-  residence: z.string().min(2).max(20),
-  address: z.string().min(2).max(20),
-  city: z.string().min(2).max(20),
-  telephone: z.string().min(2).max(20),
-  mobile: z.string().min(2).max(20),
-
-  vet: z.string().min(2).max(20),
-  vetNumber: z.string().min(2).max(20).optional(),
+  emergencyContact: z.string().optional(),
+  emergencyMobile: z.string().optional(),
 });
 
 export const DogValidation = z.object({
   dogs: z.array(
     z.object({
       name: z.string().min(2).max(20),
-      gender: z.string().min(2).max(20),
-      birthdate: z.date({
-        required_error: "Please select a date and time",
-        invalid_type_error: "That's not a date!",
-      }),
-      food: z.string().min(2).max(40),
-      breed: z.string().min(2).max(40),
-      behavior: z.string().min(2).max(40),
+      gender: z.string(),
+      birthdate: z
+        .date({
+          required_error: "Διάλεξε ημερομηνία",
+          invalid_type_error: "That's not a date!",
+        })
+        .optional(),
+      food: z.string().optional(),
+      breed: z.string().optional(),
+      behavior: z.string().optional(),
     })
   ),
 });
@@ -53,11 +71,11 @@ export const DogValidation = z.object({
 export const BookingValidation1 = z.object({
   rangeDate: z.object({
     from: z.date({
-      required_error: "Please select a date and time",
+      required_error: "Διάλεξε ημερομηνία",
       invalid_type_error: "That's not a date!",
     }),
     to: z.date({
-      required_error: "Please select a date and time",
+      required_error: "Διάλεξε ημερομηνία",
       invalid_type_error: "That's not a date!",
     }),
   }),
@@ -75,11 +93,11 @@ export const BookingValidation2 = z.object({
 export const searchRoomValidation = z.object({
   rangeDate: z.object({
     from: z.date({
-      required_error: "Please select a date and time",
+      required_error: "Διάλεξε ημερομηνία",
       invalid_type_error: "That's not a date!",
     }),
     to: z.date({
-      required_error: "Please select a date and time",
+      required_error: "Διάλεξε ημερομηνία",
       invalid_type_error: "That's not a date!",
     }),
   }),
@@ -113,20 +131,7 @@ export const TaskValidation = z.object({
   priority: z.string(),
 });
 export const TransportationValidation = z.object({
-  date: z.date(),
-  time_arrival: z.custom((value) => value instanceof Date) as z.ZodType<Date>,
-
-  client: z.object({
-    firstName: z.string(),
-    lastName: z.string(),
-    email: z.string(),
-    id: z.string(),
-    location: z.object({
-      address: z.string(),
-      city: z.string(),
-      residence: z.string(),
-    }),
-  }),
-
+  delivery_time: z.custom((value) => value instanceof Date) as z.ZodType<Date>,
+  pickup_time: z.custom((value) => value instanceof Date) as z.ZodType<Date>,
   notes: z.string().optional(),
 });
