@@ -217,7 +217,6 @@ const Client = async ({ params, searchParams }: URLProps) => {
                           item={JSON.parse(JSON.stringify(item))}
                           firstName={client.firstName}
                           lastName={client.lastName}
-                          serviceId={JSON.parse(JSON.stringify(item._id))}
                         />
                       )}
                     </div>

@@ -61,9 +61,7 @@ export function DataTableBookingRowActions({ row }: any) {
       }
     } else {
       try {
-        const updatedRoom = await updateRoomById(row.original._id, {
-          name,
-        });
+        const updatedRoom = await updateRoomById(row.original._id, name);
         if (updatedRoom) {
           toast({
             className: cn(
