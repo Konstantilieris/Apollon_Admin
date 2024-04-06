@@ -5,15 +5,17 @@ import { connectToDatabase } from "../mongoose";
 import Booking from "@/database/models/booking.model";
 import Client from "@/database/models/client.model";
 import { DateRange } from "react-day-picker";
+import { revalidatePath } from "next/cache";
 
-interface CreateRoomParams {
-  name: string;
-}
-export async function createRooms(params: CreateRoomParams) {
+export async function createRooms(name: string, path: string) {
   try {
     connectToDatabase();
-    const { name } = params;
-    await Room.create({ name, price: 25 });
+
+    const room = await Room.create({ name, price: 25 });
+    if (room) {
+      revalidatePath(path);
+      return JSON.parse(JSON.stringify(room));
+    } // Return the created room
   } catch (error) {
     console.log(error);
     throw error;
@@ -41,6 +43,20 @@ export async function getRoomById(roomId: any) {
     throw error;
   }
 }
+export async function updateRoomById(roomId: any, name: string) {
+  try {
+    connectToDatabase();
+
+    const room = await Room.findByIdAndUpdate(roomId, { name }, { new: true });
+    if (room) {
+      return JSON.parse(JSON.stringify(room));
+    } // Return the updated room
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 export async function getAllRoomsAndBookings(rangeDate: DateRange) {
   try {
     connectToDatabase();
@@ -77,6 +93,18 @@ export async function getAllRoomsAndBookings(rangeDate: DateRange) {
       options: { sort: { fromDate: 1 } },
     });
     return JSON.stringify(rooms);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function deleteRoomById(roomId: any) {
+  try {
+    connectToDatabase();
+    const room = await Room.findByIdAndDelete(roomId);
+    if (room) {
+      return JSON.parse(JSON.stringify(room));
+    } // Return the deleted room
   } catch (error) {
     console.log(error);
     throw error;

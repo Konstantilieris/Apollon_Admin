@@ -15,12 +15,18 @@ export const LogInValidation = z.object({
   name: z.string().min(2).max(20),
   password: z.string().min(2).max(15),
 });
-const validateEmail = (value: any) => {
-  // If the value is empty, it's considered valid
-  if (value === "") return true;
-  // Otherwise, check if it's a valid email
-  return z.string().email().safeParse(value).success;
-};
+
+export const ExpensesValidation = z.object({
+  description: z.string().optional(),
+  category: z.string(),
+  amount: z.string(),
+  date: z.date(),
+});
+export const ChargeValidation = z.object({
+  serviceType: z.string(),
+  amount: z.string(),
+  date: z.date(),
+});
 export const ClientValidation = z.object({
   firstName: z
     .string()
@@ -30,7 +36,7 @@ export const ClientValidation = z.object({
     .string()
     .min(2, { message: "Το επίθετο πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
     .max(20),
-  email: z.string().refine(validateEmail).optional(),
+  email: z.string().optional(),
   profession: z.string().optional(),
   birthdate: z
     .date({
@@ -47,7 +53,9 @@ export const ClientValidation = z.object({
     message: "Το τηλέφωνο πρέπει να είναι τουλάχιστον 6 χαρακτήρες",
   }),
   emergencyContact: z.string().optional(),
-  emergencyMobile: z.string().optional(),
+  workMobile: z.string().optional(),
+  vet: z.string().optional(),
+  vetNumber: z.string().optional(),
 });
 
 export const DogValidation = z.object({

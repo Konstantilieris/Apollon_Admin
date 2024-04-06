@@ -11,12 +11,23 @@ module.exports = {
     container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
     },
     extend: {
       colors: {
+        Tomato: "#FF6347",
+        SteelBlue: "#4682B4",
+        LimeGreen: "#32CD32",
+        Gold: "#FFD700",
+        MediumPurple: "#9370DB",
+        Teal: "#008080",
+        SaddleBrown: "#8B4513",
+        RoyalBlue: "#4169E1",
+        LightSalmon: "#FFA07A",
+        DarkOliveGreen: "#556B2F",
+        Purple: "#800080",
+        LightSeaGreen: "#20B2AA",
+        HotPink: "#FF69B4",
+        Navy: "#000080",
         "celtic-green": "#006400",
         "red-dark": " #8B0000",
         "light-blue": "#8661a6",
@@ -63,6 +74,7 @@ module.exports = {
 
       screens: {
         xs: "420px",
+        "2xl": "2000px",
       },
       keyframes: {
         "accordion-down": {

@@ -308,7 +308,7 @@ const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
                     name="time_arrival"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="  font-noto_sans text-lg font-bold">
+                        <FormLabel className=" font-noto_sans text-lg font-bold">
                           {flag
                             ? "Διάλεξε χρόνο παραλαβής"
                             : "Διάλεξε χρόνο άφιξης"}

@@ -8,8 +8,8 @@ import { motion } from "framer-motion";
 const Sidebar = () => {
   const pathname = usePathname();
   return (
-    <section className="background-light900_dark200 light-border custom-scrollbar sticky left-0 top-0 flex h-screen min-w-[110px] flex-col justify-between overflow-y-auto border-r p-6 pt-10 shadow-light-300 dark:shadow-none max-sm:hidden lg:min-w-[266px] ">
-      <div className=" flex flex-1 flex-col gap-6">
+    <section className="background-light900_dark200 light-border  sticky left-0 top-0 flex  min-w-[110px] flex-col justify-between  border-r p-6 pt-10 shadow-light-300 dark:shadow-none max-sm:hidden lg:min-w-[266px] ">
+      <div className=" flex flex-1 flex-col lg:gap-4 2xl:gap-14">
         {sidebarLinks.map((item, index) => {
           const isActive =
             (pathname.includes(item.route) && item.route.length > 1) ||

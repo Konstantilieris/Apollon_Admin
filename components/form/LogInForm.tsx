@@ -58,6 +58,7 @@ const LogInForm = () => {
       });
 
       router.replace("./");
+      window.location.reload();
     }
     setIsSubmitting(false);
     form.reset();

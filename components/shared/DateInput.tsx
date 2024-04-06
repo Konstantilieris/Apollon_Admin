@@ -8,24 +8,28 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-export function DateInput({ field }: any) {
-  const [stringDate, setStringDate] = React.useState<string>("");
+export function DateInput({ field, maxwidth }: any) {
+  const [stringDate, setStringDate] = React.useState<string>(
+    field.value ? format(new Date(field.value), "dd/MM/yyyy") : ""
+  );
   // eslint-disable-next-line no-unused-vars
   const [date, setDate] = React.useState<Date>();
   const [errorMessage, setErrorMessage] = React.useState<string>("");
 
   return (
     <Popover>
-      <div className="relative w-[270px]">
+      <div className={cn("relative", maxwidth)}>
         <Input
-          className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input"
+          className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input max-w-[400px] font-noto_sans font-bold"
           type="string"
           value={stringDate}
           onChange={(e) => {
-            setStringDate(e.target.value);
-            field.onChange(e.target.value);
-            const parsedDate = new Date(e.target.value);
-            if (parsedDate.toString() === "Invalid Date") {
+            const inputDate = e.target.value;
+            setStringDate(inputDate);
+            field.onChange(inputDate);
+            const [day, month, year] = inputDate.split("/");
+            const parsedDate = new Date(`${year}-${month}-${day}`);
+            if (isNaN(parsedDate.getTime())) {
               setErrorMessage("Invalid Date");
               field.onChange("");
             } else {
@@ -47,7 +51,7 @@ export function DateInput({ field }: any) {
               !date && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="h-4 w-4" />
+            <CalendarIcon className="h-4 w-4 " />
           </Button>
         </PopoverTrigger>
       </div>
@@ -56,14 +60,12 @@ export function DateInput({ field }: any) {
           className="rounded-md border shadow"
           mode="single"
           selected={field.value}
-          disabled={(date) =>
-            date > new Date() || date < new Date("1900-01-01")
-          }
+          disabled={(date) => date < new Date("1900-01-01")}
           onSelect={(selectedDate) => {
             if (!selectedDate) return;
 
             field.onChange(selectedDate);
-            setStringDate(format(selectedDate, "MM/dd/yyyy"));
+            setStringDate(format(selectedDate, "dd/MM/yyyy"));
             setErrorMessage("");
           }}
           defaultMonth={date}

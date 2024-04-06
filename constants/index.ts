@@ -5,6 +5,10 @@ export const themes = [
   { value: "dark", label: "Dark", icon: "/assets/icons/moon.svg" },
   { value: "system", label: "System", icon: "/assets/icons/computer.svg" },
 ];
+export const HomePageFilters = [
+  { name: "Καινούργια", value: "newest" },
+  { name: "Παλιά", value: "oldest" },
+];
 
 export const sidebarLinks: SidebarLink[] = [
   {
@@ -17,25 +21,16 @@ export const sidebarLinks: SidebarLink[] = [
     route: "/main",
     label: "Επισκόπηση",
   },
+
   {
     imgURL: "/assets/icons/form.svg",
     route: "/form",
     label: "Εισαγωγή Πελάτη",
   },
   {
-    imgURL: "/assets/icons/transport.svg",
-    route: "/createbooking",
-    label: "Κρατήσεις",
-  },
-  {
-    imgURL: "/assets/icons/bed.svg",
-    route: "/rooms",
-    label: "Δωμάτια",
-  },
-  {
-    imgURL: "/assets/icons/chart.svg",
-    route: "/logistics",
-    label: "Ανάλυση",
+    imgURL: "/assets/icons/clients.svg",
+    route: "/clients",
+    label: "Πελάτες",
   },
   {
     imgURL: "/assets/icons/calendar.svg",
@@ -43,9 +38,21 @@ export const sidebarLinks: SidebarLink[] = [
     label: "Ημερολόγιο",
   },
   {
-    imgURL: "/assets/icons/clients.svg",
-    route: "/clients",
-    label: "Πελάτες",
+    imgURL: "/assets/icons/reservation.svg",
+    route: "/createbooking",
+    label: "Κρατήσεις",
+  },
+
+  {
+    imgURL: "/assets/icons/chart.svg",
+    route: "/logistics",
+    label: "Ανάλυση",
+  },
+
+  {
+    imgURL: "/assets/icons/expenses.svg",
+    route: "/expenses",
+    label: "Έξοδα",
   },
   {
     imgURL: "/assets/icons/question.svg",
@@ -56,36 +63,25 @@ export const sidebarLinks: SidebarLink[] = [
 export const Priority = [1, 2, 3];
 export const TypesOfGender = ["Αρσενικό", "Θηλυκό"];
 export const TypesOfFood = [
-  "Acana",
-  "Blue Buffalo",
-  "Canidae",
-  "Eukanuba",
-  "Hill's Science Diet",
-  "Iams",
-  "Merrick",
-  "Natural Balance",
-  "Nutro",
-  "Pedigree",
-  "Purina Pro Plan",
-  "Royal Canin",
-  "Wellness",
-  "Solid Gold",
-  "Taste of the Wild",
-  "Orijen",
-  "Fromm",
-  "Victor",
-  "Artemis",
-  "Diamond",
+  "Ομοφαγία",
+  "Μαγειρευτό",
+  "Μπάρφ",
+  "Ξηρά τροφή",
+  "Υγρή τροφή",
+  "Συνδυασμός",
 ];
 export const TypesOfResidence = [
-  "Κατοικία",
-  "Πρώτος Όροφος",
-  "Δεύτερος Όροφος",
-  "Τρίτος Όροφος",
-  "Τέταρτος Όροφος",
-  "Πέμπτος Όροφος",
-  "Έκτος Όροφος",
-  "Έβδομος Όροφος",
+  "Μονοκατοικία",
+  "Υπόγειο",
+  "Ισόγειο",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "Εργασία",
 ];
 export const TypesOfBehavior = [
   "Γαυγίζοντας",
@@ -134,6 +130,7 @@ export const TypesOfBehavior = [
   "Ευκινησία",
   "Ηρεμία",
   "Κοινωνικότητα",
+  "Αντικοινωνικότητα",
   "Κίνητρο για τροφή",
   "Παιχνίδι με το νερό",
   "Συμπεριφορά καλωσορίσματος",
@@ -143,6 +140,7 @@ export const TypesOfBehavior = [
   "Χτυπημός με το πόδι",
   "Σπρώξιμο",
   "Zoomies (ξαφνικές εκρήξεις ενέργειας)",
+  "Ανεπιθύμητος",
 ];
 export const TypesOfBreed = [
   "Afghan Hound",
@@ -335,4 +333,21 @@ export const TypesOfBreed = [
   "Wirehaired Pointing Griffon",
   "Xoloitzcuintli",
   "Yorkshire Terrier",
+];
+
+export const colors = [
+  { label: "Tomato", value: "#FF6347" },
+  { label: "SteelBlue", value: "#4682B4" },
+  { label: "LimeGreen", value: "#32CD32" },
+  { label: "Gold", value: "#FFD700" },
+  { label: "MediumPurple", value: "#9370DB" },
+  { label: "Teal", value: "#008080" },
+  { label: "SaddleBrown", value: "#8B4513" },
+  { label: "RoyalBlue", value: "#4169E1" },
+  { label: "LightSalmon", value: "#FFA07A" },
+  { label: "DarkOliveGreen", value: "#556B2F" },
+  { label: "Purple", value: "#800080" },
+  { label: "LightSeaGreen", value: "#20B2AA" },
+  { label: "HotPink", value: "#FF69B4" },
+  { label: "Navy", value: "#000080" },
 ];

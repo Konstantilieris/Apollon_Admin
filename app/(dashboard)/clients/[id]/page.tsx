@@ -24,6 +24,12 @@ import { clientBookings } from "@/lib/actions/booking.action";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import PendingPaid from "@/components/shared/PendingPaid";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import CustomerChargeSheet from "@/components/shared/sheet/CustomerChargeSheet";
 
 const Client = async ({ params, searchParams }: URLProps) => {
   const { id } = params;
@@ -31,6 +37,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
     getClientById(id),
     clientBookings(id),
   ]);
+
   const { totalOwes, totalSpent } = sumTotalOwesAndSpent(client.owes);
   return (
     <>
@@ -63,27 +70,105 @@ const Client = async ({ params, searchParams }: URLProps) => {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px]">Πόλη</TableHead>
-                <TableHead>Κατοικία</TableHead>
                 <TableHead>Διεύθυνση</TableHead>
-                <TableHead>Κινητό</TableHead>
-                <TableHead>Σταθερό</TableHead>
-                <TableHead className="text-center">Email</TableHead>
+                <TableHead className="text-center">Κατοικία</TableHead>
+                <TableHead className="text-center">T.K.</TableHead>
+                <TableHead className="text-center">Κινητό</TableHead>
+                <TableHead>Τηλ.Οικιας</TableHead>
+                <TableHead className="text-center">Τηλ.Εργασίας</TableHead>
+                <TableHead>Εκτ. Επαφή</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium">
-                  {client.location.city}
+                  {client?.location?.city}
                 </TableCell>
-                <TableCell>{client.location.residence}</TableCell>
-                <TableCell>{client.location.address}</TableCell>
-                <TableCell>{client.phone.mobile}</TableCell>
-                <TableCell>{client.phone.telephone}</TableCell>
-                <TableCell>{client.email}</TableCell>
+                <TableCell className="text-center text-[12px]">
+                  {client.location?.address}
+                </TableCell>
+                <TableCell className="text-center">
+                  {client?.location?.residence}
+                </TableCell>
+                <TableCell className="text-center">
+                  {client?.location?.postalCode}
+                </TableCell>
+                <TableCell>{client?.phone?.mobile}</TableCell>
+                <TableCell>{client?.phone?.telephone}</TableCell>
+                <TableCell className="text-center">
+                  {client?.phone?.work_phone}
+                </TableCell>
+                <TableCell className="text-center">
+                  {client?.emergencyContact}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Επάγγελμα</TableHead>
+                <TableHead className="text-center">Email</TableHead>
+                <TableHead className="text-center">Σκύλοι</TableHead>
+
+                <TableHead className="text-center">Κτηνίατρος-Τήλ</TableHead>
+                <TableHead>Γενέθλια</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">
+                  {client?.profession}
+                  {}
+                </TableCell>
+                <TableCell className="text-center">{client?.email}</TableCell>
+                <TableCell className="flex flex-col gap-2 text-center text-[12px]">
+                  {client.dog.map((dog: any) => (
+                    <HoverCard key={dog._id}>
+                      <HoverCardTrigger className="rounded-lg border-2 border-white">
+                        &bull; {dog?.name}
+                      </HoverCardTrigger>
+                      <HoverCardContent
+                        align="start"
+                        className="text-dark200_light900 background-light700_dark300 flex flex-col items-center"
+                      >
+                        <Image
+                          src="/assets/icons/dog.svg"
+                          alt="dog"
+                          width={30}
+                          height={30}
+                          className="self-start"
+                        />{" "}
+                        {dog?.breed} <span>{dog?.gender} </span>
+                        <span>Τύπος Τροφής : {dog?.food}</span>
+                        <span>Συμπεριφορα : {dog?.behavior}</span>
+                      </HoverCardContent>
+                    </HoverCard>
+                  ))}
+                </TableCell>
+                <TableCell className="flex-col text-center">
+                  <span>&bull;{client?.vet}</span>
+                  <span className="flex flex-row items-center">
+                    <Image
+                      src={"/assets/icons/phone.svg"}
+                      alt="phone"
+                      width={20}
+                      height={20}
+                    />
+                    {client?.vetNumber}{" "}
+                  </span>
+                </TableCell>
+
+                <TableCell className="text-center">
+                  {formatDate(new Date(client?.birthdate), "el")}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </div>
+      </div>
+      <div className="flex flex-row justify-end">
+        <CustomerChargeSheet client={JSON.parse(JSON.stringify(client))} />
       </div>
       <div className=" flex w-full flex-row  justify-center">
         <Tabs
@@ -130,6 +215,9 @@ const Client = async ({ params, searchParams }: URLProps) => {
                         <PendingPaid
                           clientId={JSON.parse(JSON.stringify(client._id))}
                           item={JSON.parse(JSON.stringify(item))}
+                          firstName={client.firstName}
+                          lastName={client.lastName}
+                          serviceId={JSON.parse(JSON.stringify(item._id))}
                         />
                       )}
                     </div>

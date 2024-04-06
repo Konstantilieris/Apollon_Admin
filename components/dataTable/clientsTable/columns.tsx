@@ -153,6 +153,22 @@ export const columns: ColumnDef<any>[] = [
 
         enableGlobalFilter: true,
       },
+      {
+        accessorKey: "phone.work_phone",
+        header: () => (
+          <div className="flex flex-row items-center gap-2">
+            <Image
+              src={"/assets/icons/mobile.svg"}
+              alt="mobile"
+              width={30}
+              height={25}
+            />
+            Τηλ.Εργασίας
+          </div>
+        ),
+
+        enableGlobalFilter: true,
+      },
     ],
   },
 
@@ -174,11 +190,13 @@ export const columns: ColumnDef<any>[] = [
             return null;
           }
         },
-        header: "Όνομα Σκύλου",
+        header: () => (
+          <div className="ml-4 flex flex-row items-center">Ονομα Σκυλου </div>
+        ),
         cell: ({ row }) => {
           const see: Array<String> = row.getValue("dognames");
           return (
-            <div className="flex flex-col gap-2">
+            <div className="ml-2 flex flex-col gap-2">
               {see.map((name, index) => (
                 <h1 key={index}> {name}</h1>
               ))}

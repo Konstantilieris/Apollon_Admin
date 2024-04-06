@@ -5,30 +5,52 @@ import { DatePickerWithRange } from "@/components/datepicker/DateRangePicker";
 import dynamic from "next/dynamic";
 
 import { getAllClientsByQuery } from "@/lib/actions/client.action";
-import { getAllRooms, getAllRoomsAndBookings } from "@/lib/actions/room.action";
-import { removeKeysFromQuery, replacePercent20, resetHours } from "@/lib/utils";
+import {
+  createRooms,
+  getAllRooms,
+  getAllRoomsAndBookings,
+} from "@/lib/actions/room.action";
+import {
+  cn,
+  removeKeysFromQuery,
+  replacePercent20,
+  resetHours,
+} from "@/lib/utils";
 import { addDays } from "date-fns";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import Image from "next/image";
+import { useToast } from "@/components/ui/use-toast";
 const DynamicDrawer = dynamic(() => import("@/components/shared/RoomDrawer"));
 const Page = () => {
   const [rangeDate, setRangeDate] = useState<DateRange>({
     from: resetHours(new Date()),
     to: addDays(resetHours(new Date()), 1),
   });
+  const path = usePathname();
   const searchParams = useSearchParams();
   const [clients, setClients] = useState();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rooms, setRooms] = useState<any>([]);
-
+  const { toast } = useToast();
   const [bookings, setBookings] = useState([]);
-
+  const [name, setName] = useState("");
   const router = useRouter();
-
+  const [show, setShow] = useState(false);
   useEffect(() => {
     if (!openDrawer) {
       const newUrl = removeKeysFromQuery({
@@ -55,7 +77,7 @@ const Page = () => {
   }, [rangeDate]);
   useEffect(() => {
     const searchQuery = replacePercent20(searchParams.get("q"));
-    console.log(searchQuery);
+
     const fetchData = async () => {
       try {
         // Call getAllRoomsAndBookings and wait for the result
@@ -79,7 +101,31 @@ const Page = () => {
     };
     fetchRooms();
   }, []);
-
+  const handleCreateRoom = async () => {
+    try {
+      const room = await createRooms(name, path);
+      if (room) {
+        toast({
+          className: cn(
+            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          ),
+          title: "Επιτυχία",
+          description: `Επιτυχής προσθήκη δωματίου ${room.name}`,
+        });
+      }
+    } catch (error) {
+      console.error("Error creating room", error);
+      toast({
+        className: cn(
+          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+        ),
+        title: "Αποτυχία",
+        description: "Αποτυχία προσθήκης δωματίου",
+      });
+    } finally {
+      window.location.reload();
+    }
+  };
   return (
     <section className="flex flex-col gap-8 p-4">
       {" "}
@@ -87,18 +133,68 @@ const Page = () => {
         ΔΙΑΧΕΙΡΗΣΗ ΚΡΑΤΗΣΕΩΝ
       </h1>
       <div className="flex flex-col items-center gap-4">
-        <div className="flex flex-row gap-2 self-start">
+        <div className="flex w-full flex-row justify-start gap-2 ">
           <DatePickerWithRange
             rangeDate={rangeDate}
             setRangeDate={setRangeDate}
             className={"self-start"}
           />
           <Button
-            className="btn  border-2 border-purple-600 font-noto_sans font-extrabold hover:scale-105 dark:text-white"
+            className="btn  self-start border-2 border-purple-600 font-noto_sans font-extrabold hover:scale-105 dark:text-white"
             onClick={() => setOpenDrawer(true)}
           >
             ΚΡΑΤΗΣΗ
           </Button>
+          <Button
+            className="mx-auto border-2 border-white bg-green-500 p-2 font-noto_sans font-bold text-black hover:scale-105"
+            onClick={() => setShow(!show)}
+          >
+            ΠΡΟΣΘΗΚΗ{" "}
+            <Image
+              alt="room"
+              src={"assets/icons/room-available.svg"}
+              width={28}
+              height={25}
+            />
+          </Button>
+          <AlertDialog onOpenChange={setShow} open={show}>
+            <AlertDialogContent className="background-light800_dark400 text-dark200_light800 flex flex-col gap-4 p-8">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex flex-row items-center text-[22px]">
+                  Πραγματοποιείται νέα προσθήκη{" "}
+                  <Image
+                    alt="room"
+                    src={"assets/icons/room-available.svg"}
+                    width={40}
+                    height={30}
+                    className="invert"
+                  />
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  <span className="flex flex-row items-center gap-2 text-[20px]">
+                    Προσθέστε όνομα :{" "}
+                    <Input
+                      className="background-light900_dark300 text-dark200_light800  h-8 w-24 max-w-[240px]  p-0 font-noto_sans font-bold"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </span>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="self-center">
+                <AlertDialogCancel className="border-2 border-red-500 hover:scale-100 hover:animate-pulse">
+                  Ακύρωση
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="border-2 border-green-500 hover:scale-105 hover:animate-pulse"
+                  onClick={() => handleCreateRoom()}
+                  disabled={name.length === 0}
+                >
+                  Συνέχεια
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
         {!openDrawer && rooms ? (
           <DataTable data={bookings} columns={roomColumns()} />

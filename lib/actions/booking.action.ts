@@ -77,34 +77,7 @@ export async function CreateBooking({
         { $push: { owes: serviceObject } }, // Push the service object onto the owes array
         { new: true } // Return the updated document after the update operation
       );
-      const startTime = new Date(rangeDate.from);
-      const endTime = new Date(rangeDate.to);
 
-      // Adjust start time
-      startTime.setHours(
-        parseInt(timeArrival.split(":")[0], 10),
-        parseInt(timeArrival.split(":")[1], 10)
-      );
-
-      // Adjust end time
-      endTime.setHours(
-        parseInt(timeDeparture.split(":")[0], 10),
-        parseInt(timeDeparture.split(":")[1], 10)
-      );
-
-      const appointmentDescription = bookingData
-        .map(
-          ({ dogName, roomName }: any) => `${dogName} στο ΔΩΜΑΤΙΟ ${roomName}`
-        )
-        .join(", ");
-      await Appointment.create({
-        Id: booking._id,
-        Type: "Booking",
-        Subject: `${client?.lastName} - Κράτηση`,
-        Description: appointmentDescription,
-        StartTime: startTime,
-        EndTime: endTime,
-      });
       if (flag) {
         const pickUpStartTime = new Date(rangeDate.from);
         const pickUpEndTime = new Date(rangeDate.from);
@@ -226,27 +199,6 @@ export async function editBookingDate(id: string, rangeDate: DateRange) {
     if (!updatedBooking) {
       throw new Error("Booking not found");
     } else {
-      const appointment = JSON.parse(
-        JSON.stringify(
-          await Appointment.findOne({ Id: updatedBooking._id, Type: "Booking" })
-        )
-      );
-      if (appointment) {
-        const startTime = new Date(rangeDate.from);
-        const endTime = new Date(rangeDate.to);
-        startTime.setHours(
-          parseInt(updatedBooking.timeArrival.split(":")[0], 10),
-          parseInt(updatedBooking.timeArrival.split(":")[1], 10)
-        );
-        endTime.setHours(
-          parseInt(updatedBooking.timeDeparture.split(":")[0], 10),
-          parseInt(updatedBooking.timeDeparture.split(":")[1], 10)
-        );
-        await Appointment.findByIdAndUpdate(appointment._id, {
-          StartTime: startTime,
-          EndTime: endTime,
-        });
-      }
       if (updatedBooking.flag) {
         const pickUpAppointment = JSON.parse(
           JSON.stringify(
@@ -363,22 +315,6 @@ export async function editBookingArrival(
     );
     if (!updatedBooking) {
       throw new Error("Booking not found");
-    } else {
-      const appointment = JSON.parse(
-        JSON.stringify(
-          await Appointment.findOne({ Id: updatedBooking._id, Type: "Booking" })
-        )
-      );
-      if (appointment) {
-        const startTime = new Date(updatedBooking.fromDate);
-        startTime.setHours(
-          parseInt(formatTime(timeArrival, "el").split(":")[0], 10),
-          parseInt(formatTime(timeArrival, "el").split(":")[1], 10)
-        );
-        await Appointment.findByIdAndUpdate(appointment._id, {
-          StartTime: startTime,
-        });
-      }
     }
     if (updatedBooking.flag) {
       const pickUpAppointment = JSON.parse(
@@ -462,22 +398,6 @@ export async function editBookingDeparture(
     );
     if (!updatedBooking) {
       throw new Error("Booking not found");
-    } else {
-      const appointment = JSON.parse(
-        JSON.stringify(
-          await Appointment.findOne({ Id: updatedBooking._id, Type: "Booking" })
-        )
-      );
-      if (appointment) {
-        const endTime = new Date(updatedBooking.toDate);
-        endTime.setHours(
-          parseInt(formatTime(timeDeparture, "el").split(":")[0], 10),
-          parseInt(formatTime(timeDeparture, "el").split(":")[1], 10)
-        );
-        await Appointment.findByIdAndUpdate(appointment._id, {
-          EndTime: endTime,
-        });
-      }
     }
     if (updatedBooking.flag) {
       const deliveryAppointment = JSON.parse(

@@ -59,10 +59,13 @@ const Page = () => {
   };
 
   return (
-    <section className=" text-dark400_light700  flex h-full w-full flex-col ">
-      <Progress value={stage} className="w-full  shadow-light-200" />
+    <section className=" text-dark400_light700  relative flex h-full w-full flex-col ">
+      <Progress
+        value={stage}
+        className="sticky  left-0 top-0 w-full shadow-lg shadow-orange-500"
+      />
       {stage === 25 && (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 ">
           <div className="mt-20 flex flex-row items-center justify-center gap-8">
             <h1 className=" text-center font-noto_sans text-[26px] font-bold">
               Ας ξεκινήσουμε τη διαδικασία εγγραφής του πελάτη{" "}
@@ -86,13 +89,8 @@ const Page = () => {
         </div>
       )}
       {stage === 50 && (
-        <div className="flex flex-col gap-2">
-          <div className="mt-20 flex flex-row items-center justify-center gap-8">
-            <h1 className=" text-center font-noto_sans text-[24px] font-bold">
-              Παρακαλούμε δώστε τα προσωπικά στοιχεία του πελάτη για να
-              συνεχίσετε
-            </h1>
-          </div>
+        <div className="flex h-full flex-col gap-2 lg:max-h-[900px] 2xl:max-h-[1100px]">
+          <div className="flex flex-row items-center justify-center gap-8 2xl:mt-20"></div>
           <ClientForm setStage={setStage} setClient={setClient} />
         </div>
       )}

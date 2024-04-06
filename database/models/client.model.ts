@@ -31,6 +31,7 @@ export interface IClient {
   phone: {
     telephone?: string;
     mobile: string;
+    work_phone?: string;
   };
   _id?: string;
   createdAt?: Date;
@@ -40,7 +41,6 @@ export interface IClient {
   vet?: string;
   vetNumber?: string;
   emergencyContact?: string;
-  emergencyMobile?: string;
 }
 export const DogSchema = new Schema<IDog>({
   name: {
@@ -129,6 +129,9 @@ const ClientSchema = new Schema<IClient>({
     mobile: {
       type: String,
     },
+    work_phone: {
+      type: String,
+    },
   },
   createdAt: {
     type: Date,
@@ -143,9 +146,6 @@ const ClientSchema = new Schema<IClient>({
     type: String,
   },
   emergencyContact: {
-    type: String,
-  },
-  emergencyMobile: {
     type: String,
   },
 });

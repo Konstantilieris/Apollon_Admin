@@ -88,7 +88,7 @@ export function DataTable<TData, TValue>({
 
   const headerGroup = table.getHeaderGroups()[1];
   return (
-    <div className="background-light700_dark300 text-dark200_light800 custom-scrollbar relative  max-h-[1200px]  w-full  gap-2 space-y-4 rounded-lg border-2 border-purple-500">
+    <div className="background-light700_dark300 text-dark200_light800 custom-scrollbar  relative  max-h-[1200px]  gap-2 space-y-4 rounded-lg border-2 border-purple-500  xl:max-w-[1530px] 2xl:max-w-[2150px]">
       <DataTableToolbar
         table={table}
         filtering={filtering}
@@ -96,10 +96,10 @@ export function DataTable<TData, TValue>({
         facetedFilteringOptions={facetedFilteringOptions}
         viewOptions={viewOptions}
       />
-      <div className="rounded-md border border-black font-noto_sans font-semibold">
+      <div className="w-full rounded-md  font-noto_sans font-semibold ">
         <Table>
-          <TableHeader className="p-4 font-noto_sans text-[22px] font-extrabold">
-            <TableRow key={headerGroup.id}>
+          <TableHeader className=" p-4 font-noto_sans text-[22px] font-extrabold">
+            <TableRow key={headerGroup.id} className="w-full">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
@@ -118,7 +118,7 @@ export function DataTable<TData, TValue>({
               })}
             </TableRow>
           </TableHeader>
-          <TableBody className="text-center font-noto_sans">
+          <TableBody className=" w-full text-center font-noto_sans">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow

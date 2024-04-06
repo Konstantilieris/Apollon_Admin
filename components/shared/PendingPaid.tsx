@@ -1,6 +1,7 @@
 "use client";
-import React from "react";
+import React, { use } from "react";
 import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,9 +12,44 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-const PendingPaid = ({ clientId, item }: any) => {
+import { useToast } from "../ui/use-toast";
+import { payOffClient } from "@/lib/actions/client.action";
+import { usePathname } from "next/navigation";
+const PendingPaid = ({ clientId, item, firstName, lastName }: any) => {
   const [open, setOpen] = React.useState(false);
-
+  const { toast } = useToast();
+  const path = usePathname();
+  const handlePayment = async () => {
+    try {
+      const res = await payOffClient({
+        clientId,
+        serviceId: item._id,
+        serviceType: item.serviceType,
+        path,
+      });
+      if (res) {
+        toast({
+          className: cn(
+            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          ),
+          title: "Επιτυχία πληρωμής",
+          description: "Η πληρωμή πραγματοποιήθηκε με επιτυχία",
+        });
+        setOpen(false);
+      }
+    } catch (error) {
+      toast({
+        className: cn(
+          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+        ),
+        title: "Αποτυχία πληρωμής",
+        description: `${error}`,
+      });
+      throw error;
+    } finally {
+      window.location.reload();
+    }
+  };
   return (
     <>
       <Button
@@ -29,13 +65,20 @@ const PendingPaid = ({ clientId, item }: any) => {
               <AlertDialogTitle>ΕΞΌΦΛΗΣΗ ΤΗΣ ΧΡΕΩΣΗΣ</AlertDialogTitle>
               <AlertDialogDescription>
                 Είστε σίγουροι ότι θέλετε να εξοφλήσετε την χρέωση τών{" "}
-                {item.amount}€ για την υπηρεσία {item.serviceType} του πελάτη με
-                id {clientId}
+                {item.amount}€ για την υπηρεσία {item.serviceType} του πελάτη{" "}
+                {firstName + " " + lastName}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction>Continue</AlertDialogAction>
+              <AlertDialogCancel className="border-2 border-red-500">
+                Ακύρωση
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="border-2 border-green-500"
+                onClick={() => handlePayment()}
+              >
+                Συνέχεια
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

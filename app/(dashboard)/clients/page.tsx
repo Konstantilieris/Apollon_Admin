@@ -15,11 +15,11 @@ const Clients = async () => {
   };
 
   return (
-    <section className=" flex h-screen w-full flex-col items-center">
+    <section className=" flex h-screen w-full flex-col items-center justify-start">
       <h1 className="text-dark200_light800 mb-8 font-noto_sans text-[32px] font-bold">
         Πελατολόγιο
       </h1>
-      <div className="relative lg:max-w-[1500px]">
+      <div className="flex w-full">
         <DataTable
           columns={columns}
           data={newClients}
