@@ -69,6 +69,7 @@ const AddBudgetForm = ({ data }: any) => {
       });
       setIsSubmitting(false);
     } finally {
+      form.reset();
       setIsSubmitting(false);
       setShowForm(false);
     }
