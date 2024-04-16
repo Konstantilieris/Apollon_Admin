@@ -18,6 +18,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const LogInForm = () => {
   // eslint-disable-next-line no-unused-vars
@@ -58,30 +59,39 @@ const LogInForm = () => {
       });
 
       router.replace("./");
-      window.location.reload();
+      router.refresh();
     }
     setIsSubmitting(false);
     form.reset();
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="background-light900_dark300 flex min-h-[400px] w-full max-w-[800px] flex-col items-center justify-between gap-2 space-y-8  self-center rounded-lg p-12 shadow-lg"
+      >
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="flex   flex-col">
-              <FormLabel className="text-dark400_light800 font-noto_sans text-lg font-bold">
+            <FormItem className="group/form  flex min-w-[0.5vw] flex-row items-center gap-4">
+              <FormLabel className="text-dark400_light800 font-noto_sans text-[1.30rem] font-bold group-focus-within/form:hidden">
                 Username
               </FormLabel>
               <FormControl>
                 <Input
                   autoComplete="off"
                   {...field}
-                  className="no-focus  paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] max-w-[400px] border font-noto_sans"
+                  className="no-focus paragraph-regular  min-h-[56px] max-w-[400px] border-2 border-purple-400 bg-slate-500 font-noto_sans font-bold text-white group-focus-within/form:scale-105 dark:bg-white dark:text-black"
                 />
               </FormControl>
-              <FormMessage />
+              <Image
+                src="/assets/icons/shield.svg"
+                width={40}
+                height={30}
+                alt={"something"}
+              />
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
@@ -89,29 +99,34 @@ const LogInForm = () => {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem className="flex  min-w-[0.5vw] flex-col">
-              <FormLabel className="text-dark400_light800 font-noto_sans text-lg font-bold">
+            <FormItem className="group/form  flex min-w-[0.5vw] flex-row items-center gap-4">
+              <FormLabel className="text-dark400_light800 font-noto_sans text-[1.30rem] font-bold group-focus-within/form:hidden">
                 Password
               </FormLabel>
               <FormControl>
                 <Input
-                  className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] max-w-[400px] border"
+                  className="no-focus paragraph-regular  min-h-[56px] max-w-[400px] border-2 border-purple-400 bg-slate-500 font-noto_sans font-bold text-white group-focus-within/form:scale-105 dark:bg-white dark:text-black"
                   type="password"
                   {...field}
                 />
               </FormControl>
-
-              <FormMessage />
+              <Image
+                src="/assets/icons/lock.svg"
+                width={30}
+                height={30}
+                alt={"something"}
+              />
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
 
         <Button
           type="submit"
-          className="form-button w-fit font-noto_sans text-lg font-bold hover:scale-105"
+          className="  text-dark200_light900 min-h-[50px] min-w-[130px] justify-self-end border-2 border-purple-500 bg-amber-200 p-4 font-noto_sans text-lg font-bold hover:scale-105 hover:animate-pulse dark:bg-stone-800"
           disabled={isSubmitting}
         >
-          {isSubmitting ? <>{"Submitting"}</> : <>{"Submit"}</>}
+          {isSubmitting ? <>{"Αναμονή"}</> : <>{"ΣΥΝΔΕΣΗ"}</>}
         </Button>
       </form>
     </Form>

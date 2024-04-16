@@ -78,10 +78,11 @@ const AddBudgetForm = ({ data }: any) => {
     <div className="flex">
       <Button onClick={() => setShowForm(!showForm)}>
         <Image
-          src={"assets/icons/plus.svg"}
+          src={!showForm ? "/assets/icons/plus.svg" : "/assets/icons/minus.svg"}
           alt="plus"
           width={35}
           height={30}
+          className="rounded-xl bg-white"
         />
       </Button>
       {showForm && (
@@ -160,7 +161,7 @@ const AddBudgetForm = ({ data }: any) => {
                         </FormLabel>
                         <FormControl>
                           <Input
-                            className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] max-w-[400px] border"
+                            className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700  min-h-[56px] max-w-[400px] border font-noto_sans font-bold"
                             type="number"
                             {...field}
                           />

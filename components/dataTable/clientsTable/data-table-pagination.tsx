@@ -23,25 +23,24 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className=" flex   justify-between px-2 font-noto_sans font-bold">
-      <div className="text-muted-foreground flex-1 self-center text-sm">
-        {table.getFilteredSelectedRowModel().rows.length} απο{" "}
-        {table.getFilteredRowModel().rows.length} σειρές επιλεγμένες.
-      </div>
-      <div className="m-4  flex space-x-6 lg:space-x-8 ">
+    <div className=" flex   justify-end px-2 font-noto_sans font-bold">
+      <div className="  m-4 flex space-x-6 lg:space-x-8">
         <div className=" flex items-center space-x-2">
           <p className="text-sm font-medium">Σειρές ανά σελίδα</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
-              table.setPageSize(Number(value));
+              table.setPageSize(+value);
             }}
           >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
-            <SelectContent side="top">
-              {[10, 20, 30, 40, 50].map((pageSize) => (
+            <SelectContent
+              side="top"
+              className="background-light900_dark300 text-dark200_light800"
+            >
+              {[5, 10].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>

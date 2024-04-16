@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  findDogWithUndesiredBehavior,
   formatDate,
   formatDateString,
   isBookingLive,
@@ -30,6 +31,8 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import CustomerChargeSheet from "@/components/shared/sheet/CustomerChargeSheet";
+import UncheckPayment from "@/components/shared/UncheckPayment";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Client = async ({ params, searchParams }: URLProps) => {
   const { id } = params;
@@ -37,10 +40,31 @@ const Client = async ({ params, searchParams }: URLProps) => {
     getClientById(id),
     clientBookings(id),
   ]);
+  const undesired = findDogWithUndesiredBehavior(client.dog);
 
   const { totalOwes, totalSpent } = sumTotalOwesAndSpent(client.owes);
   return (
     <>
+      {undesired && (
+        <Alert className="mt-1 flex flex-col gap-2 border-2 border-white bg-red-500 font-noto_sans text-white dark:text-black">
+          <AlertTitle className="flex flex-row items-center justify-start gap-2 font-bold">
+            <Image
+              src="/assets/icons/nongrata.svg"
+              alt="dog"
+              width={60}
+              height={50}
+              className="justify-self-end"
+            />
+            ΠΡΟΣΟΧΗ!!!{" "}
+          </AlertTitle>
+          <AlertDescription className="flex w-full flex-row justify-center font-semibold">
+            {" "}
+            Ο ΣΚΥΛΟΣ ΜΕ ΟΝΟΜΑ {undesired.name} ΤΟΥ ΠΕΛΑΤΗ {client.lastName}{" "}
+            ΕΙΝΑΙ ΑΝΕΠΙΘΥΜΗΤΟΣ
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="text-dark100_light900 flex flex-row  items-start p-8 ">
         <div className="flex flex-1 flex-col items-start gap-4 lg:flex-row">
           <Image
@@ -199,24 +223,58 @@ const Client = async ({ params, searchParams }: URLProps) => {
                 </div>
                 {client.owes.map((item: any) => (
                   <div key={item._id}>
-                    <div key={item._id}>
-                      &bull; <span> Ποσό :{item.amount}€</span>
-                      <span>
+                    <div
+                      key={item._id}
+                      className="ml-32 flex max-h-[70px] min-h-[50px] flex-row items-center justify-start gap-2"
+                    >
+                      &bull;{" "}
+                      <span className="flex  flex-row items-center ">
                         {" "}
-                        Ημερομηνία: {formatDate(item.createdAt, "el")}
+                        Ποσό :{item.amount}
+                        <Image
+                          src={"/assets/icons/euro2.svg"}
+                          alt="euro"
+                          width={20}
+                          height={20}
+                        />
                       </span>
-                      <span> Περιγραφή: {item.serviceType}</span>
+                      <span className="flex flex-row items-center gap-2">
+                        {" "}
+                        Ημερομηνία: {formatDate(item.createdAt, "el")}{" "}
+                        <Image
+                          src={"/assets/icons/calendar.svg"}
+                          alt="calendar"
+                          width={20}
+                          height={20}
+                        />
+                      </span>
+                      <span className="flex flex-row items-center gap-2">
+                        {" "}
+                        Περιγραφή: {item.serviceType}{" "}
+                        <Image
+                          src={"/assets/icons/description.svg"}
+                          alt="description"
+                          width={20}
+                          height={20}
+                          className="mt-2 self-end"
+                        />
+                      </span>
                       <span>
                         {" "}
                         Κατάσταση Πληρωμής :{" "}
                         {item.paid ? "Ολοκληρωμένη " : "Εκκρεμή"}
                       </span>
-                      {!item.paid && (
+                      {!item.paid ? (
                         <PendingPaid
                           clientId={JSON.parse(JSON.stringify(client._id))}
                           item={JSON.parse(JSON.stringify(item))}
                           firstName={client.firstName}
                           lastName={client.lastName}
+                        />
+                      ) : (
+                        <UncheckPayment
+                          clientId={JSON.parse(JSON.stringify(client._id))}
+                          item={JSON.parse(JSON.stringify(item))}
                         />
                       )}
                     </div>

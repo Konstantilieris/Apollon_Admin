@@ -34,6 +34,7 @@ import {
 } from "@/lib/utils";
 
 import {
+  deleteBooking,
   editBookingArrival,
   editBookingDate,
   editBookingDeparture,
@@ -86,7 +87,28 @@ const EditbookingChange = ({ booking, rooms }: any) => {
         </Button>
       </div>
     );
-
+  const handleDeleteBooking = async () => {
+    try {
+      const deletedBooking = await deleteBooking(booking._id);
+      if (deletedBooking) {
+        toast({
+          className: cn(
+            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          ),
+          title: "Επιτυχία Διαγραφής",
+          description: `Η κράτηση του πελάτη ${booking.clientId.lastName} διαγράφηκε`,
+        });
+      }
+    } catch (error) {
+      toast({
+        className: cn(
+          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+        ),
+        title: "Αποτυχία Διαγραφής",
+        description: `${error}`,
+      });
+    }
+  };
   const submitDateChange = async () => {
     try {
       const updatedBooking = await editBookingDate(booking._id, dateBooking);
@@ -190,7 +212,10 @@ const EditbookingChange = ({ booking, rooms }: any) => {
             <AlertDialogCancel className="hover:scale-105">
               Ακύρωση
             </AlertDialogCancel>
-            <AlertDialogAction className="btn hover:scale-105">
+            <AlertDialogAction
+              className="btn hover:scale-105"
+              onClick={handleDeleteBooking}
+            >
               Συνέχεια
             </AlertDialogAction>
           </AlertDialogFooter>

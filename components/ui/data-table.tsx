@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import React from "react";
+import React, { useEffect } from "react";
 import { DataTablePagination } from "../dataTable/clientsTable/data-table-pagination";
 
 interface DataTableProps<TData, TValue> {
@@ -34,14 +34,42 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const finalData = React.useMemo(() => data, [data]);
   const finalColumnDef = React.useMemo(() => columns, [columns]);
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0, // initial page index
+    pageSize: 10,
+  }); // Default page size
+  useEffect(() => {
+    const updatePageSize = () => {
+      if (window.matchMedia("(min-width: 2000px)").matches) {
+        setPagination({ ...pagination, pageSize: 10 }); // Set page size to 10 for 2XL devices
+      } else if (window.matchMedia("(min-width: 1024px)").matches) {
+        setPagination({ ...pagination, pageSize: 7 }); // Set page size to 5 for LG devices
+      } else {
+        setPagination({ ...pagination, pageSize: 5 }); // Default page size
+      }
+    };
+
+    updatePageSize(); // Initial update
+
+    const resizeHandler = () => {
+      updatePageSize();
+    };
+
+    window.addEventListener("resize", resizeHandler);
+
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
   const table = useReactTable({
     data: finalData,
     columns: finalColumnDef,
 
     state: {
       sorting,
+      pagination,
     },
-
+    onPaginationChange: setPagination,
     onSortingChange: setSorting,
 
     getCoreRowModel: getCoreRowModel(),
@@ -51,7 +79,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="background-light700_dark300  text-dark200_light800 custom-scrollbar  max-h-[1280px]  w-full gap-2 space-y-8 rounded-lg border-2 border-purple-700 lg:max-w-[1570px] 2xl:max-w-[2200px]">
+    <div className="background-light700_dark300  text-dark200_light800 custom-scrollbar  max-h-[1280px] w-full gap-2 space-y-8 rounded-lg border-2 border-purple-700 lg:max-w-[1500px] 2xl:mt-4 2xl:max-w-[2200px]">
       <Table className="w-full">
         <TableHeader className="border-b-2 border-black p-4 font-noto_sans text-[22px] font-extrabold">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -71,7 +99,7 @@ export function DataTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="text-center font-noto_sans">
+        <TableBody className=" text-center font-noto_sans">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow

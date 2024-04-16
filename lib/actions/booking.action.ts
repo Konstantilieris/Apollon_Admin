@@ -575,3 +575,60 @@ export async function clientBookings(clientId: string) {
     throw error;
   }
 }
+
+export async function deleteBooking(id: string) {
+  try {
+    connectToDatabase();
+    const booking = await Booking.findByIdAndDelete(id);
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+    for (const dog of booking.dogs) {
+      await Room.findByIdAndUpdate(dog.roomId, {
+        $pull: { currentBookings: id },
+      });
+    }
+
+    revalidatePath("/createbooking");
+    return JSON.parse(JSON.stringify(booking));
+  } catch (error) {
+    console.error("Failed to delete booking:", error);
+    throw error;
+  }
+}
+export async function checkExistingBooking({ rangeDate, clientId }: any) {
+  try {
+    connectToDatabase();
+    const existingBooking = await Booking.findOne({
+      clientId,
+      $or: [
+        {
+          $and: [
+            { fromDate: { $lte: rangeDate.to } }, // Booking starts before or on rangeDate.toDate
+            { toDate: { $gte: rangeDate.to } }, // Booking ends after or on rangeDate.toDate
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $lte: rangeDate.from } }, // Booking starts before or on rangeDate.fromDate
+            { toDate: { $gte: rangeDate.from } }, // Booking ends after or on rangeDate.fromDate
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $gte: rangeDate.from } }, // Booking starts after or on rangeDate.fromDate
+            { toDate: { $lte: rangeDate.to } }, // Booking ends before or on rangeDate.toDate
+          ],
+        },
+      ],
+    });
+    if (existingBooking) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Failed to check booking:", error);
+    throw error;
+  }
+}

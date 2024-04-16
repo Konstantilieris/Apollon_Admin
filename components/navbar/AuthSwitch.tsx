@@ -14,8 +14,9 @@ const AuthSwitch = () => {
         onClick={() => {
           sessionStorage.clear();
           signOut({ redirect: false }).then(() => {
-            router.push("/");
-            window.location.reload(); // Redirect to the home page after signing out
+            router.replace("./");
+            router.refresh();
+            // Redirect to the home page after signing out
           });
         }}
         className="auth_btn"

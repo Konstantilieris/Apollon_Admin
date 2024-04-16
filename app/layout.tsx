@@ -51,19 +51,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <html lang="en">
-        <body
-          className={`${inter.variable} ${changa.variable} ${noto_sans.variable} ${chakra.variable} ${rubik.variable} custom-scrollbar`}
-        >
+    <html lang="en">
+      <body
+        className={`${inter.variable} ${changa.variable} ${noto_sans.variable} ${chakra.variable} ${rubik.variable} custom-scrollbar  scroll-smooth`}
+      >
+        <AuthProvider>
           <ThemeProvider>
             <Navbar />
 
             {children}
           </ThemeProvider>
-          <Toaster />
-        </body>
-      </html>
-    </AuthProvider>
+        </AuthProvider>
+        <Toaster />
+      </body>
+    </html>
   );
 }

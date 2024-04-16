@@ -51,7 +51,7 @@ export function DateInput({ field, maxwidth }: any) {
               !date && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="h-4 w-4 " />
+            <CalendarIcon className="h-4 w-4  " />
           </Button>
         </PopoverTrigger>
       </div>

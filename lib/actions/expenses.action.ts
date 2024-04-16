@@ -187,6 +187,7 @@ export async function getTotalAmountByCategoryForCurrentMonth({
       {
         $group: {
           _id: "$category.name",
+          color: { $first: "$category.color" },
           totalAmount: { $sum: "$amount" },
         },
       },
@@ -210,6 +211,25 @@ export async function getTotalAmountByCategoryForCurrentMonth({
       "Error fetching total amount by category for current month:",
       error
     );
+    throw error;
+  }
+}
+export async function deleteExpense({
+  id,
+  path,
+}: {
+  id: string;
+  path: string;
+}) {
+  try {
+    connectToDatabase();
+    const deletedExpense = await Expenses.findByIdAndDelete(id);
+    if (deletedExpense) {
+      revalidatePath(path);
+      return JSON.parse(JSON.stringify(deletedExpense));
+    }
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 }

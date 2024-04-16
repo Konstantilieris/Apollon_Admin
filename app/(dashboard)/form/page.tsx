@@ -59,7 +59,7 @@ const Page = () => {
   };
 
   return (
-    <section className=" text-dark400_light700  relative flex h-full w-full flex-col ">
+    <section className=" text-dark400_light700  relative mt-2 flex min-h-[70vh] w-full flex-col p-4">
       <Progress
         value={stage}
         className="sticky  left-0 top-0 w-full shadow-lg shadow-orange-500"

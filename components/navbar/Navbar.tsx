@@ -10,7 +10,7 @@ const Navbar = async () => {
   const session = await getServerSession();
 
   return (
-    <nav className="flex-between background-light900_dark200 sticky top-0 z-50 min-h-[10vh] w-full gap-5 p-6 shadow-light-300 dark:shadow-none sm:px-12">
+    <nav className="flex-between background-light900_dark200 sticky top-0 z-50 min-h-[10vh] w-full gap-5 p-6 shadow-md shadow-white dark:shadow-slate-600 sm:px-12">
       <div className="flex flex-row gap-8">
         <Link
           href={"/main"}

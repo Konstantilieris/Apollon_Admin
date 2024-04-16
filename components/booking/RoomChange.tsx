@@ -103,7 +103,6 @@ const RoomChange = (
       const updatedBooking = await editBookingRooms(booking._id, bookingData);
 
       if (updatedBooking) {
-        console.log(updatedBooking);
         toast({
           className: cn(
             "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "

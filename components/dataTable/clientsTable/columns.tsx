@@ -330,7 +330,6 @@ export const columns: ColumnDef<any>[] = [
         },
 
         filterFn: (row, id, value) => {
-          console.log(value);
           const dogs: Array<any> = row.original.dog;
 
           return dogs.some((dog) => dog.behavior === value[0]);

@@ -180,7 +180,6 @@ export function DataTableBookingRowActions({ row }: any) {
                 className="background-light900_dark300 text-dark200_light800 w-[180px] font-noto_sans font-bold"
               >
                 {row.original.currentBookings.map((booking: any) => {
-                  console.log(booking);
                   return (
                     <DropdownMenuItem
                       key={booking._id}

@@ -240,7 +240,7 @@ export function replacePercent20(inputString: string | null) {
   if (!inputString) {
     return;
   }
-  return inputString.replace(/%20/g, " ");
+  return inputString.replace(/%20/g, "").split(" ").join("");
 }
 export function calculateTotal(
   fromDate: Date,
@@ -348,4 +348,21 @@ export function sumTotalOwesAndSpent(transactions: any[]) {
   }
 
   return { totalOwes, totalSpent };
+}
+
+export function ExpendsLabel({ categories }: any) {
+  const obj: any = [];
+  categories.map((item: any) => {
+    obj.push(`${item._id.toUpperCase()}-${item.totalAmount}€`);
+    return obj;
+  });
+  return obj;
+}
+export function findDogWithUndesiredBehavior(dogs: any[]) {
+  for (const dog of dogs) {
+    if (dog.behavior === "Ενθουσιώδης") {
+      return dog;
+    }
+  }
+  return null; // Return null if no dog with the specified behavior is found
 }

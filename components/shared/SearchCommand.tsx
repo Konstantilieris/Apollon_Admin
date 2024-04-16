@@ -23,7 +23,7 @@ export function SearchCommand({
     setSelectedClient({ firstName, lastName, id, email });
     setDogs(dogs);
   };
-  console.log(clients);
+
   return (
     <>
       <LocalSearch

@@ -133,14 +133,14 @@ const ClientForm = ({ setClient, setStage }: any) => {
                   </FormLabel>
                   <Select onValueChange={field.onChange}>
                     <FormControl>
-                      <SelectTrigger className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] min-w-[246px] rounded-lg p-2 font-noto_sans font-bold">
+                      <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] min-w-[246px] rounded-lg p-2 font-noto_sans font-bold">
                         <SelectValue placeholder="Τύπος κατοικίας" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 ">
+                    <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 font-noto_sans font-bold ">
                       {TypesOfResidence.map((item) => (
                         <SelectItem
-                          className={`hover:bg-sky-blue hover:opacity-50 `}
+                          className={`rounded-lg hover:bg-sky-blue hover:opacity-50 `}
                           value={item}
                           key={item}
                         >

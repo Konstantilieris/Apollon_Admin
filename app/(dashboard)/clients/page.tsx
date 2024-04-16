@@ -15,7 +15,7 @@ const Clients = async () => {
   };
 
   return (
-    <section className=" flex h-screen w-full flex-col items-center justify-start">
+    <section className=" flex w-full flex-col items-center justify-start px-4">
       <h1 className="text-dark200_light800 mb-8 font-noto_sans text-[32px] font-bold">
         Πελατολόγιο
       </h1>

@@ -80,7 +80,6 @@ const Page = () => {
 
     const fetchData = async () => {
       try {
-        // Call getAllRoomsAndBookings and wait for the result
         const clientsData = await getAllClientsByQuery(searchQuery);
         setClients(JSON.parse(clientsData));
       } catch (error) {
@@ -127,9 +126,9 @@ const Page = () => {
     }
   };
   return (
-    <section className="flex flex-col gap-8 p-4">
+    <section className="flex h-full flex-col gap-8 p-4">
       {" "}
-      <h1 className="text-light850_dark500 font-noto_sans text-xl font-bold">
+      <h1 className="text-light850_dark500 font-noto_sans text-xl font-bold max-2xl:hidden">
         ΔΙΑΧΕΙΡΗΣΗ ΚΡΑΤΗΣΕΩΝ
       </h1>
       <div className="flex flex-col items-center gap-4">

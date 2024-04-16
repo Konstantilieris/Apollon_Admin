@@ -13,8 +13,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import * as z from "zod";
-
+import Image from "next/image";
 import { BookingValidation1, BookingValidation2 } from "@/lib/validation";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { DatePickerWithRange } from "../datepicker/DateRangePicker";
 import { SearchCommand } from "../shared/SearchCommand";
@@ -25,6 +28,7 @@ import dynamic from "next/dynamic";
 import { Separator } from "../ui/separator";
 import { cn, constructDogsArray, isIdIncluded } from "@/lib/utils";
 import { ScrollArea } from "../ui/scroll-area";
+import { checkExistingBooking } from "@/lib/actions/booking.action";
 
 const DynamicDialog = dynamic(() => import("../shared/AlertDialogSubmit"));
 const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
@@ -36,6 +40,7 @@ const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
   const [selectedDogs, setSelectedDogs] = useState<any>([]);
   const [bookingData, setBookingData] = useState<any>([]);
   const [flag, setFlag] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const form1 = useForm<z.infer<typeof BookingValidation1>>({
     resolver: zodResolver(BookingValidation1),
     defaultValues: {
@@ -59,9 +64,41 @@ const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
       setIsSubmitting(false);
     }
   };
-  const handleBooking1 = (values: z.infer<typeof BookingValidation1>) => {
+  function AlertDestructive() {
+    return (
+      <Alert
+        className="relative border-2 border-red-500"
+        onClick={() => {
+          setShowAlert(false);
+        }}
+      >
+        <ExclamationTriangleIcon className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          Ο πελάτης έχει ήδη κράτηση για αυτές τις ημερομηνίες
+        </AlertDescription>
+        <Image
+          className="absolute right-4 top-2 cursor-pointer"
+          alt="error"
+          src={"/assets/icons/close2.svg"}
+          width={45}
+          height={30}
+        />
+      </Alert>
+    );
+  }
+  const handleBooking1 = async (values: z.infer<typeof BookingValidation1>) => {
     try {
       setIsSubmitting(true);
+      const checkBooking = await checkExistingBooking({
+        clientId: values.client.id,
+        rangeDate: values.rangeDate,
+      });
+      if (checkBooking) {
+        setShowAlert(true);
+        setIsSubmitting(false);
+        return;
+      }
       // Make sure this is synchronous or await if it's asynchronous
       setStage(1); // Make sure this is synchronous or await if it's asynchronous
     } finally {
@@ -122,13 +159,17 @@ const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
   };
 
   return (
-    <div className="">
+    <>
+      {showAlert && <AlertDestructive />}
       {stage === 0 && (
         <Form {...form1}>
           <form
             onSubmit={form1.handleSubmit(handleBooking1)}
             className="space-y-4"
           >
+            <h1 className="font-noto_sans text-[20px] font-bold">
+              Με λίγα κλίκ δημιουργήστε κράτηση
+            </h1>
             <div className="flex flex-row items-center justify-around">
               <FormField
                 control={form1.control}
@@ -184,6 +225,15 @@ const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
       )}
       {stage === 1 && (
         <div className="ml-8 flex flex-row items-center justify-start gap-8">
+          <Button onClick={() => setStage(0)} className="hover:scale-105">
+            <Image
+              alt="room"
+              src={"assets/icons/arrow-left.svg"}
+              width={28}
+              height={25}
+              className="invert dark:invert-0"
+            />
+          </Button>
           <h1 className=" text-center font-noto_sans text-[24px] font-bold">
             Επιθυμείτε μεταφορά;
           </h1>
@@ -371,7 +421,7 @@ const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
           bookingData={bookingData}
         />
       )}
-    </div>
+    </>
   );
 };
 

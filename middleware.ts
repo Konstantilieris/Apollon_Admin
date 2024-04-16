@@ -5,6 +5,7 @@ export const config = {
     "/main/:path*",
     "/form/:path*",
     "/rooms/:path*",
+    "/createbooking/:path*",
     "/logistics/:path*",
     "/calendar/:path*",
     "/clients/:path*",

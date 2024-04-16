@@ -33,13 +33,14 @@ export const roomColumns = (): ColumnDef<any>[] => [
             column={column}
             title="Όνομα "
             className="text-start"
+            imgurl="/assets/icons/room.svg"
           />
         ),
         cell: ({ row }) => {
           return (
             <Link href={``}>
               <div className="ml-12 text-start font-noto_sans text-lg font-bold">
-                Δωμάτιο {row.getValue("name")}
+                {row.getValue("name")}
               </div>{" "}
             </Link>
           );

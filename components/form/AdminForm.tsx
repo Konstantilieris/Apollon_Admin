@@ -45,7 +45,6 @@ const AdminForm = () => {
         password: values.password,
         role: values.role,
       });
-      console.log("admin", user);
     } catch (error) {
       console.log(error);
     } finally {

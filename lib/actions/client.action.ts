@@ -161,3 +161,123 @@ export async function payOffClient({
     throw error;
   }
 }
+export async function uncheckedPayment({ clientId, serviceId, path }: any) {
+  try {
+    connectToDatabase();
+    const client = await Client.findOneAndUpdate(
+      {
+        _id: clientId,
+        "owes._id": serviceId,
+      },
+      {
+        $set: {
+          "owes.$[elem].paid": false,
+        },
+      },
+      {
+        new: true,
+        arrayFilters: [{ "elem._id": serviceId }],
+      }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    revalidatePath(path);
+    return JSON.parse(JSON.stringify(client));
+  } catch (error) {
+    console.error("Error unchecking payment:", error);
+    throw error;
+  }
+}
+export async function calculateAverageNewClients(startDate: Date) {
+  // Calculate the start date of the previous month
+  const previousMonthStartDate = new Date(startDate);
+  previousMonthStartDate.setMonth(startDate.getMonth() - 1);
+
+  try {
+    connectToDatabase();
+    // Fetch all clients created in the previous months
+    const clientsInPreviousMonths = await Client.find({
+      createdAt: { $gte: previousMonthStartDate, $lt: startDate },
+    }).countDocuments();
+
+    // Calculate the average
+    const numberOfMonths = Math.ceil(
+      (startDate.getTime() - previousMonthStartDate.getTime()) /
+        (1000 * 3600 * 24 * 30)
+    );
+    const averageNewClients = clientsInPreviousMonths / numberOfMonths;
+    return averageNewClients;
+  } catch (error) {
+    console.error("Error calculating average new clients:", error);
+    return null;
+  }
+}
+export async function analyzeNewClientsThisMonth() {
+  const currentDate = new Date();
+  const startDateOfMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1
+  );
+  try {
+    connectToDatabase();
+    const newClientsThisMonth = await Client.find({
+      createdAt: { $gte: startDateOfMonth },
+    }).countDocuments();
+    const averageNewClients =
+      await calculateAverageNewClients(startDateOfMonth);
+    let difference;
+    if (averageNewClients !== null) {
+      difference = newClientsThisMonth - averageNewClients;
+    }
+    return {
+      newClientsThisMonth,
+      averageNewClients,
+      difference,
+    };
+  } catch (error) {
+    console.error("Error analyzing new clients this month:", error);
+    throw error;
+  }
+}
+
+export async function countClientsByMonth() {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+
+  // Initialize an object to store the counts for each month
+  const clientsByMonth: any = [];
+
+  // Loop through each month of the current year
+  for (let month = 0; month < currentDate.getMonth() + 1; month++) {
+    // Set the start date of the current month
+    const startDateOfMonth = new Date(currentYear, month, 1);
+
+    // Calculate the end date of the current month
+    const endDateOfMonth = new Date(currentYear, month + 1, 0, 23, 59, 59);
+
+    try {
+      // Count the number of clients created within the current month
+      const count = await Client.find({
+        createdAt: { $gte: startDateOfMonth, $lte: endDateOfMonth },
+      }).countDocuments();
+
+      // Store the count for the current month
+      clientsByMonth.push({
+        month: startDateOfMonth.toLocaleString("default", { month: "long" }),
+        count,
+      });
+    } catch (error) {
+      console.error(
+        `Error counting clients for ${startDateOfMonth.toLocaleString(
+          "default",
+          { month: "long" }
+        )}:`,
+        error
+      );
+    }
+  }
+
+  return clientsByMonth;
+}

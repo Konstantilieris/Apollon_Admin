@@ -1,12 +1,6 @@
 "use client";
 import React, { Suspense } from "react";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerFooter } from "@/components/ui/drawer";
 
 import BookingForm from "../form/BookingForm";
 import { Button } from "../ui/button";
@@ -20,13 +14,6 @@ const RoomDrawer = ({ open, setOpen, rooms, clients, rangeDate }: any) => {
     >
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent className="text-dark200_light800 background-light850_dark100  flex max-h-[800px] min-h-[500px] px-8">
-          <DrawerHeader className="  self-start font-noto_sans">
-            <DrawerTitle className=" text-xl">
-              Επιλέγοντας απλά τις ημερομηνίες που επιθυμείτε. Εξασφαλίστε την
-              ιδανική διαμονή για τον σκύλο σε λίγα κλικ!
-            </DrawerTitle>
-          </DrawerHeader>
-
           <BookingForm
             rooms={rooms}
             rangeDate={rangeDate}
