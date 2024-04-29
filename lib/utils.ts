@@ -13,6 +13,7 @@ import {
   ArrowRightIcon,
   ArrowUpIcon,
 } from "lucide-react";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -140,12 +141,22 @@ export const viewClientOptions = [
     ],
   },
 ];
+export const isTrainingOptions = {
+  column_name: "isTraining",
+  title: "Εκπαίδευση",
+
+  options: [
+    { label: "Ναι", value: true },
+    { label: "Όχι", value: false },
+  ],
+};
 
 export function formatDate(date: Date, language: string) {
   return new Intl.DateTimeFormat(language, {
     weekday: "short",
     month: "long",
     day: "numeric",
+    year: "numeric",
   }).format(date);
 }
 export function formatDateUndefined(date: Date | undefined, language: string) {
@@ -336,6 +347,7 @@ export function isBookingLive(booking: any) {
   return currentDate >= fromDate && currentDate <= toDate;
 }
 export function sumTotalOwesAndSpent(transactions: any[]) {
+  if (!transactions) return { totalOwes: 0, totalSpent: 0 };
   let totalOwes = 0;
   let totalSpent = 0;
 
@@ -359,10 +371,23 @@ export function ExpendsLabel({ categories }: any) {
   return obj;
 }
 export function findDogWithUndesiredBehavior(dogs: any[]) {
+  if (!dogs) return null; // Return null if no dogs are provided
   for (const dog of dogs) {
     if (dog.behavior === "Ενθουσιώδης") {
       return dog;
     }
   }
   return null; // Return null if no dog with the specified behavior is found
+}
+
+export function numberToHexString(number: number) {
+  // Convert the number to hexadecimal
+  let hexString = number.toString(16);
+
+  // Pad the hexadecimal string with zeros to ensure it's 24 characters long
+  while (hexString.length < 24) {
+    hexString = "0" + hexString;
+  }
+
+  return hexString;
 }

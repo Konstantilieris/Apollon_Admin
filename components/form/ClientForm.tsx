@@ -16,7 +16,6 @@ import Image from "next/image";
 import { ClientValidation } from "@/lib/validation";
 import * as z from "zod";
 
-import { DateInput } from "../shared/DateInput";
 import {
   Select,
   SelectContent,
@@ -38,7 +37,7 @@ const ClientForm = ({ setClient, setStage }: any) => {
       city: "",
       address: "",
       postalCode: "",
-      birthdate: new Date(),
+
       mobile: "",
       telephone: "",
       emergencyContact: "",
@@ -51,7 +50,7 @@ const ClientForm = ({ setClient, setStage }: any) => {
   async function onSubmit(values: z.infer<typeof ClientValidation>) {
     setClient({ ...values });
 
-    setStage(65);
+    setStage(55);
     form.reset();
   }
 
@@ -92,6 +91,23 @@ const ClientForm = ({ setClient, setStage }: any) => {
             />
             <FormField
               control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem className="form_item">
+                  <FormLabel className="form_label">Επώνυμο</FormLabel>
+                  <FormControl>
+                    <Input
+                      autoComplete="new-password"
+                      {...field}
+                      className=" background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input"
+                    />
+                  </FormControl>
+                  <FormMessage className="max-w-[100px] text-red-500" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem className="form_item">
@@ -106,60 +122,13 @@ const ClientForm = ({ setClient, setStage }: any) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
-            <FormField
-              control={form.control}
-              name="birthdate"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-4">
-                  <FormLabel className="form_label">Ημ.Γέννησης</FormLabel>
-
-                  <FormControl>
-                    <DateInput field={field} maxwidth={"min-w-[270px]"} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
             />{" "}
             <FormField
               control={form.control}
-              name="residence"
-              render={({ field }) => (
-                <FormItem className=" flex flex-row items-center gap-4">
-                  <FormLabel className="form_label ">
-                    {" "}
-                    Τύπος κατοικίας
-                  </FormLabel>
-                  <Select onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] min-w-[246px] rounded-lg p-2 font-noto_sans font-bold">
-                        <SelectValue placeholder="Τύπος κατοικίας" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 font-noto_sans font-bold ">
-                      {TypesOfResidence.map((item) => (
-                        <SelectItem
-                          className={`rounded-lg hover:bg-sky-blue hover:opacity-50 `}
-                          value={item}
-                          key={item}
-                        >
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="address"
+              name="city"
               render={({ field }) => (
                 <FormItem className="form_item">
-                  <FormLabel className="form_label">Διεύθυνση</FormLabel>
+                  <FormLabel className="form_label">Πόλη</FormLabel>
                   <FormControl>
                     <Input
                       autoComplete="new-password"
@@ -173,10 +142,10 @@ const ClientForm = ({ setClient, setStage }: any) => {
             />
             <FormField
               control={form.control}
-              name="city"
+              name="address"
               render={({ field }) => (
                 <FormItem className="form_item">
-                  <FormLabel className="form_label">Πόλη</FormLabel>
+                  <FormLabel className="form_label">Διεύθυνση</FormLabel>
                   <FormControl>
                     <Input
                       autoComplete="new-password"
@@ -205,26 +174,41 @@ const ClientForm = ({ setClient, setStage }: any) => {
                 </FormItem>
               )}
             />
-          </div>
-          <div className="flex flex-col items-center justify-center 2xl:gap-6">
-            {" "}
             <FormField
               control={form.control}
-              name="lastName"
+              name="residence"
               render={({ field }) => (
-                <FormItem className="form_item">
-                  <FormLabel className="form_label">Επώνυμο</FormLabel>
-                  <FormControl>
-                    <Input
-                      autoComplete="new-password"
-                      {...field}
-                      className=" background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input"
-                    />
-                  </FormControl>
-                  <FormMessage className="max-w-[100px] text-red-500" />
+                <FormItem className=" flex flex-row items-center gap-4">
+                  <FormLabel className="form_label ">
+                    {" "}
+                    Τύπος κατοικίας
+                  </FormLabel>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] min-w-[246px] rounded-lg p-2 font-noto_sans font-bold">
+                        <SelectValue placeholder="Τύπος κατοικίας" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 font-noto_sans font-bold ">
+                      {TypesOfResidence.map((item) => (
+                        <SelectItem
+                          className={`rounded-lg hover:bg-sky-blue  `}
+                          value={item}
+                          key={item}
+                        >
+                          {item}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <FormMessage />
                 </FormItem>
               )}
             />
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2 2xl:gap-8">
+            {" "}
             <FormField
               control={form.control}
               name="profession"
@@ -247,7 +231,7 @@ const ClientForm = ({ setClient, setStage }: any) => {
               name="mobile"
               render={({ field }) => (
                 <FormItem className="form_item">
-                  <FormLabel className="form_label mr-2">Κινητό</FormLabel>
+                  <FormLabel className="form_label ">Κινητό</FormLabel>
                   <FormControl>
                     <Input
                       autoComplete="new-password"
@@ -263,13 +247,13 @@ const ClientForm = ({ setClient, setStage }: any) => {
               control={form.control}
               name="emergencyContact"
               render={({ field }) => (
-                <FormItem className="flex flex-row gap-8">
+                <FormItem className="form_item">
                   <FormLabel className="text-[18px]">Έκτακτη Επαφή</FormLabel>
                   <FormControl>
                     <Input
                       autoComplete="new-password"
                       {...field}
-                      className=" background-light900_dark300 text-dark300_light700  light-border-2 min-h-[56px] min-w-[246px] rounded-lg p-2 font-noto_sans font-bold"
+                      className=" background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input max-w-[252px]"
                     />
                   </FormControl>
                   <FormMessage />

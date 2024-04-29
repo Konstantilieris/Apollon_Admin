@@ -33,7 +33,7 @@ const Navbar = async () => {
 
       {session && (
         <Link
-          className=" flex min-h-[30px] flex-row items-center gap-2 rounded-lg bg-blue-600 p-2 font-noto_sans font-bold text-white shadow-light-400 hover:animate-pulse dark:text-slate-300"
+          className="flex min-h-[30px] flex-row items-center gap-2 rounded-lg bg-blue-600 p-2 font-noto_sans font-bold text-white shadow-light-400 hover:scale-105 hover:animate-pulse dark:text-slate-300 2xl:min-h-[45px] 2xl:min-w-[160px] 2xl:p-4"
           href={"/main"}
         >
           DASHBOARD{" "}

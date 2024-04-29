@@ -32,14 +32,14 @@ export const roomColumns = (): ColumnDef<any>[] => [
           <DataTableColumnHeader
             column={column}
             title="Όνομα "
-            className="text-start"
+            className="text-center"
             imgurl="/assets/icons/room.svg"
           />
         ),
         cell: ({ row }) => {
           return (
             <Link href={``}>
-              <div className="ml-12 text-start font-noto_sans text-lg font-bold">
+              <div className="text-center font-noto_sans text-lg font-bold">
                 {row.getValue("name")}
               </div>{" "}
             </Link>
@@ -156,7 +156,7 @@ export const roomColumns = (): ColumnDef<any>[] => [
           <DataTableColumnHeader
             imgurl="/assets/icons/departure.svg"
             column={column}
-            title="Αρχή Κράτησης"
+            title="Άφιξη"
             className="text-start"
           />
         ),
@@ -208,7 +208,7 @@ export const roomColumns = (): ColumnDef<any>[] => [
           <DataTableColumnHeader
             imgurl="/assets/icons/departure.svg"
             column={column}
-            title="Τέλος Κράτησης"
+            title="Αναχώρηση"
             className="text-start"
           />
         ),

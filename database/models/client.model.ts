@@ -1,11 +1,5 @@
 import { Schema, models, model } from "mongoose";
-export interface IService {
-  service: Schema.Types.ObjectId;
-  amount: number;
-  date: Date;
-  serviceType: "Booking" | "Transportation" | "OtherService" | string;
-  paid: boolean;
-}
+
 export interface ILocation {
   residence?: String;
   address?: String;
@@ -15,33 +9,41 @@ export interface ILocation {
 export interface IDog {
   name: string;
   gender: string;
-  birthdate: Date;
-  food: string;
-  breed: string;
-  behavior: string;
+  birthdate?: Date;
+  food?: string;
+  breed?: string;
+  behavior?: string;
   microchip?: string;
+}
+export interface IReference {
+  clientId?: Schema.Types.ObjectId;
+  google?: boolean;
+  other?: string;
 }
 export interface IClient {
   firstName: string;
   lastName: string;
   email?: string;
   profession?: string;
-  birthdate?: Date;
+
   location?: ILocation;
   phone: {
     telephone?: string;
-    mobile: string;
+    mobile?: string;
     work_phone?: string;
   };
-  _id?: string;
-  createdAt?: Date;
-  owes?: IService[];
 
+  createdAt?: Date;
+  owes?: Schema.Types.ObjectId[];
+  reference?: IReference;
   dog?: IDog;
   vet?: string;
   vetNumber?: string;
+  isTraining?: boolean;
   emergencyContact?: string;
+  notes?: string;
 }
+
 export const DogSchema = new Schema<IDog>({
   name: {
     type: String,
@@ -67,27 +69,16 @@ export const DogSchema = new Schema<IDog>({
     type: String,
   },
 });
-const ServiceSchema = new Schema<IService>({
-  service: {
+export const ReferenceSchema = new Schema<IReference>({
+  clientId: {
     type: Schema.Types.ObjectId,
-    refPath: "owes.serviceType",
+    ref: "Client",
   },
-  amount: {
-    type: Number,
-    required: true,
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-    required: true,
-  },
-  serviceType: {
-    type: String,
-    required: true,
-  },
-  paid: {
+  google: {
     type: Boolean,
-    default: false,
+  },
+  other: {
+    type: String,
   },
 });
 const ClientSchema = new Schema<IClient>({
@@ -105,9 +96,7 @@ const ClientSchema = new Schema<IClient>({
   profession: {
     type: String,
   },
-  birthdate: {
-    type: Date,
-  },
+
   location: {
     residence: {
       type: String,
@@ -137,12 +126,20 @@ const ClientSchema = new Schema<IClient>({
     type: Date,
     default: Date.now,
   },
-  owes: [ServiceSchema],
+  owes: [{ type: Schema.Types.ObjectId, ref: "Service" }],
   dog: [DogSchema],
+
   vet: {
     type: String,
   },
   vetNumber: {
+    type: String,
+  },
+  reference: ReferenceSchema,
+  isTraining: {
+    type: Boolean,
+  },
+  notes: {
     type: String,
   },
   emergencyContact: {

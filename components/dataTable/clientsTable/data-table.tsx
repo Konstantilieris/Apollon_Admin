@@ -27,6 +27,7 @@ import {
 
 import { DataTablePagination } from "@/components/dataTable/clientsTable/data-table-pagination";
 import { DataTableToolbar } from "@/components/dataTable/clientsTable/data-table-toolbar";
+import { useEffect } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -41,6 +42,12 @@ interface DataTableProps<TData, TValue> {
     title: string;
     value: string[];
   }[];
+  isTrainingOptions: {
+    column_name: string;
+    title: string;
+
+    options: any;
+  };
 }
 
 export function DataTable<TData, TValue>({
@@ -48,6 +55,7 @@ export function DataTable<TData, TValue>({
   data,
   facetedFilteringOptions,
   viewOptions,
+  isTrainingOptions,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -55,17 +63,44 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0, // initial page index
+    pageSize: 10,
+  });
   const [filtering, setFiltering] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const finalData = React.useMemo(() => data, [data]);
   const finalColumnDef = React.useMemo(() => columns, [columns]);
   // ho
+  useEffect(() => {
+    const updatePageSize = () => {
+      if (window.matchMedia("(min-width: 2000px)").matches) {
+        setPagination({ ...pagination, pageSize: 10 }); // Set page size to 10 for 2XL devices
+      } else if (window.matchMedia("(min-width: 1024px)").matches) {
+        setPagination({ ...pagination, pageSize: 5 }); // Set page size to 5 for LG devices
+      } else {
+        setPagination({ ...pagination, pageSize: 5 }); // Default page size
+      }
+    };
 
+    updatePageSize(); // Initial update
+
+    const resizeHandler = () => {
+      updatePageSize();
+    };
+
+    window.addEventListener("resize", resizeHandler);
+
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
   const table = useReactTable({
     data: finalData,
     columns: finalColumnDef,
     state: {
       sorting,
+      pagination,
       columnVisibility,
       rowSelection,
       columnFilters,
@@ -87,6 +122,7 @@ export function DataTable<TData, TValue>({
   });
 
   const headerGroup = table.getHeaderGroups()[1];
+
   return (
     <div className="background-light700_dark300 text-dark200_light800 custom-scrollbar  relative  max-h-[1200px]  gap-2 space-y-4 rounded-lg border-2 border-purple-500  xl:max-w-[1530px] 2xl:max-w-[2150px]">
       <DataTableToolbar
@@ -95,6 +131,7 @@ export function DataTable<TData, TValue>({
         setFiltering={setFiltering}
         facetedFilteringOptions={facetedFilteringOptions}
         viewOptions={viewOptions}
+        isTrainingOptions={isTrainingOptions}
       />
       <div className="w-full rounded-md  font-noto_sans font-semibold ">
         <Table>

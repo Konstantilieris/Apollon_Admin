@@ -1,7 +1,7 @@
 export default function Home() {
   return (
-    <main className="background-light700_dark400 flex min-h-screen  w-full  flex-col justify-between ">
-      <div className="  z-0 flex h-[60vh] w-full flex-row bg-black">
+    <main className=" relative   flex w-full flex-col ">
+      <div className="  z-0 flex  w-full flex-row bg-black lg:max-h-[76.7vh] 2xl:max-h-[80vh]">
         {/* responsive text size ,responsive change of positionings */}
         <p className="hero-text font-noto_sans tracking-widest">
           WELCOME TO APOLLON DOG CENTER
@@ -14,6 +14,13 @@ export default function Home() {
           autoPlay
           playsInline
         ></video>
+      </div>
+      <div className="background-light900_dark200  text-dark300_light900 flex  min-h-[10vh] items-center justify-between px-4 font-bold text-white">
+        <p>
+          Empowering your pet care journey – Welcome to the Apollon Dog Center
+          Admin Dashboard, expertly crafted by Konstantilieris development team.
+        </p>
+        <p>© 2024 Apollon Dog Center</p>
       </div>
     </main>
   );

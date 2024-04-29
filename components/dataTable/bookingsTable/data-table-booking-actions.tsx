@@ -28,16 +28,18 @@ import { useToast } from "@/components/ui/use-toast";
 import { deleteRoomById, updateRoomById } from "@/lib/actions/room.action";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { usePathname } from "next/navigation";
 export function DataTableBookingRowActions({ row }: any) {
   const [show, setsShow] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
   const [name, setName] = useState("");
+  const path = usePathname();
   const { toast } = useToast();
   const handleEditRoom = async () => {
     setsShow(!show);
     if (deleteMode) {
       try {
-        const deletedRoom = await deleteRoomById(row.original._id);
+        const deletedRoom = await deleteRoomById(row.original._id, path);
         if (deletedRoom) {
           toast({
             className: cn(
@@ -61,7 +63,7 @@ export function DataTableBookingRowActions({ row }: any) {
       }
     } else {
       try {
-        const updatedRoom = await updateRoomById(row.original._id, name);
+        const updatedRoom = await updateRoomById(row.original._id, name, path);
         if (updatedRoom) {
           toast({
             className: cn(

@@ -1,33 +1,29 @@
 "use client";
 
-import LocalSearch from "./LocalSearch";
-
-import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "@radix-ui/react-menubar";
 import { cn } from "@/lib/utils";
-
+import LocalSearch from "../LocalSearch";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 interface Params {
   firstName: string;
   lastName: string;
   id: string;
   email: string;
-  dogs?: any;
 }
-export function SearchCommand({
+const ReferenceCommand = ({
   clients,
   selectedClient,
   setSelectedClient,
-  setDogs,
-}: any) {
-  const handleClick = ({ firstName, lastName, id, email, dogs }: Params) => {
+  setReferenceChoice,
+}: any) => {
+  const handleClick = ({ firstName, lastName, id, email }: Params) => {
     setSelectedClient({ firstName, lastName, id, email });
-    setDogs(dogs);
+    setReferenceChoice({ clientId: id });
   };
-
   return (
     <>
       <LocalSearch
-        route={"/createbooking"}
+        route={"/form"}
         placeholder="Επώνυμο πελάτη"
         otherClasses="max-w-[280px]"
       />
@@ -42,21 +38,20 @@ export function SearchCommand({
                     lastName: client.lastName,
                     id: client._id,
                     email: client.email,
-                    dogs: client.dog,
                   })
                 }
                 className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1 font-noto_sans
-                ${
-                  selectedClient?.id === client._id
-                    ? "bg-celtic-green text-white"
-                    : "hover:bg-light-blue "
-                }
-              `)}
+              ${
+                selectedClient?.email === client.email
+                  ? "bg-celtic-green text-white"
+                  : "hover:bg-light-blue "
+              }
+            `)}
               >
                 <span className="font-bold">
                   {client.firstName} {client.lastName}
                 </span>
-                <span className="subtle-email">{client?.email}</span>
+                <span className="subtle-email">{client.email}</span>
               </div>
               <Separator className="my-2" />
             </div>
@@ -65,4 +60,6 @@ export function SearchCommand({
       </ScrollArea>
     </>
   );
-}
+};
+
+export default ReferenceCommand;

@@ -336,7 +336,7 @@ const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
                     {bookingData.map((data: any) => (
                       <div key={data.dogId}>
                         <div className=" rounded-md bg-sky-200 py-2 text-center font-noto_sans font-bold dark:text-dark-100">
-                          {data.dogName} - ROOM{data.roomName}
+                          {data.dogName} - {data.roomName}
                         </div>
                         <Separator className="my-2" />
                       </div>
@@ -357,11 +357,11 @@ const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
                     control={form2.control}
                     name="time_arrival"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className=" font-noto_sans text-lg font-bold">
+                      <FormItem className="flex flex-row items-end gap-2">
+                        <FormLabel className=" mb-2 font-noto_sans text-lg font-bold">
                           {flag
-                            ? "Διάλεξε χρόνο παραλαβής"
-                            : "Διάλεξε χρόνο άφιξης"}
+                            ? "Διάλεξε χρόνο παραλαβής:"
+                            : "Διάλεξε χρόνο άφιξης:"}
                         </FormLabel>
                         <FormControl>
                           <TimePicker
@@ -377,11 +377,11 @@ const BookingForm = ({ rooms, rangeDate, clients, open, close }: any) => {
                     control={form2.control}
                     name="time_departure"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="  font-noto_sans text-lg font-bold">
+                      <FormItem className="flex flex-row items-end gap-2">
+                        <FormLabel className="  mb-2 font-noto_sans text-lg font-bold">
                           {flag
-                            ? "Διάλεξε χρόνο παράδοσης"
-                            : "Διάλεξε χρόνο αναχώρησης"}
+                            ? "Διάλεξε χρόνο παράδοσης :"
+                            : "Διάλεξε χρόνο αναχώρησης :"}
                         </FormLabel>
                         <FormControl>
                           <TimePicker

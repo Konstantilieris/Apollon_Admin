@@ -19,7 +19,7 @@ const AuthSwitch = () => {
             // Redirect to the home page after signing out
           });
         }}
-        className="auth_btn"
+        className="auth_btn "
       >
         <Image
           src={"/assets/icons/logout.svg"}

@@ -20,7 +20,7 @@ interface SelectedClient {
   firstName: string;
   lastName: string;
   id: string;
-  email: string;
+  email?: string;
 }
 interface Params {
   selectedClient: SelectedClient;

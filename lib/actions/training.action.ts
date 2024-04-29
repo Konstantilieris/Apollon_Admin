@@ -8,6 +8,7 @@ import { CreateTrainingParams } from "@/types";
 import Appointment from "@/database/models/event.model";
 
 import { formatTime } from "../utils";
+import Service from "@/database/models/service.model";
 
 export async function CreateTraining({
   name,
@@ -37,44 +38,50 @@ export async function CreateTraining({
       notes,
     });
     if (training) {
-      const serviceObject = {
-        service: training._id,
-        amount: price,
-        date: training.createdAt,
-        serviceType: "Training",
-      };
-      const client = await Client.findOneAndUpdate(
-        { _id: training.clientId }, // Find the client document by _id
-        { $push: { owes: serviceObject } }, // Push the service object onto the owes array
-        { new: true } // Return the updated document after the update operation
-      );
-      const startTime = new Date(date);
-      const endTime = new Date(date);
-      startTime.setHours(
-        parseInt(timeArrival.split(":")[0], 10),
-        parseInt(timeArrival.split(":")[1], 10)
-      );
-
-      endTime.setHours(
-        parseInt(timeDeparture.split(":")[0], 10),
-        parseInt(timeDeparture.split(":")[1], 10)
-      );
-
-      const appointmentDescription = selectedDogsFiltered
-        .map(({ dogName }: any) => `${dogName} - ΕΚΠΑΙΔΕΥΣΗ`)
-        .join(", ");
-
-      await Appointment.create({
-        Id: training._id, // Use the training _id as the event Id
-        Type: "Training",
-        Subject: `${client?.lastName} - ΕΚΠΑΙΔΕΥΣΗ`,
-        Description: appointmentDescription,
-        StartTime: startTime,
-        EndTime: endTime,
+      const service = await Service.create({
+        serviceType: "ΕΚΠΑΙΔΕΥΣΗ",
+        clientId,
+        amount: +price,
+        date,
       });
+      if (service) {
+        const client = await Client.findByIdAndUpdate(
+          clientId,
+          { $push: { owes: service._id } },
+          { new: true }
+        );
+        if (client) {
+          const startTime = new Date(date);
+          const endTime = new Date(date);
+          startTime.setHours(
+            parseInt(timeArrival.split(":")[0], 10),
+            parseInt(timeArrival.split(":")[1], 10)
+          );
 
-      revalidatePath(path);
-      return JSON.parse(JSON.stringify(training));
+          endTime.setHours(
+            parseInt(timeDeparture.split(":")[0], 10),
+            parseInt(timeDeparture.split(":")[1], 10)
+          );
+
+          const appointmentDescription = selectedDogsFiltered
+            .map(({ dogName }: any) => `${dogName} - ΕΚΠΑΙΔΕΥΣΗ`)
+            .join(", ");
+
+          await Appointment.create({
+            Id: training._id, // Use the training _id as the event Id
+            Type: "Training",
+            Subject: `${client?.lastName} - ΕΚΠΑΙΔΕΥΣΗ`,
+            Description: appointmentDescription,
+            StartTime: startTime,
+            EndTime: endTime,
+          });
+
+          revalidatePath(path);
+          return JSON.parse(JSON.stringify(training));
+        } else {
+          throw new Error("Client not found");
+        }
+      }
     }
   } catch (error) {
     console.error("Error creating training:", error);

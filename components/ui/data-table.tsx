@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="background-light700_dark300  text-dark200_light800 custom-scrollbar  max-h-[1280px] w-full gap-2 space-y-8 rounded-lg border-2 border-purple-700 lg:max-w-[1500px] 2xl:mt-4 2xl:max-w-[2200px]">
+    <div className="background-light700_dark300  text-dark200_light800 custom-scrollbar  max-h-[1280px] w-full gap-2 space-y-8 rounded-lg border-2 border-purple-700 lg:max-w-[1600px] 2xl:mt-4 2xl:max-w-[2230px]">
       <Table className="w-full">
         <TableHeader className="border-b-2 border-black p-4 font-noto_sans text-[22px] font-extrabold">
           {table.getHeaderGroups().map((headerGroup) => (

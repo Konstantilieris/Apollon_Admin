@@ -2,11 +2,11 @@ import React from "react";
 import { TypesOfBehavior } from "@/constants";
 import { columns } from "@/components/dataTable/clientsTable/columns";
 import { DataTable } from "@/components/dataTable/clientsTable/data-table";
-import { viewClientOptions } from "@/lib/utils";
+import { viewClientOptions, isTrainingOptions } from "@/lib/utils";
 import { getAllClients } from "@/lib/actions/client.action";
 
 const Clients = async () => {
-  const newClients = JSON.parse(await getAllClients());
+  const newClients = await getAllClients();
 
   const facetedFilteringOptions = {
     column_name: "dogBehavior",
@@ -15,7 +15,7 @@ const Clients = async () => {
   };
 
   return (
-    <section className=" flex w-full flex-col items-center justify-start px-4">
+    <section className=" flex w-full flex-col items-center justify-start p-4">
       <h1 className="text-dark200_light800 mb-8 font-noto_sans text-[32px] font-bold">
         Πελατολόγιο
       </h1>
@@ -25,6 +25,7 @@ const Clients = async () => {
           data={newClients}
           facetedFilteringOptions={facetedFilteringOptions}
           viewOptions={viewClientOptions}
+          isTrainingOptions={isTrainingOptions}
         />
       </div>
     </section>

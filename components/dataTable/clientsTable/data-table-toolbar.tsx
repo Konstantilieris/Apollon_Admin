@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/dataTable/clientsTable/data-table-view.options";
 
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { TrainingOption } from "./TraininingOption";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -23,6 +24,11 @@ interface DataTableToolbarProps<TData> {
     title: string;
     value: string[];
   }[];
+  isTrainingOptions?: {
+    column_name: string;
+    title: string;
+    options: any;
+  };
 }
 
 export function DataTableToolbar<TData>({
@@ -31,6 +37,7 @@ export function DataTableToolbar<TData>({
   setFiltering,
   facetedFilteringOptions,
   viewOptions,
+  isTrainingOptions,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -41,7 +48,7 @@ export function DataTableToolbar<TData>({
           placeholder="Αναζήτηση"
           value={filtering}
           onChange={(event) => setFiltering(event.target.value)}
-          className="background-light900_dark300 text-dark200_light800 h-8 w-[150px] font-noto_sans font-semibold lg:w-[250px]"
+          className="background-light900_dark300 text-dark200_light800 h-10 w-[150px] font-noto_sans font-semibold lg:w-[250px]"
         />
 
         {facetedFilteringOptions &&
@@ -53,6 +60,17 @@ export function DataTableToolbar<TData>({
             />
           )}
 
+        {viewOptions && (
+          <DataTableViewOptions table={table} options={viewOptions} />
+        )}
+        {isTrainingOptions &&
+          table.getColumn(isTrainingOptions.column_name) && (
+            <TrainingOption
+              column={table.getColumn(isTrainingOptions.column_name)}
+              title={isTrainingOptions.title}
+              options={isTrainingOptions.options}
+            />
+          )}
         {isFiltered && (
           <Button
             variant="ghost"
@@ -62,9 +80,6 @@ export function DataTableToolbar<TData>({
             Εκκαθάριση
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
-        )}
-        {viewOptions && (
-          <DataTableViewOptions table={table} options={viewOptions} />
         )}
       </div>
     </div>

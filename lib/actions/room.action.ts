@@ -25,7 +25,7 @@ export async function getAllRooms() {
   try {
     connectToDatabase();
     const rooms = await Room.find().sort({ name: 1 });
-    return JSON.stringify(rooms);
+    return JSON.parse(JSON.stringify(rooms));
   } catch (error) {
     console.log(error);
     throw error;
@@ -43,7 +43,7 @@ export async function getRoomById(roomId: any) {
     throw error;
   }
 }
-export async function updateRoomById(roomId: any, name: string) {
+export async function updateRoomById(roomId: any, name: string, path: string) {
   try {
     connectToDatabase();
 
@@ -98,11 +98,12 @@ export async function getAllRoomsAndBookings(rangeDate: DateRange) {
     throw error;
   }
 }
-export async function deleteRoomById(roomId: any) {
+export async function deleteRoomById(roomId: any, path: string) {
   try {
     connectToDatabase();
     const room = await Room.findByIdAndDelete(roomId);
     if (room) {
+      revalidatePath(path);
       return JSON.parse(JSON.stringify(room));
     } // Return the deleted room
   } catch (error) {

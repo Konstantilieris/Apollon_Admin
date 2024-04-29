@@ -1,4 +1,4 @@
-import { Schema, models, model, Date } from "mongoose";
+import { Schema, models, model } from "mongoose";
 
 export interface ITraining {
   name: string;

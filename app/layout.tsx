@@ -53,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${changa.variable} ${noto_sans.variable} ${chakra.variable} ${rubik.variable} custom-scrollbar  scroll-smooth`}
+        className={`${inter.variable} ${changa.variable} ${noto_sans.variable} ${chakra.variable} ${rubik.variable} custom-scrollbar  background-light700_dark400 h-screen scroll-smooth`}
       >
         <AuthProvider>
           <ThemeProvider>

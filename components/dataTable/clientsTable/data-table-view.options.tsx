@@ -26,12 +26,13 @@ export function DataTableViewOptions<TData>({
     column.toggleVisibility(!!value);
     column.columns.map((item: any) => item.toggleVisibility(!!value));
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          size="sm"
-          className="ml-auto hidden h-8 border border-black font-noto_sans font-bold hover:scale-110 dark:border-white lg:flex"
+          size="lg"
+          className="ml-auto hidden h-10 border border-black font-noto_sans font-bold hover:scale-110 dark:border-white lg:flex"
         >
           <MixerHorizontalIcon className="mr-2 h-4 w-4" />
           Όψη
@@ -46,7 +47,7 @@ export function DataTableViewOptions<TData>({
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
-          .filter((column) => column.getCanHide())
+          .filter((column) => column.id === "Dog")
           .map((column) => {
             return (
               <DropdownMenuCheckboxItem

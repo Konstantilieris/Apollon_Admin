@@ -40,9 +40,9 @@ const Client = async ({ params, searchParams }: URLProps) => {
     getClientById(id),
     clientBookings(id),
   ]);
-  const undesired = findDogWithUndesiredBehavior(client.dog);
+  const undesired = findDogWithUndesiredBehavior(client?.dog);
 
-  const { totalOwes, totalSpent } = sumTotalOwesAndSpent(client.owes);
+  const { totalOwes, totalSpent } = sumTotalOwesAndSpent(client?.owes);
   return (
     <>
       {undesired && (
@@ -59,7 +59,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
           </AlertTitle>
           <AlertDescription className="flex w-full flex-row justify-center font-semibold">
             {" "}
-            Ο ΣΚΥΛΟΣ ΜΕ ΟΝΟΜΑ {undesired.name} ΤΟΥ ΠΕΛΑΤΗ {client.lastName}{" "}
+            Ο ΣΚΥΛΟΣ ΜΕ ΟΝΟΜΑ {undesired?.name} ΤΟΥ ΠΕΛΑΤΗ {client?.lastName}{" "}
             ΕΙΝΑΙ ΑΝΕΠΙΘΥΜΗΤΟΣ
           </AlertDescription>
         </Alert>
@@ -76,14 +76,14 @@ const Client = async ({ params, searchParams }: URLProps) => {
           />
           <div className="mt-3">
             <h2 className="h2-bold text-dark100_light900 font-noto_sans">
-              {client.lastName}
+              {client?.lastName}
             </h2>
             <p className=" text-dark200_light800 mt-1 font-noto_sans text-lg font-bold">
-              {client.firstName}
+              {client?.firstName}
             </p>
             <p className="font-noto_sans font-semibold">
               {" "}
-              ΔΗΜΙΟΥΡΓΗΘΗΚΕ {formatDateString(client.createdAt)}
+              ΔΗΜΙΟΥΡΓΗΘΗΚΕ {formatDateString(client?.createdAt)}
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-start gap-5"></div>
           </div>
@@ -136,7 +136,6 @@ const Client = async ({ params, searchParams }: URLProps) => {
                 <TableHead className="text-center">Σκύλοι</TableHead>
 
                 <TableHead className="text-center">Κτηνίατρος-Τήλ</TableHead>
-                <TableHead>Γενέθλια</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -147,7 +146,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
                 </TableCell>
                 <TableCell className="text-center">{client?.email}</TableCell>
                 <TableCell className="flex flex-col gap-2 text-center text-[12px]">
-                  {client.dog.map((dog: any) => (
+                  {client?.dog.map((dog: any) => (
                     <HoverCard key={dog._id}>
                       <HoverCardTrigger className="rounded-lg border-2 border-white">
                         &bull; {dog?.name}
@@ -170,9 +169,11 @@ const Client = async ({ params, searchParams }: URLProps) => {
                     </HoverCard>
                   ))}
                 </TableCell>
-                <TableCell className="flex-col text-center">
-                  <span>&bull;{client?.vet}</span>
-                  <span className="flex flex-row items-center">
+                <TableCell className=" flex-col items-center">
+                  <span className="flex flex-row justify-center">
+                    &bull;{client?.vet}
+                  </span>
+                  <span className="flex flex-row justify-center">
                     <Image
                       src={"/assets/icons/phone.svg"}
                       alt="phone"
@@ -181,10 +182,6 @@ const Client = async ({ params, searchParams }: URLProps) => {
                     />
                     {client?.vetNumber}{" "}
                   </span>
-                </TableCell>
-
-                <TableCell className="text-center">
-                  {formatDate(new Date(client?.birthdate), "el")}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -212,10 +209,10 @@ const Client = async ({ params, searchParams }: URLProps) => {
             className=" text-dark100_light900 background-light700_dark300 flex w-full flex-col gap-6 rounded-lg "
           >
             {" "}
-            <ScrollArea className="h-full w-full rounded-md border text-center">
+            <ScrollArea className="w-full rounded-md border text-center lg:max-h-[350px] 2xl:max-h-[600px]">
               <div className="p-4">
                 <h4 className="mb-4   text-[24px] font-medium  leading-none underline decoration-black decoration-2 underline-offset-8 dark:decoration-purple-300">
-                  ΟΦΕΙΛΕΣ-{client.lastName}
+                  ΟΦΕΙΛΕΣ-{client?.lastName}
                 </h4>
                 <div className="flex w-full flex-row justify-center gap-2 border-b-2 border-black dark:border-white">
                   <h1>Συνολικό Ποσό Οφειλής : {totalOwes}€</h1>
@@ -240,7 +237,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
                       </span>
                       <span className="flex flex-row items-center gap-2">
                         {" "}
-                        Ημερομηνία: {formatDate(item.createdAt, "el")}{" "}
+                        Ημερομηνία: {formatDate(item.date, "el")}{" "}
                         <Image
                           src={"/assets/icons/calendar.svg"}
                           alt="calendar"
@@ -272,10 +269,15 @@ const Client = async ({ params, searchParams }: URLProps) => {
                           lastName={client.lastName}
                         />
                       ) : (
-                        <UncheckPayment
-                          clientId={JSON.parse(JSON.stringify(client._id))}
-                          item={JSON.parse(JSON.stringify(item))}
-                        />
+                        <>
+                          <UncheckPayment
+                            clientId={JSON.parse(JSON.stringify(client._id))}
+                            item={JSON.parse(JSON.stringify(item))}
+                          />
+                          <span>
+                            Πληρώθηκε : {formatDate(item.paymentDate, "el")}
+                          </span>
+                        </>
                       )}
                     </div>
                     <Separator className="my-2 bg-black dark:bg-white" />

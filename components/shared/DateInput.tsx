@@ -18,7 +18,7 @@ export function DateInput({ field, maxwidth }: any) {
 
   return (
     <Popover>
-      <div className={cn("relative", maxwidth)}>
+      <div className={cn("relative form_input rounded-lg", maxwidth)}>
         <Input
           className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input max-w-[400px] font-noto_sans font-bold"
           type="string"

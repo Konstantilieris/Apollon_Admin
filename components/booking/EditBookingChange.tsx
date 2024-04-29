@@ -42,6 +42,7 @@ import {
 import { useToast } from "../ui/use-toast";
 
 import dynamic from "next/dynamic";
+import { Input } from "../ui/input";
 const DynamicRoomChange = dynamic(() => import("./RoomChange"));
 
 const EditbookingChange = ({ booking, rooms }: any) => {
@@ -69,7 +70,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
   const [timeDeparture, setTimeDeparture] = useState<Date>();
   const [editDate, setEditDate] = useState(false);
   const [editRoom, setEditRoom] = useState(false);
-
+  const [amount, setAmount] = useState(0);
   if (!edit && !modeDelete)
     return (
       <div className="flex flex-row gap-2">
@@ -242,6 +243,13 @@ const EditbookingChange = ({ booking, rooms }: any) => {
               &bull; Τελική Κράτηση απο{" "}
               {formatDateUndefined(dateBooking?.from, "el")} μεχρι{" "}
               {formatDateUndefined(dateBooking?.to, "el")}
+              &bull;: Παλιά Χρέωση :{booking.amount}
+              Νέα Χρέωση: {amount}{" "}
+              <Input
+                value={amount}
+                onChange={(e) => setAmount(+e.target.value)}
+                className=""
+              />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

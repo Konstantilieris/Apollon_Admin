@@ -25,6 +25,7 @@ const SelectInput = ({ className, data, field, title }: any) => {
         <Input
           className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input max-w-[400px] font-noto_sans font-bold"
           type="string"
+          disabled={field.value !== "other"}
           value={stringData}
           onChange={(e) => {
             const input = e.target.value;
@@ -42,7 +43,7 @@ const SelectInput = ({ className, data, field, title }: any) => {
             )}
           >
             <Image
-              src={"/assets/icons/command.svg"}
+              src={`/assets/icons/command.svg`}
               className=" dark:invert"
               height={20}
               width={20}

@@ -18,6 +18,7 @@ const DogForm = ({ number, setDogs, setStage }: any) => {
         food: "",
         breed: "",
         behavior: "",
+        microchip: "",
       })),
     },
   });
@@ -43,10 +44,10 @@ const DogForm = ({ number, setDogs, setStage }: any) => {
         <div className="flex flex-row justify-center gap-4">
           {renderDogFields()}
         </div>
-        <div className="flex flex-row gap-8 self-center">
+        <div className="flex flex-row gap-8 self-center 2xl:mt-12 2xl:gap-20">
           <Button
             className="  mt-8 min-w-[135px] self-center bg-red-dark py-6 font-noto_sans text-[20px] font-extrabold text-white hover:scale-105 hover:animate-pulse"
-            onClick={() => setStage(25)}
+            onClick={() => setStage(65)}
           >
             {" "}
             ΠΙΣΩ

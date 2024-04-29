@@ -25,7 +25,7 @@ import { Input } from "../ui/input";
 const DogField = ({ form, index }: any) => {
   const namePrefix = `dogs[${index}]`;
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col 2xl:gap-8">
       <FormField
         control={form.control}
         name={`${namePrefix}.name`}
@@ -36,7 +36,7 @@ const DogField = ({ form, index }: any) => {
               <Input
                 autoComplete="new-password"
                 {...field}
-                className=" background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input ml-2 max-w-[333px]"
+                className=" background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input "
               />
             </FormControl>
             <FormMessage />
@@ -47,11 +47,11 @@ const DogField = ({ form, index }: any) => {
         control={form.control}
         name={`${namePrefix}.gender`}
         render={({ field }) => (
-          <FormItem className=" flex flex-row items-center gap-8">
+          <FormItem className=" form_item">
             <FormLabel className="form_label ">Φύλο</FormLabel>
             <Select onValueChange={field.onChange}>
               <FormControl>
-                <SelectTrigger className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] min-w-[265px] rounded-lg p-2 font-noto_sans font-bold">
+                <SelectTrigger className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input rounded-lg p-2 font-noto_sans font-bold">
                   <SelectValue placeholder="Διάλεξε Φύλο" />
                 </SelectTrigger>
               </FormControl>
@@ -76,11 +76,11 @@ const DogField = ({ form, index }: any) => {
         control={form.control}
         name={`${namePrefix}.breed`}
         render={({ field }) => (
-          <FormItem className=" flex flex-row items-center gap-8">
+          <FormItem className="form_item">
             <FormLabel className="form_label ">Ράτσα</FormLabel>
             <Select onValueChange={field.onChange}>
               <FormControl>
-                <SelectTrigger className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] min-w-[260px] rounded-lg p-2 font-noto_sans font-bold">
+                <SelectTrigger className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input rounded-lg p-2 font-noto_sans font-bold">
                   <SelectValue placeholder="Ράτσα" />
                 </SelectTrigger>
               </FormControl>
@@ -103,13 +103,30 @@ const DogField = ({ form, index }: any) => {
       />
       <FormField
         control={form.control}
+        name={`${namePrefix}.microchip`}
+        render={({ field }) => (
+          <FormItem className="form_item">
+            <FormLabel className="form_label">Μικροτσίπ</FormLabel>
+            <FormControl>
+              <Input
+                autoComplete="new-password"
+                {...field}
+                className=" background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input "
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
         name={`${namePrefix}.behavior`}
         render={({ field }) => (
-          <FormItem className=" flex flex-row items-center gap-10">
+          <FormItem className="form_item">
             <FormLabel className="form_label ">Συμπεριφορά</FormLabel>
             <Select onValueChange={field.onChange}>
               <FormControl>
-                <SelectTrigger className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] min-w-[235px] rounded-lg p-2 font-noto_sans font-bold">
+                <SelectTrigger className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input rounded-lg p-2 font-noto_sans font-bold">
                   <SelectValue placeholder="Συμπεριφορά" />
                 </SelectTrigger>
               </FormControl>
@@ -134,10 +151,10 @@ const DogField = ({ form, index }: any) => {
         control={form.control}
         name={`${namePrefix}.birthdate`}
         render={({ field }) => (
-          <FormItem className=" flex flex-row items-center gap-4 ">
+          <FormItem className="form_item ">
             <FormLabel className="form_label  ">Ημ.Γέννησης</FormLabel>
             <FormControl>
-              <DateInput field={field} />
+              <DateInput field={field} maxwidth={"min-w-[245px]"} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -147,7 +164,7 @@ const DogField = ({ form, index }: any) => {
         control={form.control}
         name={`${namePrefix}.food`}
         render={({ field }) => (
-          <FormItem className=" flex flex-row items-center gap-8">
+          <FormItem className="form_item">
             <FormLabel className="form_label ">Τύπος Τροφής</FormLabel>
             <Select onValueChange={field.onChange}>
               <FormControl>

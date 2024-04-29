@@ -17,12 +17,12 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     id: "Client",
-    enableHiding: false,
+    enableHiding: true,
     enableGlobalFilter: true,
     columns: [
       {
         id: "grouped&sorted",
-        accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+        accessorFn: (row) => `${row.firstName} ${row.lastName} `,
         header: ({ column }) => (
           <DataTableColumnHeader
             column={column}
@@ -63,28 +63,11 @@ export const columns: ColumnDef<any>[] = [
           />
         ),
       },
-      {
-        accessorKey: "birthdate",
-        header: () => (
-          <div className="flex flex-row items-center gap-2 text-right">
-            <Image
-              src={"/assets/icons/birthdate.svg"}
-              alt="birthdate"
-              width={30}
-              height={25}
-            />
-            Ημ.Γέννησης
-          </div>
-        ),
-        cell: ({ row }) => {
-          const parsedDate = formatDateString(row.getValue("birthdate"));
-          return <div className="text-center font-medium">{parsedDate}</div>;
-        },
-      },
+
       {
         accessorKey: "location.residence",
         header: () => (
-          <div className="ml-2 flex flex-row items-center gap-2">
+          <div className="mr-4 flex flex-row items-center gap-2">
             <Image
               src={"/assets/icons/residence.svg"}
               alt="residence"
@@ -98,7 +81,7 @@ export const columns: ColumnDef<any>[] = [
       {
         accessorKey: "location.address",
         header: () => (
-          <div className="mr-2 flex flex-row items-center gap-2">
+          <div className="mr-4 flex flex-row items-center gap-2">
             <Image
               src={"/assets/icons/address.svg"}
               alt="residence"
@@ -112,7 +95,7 @@ export const columns: ColumnDef<any>[] = [
       {
         accessorKey: "location.city",
         header: () => (
-          <div className="mr-2 flex flex-row items-center gap-2">
+          <div className="mr-4 flex flex-row items-center gap-2">
             <Image
               src={"/assets/icons/city.svg"}
               alt="city"
@@ -126,7 +109,7 @@ export const columns: ColumnDef<any>[] = [
       {
         accessorKey: "phone.telephone",
         header: () => (
-          <div className="flex flex-row items-center gap-2">
+          <div className="mr-4 flex flex-row items-center gap-2">
             <Image
               src={"/assets/icons/telephone.svg"}
               alt="telephone"
@@ -179,28 +162,47 @@ export const columns: ColumnDef<any>[] = [
 
     columns: [
       {
+        id: "isTraining",
+        accessorFn: (row) => row.isTraining,
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Εκπαίδευση"
+            imgurl="/assets/icons/training.svg"
+          />
+        ),
+        cell: ({ row }) => {
+          return (
+            <div className="flex flex-row items-center justify-center gap-2">
+              {row.getValue("isTraining") ? "ΝΑΙ" : "ΟΧΙ"}
+            </div>
+          );
+        },
+      },
+
+      {
         id: "dognames",
         accessorFn: (row) => {
           if (row.dog) {
             const names = row.dog.map((item: any) => {
               return item.name;
             });
-            return names;
+
+            return names.join(" ");
           } else {
             return null;
           }
         },
         header: () => (
-          <div className="ml-4 flex flex-row items-center">Ονομα Σκυλου </div>
+          <div className="ml-4 flex flex-row items-center leading-[26px]">
+            Ονομα Σκυλου{" "}
+          </div>
         ),
         cell: ({ row }) => {
-          const see: Array<String> = row.getValue("dognames");
+          const see: string = row.getValue("dognames");
+
           return (
-            <div className="ml-2 flex flex-col gap-2">
-              {see.map((name, index) => (
-                <h1 key={index}> {name}</h1>
-              ))}
-            </div>
+            <div className="ml-2 flex flex-col gap-2 leading-6">{see} </div>
           );
         },
       },

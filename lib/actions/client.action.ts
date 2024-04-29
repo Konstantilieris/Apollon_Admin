@@ -4,6 +4,8 @@
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../mongoose";
 import Client, { IClient } from "@/database/models/client.model";
+import Service from "@/database/models/service.model";
+
 export async function getDogsForClient(clientId: string) {
   try {
     connectToDatabase();
@@ -23,7 +25,7 @@ export async function CreateClient({ clientData, dogs }: any) {
     lastName: clientData.lastName,
     email: clientData.email,
     profession: clientData.profession,
-    birthdate: clientData.birthdate,
+
     location: {
       residence: clientData.residence,
       address: clientData.address,
@@ -38,6 +40,8 @@ export async function CreateClient({ clientData, dogs }: any) {
     vet: clientData.vet,
     vetNumber: clientData.vetNumber,
     emergencyContact: clientData.emergencyContact,
+    isTraining: clientData.isTraining,
+    reference: clientData.referenceChoice,
   };
   try {
     connectToDatabase();
@@ -58,7 +62,7 @@ export async function getAllClients() {
     connectToDatabase();
 
     const clients = await Client.find();
-    return JSON.stringify(clients);
+    return JSON.parse(JSON.stringify(clients));
   } catch (error) {
     console.log(error);
     throw error;
@@ -71,7 +75,7 @@ export async function getAllClientsByQuery(searchQuery: string | undefined) {
 
     if (!searchQuery) {
       const clients = await Client.find();
-      return JSON.stringify(clients);
+      return JSON.parse(JSON.stringify(clients));
     }
 
     const clients = await Client.find({
@@ -83,7 +87,7 @@ export async function getAllClientsByQuery(searchQuery: string | undefined) {
         },
       },
     });
-    return JSON.stringify(clients);
+    return JSON.parse(JSON.stringify(clients));
   } catch (error) {
     console.log(error);
     throw error;
@@ -92,7 +96,10 @@ export async function getAllClientsByQuery(searchQuery: string | undefined) {
 export async function getClientById(id: string) {
   try {
     connectToDatabase();
-    const client = await Client.findById(id);
+    const client = await Client.findById(id).populate({
+      path: "owes",
+      model: "Service",
+    });
     return client;
   } catch (error) {
     console.log(error);
@@ -108,82 +115,64 @@ export async function chargeClient({
 }: any) {
   try {
     connectToDatabase();
-    const serviceObject = {
+
+    const service = await Service.create({
       serviceType,
+      clientId,
       amount: +amount,
-      date,
-    };
-    const client = await Client.findOneAndUpdate(
-      { _id: clientId }, // Find the client document by _id
-      { $push: { owes: serviceObject } }, // Push the service object onto the owes array
-      { new: true } // Return the updated document after the update operation
-    );
-    if (!client) {
-      throw new Error("Client not found");
+    });
+    if (service) {
+      const client = await Client.findByIdAndUpdate(
+        clientId,
+        { $push: { owes: service._id } },
+        { new: true }
+      );
+      if (client) {
+        revalidatePath(path);
+        return JSON.parse(JSON.stringify(client));
+      } else {
+        throw new Error("Client not found");
+      }
     }
-    revalidatePath(path);
-    return JSON.parse(JSON.stringify(client));
   } catch (error) {
     console.error("Error charging client:", error);
     throw error;
   }
 }
-export async function payOffClient({
-  clientId,
-  path,
-  serviceId,
-  serviceType,
-}: any) {
+
+export async function payOffClient({ path, serviceId }: any) {
   try {
     connectToDatabase();
-    const client = await Client.findOneAndUpdate(
-      {
-        _id: clientId,
-        "owes._id": serviceId, // Match client by ID and service within owes array by ID
-      },
-      {
-        $set: {
-          "owes.$[elem].paid": true, // Update the paid status of the matched service within owes array
-        },
-      },
-      {
-        new: true, // Return the updated client document
-        arrayFilters: [{ "elem._id": serviceId }], // Apply filter to match the specific owes array element
-      }
+    const service = await Service.findByIdAndUpdate(
+      { _id: serviceId },
+      { paid: true, paymentDate: new Date() },
+      { new: true }
     );
-    if (!client) {
-      throw new Error("Client not found");
+    if (!service) {
+      throw new Error("Service not found");
+    } else {
+      revalidatePath(path);
+      return JSON.parse(JSON.stringify(service));
     }
-    revalidatePath(path);
-    return JSON.parse(JSON.stringify(client));
   } catch (error) {
     console.error("Error paying off client:", error);
     throw error;
   }
 }
-export async function uncheckedPayment({ clientId, serviceId, path }: any) {
+export async function uncheckedPayment({ serviceId, path }: any) {
   try {
     connectToDatabase();
-    const client = await Client.findOneAndUpdate(
-      {
-        _id: clientId,
-        "owes._id": serviceId,
-      },
-      {
-        $set: {
-          "owes.$[elem].paid": false,
-        },
-      },
-      {
-        new: true,
-        arrayFilters: [{ "elem._id": serviceId }],
-      }
+    const service = await Service.findByIdAndUpdate(
+      { _id: serviceId },
+      { paid: false, paymentDate: null },
+      { new: true }
     );
-    if (!client) {
-      throw new Error("Client not found");
+    if (!service) {
+      throw new Error("Service not found");
+    } else {
+      revalidatePath(path);
+      return JSON.parse(JSON.stringify(service));
     }
-    revalidatePath(path);
-    return JSON.parse(JSON.stringify(client));
   } catch (error) {
     console.error("Error unchecking payment:", error);
     throw error;
@@ -258,14 +247,16 @@ export async function countClientsByMonth() {
     const endDateOfMonth = new Date(currentYear, month + 1, 0, 23, 59, 59);
 
     try {
-      // Count the number of clients created within the current month
+      connectToDatabase();
       const count = await Client.find({
         createdAt: { $gte: startDateOfMonth, $lte: endDateOfMonth },
       }).countDocuments();
 
       // Store the count for the current month
       clientsByMonth.push({
-        month: startDateOfMonth.toLocaleString("default", { month: "long" }),
+        month: startDateOfMonth.toLocaleString("el-GR", {
+          month: "long",
+        }),
         count,
       });
     } catch (error) {

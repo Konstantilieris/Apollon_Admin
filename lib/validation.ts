@@ -38,17 +38,13 @@ export const ClientValidation = z.object({
     .max(20),
   email: z.string().optional(),
   profession: z.string().optional(),
-  birthdate: z
-    .date({
-      required_error: "Διάλεξε ημερομηνία",
-      invalid_type_error: "That's not a date!",
-    })
-    .optional(),
+
   residence: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
   postalCode: z.string().optional(),
   telephone: z.string().optional(),
+
   mobile: z.string().min(6, {
     message: "Το τηλέφωνο πρέπει να είναι τουλάχιστον 6 χαρακτήρες",
   }),
@@ -72,6 +68,7 @@ export const DogValidation = z.object({
       food: z.string().optional(),
       breed: z.string().optional(),
       behavior: z.string().optional(),
+      microchip: z.string().optional(),
     })
   ),
 });
@@ -90,7 +87,7 @@ export const BookingValidation1 = z.object({
   client: z.object({
     firstName: z.string(),
     lastName: z.string(),
-    email: z.string(),
+    email: z.string().optional(),
     id: z.string(),
   }),
 });

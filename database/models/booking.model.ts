@@ -13,7 +13,11 @@ export interface IBooking {
 }
 const BookingSchema = new Schema<IBooking>(
   {
-    clientId: { type: Schema.Types.ObjectId, ref: "Client", required: true },
+    clientId: {
+      type: Schema.Types.ObjectId,
+      ref: "Client",
+      required: true,
+    },
     fromDate: { type: Date, required: true },
     toDate: { type: Date, required: true },
     totalDays: { type: Number, required: true },

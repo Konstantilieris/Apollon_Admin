@@ -11,6 +11,7 @@ import { revalidatePath } from "next/cache";
 import Client from "@/database/models/client.model";
 import { DateRange } from "react-day-picker";
 import Appointment from "@/database/models/event.model";
+import Service from "@/database/models/service.model";
 
 interface ICreateBooking {
   clientId_string: string;
@@ -66,116 +67,124 @@ export async function CreateBooking({
       } catch (error) {
         console.log(error);
       }
-      const serviceObject = {
-        service: booking._id,
+      const service = await Service.create({
+        serviceType: "ΔΙΑΜΟΝΗ",
         amount: totalprice,
-        date: booking.createdAt,
-        serviceType: "Booking",
-      };
-      const client = await Client.findOneAndUpdate(
-        { _id: booking.clientId }, // Find the client document by _id
-        { $push: { owes: serviceObject } }, // Push the service object onto the owes array
-        { new: true } // Return the updated document after the update operation
-      );
-
-      if (flag) {
-        const pickUpStartTime = new Date(rangeDate.from);
-        const pickUpEndTime = new Date(rangeDate.from);
-        const deliveryStartTime = new Date(rangeDate.to);
-        const deliverEndTime = new Date(rangeDate.to);
-        pickUpStartTime.setHours(
-          parseInt(timeArrival.split(":")[0], 10),
-          parseInt(timeArrival.split(":")[1], 10)
+        clientId: clientId_string,
+        bookingId: booking._id,
+        date: rangeDate.from,
+      });
+      if (service) {
+        const client = await Client.findOneAndUpdate(
+          { _id: booking.clientId }, // Find the client document by _id
+          { $push: { owes: service._id } }, // Push the service object onto the owes array
+          { new: true } // Return the updated document after the update operation
         );
-        pickUpEndTime.setHours(
-          parseInt(timeArrival.split(":")[0], 10),
-          parseInt(timeArrival.split(":")[1], 10)
-        );
-        deliveryStartTime.setHours(
-          parseInt(timeDeparture.split(":")[0], 10),
-          parseInt(timeDeparture.split(":")[1], 10)
-        );
-        deliverEndTime.setHours(
-          parseInt(timeDeparture.split(":")[0], 10),
-          parseInt(timeDeparture.split(":")[1], 10)
-        );
-        const pickUpDescription = `${
-          client.location.address
-        } - ${selectedDogsFiltered
-          .map(({ dogName }: any) => `${dogName}`)
-          .join(", ")} - ΠΑΡΑΛΑΒΗ`;
-        await Appointment.create({
-          Id: booking._id, // Use the training _id as the event Id
-          Type: "ΠΑΡΑΛΑΒΗ",
-          Subject: `${client.lastName} - ΜΕΤΑΦΟΡΑ`,
-          Description: pickUpDescription,
-          StartTime: pickUpStartTime,
-          EndTime: pickUpEndTime,
-        });
-        const deliveryDescription = `${
-          client.location.address
-        } - ${selectedDogsFiltered
-          .map(({ dogName }: any) => `${dogName}`)
-          .join(", ")} - ΠΑΡΑΔΟΣΗ`;
-        await Appointment.create({
-          Id: booking._id,
-          Type: "ΠΑΡΑΔΟΣΗ",
-          Subject: `${client.lastName} - ΜΕΤΑΦΟΡΑ`,
-          Description: deliveryDescription,
-          StartTime: deliveryStartTime,
-          EndTime: deliverEndTime,
-        });
+        if (!client) {
+          throw new Error("Client not found");
+        } else {
+          if (flag) {
+            const pickUpStartTime = new Date(rangeDate.from);
+            const pickUpEndTime = new Date(rangeDate.from);
+            const deliveryStartTime = new Date(rangeDate.to);
+            const deliverEndTime = new Date(rangeDate.to);
+            pickUpStartTime.setHours(
+              parseInt(timeArrival.split(":")[0], 10),
+              parseInt(timeArrival.split(":")[1], 10)
+            );
+            pickUpEndTime.setHours(
+              parseInt(timeArrival.split(":")[0], 10),
+              parseInt(timeArrival.split(":")[1], 10)
+            );
+            deliveryStartTime.setHours(
+              parseInt(timeDeparture.split(":")[0], 10),
+              parseInt(timeDeparture.split(":")[1], 10)
+            );
+            deliverEndTime.setHours(
+              parseInt(timeDeparture.split(":")[0], 10),
+              parseInt(timeDeparture.split(":")[1], 10)
+            );
+            const pickUpDescription = `${
+              client.location.address
+            } - ${selectedDogsFiltered
+              .map(({ dogName }: any) => `${dogName}`)
+              .join(", ")} - ΠΑΡΑΛΑΒΗ`;
+            await Appointment.create({
+              Id: booking._id, // Use the training _id as the event Id
+              Type: "ΠΑΡΑΛΑΒΗ",
+              Subject: `${client.lastName} - ΜΕΤΑΦΟΡΑ`,
+              Description: pickUpDescription,
+              StartTime: pickUpStartTime,
+              EndTime: pickUpEndTime,
+            });
+            const deliveryDescription = `${
+              client.location.address
+            } - ${selectedDogsFiltered
+              .map(({ dogName }: any) => `${dogName}`)
+              .join(", ")} - ΠΑΡΑΔΟΣΗ`;
+            await Appointment.create({
+              Id: booking._id,
+              Type: "ΠΑΡΑΔΟΣΗ",
+              Subject: `${client.lastName} - ΜΕΤΑΦΟΡΑ`,
+              Description: deliveryDescription,
+              StartTime: deliveryStartTime,
+              EndTime: deliverEndTime,
+            });
+          } else {
+            const ArrivalStartTime = new Date(rangeDate.from);
+            const ArrivalEndTime = new Date(rangeDate.from);
+            ArrivalStartTime.setHours(
+              parseInt(timeArrival.split(":")[0], 10),
+              parseInt(timeArrival.split(":")[1], 10)
+            );
+            ArrivalEndTime.setHours(
+              parseInt(timeArrival.split(":")[0], 10),
+              parseInt(timeArrival.split(":")[1], 10)
+            );
+            const appointmentDescription = `${
+              client.lastName + client.firstName
+            } - ${selectedDogsFiltered
+              .map(({ dogName }: any) => `${dogName}`)
+              .join(", ")} - ΑΦΙΞΗ`;
+            await Appointment.create({
+              Id: booking._id, // Use the training _id as the event Id
+              Type: "ΑΦΙΞΗ",
+              Subject: `${client.lastName} -AΦΙΞΗ`,
+              Description: appointmentDescription,
+              StartTime: ArrivalStartTime,
+              EndTime: ArrivalEndTime,
+            });
+            const DepartureStartTime = new Date(rangeDate.to);
+            const DepartureEndTime = new Date(rangeDate.to);
+            DepartureStartTime.setHours(
+              parseInt(timeDeparture.split(":")[0], 10),
+              parseInt(timeDeparture.split(":")[1], 10)
+            );
+            DepartureEndTime.setHours(
+              parseInt(timeDeparture.split(":")[0], 10),
+              parseInt(timeDeparture.split(":")[1], 10)
+            );
+            const departureDescription = `${
+              client.lastName + client.firstName
+            } - ${selectedDogsFiltered
+              .map(({ dogName }: any) => `${dogName}`)
+              .join(", ")} - ΑΝΑΧΩΡΗΣΗ`;
+            await Appointment.create({
+              Id: booking._id, // Use the training _id as the event Id
+              Type: "ΑΝΑΧΩΡΗΣΗ",
+              Subject: `${client.lastName} - ΑΝΑΧΩΡΗΣΗ`,
+              Description: departureDescription,
+              StartTime: DepartureStartTime,
+              EndTime: DepartureEndTime,
+            });
+          }
+          revalidatePath(path);
+          revalidatePath("/calendar");
+          return JSON.parse(JSON.stringify(booking));
+        }
       } else {
-        const ArrivalStartTime = new Date(rangeDate.from);
-        const ArrivalEndTime = new Date(rangeDate.from);
-        ArrivalStartTime.setHours(
-          parseInt(timeArrival.split(":")[0], 10),
-          parseInt(timeArrival.split(":")[1], 10)
-        );
-        ArrivalEndTime.setHours(
-          parseInt(timeArrival.split(":")[0], 10),
-          parseInt(timeArrival.split(":")[1], 10)
-        );
-        const appointmentDescription = `${
-          client.lastName + client.firstName
-        } - ${selectedDogsFiltered
-          .map(({ dogName }: any) => `${dogName}`)
-          .join(", ")} - ΑΦΙΞΗ`;
-        await Appointment.create({
-          Id: booking._id, // Use the training _id as the event Id
-          Type: "ΑΦΙΞΗ",
-          Subject: `${client.lastName} -AΦΙΞΗ`,
-          Description: appointmentDescription,
-          StartTime: ArrivalStartTime,
-          EndTime: ArrivalEndTime,
-        });
-        const DepartureStartTime = new Date(rangeDate.to);
-        const DepartureEndTime = new Date(rangeDate.to);
-        DepartureStartTime.setHours(
-          parseInt(timeDeparture.split(":")[0], 10),
-          parseInt(timeDeparture.split(":")[1], 10)
-        );
-        DepartureEndTime.setHours(
-          parseInt(timeDeparture.split(":")[0], 10),
-          parseInt(timeDeparture.split(":")[1], 10)
-        );
-        const departureDescription = `${
-          client.lastName + client.firstName
-        } - ${selectedDogsFiltered
-          .map(({ dogName }: any) => `${dogName}`)
-          .join(", ")} - ΑΝΑΧΩΡΗΣΗ`;
-        await Appointment.create({
-          Id: booking._id, // Use the training _id as the event Id
-          Type: "ΑΝΑΧΩΡΗΣΗ",
-          Subject: `${client.lastName} - ΑΝΑΧΩΡΗΣΗ`,
-          Description: departureDescription,
-          StartTime: DepartureStartTime,
-          EndTime: DepartureEndTime,
-        });
+        throw new Error("Service not found");
       }
-      revalidatePath(path);
-      revalidatePath("/calendar");
-      return JSON.parse(JSON.stringify(booking));
     }
   } catch (error) {
     console.log("Failed to create booking", error);
@@ -199,6 +208,11 @@ export async function editBookingDate(id: string, rangeDate: DateRange) {
     if (!updatedBooking) {
       throw new Error("Booking not found");
     } else {
+      await Service.findOne({
+        bookingId: updatedBooking._id,
+        date: updatedBooking.fromDate,
+      });
+
       if (updatedBooking.flag) {
         const pickUpAppointment = JSON.parse(
           JSON.stringify(
@@ -568,6 +582,7 @@ export async function editBookingRooms(id: string, bookingData: any) {
 export async function clientBookings(clientId: string) {
   try {
     connectToDatabase();
+
     const bookings = await Booking.find({ clientId });
     return bookings;
   } catch (error) {
@@ -631,4 +646,44 @@ export async function checkExistingBooking({ rangeDate, clientId }: any) {
     console.error("Failed to check booking:", error);
     throw error;
   }
+}
+
+export async function countBookingsByMonth() {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+
+  // Initialize an object to store the counts for each month
+  const bookingsByMonth = [];
+
+  // Loop through each month of the current year
+  for (let month = 0; month < currentDate.getMonth() + 1; month++) {
+    // Set the start date of the current month
+    const startDateOfMonth = new Date(currentYear, month, 1);
+
+    // Calculate the end date of the current month
+    const endDateOfMonth = new Date(currentYear, month + 1, 0, 23, 59, 59);
+
+    try {
+      connectToDatabase();
+      const count = await Booking.countDocuments({
+        fromDate: { $gte: startDateOfMonth, $lte: endDateOfMonth },
+      });
+
+      // Store the count for the current month
+      bookingsByMonth.push({
+        month: startDateOfMonth.toLocaleString("en-US", { month: "long" }),
+        count,
+      });
+    } catch (error) {
+      console.error(
+        `Error counting bookings for ${startDateOfMonth.toLocaleString(
+          "el-GR",
+          { month: "long" }
+        )}:`,
+        error
+      );
+    }
+  }
+
+  return bookingsByMonth;
 }
