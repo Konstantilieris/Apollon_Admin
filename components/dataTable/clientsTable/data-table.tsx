@@ -42,7 +42,7 @@ interface DataTableProps<TData, TValue> {
     title: string;
     value: string[];
   }[];
-  isTrainingOptions: {
+  isTrainingOptions?: {
     column_name: string;
     title: string;
 
