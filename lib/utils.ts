@@ -391,3 +391,79 @@ export function numberToHexString(number: number) {
 
   return hexString;
 }
+export function DateValidation(item: string) {
+  const date = new Date(item);
+  if (date.toString() === "Invalid Date") {
+    return new Date();
+  }
+  return date;
+}
+export function weatherCondition(code: number) {
+  switch (code) {
+    case 0:
+      return {
+        label: "Καθαρός ουρανός",
+        imgUrl: "/assets/weather/clearSky.svg",
+      };
+    case 1:
+      return {
+        label: "Κυρίως αίθριος",
+        imgUrl: "/assets/weather/mainlyClear.svg",
+      };
+    case 2:
+      return {
+        label: "Αραιή Συννεφιά",
+        imgUrl: "/assets/weather/partlyCloudy.svg",
+      };
+    case 3:
+      return { label: "Συννεφιά", imgUrl: "/assets/weather/cloudy.svg" };
+    case 45 | 48:
+      return { label: "Ομίχλη", imgUrl: "/assets/weather/fog.svg" };
+
+    case 51 | 53:
+      return { label: "Ψιλόβροχο", imgUrl: "/assets/weather/drizzle.svg" };
+    case 55:
+      return {
+        label: "βαρύ ψιλόβροχο",
+        imgUrl: "/assets/weather/heavyDrizzle.svg",
+      };
+    case 56 | 57:
+      return {
+        label: "Παγερό ψιλόβροχο",
+        imgUrl: "/assets/weather/freezingDrizzle.svg",
+      };
+    case 61 | 63 | 65:
+      return { label: "Βροχή", imgUrl: "/assets/weather/rain.svg" };
+    case 66 | 67:
+      return {
+        label: "Παγωμένη βροχή",
+        imgUrl: "/assets/weather/freezingRain.svg",
+      };
+    case 71:
+      return {
+        label: "Χιονόνερο",
+        imgUrl: "/assets/weather/lightSnowfall.svg",
+      };
+    case 73:
+      return { label: "Χιόνι", imgUrl: "/assets/weather/moderateSnowfall.svg" };
+    case 75:
+      return { label: "Πυκνό χιόνι", imgUrl: "/assets/weather/heavySnow.svg" };
+    case 80 | 81 | 82:
+      return {
+        label: "Ντούς Βροχής",
+        imgUrl: "/assets/weather/rainShowers.svg",
+      };
+    case 85 | 86:
+      return {
+        label: "Ντούς Χιόνι",
+        imgUrl: "/assets/weather/snowShower.svg",
+      };
+    case 95 | 96 | 99:
+      return {
+        label: "Θυελλώδεις Βροχές",
+        imgUrl: "/assets/weather/thunderstorm.svg",
+      };
+    default:
+      return { label: "Άγνωστο", imgUrl: "/assets/weather/unknown.svg" };
+  }
+}

@@ -38,21 +38,33 @@ export const columns: ColumnDef<any>[] = [
           );
         },
       },
-
       {
-        accessorKey: "email",
+        id: "dognames",
+        accessorFn: (row) => {
+          if (row.dog) {
+            const names = row.dog.map((item: any) => {
+              return item.name;
+            });
+
+            return names.join(" ");
+          } else {
+            return null;
+          }
+        },
         header: () => (
-          <div className="flex flex-row items-center justify-center gap-2">
-            <Image
-              alt={"email"}
-              src={"/assets/icons/email.svg"}
-              width={30}
-              height={20}
-            />{" "}
-            Email
+          <div className="ml-4 flex flex-row items-center leading-[26px]">
+            Ονομα Σκυλου{" "}
           </div>
         ),
+        cell: ({ row }) => {
+          const see: string = row.getValue("dognames");
+
+          return (
+            <div className="ml-2 flex flex-col gap-2 leading-6">{see} </div>
+          );
+        },
       },
+
       {
         accessorKey: "profession",
         header: ({ column }) => (
@@ -65,16 +77,16 @@ export const columns: ColumnDef<any>[] = [
       },
 
       {
-        accessorKey: "location.residence",
+        accessorKey: "location.city",
         header: () => (
           <div className="mr-4 flex flex-row items-center gap-2">
             <Image
-              src={"/assets/icons/residence.svg"}
-              alt="residence"
+              src={"/assets/icons/city.svg"}
+              alt="city"
               width={30}
               height={25}
             />
-            Κατοικία
+            Πόλη
           </div>
         ),
       },
@@ -93,19 +105,20 @@ export const columns: ColumnDef<any>[] = [
         ),
       },
       {
-        accessorKey: "location.city",
+        accessorKey: "location.residence",
         header: () => (
           <div className="mr-4 flex flex-row items-center gap-2">
             <Image
-              src={"/assets/icons/city.svg"}
-              alt="city"
+              src={"/assets/icons/residence.svg"}
+              alt="residence"
               width={30}
               height={25}
             />
-            Πόλη
+            Κατοικία
           </div>
         ),
       },
+
       {
         accessorKey: "phone.telephone",
         header: () => (
@@ -152,6 +165,20 @@ export const columns: ColumnDef<any>[] = [
 
         enableGlobalFilter: true,
       },
+      {
+        accessorKey: "email",
+        header: () => (
+          <div className="ml-8 flex flex-row items-center justify-center gap-2">
+            <Image
+              alt={"email"}
+              src={"/assets/icons/email.svg"}
+              width={30}
+              height={20}
+            />{" "}
+            Email
+          </div>
+        ),
+      },
     ],
   },
 
@@ -180,32 +207,6 @@ export const columns: ColumnDef<any>[] = [
         },
       },
 
-      {
-        id: "dognames",
-        accessorFn: (row) => {
-          if (row.dog) {
-            const names = row.dog.map((item: any) => {
-              return item.name;
-            });
-
-            return names.join(" ");
-          } else {
-            return null;
-          }
-        },
-        header: () => (
-          <div className="ml-4 flex flex-row items-center leading-[26px]">
-            Ονομα Σκυλου{" "}
-          </div>
-        ),
-        cell: ({ row }) => {
-          const see: string = row.getValue("dognames");
-
-          return (
-            <div className="ml-2 flex flex-col gap-2 leading-6">{see} </div>
-          );
-        },
-      },
       {
         id: "dogGender",
         accessorFn: (row) => {

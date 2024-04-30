@@ -4,9 +4,9 @@ import { connectToDatabase } from "../mongoose";
 import Client from "@/database/models/client.model";
 
 import Service from "@/database/models/service.model";
-import { numberToHexString } from "../utils";
+import { DateValidation, numberToHexString } from "../utils";
 export async function parseClients() {
-  const filePath = "/Users/Cringiano/Desktop/old/oldClients.json";
+  const filePath = "/Users/Cringiano/Desktop/old/QueryCouples.json";
 
   try {
     const fileData = fs.readFileSync(filePath, "utf-8");
@@ -17,7 +17,9 @@ export async function parseClients() {
         _id: numberToHexString(+item._id),
         firstName: item.firstName,
         lastName: item.lastName,
+        profession: item.profession,
         vet: item.vet,
+        createdAt: DateValidation(item.createdAt),
         vetNumber: item.vetNumber,
         location: {
           residence: item.residence,
@@ -31,21 +33,20 @@ export async function parseClients() {
 
         notes: item.notes,
       },
-      dog: {
-        name: item.dogName,
-        birthdate: new Date(item.birthdate),
-        gender: item.gender,
-        breed: item.breed,
-        food: item.food,
-      },
+      dog: [
+        ...item.dogName.split("-").map((dog: string) => ({
+          name: dog.trim(),
+          gender: "αρσενικός",
+          birthdate: new Date(item.birthdate),
+          food: item.food,
+          breed: item.breed,
+        })),
+      ],
     }));
 
     connectToDatabase();
     modifiedData.forEach(async (item: any) => {
-      await Client.create({
-        ...item.clientData,
-        dog: [item.dog],
-      });
+      await Client.create({ ...item.clientData, dog: item.dog });
     });
   } catch (error) {
     console.error("Error reading JSON file:", error);

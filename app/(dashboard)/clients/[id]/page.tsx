@@ -88,7 +88,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
             <div className="mt-5 flex flex-wrap items-center justify-start gap-5"></div>
           </div>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 ">
           <Table>
             <TableCaption>Στοιχεία Πελάτη</TableCaption>
             <TableHeader>
@@ -191,7 +191,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
       <div className="flex flex-row justify-end">
         <CustomerChargeSheet client={JSON.parse(JSON.stringify(client))} />
       </div>
-      <div className=" flex w-full flex-row  justify-center">
+      <div className=" flex w-full flex-row  justify-center p-4">
         <Tabs
           defaultValue="owes"
           className="flex w-full flex-col items-center justify-center gap-6"
@@ -290,7 +290,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
             value="bookings"
             className=" text-dark100_light900 background-light700_dark300 flex w-full flex-col gap-6 rounded-lg "
           >
-            <ScrollArea className="h-full w-full rounded-md border text-center">
+            <ScrollArea className="w-full rounded-md border text-center lg:max-h-[350px] 2xl:max-h-[600px]">
               <div className="p-4">
                 <h4 className="mb-4   text-[24px] font-medium  leading-none underline decoration-black decoration-2 underline-offset-8 dark:decoration-purple-300">
                   ΚΡΑΤΗΣΕΙΣ-{client.lastName}
