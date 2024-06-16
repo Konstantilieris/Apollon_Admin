@@ -1,0 +1,7 @@
+.scrollbar-custom::-webkit-scrollbar {
+  width: 3px;
+
+  border-radius: 9999px;
+  /* background color of the scrollbar track */
+  background: hsla(24, 93%, 44%, 0.822);
+}

@@ -93,13 +93,23 @@ export async function getAllClientsByQuery(searchQuery: string | undefined) {
     throw error;
   }
 }
-export async function getClientById(id: string) {
+export async function getClientById(id: string | undefined) {
   try {
     connectToDatabase();
     const client = await Client.findById(id).populate({
       path: "owes",
       model: "Service",
     });
+    return client;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function getClientByIdForBooking(id: string | undefined) {
+  try {
+    connectToDatabase();
+    const client = await Client.findById(id, "firstName lastName dog");
     return client;
   } catch (error) {
     console.log(error);
@@ -271,4 +281,16 @@ export async function countClientsByMonth() {
   }
 
   return clientsByMonth;
+}
+export async function updateClients() {
+  try {
+    connectToDatabase();
+    const result = await Client.updateMany(
+      { bookingPerDay: { $exists: false } },
+      { bookingPerDay: 30 }
+    );
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
 }

@@ -14,6 +14,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        bankGradient: "#0179FE",
         Tomato: "#FF6347",
         SteelBlue: "#4682B4",
         LimeGreen: "#32CD32",
@@ -70,6 +71,8 @@ module.exports = {
         "light-300": "-10px 10px 20px 0px rgba(218, 213, 213, 0.10)",
         "dark-100": "0px 2px 10px 0px rgba(46, 52, 56, 0.10)",
         "dark-200": "2px 0px 20px 0px rgba(39, 36, 36, 0.04)",
+        chart:
+          "0px 1px 3px 0px rgba(16, 24, 40, 0.10), 0px 1px 2px 0px rgba(16, 24, 40, 0.06)",
       },
 
       screens: {
@@ -77,6 +80,14 @@ module.exports = {
         "2xl": "2000px",
       },
       keyframes: {
+        shimmer: {
+          from: {
+            backgroundPosition: "0 0",
+          },
+          to: {
+            backgroundPosition: "-200% 0",
+          },
+        },
         "accordion-down": {
           from: { height: 0 },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -87,6 +98,7 @@ module.exports = {
         },
       },
       animation: {
+        shimmer: "shimmer 2s linear infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },

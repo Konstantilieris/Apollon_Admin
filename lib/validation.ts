@@ -18,7 +18,7 @@ export const LogInValidation = z.object({
 
 export const ExpensesValidation = z.object({
   description: z.string().optional(),
-  category: z.string(),
+
   amount: z.string(),
   date: z.date(),
 });

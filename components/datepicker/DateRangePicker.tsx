@@ -12,11 +12,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { DateRange } from "react-day-picker";
 
 interface Props {
   className?: string;
-  rangeDate: any;
-  setRangeDate: any;
+  rangeDate?: DateRange;
+  setRangeDate?: any;
 }
 export function DatePickerWithRange({
   className,
@@ -31,7 +32,7 @@ export function DatePickerWithRange({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-noto_sans font-bold background-light800_dark300 text-dark300_light700 hover:scale-105 border-purple-500 border-2 min-h-[40px]",
+              "w-[300px] justify-start text-left font-noto_sans font-bold background-light800_dark300 text-dark300_light700 hover:scale-105 border-blue-500 border min-h-[40px]",
               !rangeDate && "text-muted-foreground"
             )}
           >

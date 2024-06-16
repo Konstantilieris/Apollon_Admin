@@ -11,6 +11,7 @@
       2px 4px #222324,
       3px 5px #222324;
   }
+
   .background-light850_dark100 {
     @apply bg-light-850 dark:bg-dark-100;
   }
@@ -79,7 +80,7 @@
   .text-dark500_light500 {
     @apply text-dark-500 dark:text-light-500;
   }
-
+   
   .text-dark300_light900 {
     @apply text-dark-300 dark:text-light-900 !important;
   }
@@ -95,13 +96,38 @@
   .text-dark400_light500 {
     @apply text-dark-400 dark:text-light-500;
   }
-
+  .banktab-item {
+    @apply gap-[18px] border-b-2 flex px-2 sm:px-4 py-2 transition-all;
+  }
   .text-dark400_light900 {
     @apply text-dark-400 dark:text-light-900 !important;
+  }
+  .recent-expenses {
+    @apply flex w-full flex-col gap-6  rounded-lg px-1 py-2;
+  }
+  .recent-expenses-label {
+    @apply font-semibold text-gray-900;
+  }
+  .recent-expenses-tablist {
+    @apply mb-8 flex w-full flex-nowrap;
   }
 
   .text-light400_light500 {
     @apply text-light-400 dark:text-light-500 !important;
+  }
+  .total-balance {
+    @apply flex w-full items-center gap-4 rounded-xl border border-gray-200 p-4 shadow-chart sm:gap-6 sm:p-6;
+  }
+  .total-balance-chart {
+    @apply flex flex-row w-full max-w-[120px] items-center sm:max-w-[120px] dark:bg-slate-900 bg-blue-100 rounded-lg p-2;
+  }
+
+  .total-balance-label {
+    @apply text-14 font-medium text-gray-600;
+  }
+
+  .total-balance-amount {
+    @apply text-24 lg:text-30 flex-1 font-semibold text-gray-900;
   }
 
   .light-border {
@@ -175,7 +201,7 @@
   .small-medium {
     @apply text-[12px] font-medium leading-[15.6px];
   }
-
+  
   .small-semibold {
     @apply text-[12px] font-semibold leading-[15.6px];
   }
@@ -185,7 +211,7 @@
   }
 
   .subtle-regular {
-    @apply text-[10px] font-normal leading-[13px];
+    @apply text-[14px] font-normal leading-[13px];
   }
 
   .subtle-email {
@@ -210,6 +236,12 @@
 
   .shadow-light100_darknone {
     @apply shadow-light-100 dark:shadow-none;
+  }
+  .category-info {
+    @apply gap-[18px] flex p-4 transition-all border  border-transparent;
+  }
+  .category-info_content {
+    @apply flex flex-1 items-center justify-between gap-2 overflow-hidden flex-row max-lg:flex-col;
   }
 
   .blue-gradient {

@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <main className=" relative   flex w-full flex-col ">
+    <main className=" relative   flex h-full w-full flex-col">
       <div className="  z-0 flex  w-full flex-row bg-black lg:max-h-[76.7vh] 2xl:max-h-[80vh]">
         {/* responsive text size ,responsive change of positionings */}
         <p className="hero-text font-noto_sans tracking-widest">

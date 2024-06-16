@@ -32,7 +32,7 @@ export interface IClient {
     mobile?: string;
     work_phone?: string;
   };
-
+  bookingPerDay?: number;
   createdAt?: Date;
   owes?: Schema.Types.ObjectId[];
   reference?: IReference;
@@ -142,6 +142,11 @@ const ClientSchema = new Schema<IClient>({
   notes: {
     type: String,
   },
+  bookingPerDay: {
+    type: Number,
+    default: 30,
+  },
+
   emergencyContact: {
     type: String,
   },

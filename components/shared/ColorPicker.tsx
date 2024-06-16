@@ -5,7 +5,7 @@ import { colors } from "@/constants";
 
 const ColorPicker = ({ color, setColor, disabled }: any) => {
   return (
-    <div className="mt-2 flex h-full flex-col">
+    <div className="mt-2 flex h-full flex-col items-start">
       <HexColorPicker color={color} onChange={setColor} />
       <div className="mt-4 grid grid-cols-7 gap-2">
         {colors.map((color: any, i) => {
@@ -21,9 +21,6 @@ const ColorPicker = ({ color, setColor, disabled }: any) => {
           );
         })}
       </div>
-      <span className="mt-6 rounded-full   py-2 text-center font-bold text-slate-800 shadow-lg shadow-lime-500">
-        Χρώμα Κατηγορίας
-      </span>
     </div>
   );
 };

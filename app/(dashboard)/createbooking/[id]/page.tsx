@@ -1,79 +1,60 @@
-import { getBookingById } from "@/lib/actions/booking.action";
-import { formatDate } from "@/lib/utils";
-import React, { Suspense } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import BookingBox from "@/components/booking/BookingBox";
+import LoadingSkeleton from "@/components/shared/LoadingSkeleton";
+import { getClientByIdForBooking } from "@/lib/actions/client.action";
+import { getAllRoomsAndBookings } from "@/lib/actions/room.action";
+import { intToDate } from "@/lib/utils";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+const RoomBox = dynamic(() => import("@/components/booking/AvailableRooms"), {
+  ssr: false,
+});
 
-import { getAllRooms } from "@/lib/actions/room.action";
-import EditbookingChange from "@/components/booking/EditBookingChange";
-import Image from "next/image";
-const EditChange = async ({ params }: any) => {
-  const booking = JSON.parse(await getBookingById(params.id));
-  const rooms = JSON.parse(await getAllRooms());
-  function findRoomNameById(id: string) {
-    const room = rooms.find((room: any) => room._id === id);
-    return room ? room.name : "Room not found"; // Return room name if found, otherwise a default message
-  }
-
+const EditChange = async ({ searchParams, params }: any) => {
+  const [client, { allRooms, isNext }] = await Promise.all([
+    getClientByIdForBooking(params.id),
+    getAllRoomsAndBookings({
+      rangeDate: {
+        from: intToDate(+searchParams.fr),
+        to: intToDate(+searchParams.to),
+      },
+      page: searchParams.page ? +searchParams.page : 1,
+      filter: searchParams.filter,
+      query: searchParams.q ? searchParams.q : "",
+    }),
+  ]);
+  const pageNumber = searchParams.page ? +searchParams.page : 1;
   return (
-    <Suspense>
-      <section className="text-dark100_light900 flex flex-col gap-4">
-        <h1 className="font-noto_sans text-[40px] font-extrabold">
-          ΚΑΛΩΣΗΡΘΑΤΕ ΣΤΗΝ ΕΠΕΞΕΡΓΑΣΙΑ ΚΡΑΤΗΣΗΣ
-        </h1>
-        <Card className="background-light800_dark400 border-2 border-purple-700">
-          <CardHeader>
-            <CardTitle className="font-noto_sans font-extrabold">
+    <section className=" no-scrollbar flex h-full  w-full flex-row  scroll-smooth font-noto_sans max-2xl:max-h-screen max-xl:overflow-y-scroll">
+      <div className="flex w-full flex-1 flex-col gap-8   scroll-smooth px-5 py-7 max-2xl:min-h-screen max-2xl:gap-2 max-2xl:py-8 sm:px-8 2xl:max-h-screen">
+        <header className=" flex flex-col justify-between gap-8 max-2xl:gap-2">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-dark100_light900 font-semibold max-lg:text-sm lg:text-lg">
               {" "}
-              Πραγματοποιείται αλλαγή στην κράτηση με αριθμό : &nbsp; {"  "}
-              {booking._id} &nbsp;{" "}
-            </CardTitle>
-            <CardDescription className="font-noto_sans text-lg font-bold">
-              {" "}
-              Πελάτης : &nbsp;
-              {booking.clientId.lastName} &nbsp; {booking.clientId.firstName}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col text-lg">
-            {booking.dogs.map((item: any) => {
-              return (
-                <span key={item.dogId}>
-                  &bull; {item.dogName} ΣΤΟ ΔΩΜΑΤΙΟ{" "}
-                  {findRoomNameById(item.roomId)}
-                </span>
-              );
-            })}
-            <span>
-              &bull; Hμερομηνία και ώρα άφιξης :{" "}
-              {formatDate(new Date(booking.fromDate), "el")} στις{" "}
-              {booking.timeArrival}{" "}
-            </span>{" "}
-            <span>
-              &bull; Hμερομηνία και ώρα αναχώρησης :{" "}
-              {formatDate(new Date(booking.toDate), "el")} στις{" "}
-              {booking.timeDeparture}
-            </span>
-          </CardContent>
-          <CardFooter className="gap-2 text-lg font-extrabold">
-            Προχωρήστε παρακάτω για τις εξής ενέργειες
-            <Image
-              src={"/assets/icons/arrow-down.svg"}
-              width={30}
-              height={20}
-              alt="arrow-down"
-              className="dark:invert"
-            />
-          </CardFooter>
-        </Card>
-        <EditbookingChange booking={booking} rooms={rooms} />
-      </section>
-    </Suspense>
+              ΔΗΜΙΟΥΡΓΙΑ
+              <span className="text-bankGradient">&nbsp;ΚΡΑΤΗΣΗΣ</span>
+            </h1>
+            <p className="text-dark500_light500 font-normal max-md:text-sm lg:text-lg ">
+              Κάντε την κράτησή σας με ευκολία και ακρίβεια. Οργανώστε τις
+              δραστηριότητές σας χωρίς κόπο και διαχειριστείτε το χρόνο σας με
+              αξιοπιστία.
+            </p>
+          </div>
+
+          <BookingBox client={client} searchParams={searchParams} />
+        </header>
+        <Suspense
+          fallback={<LoadingSkeleton size={20} animation="animate-spin" />}
+        >
+          <RoomBox
+            rooms={JSON.parse(JSON.stringify(allRooms))}
+            client={JSON.parse(JSON.stringify(client))}
+            isNext={isNext}
+            pageNumber={pageNumber}
+          />
+        </Suspense>
+      </div>
+      <aside className="no-scrollbar  h-full w-[300px] flex-col border-l border-gray-200 max-xl:hidden xl:flex xl:overflow-y-scroll"></aside>
+    </section>
   );
 };
 

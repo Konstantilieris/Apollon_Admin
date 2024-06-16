@@ -60,6 +60,22 @@ export const sidebarLinks: SidebarLink[] = [
     label: "Εκπαίδευση",
   },
 ];
+export const mainCategoryColors = [
+  "#FF6347",
+  "#4682B4",
+  "#32CD32",
+  "#FFD700",
+  "#9370DB",
+  "#008080",
+  "#8B4513",
+  "#4169E1",
+  "#FFA07A",
+  "#556B2F",
+  "#800080",
+  "#20B2AA",
+  "#FF69B4",
+  "#000080",
+];
 export const Priority = [1, 2, 3];
 export const TypesOfGender = ["Αρσενικό", "Θηλυκό"];
 export const TypesOfFood = [

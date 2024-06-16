@@ -18,7 +18,7 @@ import {
 
 import { useToast } from "../ui/use-toast";
 import { cn } from "@/lib/utils";
-import { DateInput } from "../shared/DateInput";
+import { DateInput } from "../datepicker/DateInput";
 import { chargeClient } from "@/lib/actions/client.action";
 import { usePathname } from "next/navigation";
 

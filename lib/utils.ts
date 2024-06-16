@@ -17,7 +17,19 @@ import {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+export function formatDateString2(inputDateString: Date) {
+  // Parse the input date string
+  const inputDate = new Date(inputDateString);
 
+  // Get the day, month, and year components
+  const day = inputDate.getDate();
+  const month = inputDate.getMonth() + 1; // Months are zero-based
+
+  // Format the date components
+  const formattedDate = `${day}/${month}`;
+
+  return formattedDate;
+}
 export function formatDateString(inputDateString: Date) {
   // Parse the input date string
   const inputDate = new Date(inputDateString);
@@ -79,7 +91,17 @@ export function formUrlQuery({ params, key, value }: URLQueryParams) {
     { skipNull: true }
   );
 }
-
+export function formCombinedParams(params: any, updates: any) {
+  const currentUrlParams = qs.parse(params);
+  const combinedParams = { ...currentUrlParams, ...updates };
+  return qs.stringifyUrl(
+    {
+      url: window.location.pathname,
+      query: combinedParams,
+    },
+    { skipNull: true }
+  );
+}
 export const statuses = [
   {
     value: "backlog",
@@ -167,14 +189,32 @@ export function formatDateUndefined(date: Date | undefined, language: string) {
     day: "numeric",
   }).format(date);
 }
-export function formatTime(date: Date | undefined, language: string) {
-  return new Intl.DateTimeFormat(language, {
+export function formatDateUndefined2(date: Date | undefined, language: string) {
+  if (!date) return "";
+
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
     hour: "numeric",
     minute: "numeric",
     hour12: false, // Use 24-hour format
-  }).format(date);
+  };
+
+  return new Intl.DateTimeFormat(language, options).format(date);
 }
 
+export function formatTime(date: Date | undefined, language: string) {
+  if (!date) return "";
+
+  const options: Intl.DateTimeFormatOptions = {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false, // Use 24-hour format
+  };
+
+  return new Intl.DateTimeFormat(language, options).format(date);
+}
 export function getDatesInRange(
   startDate: Date | undefined,
   endDate: Date | undefined
@@ -253,55 +293,53 @@ export function replacePercent20(inputString: string | null) {
   }
   return inputString.replace(/%20/g, "").split(" ").join("");
 }
-export function calculateTotal(
-  fromDate: Date,
-  timeOfArrival: Date,
-  toDate: Date,
-  timeOfDeparture: Date,
-  dailyPrice: number
-): number {
-  // Combine the date and time parts
-  const arrivalDateTime = new Date(fromDate);
-  arrivalDateTime.setHours(
-    timeOfArrival.getHours(),
-    timeOfArrival.getMinutes()
-  );
+export function calculateTotalPrice({
+  fromDate,
+  toDate,
+  dailyPrice,
+}: {
+  fromDate: Date;
+  toDate: Date;
+  dailyPrice: number;
+}) {
+  // Ensure the dates are Date objects (this step is not necessary if fromDate and toDate are already Date objects)
+  fromDate = new Date(fromDate);
+  toDate = new Date(toDate);
 
-  const departureDateTime = new Date(toDate);
-  departureDateTime.setHours(
-    timeOfDeparture.getHours(),
-    timeOfDeparture.getMinutes()
-  );
-
-  // If arrival time is after 14:00, move to the next day
-  if (timeOfArrival.getHours() >= 14) {
-    arrivalDateTime.setDate(arrivalDateTime.getDate() + 1);
-    arrivalDateTime.setHours(14, 0, 0, 0);
-  } else {
-    arrivalDateTime.setHours(14, 0, 0, 0);
+  // If toDate is before or same as fromDate, return 0
+  if (toDate <= fromDate) {
+    return 0;
   }
 
-  // If departure time is after 14:00, move to the next day
-  if (timeOfDeparture.getHours() >= 14) {
-    departureDateTime.setDate(departureDateTime.getDate() + 1);
-    departureDateTime.setHours(14, 0, 0, 0);
-  } else {
-    departureDateTime.setHours(14, 0, 0, 0);
-  }
+  // Calculate the total number of days
+  const oneDay = 24 * 60 * 60 * 1000; // Milliseconds in one day
 
-  // Ensure the arrivalDateTime is before the departureDateTime
-  if (arrivalDateTime >= departureDateTime) return 0;
-
-  // Calculate the number of nights based on the 14:00 start and end time
-  const numberOfNights = Math.floor(
-    (departureDateTime.getTime() - arrivalDateTime.getTime()) /
-      (24 * 60 * 60 * 1000)
+  // Set fromDate and toDate to midday of their respective days to avoid time discrepancies
+  const checkInMidday = new Date(
+    fromDate.getFullYear(),
+    fromDate.getMonth(),
+    fromDate.getDate(),
+    12,
+    0,
+    0
+  );
+  const checkOutMidday = new Date(
+    toDate.getFullYear(),
+    toDate.getMonth(),
+    toDate.getDate(),
+    12,
+    0,
+    0
   );
 
-  // Calculate the total cost
-  const totalCost = numberOfNights * dailyPrice;
+  // Calculate the difference in days between checkOutMidday and checkInMidday
+  const timeDiff = checkOutMidday.getTime() - checkInMidday.getTime();
+  const totalDays = Math.ceil(timeDiff / oneDay); // Use Math.ceil to ensure any partial day is counted as a full day
 
-  return totalCost;
+  // Calculate the total price
+  const totalPrice = totalDays * dailyPrice;
+
+  return totalPrice;
 }
 export function ManageAvailability(
   roomUnavailableDates: string[] | undefined,
@@ -362,9 +400,9 @@ export function sumTotalOwesAndSpent(transactions: any[]) {
   return { totalOwes, totalSpent };
 }
 
-export function ExpendsLabel({ categories }: any) {
+export function ExpendsLabel({ total }: any) {
   const obj: any = [];
-  categories.map((item: any) => {
+  total.map((item: any) => {
     obj.push(`${item._id.toUpperCase()}-${item.totalAmount}€`);
     return obj;
   });
@@ -466,4 +504,42 @@ export function weatherCondition(code: number) {
     default:
       return { label: "Άγνωστο", imgUrl: "/assets/weather/unknown.svg" };
   }
+}
+export const removeSpecialCharacters = (value: string) => {
+  return value.replace(/[^\w\s]/gi, "");
+};
+export function formatAmount(amount: number): string {
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 2,
+  });
+
+  return formatter.format(amount);
+}
+export function dateToInt(date: Date | undefined) {
+  if (!date) return 0;
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // getMonth() returns 0-11, so add 1
+  const day = date.getDate().toString().padStart(2, "0");
+  return parseInt(`${year}${month}${day}`);
+}
+
+export function intToDate(dateInt: number | undefined) {
+  if (!dateInt) return new Date();
+  const dateStr = dateInt.toString();
+  const year = parseInt(dateStr.substring(0, 4));
+  const month = parseInt(dateStr.substring(4, 6)) - 1; // JavaScript months are 0-based
+  const day = parseInt(dateStr.substring(6, 8));
+  return new Date(Date.UTC(year, month, day));
+}
+export function setLocalTime(date: Date, time: string) {
+  // Split the tm1 string to extract hours and minutes
+  if (!time) return date;
+  const [hours, minutes] = time.split("-").map(Number);
+
+  // Set the hours and minutes in local time
+  date.setHours(hours, minutes, 0, 0); // setting seconds and milliseconds to 0
+
+  return date;
 }

@@ -25,7 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { useToast } from "@/components/ui/use-toast";
-const DynamicDrawer = dynamic(() => import("@/components/shared/RoomDrawer"));
+const DynamicDrawer = dynamic(() => import("@/components/booking/RoomDrawer"));
 
 const Booking = ({ clients, rooms }: any) => {
   const [rangeDate, setRangeDate] = useState<DateRange>({

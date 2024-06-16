@@ -33,13 +33,11 @@ const SearchBar = ({
         });
         router.push(newUrl, { scroll: false });
       } else {
-        if (pathname === route) {
-          const newUrl = removeKeysFromQuery({
-            params: searchParams.toString(),
-            keysToRemove: ["q"],
-          });
-          router.push(newUrl, { scroll: false });
-        }
+        const newUrl = removeKeysFromQuery({
+          params: searchParams.toString(),
+          keysToRemove: ["q"],
+        });
+        router.push(newUrl, { scroll: false });
       }
     }, 500);
 
@@ -48,7 +46,7 @@ const SearchBar = ({
 
   return (
     <div
-      className={`background-light800_darkgradient flex min-h-[56px] grow items-center gap-4 rounded-[10px] px-4 ${otherClasses}`}
+      className={`flex max-h-[50px] min-h-[36px] grow items-center gap-4 rounded-[10px] bg-light-700  px-4  dark:bg-dark-300  ${otherClasses}`}
     >
       {iconPosition === "left" && (
         <Image
@@ -56,7 +54,7 @@ const SearchBar = ({
           alt="search Icon"
           width={24}
           height={24}
-          className="cursor-pointer"
+          className="cursor-pointer invert dark:invert-0"
         />
       )}
       <Input
@@ -64,7 +62,7 @@ const SearchBar = ({
         placeholder={placeholder}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="paragraph-regular no-focus placeholder border-none bg-transparent shadow-none outline-none "
+        className="paragraph-regular  placeholder no-focus border-none bg-transparent shadow-none outline-none "
       />
       {iconPosition === "right" && (
         <Image

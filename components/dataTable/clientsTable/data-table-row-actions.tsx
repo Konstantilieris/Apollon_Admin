@@ -20,6 +20,9 @@ export function DataTableRowActions({ row }: any) {
   const handleProfile = () => {
     router.push(`/clients/${row?.original?._id ?? ""}`);
   };
+  const handleBooking = () => {
+    router.push(`/createbooking/${row?.original?._id ?? ""}`);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -37,6 +40,9 @@ export function DataTableRowActions({ row }: any) {
       >
         <DropdownMenuItem onClick={handleProfile} className="hover:scale-105">
           Άνοιγμα Προφίλ
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleBooking} className="hover:scale-105">
+          Δημιουργία Κράτησης
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

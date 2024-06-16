@@ -1,0 +1,56 @@
+.carousel-item-padding-40-px {
+  padding-left: 10px;
+  padding-right: 20px;
+}
+
+.container {
+  display: flex;
+
+  align-items: center;
+}
+
+.container .react-multi-carousel-list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+.container .react-multi-carousel-track {
+  display: flex;
+  align-items: center;
+}
+.arrow-left {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 20px;
+  z-index: 2;
+}
+.arrow-right {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 20px;
+  z-index: 2;
+}
+.react-multi-carousel-dot-list {
+  margin-top: 10px; /* Add margin top to the dots */
+}
+
+.react-multi-carousel-dot button {
+  background: #ccc; /* Style for dots */
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+}
+
+.react-multi-carousel-dot--active button {
+  background: #000; /* Style for active dot */
+}

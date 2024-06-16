@@ -63,12 +63,12 @@ const MobileNav = () => {
             width={38}
             height={36}
             alt="menu"
-            className="invert-colors cursor-pointer sm:hidden"
+            className="invert-colors cursor-pointer lg:hidden"
           />
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="background-light900_dark200 border-none max-w-[300px]"
+          className="background-light900_dark200 max-w-[300px] border-none"
         >
           <Link
             href="/main"

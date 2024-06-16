@@ -5,7 +5,7 @@ import { Drawer, DrawerContent, DrawerFooter } from "@/components/ui/drawer";
 import BookingForm from "../form/BookingForm";
 import { Button } from "../ui/button";
 
-import LoadingSkeleton from "./LoadingSkeleton";
+import LoadingSkeleton from "../shared/LoadingSkeleton";
 
 const RoomDrawer = ({ open, setOpen, rooms, clients, rangeDate }: any) => {
   return (

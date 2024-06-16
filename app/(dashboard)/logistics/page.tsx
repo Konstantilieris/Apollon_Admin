@@ -11,7 +11,7 @@ const page = async () => {
   ]);
 
   return (
-    <div className="mt-2 flex w-full p-2 2xl:min-h-[2vh]">
+    <div className="mt-2 flex w-full py-4 pr-16 2xl:min-h-[2vh]">
       <Tabs
         defaultValue="clients"
         className=" text-dark100_light900 background-light700_dark300 flex min-h-[500px] w-full min-w-[1200px] flex-col gap-6 rounded-lg p-4"

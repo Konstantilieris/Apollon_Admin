@@ -614,6 +614,9 @@ export async function deleteBooking(id: string) {
 export async function checkExistingBooking({ rangeDate, clientId }: any) {
   try {
     connectToDatabase();
+    if (!rangeDate.from || !rangeDate.to) {
+      return false;
+    }
     const existingBooking = await Booking.findOne({
       clientId,
       $or: [

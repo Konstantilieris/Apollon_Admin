@@ -19,7 +19,7 @@ import {
   TypesOfFood,
   TypesOfGender,
 } from "@/constants";
-import { DateInput } from "../shared/DateInput";
+import { DateInput } from "../datepicker/DateInput";
 import { Input } from "../ui/input";
 
 const DogField = ({ form, index }: any) => {
