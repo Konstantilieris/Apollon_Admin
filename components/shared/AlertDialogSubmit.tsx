@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { CreateBooking } from "@/lib/actions/booking.action";
-import { calculateTotal, cn, formatDate, formatTime } from "@/lib/utils";
+import { cn, formatDate, formatTime } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { useToast } from "../ui/use-toast";
@@ -47,15 +47,7 @@ const AlertDialogSubmit = ({
   const { toast } = useToast();
   const path = usePathname();
 
-  const [price, setPrice] = useState(
-    calculateTotal(
-      rangeDate?.from,
-      timeArrival,
-      rangeDate?.to,
-      timeDeparture,
-      30
-    ) * bookingData.length
-  );
+  const [price, setPrice] = useState(0);
   const handleBookingAction = async () => {
     try {
       const booking = await CreateBooking({

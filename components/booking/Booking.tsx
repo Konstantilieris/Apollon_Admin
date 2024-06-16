@@ -1,17 +1,15 @@
 "use client";
 
-import { roomColumns } from "@/components/dataTable/bookingsTable/bookingColumn";
 import { DatePickerWithRange } from "@/components/datepicker/DateRangePicker";
-import dynamic from "next/dynamic";
 
-import { createRooms, getAllRoomsAndBookings } from "@/lib/actions/room.action";
+import { createRooms } from "@/lib/actions/room.action";
 import { cn, removeKeysFromQuery, resetHours } from "@/lib/utils";
 import { addDays } from "date-fns";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +23,6 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { useToast } from "@/components/ui/use-toast";
-const DynamicDrawer = dynamic(() => import("@/components/booking/RoomDrawer"));
 
 const Booking = ({ clients, rooms }: any) => {
   const [rangeDate, setRangeDate] = useState<DateRange>({
@@ -38,7 +35,7 @@ const Booking = ({ clients, rooms }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
 
   const { toast } = useToast();
-  const [bookings, setBookings] = useState([]);
+
   const [name, setName] = useState("");
   const router = useRouter();
   const [show, setShow] = useState(false);
@@ -52,20 +49,6 @@ const Booking = ({ clients, rooms }: any) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openDrawer]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!rangeDate) return;
-        const allrooms = await getAllRoomsAndBookings(rangeDate);
-        setBookings(JSON.parse(allrooms));
-      } catch (error) {
-        console.error("Error fetching rooms:", error);
-      }
-    };
-    const fetchDataWithDelay = setTimeout(fetchData, 500); // Adjust the delay as needed
-    return () => clearTimeout(fetchDataWithDelay);
-  }, [rangeDate]);
 
   const handleCreateRoom = async () => {
     try {
@@ -166,17 +149,6 @@ const Booking = ({ clients, rooms }: any) => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-        {!openDrawer && rooms ? (
-          <DataTable data={bookings} columns={roomColumns()} />
-        ) : (
-          <DynamicDrawer
-            rooms={rooms}
-            open={openDrawer}
-            setOpen={setOpenDrawer}
-            clients={clients}
-            rangeDate={rangeDate}
-          />
-        )}
       </div>
     </section>
   );
