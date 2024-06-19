@@ -80,7 +80,7 @@
   .text-dark500_light500 {
     @apply text-dark-500 dark:text-light-500;
   }
-   
+
   .text-dark300_light900 {
     @apply text-dark-300 dark:text-light-900 !important;
   }
@@ -201,7 +201,7 @@
   .small-medium {
     @apply text-[12px] font-medium leading-[15.6px];
   }
-  
+
   .small-semibold {
     @apply text-[12px] font-semibold leading-[15.6px];
   }

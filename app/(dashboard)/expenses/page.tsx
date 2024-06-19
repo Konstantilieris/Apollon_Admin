@@ -2,11 +2,12 @@ import {
   getAllCategories,
   getMainCategoriesWithExpenses,
 } from "@/lib/actions/expenses.action";
-import React from "react";
+import React, { Suspense } from "react";
 
 import ExpenseBox from "@/components/shared/cards/ExpenseBox";
 import RecentExpenses from "@/components/shared/expenses/RecentExpenses";
 import Pagination from "@/components/shared/Pagination";
+import LoadingSkeleton from "@/components/shared/LoadingSkeleton";
 
 const page = async ({ searchParams: { id, page, sub } }: any) => {
   const main = await getAllCategories();
@@ -34,14 +35,34 @@ const page = async ({ searchParams: { id, page, sub } }: any) => {
           </div>
           <ExpenseBox />
         </header>
-        <RecentExpenses
-          data={main}
-          collection={results}
-          mainId={main[0]?._id}
-          query={mainId}
-        />
-        <div className="mt-10">
-          <Pagination pageNumber={page ? +page : 1} isNext={hasNextPage} />
+        <Suspense
+          fallback={<LoadingSkeleton size={20} animation="animate-spin" />}
+        >
+          <RecentExpenses
+            data={main}
+            collection={results}
+            mainId={mainId}
+            query={mainId}
+          />
+        </Suspense>
+
+        <div>
+          <Suspense
+            fallback={<LoadingSkeleton size={20} animation="animate-spin" />}
+          >
+            {results.length > 0 ? (
+              <div className="mt-10">
+                <Pagination
+                  pageNumber={page ? +page : 1}
+                  isNext={hasNextPage}
+                />
+              </div>
+            ) : (
+              <div className="mt-12 flex justify-center">
+                <LoadingSkeleton size={140} animation="animate-pulse" />
+              </div>
+            )}
+          </Suspense>
         </div>
       </div>
       <aside className="no-scrollbar  h-full w-[300px] flex-col border-l border-gray-200 xl:flex xl:overflow-y-scroll"></aside>

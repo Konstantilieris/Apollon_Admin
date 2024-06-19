@@ -1,19 +1,15 @@
 import React from "react";
 import DoughnutChart from "../charts/DoughnutChart";
 import {
-  getAllCategories,
   totalFromEachMainCategory,
   totalSumFromAllCategories,
 } from "@/lib/actions/expenses.action";
-
-import CreateExpenseDialog from "@/components/form/CreateExpenseDialog";
 
 import { cn } from "@/lib/utils";
 import AnimatedCounter from "../AnimatedCounter";
 
 const ExpenseBox = async ({ searchParams }: any) => {
-  const [categories, total, totalSum] = await Promise.all([
-    getAllCategories(),
+  const [total, totalSum] = await Promise.all([
     totalFromEachMainCategory(),
     totalSumFromAllCategories(),
   ]);
@@ -48,9 +44,7 @@ const ExpenseBox = async ({ searchParams }: any) => {
           "self-start": totalSum,
           "self-center": !totalSum,
         })}
-      >
-        <CreateExpenseDialog data={categories} />
-      </div>
+      ></div>
     </section>
   );
 };

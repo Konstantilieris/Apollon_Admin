@@ -40,15 +40,7 @@ export async function createExpense({
     throw error;
   }
 }
-export async function getExpenses() {
-  try {
-    connectToDatabase();
-    const expenses = await Expenses.find();
-    console.log(expenses);
-  } catch (error) {
-    console.log(error);
-  }
-}
+
 export async function getExpensesByCategories() {
   try {
     connectToDatabase();
@@ -183,12 +175,12 @@ export async function createSubCategory({
   name,
   icon,
   color,
-  parentCategory,
+  parentCategoryId,
 }: {
   name: string;
   icon: string;
   color: string;
-  parentCategory: any;
+  parentCategoryId: any;
 }) {
   try {
     connectToDatabase();
@@ -196,9 +188,9 @@ export async function createSubCategory({
       name,
       icon,
       color,
-      parentCategory: parentCategory._id,
+      parentCategory: parentCategoryId,
     });
-    await Categories.findByIdAndUpdate(parentCategory._id, {
+    await Categories.findByIdAndUpdate(parentCategoryId, {
       $push: { subCategories: subCategory._id },
     });
     if (subCategory) {

@@ -71,7 +71,7 @@ const WeatherRow = () => {
 
     fetchWeatherData();
   }, []);
-  console.log(weatherData);
+
   return (
     <div className="flex flex-col gap-8">
       <div className="background-light900_dark200 text-dark400_light700 flex flex-row items-center justify-between gap-2 rounded-lg p-4 font-noto_sans text-lg font-semibold">

@@ -6,27 +6,30 @@ import { cn } from "@/lib/utils";
 
 import SubCategoryCarousel from "./SubCategoryCarousel";
 
-const ExpenseInfo = ({ data, mainId, totalSum = 0 }: any) => {
+import CreateCategoryDialog from "./CreateCategoryDialog";
+import CreateExpenseDialog from "@/components/form/CreateExpenseDialog";
+
+const ExpenseInfo = ({ data, totalSum = 0 }: any) => {
   return (
     <div
       className={cn(
-        `category-info background-light850_dark100 shadow-sm border-white rounded-lg text-dark200_light900 font-noto_sans`
+        `category-info background-light850_dark100 shadow-sm border-white rounded-lg text-dark200_light900 font-noto_sans max-h-[150px] min-h-[130px]`
       )}
     >
-      <figure className={`flex-center mt-4 h-fit rounded-full bg-blue-600`}>
+      <figure className={`flex-center h-fit rounded-full bg-blue-600`}>
         <Image
-          src={data?.mainCategory.img}
+          src={data?.img}
           width={20}
           height={20}
-          alt={data.mainCategory.name}
+          alt={data?.name}
           className="m-2 w-5 "
         />
       </figure>
       <div className="flex w-full flex-1 flex-col justify-center gap-1">
-        <div className="category-info_content">
+        <div className="category-info_content ">
           <div>
             <h2 className={` line-clamp-1 flex-1 font-bold  2xl:text-lg`}>
-              {data.mainCategory.name}
+              {data?.name}
             </h2>
             <p className={` text-center font-medium  `}>
               <span className="2xl:text-lg"> Σύνολο Εξόδων Κατηγορίας : </span>
@@ -37,18 +40,16 @@ const ExpenseInfo = ({ data, mainId, totalSum = 0 }: any) => {
           </div>
 
           <div
-            className={`flex max-h-[100px] max-w-[350px]  items-center justify-end gap-2 self-end px-3 py-1 font-medium text-blue-700 dark:text-blue-300 2xl:max-w-[150px]`}
+            className={`flex max-h-[100px] max-w-[350px]  items-center justify-end gap-4 self-end px-3 py-1 font-medium text-blue-700 dark:text-blue-300 2xl:max-w-[150px]`}
           >
-            <span className="mb-4 flex flex-row items-center gap-2 2xl:text-lg">
-              Υποκατηγορίες
-            </span>
+            <CreateExpenseDialog parentCategory={data} />
+            <CreateCategoryDialog parentCategory={data} />
+
             <span className="mb-4 flex flex-row items-center gap-2 rounded-full bg-light-700 px-3 py-2 font-semibold text-black dark:text-blue-600 2xl:text-lg">
-              {data.mainCategory.subCategories.length}
+              {data?.subCategories.length}
             </span>
 
-            <SubCategoryCarousel
-              subCategories={data.mainCategory.subCategories}
-            />
+            <SubCategoryCarousel subCategories={data?.subCategories} />
           </div>
         </div>
       </div>

@@ -24,16 +24,23 @@ const RecentExpenses = async ({ data, mainId, collection, query }: any) => {
             </TabsTrigger>
           ))}
         </TabsList>
-        {collection.map((main: any) => (
-          <TabsContent
-            key={main.mainCategory._id}
-            value={main.mainCategory._id}
-            className="space-y-4"
-          >
-            <ExpenseInfo data={main} totalSum={total[0].totalAmount} />
-            <ExpensesTable expenses={main.expenses} />
-          </TabsContent>
-        ))}
+        {data
+          ?.filter((item: any) => item._id === mainId)
+          .map((main: any) => (
+            <ExpenseInfo
+              data={main}
+              totalSum={total[0]?.totalAmount}
+              key={main._id}
+            />
+          ))}
+
+        <TabsContent
+          key={collection[0]?.mainCategory._id}
+          value={collection[0]?.mainCategory._id}
+          className="space-y-4"
+        >
+          <ExpensesTable expenses={collection[0]?.expenses} />
+        </TabsContent>
       </Tabs>
     </section>
   );

@@ -29,7 +29,7 @@ const SubCarouselItem = ({ sub }: any) => {
   return (
     <>
       {open && (
-        <div className="absolute right-20 top-10 z-50     text-[8px] italic text-light-500 dark:text-light-700">
+        <div className="absolute right-20 top-10 z-50     text-[12px] italic text-light-500 dark:text-light-700">
           {" "}
           {sub.name}{" "}
         </div>
