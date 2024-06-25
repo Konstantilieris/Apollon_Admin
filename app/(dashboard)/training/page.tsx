@@ -5,17 +5,13 @@ import { getAllClientsByQuery } from "@/lib/actions/client.action";
 import { replacePercent20 } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+
 import { getAllTrainings } from "@/lib/actions/training.action";
 import { DataTable } from "@/components/dataTable/clientsTable/data-table";
 import { trainingColumns } from "@/components/dataTable/trainingTable/TrainingColumns";
-const DynamicTrainingForm = dynamic(
-  () => import("@/components/form/TrainingForm"),
-  {
-    ssr: false,
-  }
-);
+
 const Page = () => {
+  // eslint-disable-next-line no-unused-vars
   const [clients, setClients] = useState<any>();
   const [training, setTraining] = useState<any>();
   const [openForm, setOpenForm] = useState(false);
@@ -68,9 +64,7 @@ const Page = () => {
           </Button>
         </div>
       )}
-      {openForm && clients && (
-        <DynamicTrainingForm clients={clients} setOpenForm={setOpenForm} />
-      )}
+
       <div className="mt-12 h-full  w-full">
         {!openForm && training && (
           <>
