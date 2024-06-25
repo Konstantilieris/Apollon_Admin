@@ -44,7 +44,7 @@ const LocalSearch = ({
 
   return (
     <div
-      className={` background-light900_dark300 flex max-h-[56px] grow items-center gap-4 rounded-[10px] px-4 ${otherClasses} font-noto_sans font-bold`}
+      className={`background-light700_dark400 flex max-h-[56px] grow items-center gap-4 rounded-[10px] px-4 ${otherClasses} font-noto_sans font-bold`}
     >
       <Input
         type="text"

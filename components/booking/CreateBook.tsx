@@ -10,7 +10,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useSearchParams } from "next/navigation";
-import { checkExistingBooking } from "@/lib/actions/booking.action";
+import {
+  checkExistingBooking,
+  createBooking,
+} from "@/lib/actions/booking.action";
 import {
   calculateTotalPrice,
   cn,
@@ -18,7 +21,7 @@ import {
   intToDate,
   setLocalTime,
 } from "@/lib/utils";
-import {} from "../ui/use-toast";
+import { useToast } from "../ui/use-toast";
 import { Input } from "../ui/input";
 
 const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
@@ -28,7 +31,7 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
 
   const [costDeparture, setCostDeparture] = React.useState(0);
   const [costArrival, setCostArrival] = React.useState(0);
-
+  const { toast } = useToast();
   const [change, setChange] = React.useState(false);
   useEffect(() => {
     const validateBooking = async () => {
@@ -72,6 +75,43 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
       dailyPrice: 30,
     })
   );
+  const handleCreateBooking = async () => {
+    const totalprice = totalAmount + (costArrival || 0) + (costDeparture || 0);
+    try {
+      const res = await createBooking({
+        clientId_string: client._id,
+        fromDate,
+        toDate,
+        totalprice,
+        bookingData: dogsInRooms,
+        flag1: searchParams.has("flag1"),
+        flag2: searchParams.has("flag2"),
+        path: "/createbooking",
+      });
+      if (res) {
+        toast({
+          className: cn(
+            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          ),
+          title: "Επιτυχία",
+          description: "Η κράτηση δημιουργήθηκε",
+        });
+      }
+    } catch (error) {
+      toast({
+        className: cn(
+          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+        ),
+        title: "Failed to create Booking",
+        description: `${error}`,
+      });
+    } finally {
+      setShow(false);
+      setDogsInRooms([]);
+      window.location.reload();
+    }
+  };
+
   return (
     <>
       {!validate.check ? (
@@ -99,7 +139,7 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
           ΚΡΑΤΗΣΗ
         </Button>
       ) : (
-        <span className="animate-pulse rounded-lg bg-light-700 p-2 font-bold text-red-500 dark:bg-dark-500">
+        <span className="max-w-[180px] animate-pulse rounded-lg bg-light-700 p-2 text-center text-sm font-bold text-red-500 dark:bg-dark-500">
           {validate?.message}
         </span>
       )}
@@ -127,27 +167,28 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
               </span>
               {searchParams.has("flag1") && (
                 <span className="flex flex-row items-center gap-2 ">
+                  <span className="flex flex-row">
+                    Χρέωση Παραλαβής {costArrival || 0} €{" "}
+                  </span>
                   <Input
                     className="background-light850_dark100 text-light850_dark500 max-w-[90px]"
                     type="number"
                     value={costArrival || ""}
                     onChange={(e) => setCostArrival(parseInt(e.target.value))}
                   />{" "}
-                  <span className="flex flex-row">
-                    Χρέωση Παραλαβής {costArrival || 0} €{" "}
-                  </span>
                 </span>
               )}{" "}
               {searchParams.has("flag2") && (
                 <span className="flex flex-row items-center gap-2">
-                  <Input
-                    className="background-light850_dark100 text-light850_dark500 max-w-[90px]"
-                    value={costDeparture || ""}
-                    onChange={(e) => setCostDeparture(parseInt(e.target.value))}
-                  />
                   <span className="flex flex-row">
                     Χρέωση Παράδοσης {costDeparture || 0} €{" "}
                   </span>
+                  <Input
+                    className="background-light850_dark100 text-light850_dark500 max-w-[90px]"
+                    value={costDeparture || ""}
+                    type="number"
+                    onChange={(e) => setCostDeparture(parseInt(e.target.value))}
+                  />
                 </span>
               )}
               <div className="flex flex-col gap-2">
@@ -156,10 +197,7 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
                     Σύνολο μεταφορών {(costArrival || 0) + (costDeparture || 0)}
                   </span>
                 )}
-                <span>
-                  Χρέωση ανα ημέρα 30 € - Σύνολικο κόστος διαμονής{" "}
-                  {totalAmount || 0} €
-                </span>
+
                 <div className="mt-2 flex flex-row items-center  gap-2">
                   <Button
                     onClick={() => setChange(!change)}
@@ -176,6 +214,12 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
                     />
                   )}
                 </div>
+                <span>
+                  Χρέωση ανα ημέρα 30 € - Κόστος διαμονής {totalAmount || 0} €
+                </span>
+                <span>
+                  Συνολικό Κόστος :{totalAmount + costArrival + costDeparture}
+                </span>
               </div>
             </div>
           </AlertDialogHeader>
@@ -183,8 +227,11 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
             <AlertDialogCancel className="border border-red-400 hover:scale-105 hover:border-red-600">
               ΑΚΥΡΩΣΗ
             </AlertDialogCancel>
-            <Button className="border border-green-400 hover:scale-105 hover:border-green-600">
-              ΚΑΤΑΧΩΡΗΣΗ
+            <Button
+              className="border border-green-400 hover:scale-105 hover:border-green-600"
+              onClick={handleCreateBooking}
+            >
+              ΔΗΜΙΟΥΡΓΙΑ ΚΡΑΤΗΣΗΣ
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

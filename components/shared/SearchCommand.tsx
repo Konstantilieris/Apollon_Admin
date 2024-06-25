@@ -1,6 +1,6 @@
 "use client";
 
-import LocalSearch from "./LocalSearch";
+import LocalSearch from "./searchBar/LocalSearch";
 
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "@radix-ui/react-menubar";

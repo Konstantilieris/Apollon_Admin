@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css"; // Ensure you import the styles for the carousel
@@ -27,7 +28,6 @@ const SubCategoryCarousel = ({ subCategories }: any) => {
   return (
     <div className="relative flex  max-w-[300px] flex-col items-center gap-2 self-end">
       <Carousel
-        ssr
         responsive={responsive}
         infinite={false}
         containerClass="container rounded-lg bg-light-700 dark:bg-dark-400  p-x-1 shadow-md shadow-white dark:shadow-dark-500 min-h-[70px] max-w-[160px] min-w-[120px]"

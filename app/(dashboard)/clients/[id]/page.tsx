@@ -31,8 +31,9 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import CustomerChargeSheet from "@/components/shared/sheet/CustomerChargeSheet";
-import UncheckPayment from "@/components/shared/UncheckPayment";
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import UncheckPayment from "@/components/shared/clientProfile/UncheckPayment";
 
 const Client = async ({ params, searchParams }: URLProps) => {
   const { id } = params;

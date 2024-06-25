@@ -4,19 +4,20 @@ import Image from "next/image";
 
 const page = () => {
   return (
-    <section className="blue-gradient dark:dark-gradient flex  h-screen w-full flex-col  gap-8 p-8">
-      <h2 className="h2-bold text-light850_dark500 mt-10 flex items-center gap-4 self-center font-noto_sans italic">
-        {" "}
-        Συνδεθείτε στον λογαριασμό σας
-        <Image
-          src="/assets/icons/login-account.svg"
-          width={80}
-          height={50}
-          alt={"something"}
-        />
-      </h2>
+    <main className=" text-dark300_light700  relative   flex  min-h-[87vh] w-full overflow-x-hidden bg-light-850 font-noto_sans dark:bg-black 2xl:min-h-[90vh]">
       <LogInForm />
-    </section>
+      <div className="  sticky top-0 flex  min-h-full w-full items-center justify-end max-lg:hidden">
+        <div className="relative min-h-full w-full">
+          <Image
+            src="/assets/icons/auth-form.svg"
+            alt="asset"
+            width={1200}
+            height={1000}
+            className="absolute left-[420px] top-[14vh] rounded-lg border-2 border-light-500 shadow-light-400 dark:border-light-700 dark:shadow-slate-600"
+          />
+        </div>
+      </div>
+    </main>
   );
 };
 

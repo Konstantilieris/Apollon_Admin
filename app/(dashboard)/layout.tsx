@@ -1,4 +1,4 @@
-import Sidebar from "@/components/dashboard/sidebar/Sidebar";
+import Sidebar from "@/components/navbar/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import "../globals.css";
 import React from "react";

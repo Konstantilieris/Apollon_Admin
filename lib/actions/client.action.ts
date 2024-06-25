@@ -282,15 +282,33 @@ export async function countClientsByMonth() {
 
   return clientsByMonth;
 }
-export async function updateClients() {
+export async function globalSearch({ query }: any) {
   try {
     connectToDatabase();
-    const result = await Client.updateMany(
-      { bookingPerDay: { $exists: false } },
-      { bookingPerDay: 30 }
-    );
-    console.log(result);
+
+    const clients = await Client.find({
+      $or: [
+        {
+          $expr: {
+            $regexMatch: {
+              input: { $concat: ["$firstName", " ", "$lastName"] },
+              regex: query,
+              options: "i",
+            },
+          },
+        },
+        {
+          "dog.name": {
+            $regex: query,
+            $options: "i",
+          },
+        },
+      ],
+    }).limit(5);
+
+    return JSON.stringify(clients);
   } catch (error) {
-    console.log(error);
+    console.error("Error searching clients:", error);
+    throw error;
   }
 }

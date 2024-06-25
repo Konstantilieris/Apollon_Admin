@@ -5,6 +5,7 @@ import React, { useState } from "react";
 
 const SubCarouselItem = ({ sub }: any) => {
   const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
   const subFilter = searchParams.get("sub");
@@ -15,6 +16,7 @@ const SubCarouselItem = ({ sub }: any) => {
         keysToRemove: ["sub"],
       });
       router.push(newUrl, { scroll: false });
+      setOpen2(false);
     } else {
       const newUrl = formUrlQuery({
         params: searchParams.toString(),
@@ -23,12 +25,13 @@ const SubCarouselItem = ({ sub }: any) => {
       });
 
       router.push(newUrl, { scroll: false });
+      setOpen2(true);
     }
   };
 
   return (
     <>
-      {open && (
+      {(open || open2) && (
         <div className="absolute right-20 top-10 z-50     text-[12px] italic text-light-500 dark:text-light-700">
           {" "}
           {sub.name}{" "}

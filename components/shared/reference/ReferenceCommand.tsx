@@ -2,7 +2,7 @@
 
 import { Separator } from "@radix-ui/react-menubar";
 import { cn } from "@/lib/utils";
-import LocalSearch from "../LocalSearch";
+import LocalSearch from "../searchBar/LocalSearch";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 interface Params {
   firstName: string;

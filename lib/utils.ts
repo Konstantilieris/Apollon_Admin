@@ -543,3 +543,8 @@ export function setLocalTime(date: Date, time: string) {
 
   return date;
 }
+export const GlobalSearchFilters = [
+  { name: "Προφίλ ", value: "client" },
+  { name: "Κράτηση", value: "booking" },
+  { name: "Εκπαίδευση", value: "training" },
+];

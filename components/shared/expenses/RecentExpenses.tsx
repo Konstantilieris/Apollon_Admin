@@ -3,11 +3,17 @@ import React from "react";
 import CategoryTabItem from "./CategoryTabItem";
 
 import ExpenseInfo from "./ExpenseInfo";
-import { totalFromMainCategoryWithId } from "@/lib/actions/expenses.action";
+import {
+  getTopSubCategory,
+  getTotalFromCategoryWithId,
+} from "@/lib/actions/expenses.action";
 import ExpensesTable from "./ExpensesTable";
 
 const RecentExpenses = async ({ data, mainId, collection, query }: any) => {
-  const total = await totalFromMainCategoryWithId({ id: query });
+  const [total, topSubCategory] = await Promise.all([
+    getTotalFromCategoryWithId({ id: query }),
+    getTopSubCategory({ id: query }),
+  ]);
 
   return (
     <section className="recent-expenses text-dark400_light500 bg-light-700 dark:bg-dark-200 ">
@@ -31,6 +37,7 @@ const RecentExpenses = async ({ data, mainId, collection, query }: any) => {
               data={main}
               totalSum={total[0]?.totalAmount}
               key={main._id}
+              topSubCategory={topSubCategory}
             />
           ))}
 

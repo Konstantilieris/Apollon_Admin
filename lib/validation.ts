@@ -12,8 +12,14 @@ export const AdminValidation = z
     path: ["confirm"], // path of error
   });
 export const LogInValidation = z.object({
-  name: z.string().min(2).max(20),
-  password: z.string().min(2).max(15),
+  name: z
+    .string()
+    .min(2, { message: "Πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
+    .max(20),
+  password: z
+    .string()
+    .min(2, { message: "Πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
+    .max(15),
 });
 
 export const ExpensesValidation = z.object({
@@ -30,11 +36,11 @@ export const ChargeValidation = z.object({
 export const ClientValidation = z.object({
   firstName: z
     .string()
-    .min(2, { message: "Το επίθετο πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
+    .min(2, { message: "Πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
     .max(20),
   lastName: z
     .string()
-    .min(2, { message: "Το επίθετο πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
+    .min(2, { message: "Πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
     .max(20),
   email: z.string().optional(),
   profession: z.string().optional(),

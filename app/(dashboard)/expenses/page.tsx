@@ -1,5 +1,6 @@
 import {
   getAllCategories,
+  getFromMainCategorySubCategoriesTotal,
   getMainCategoriesWithExpenses,
 } from "@/lib/actions/expenses.action";
 import React, { Suspense } from "react";
@@ -8,16 +9,20 @@ import ExpenseBox from "@/components/shared/cards/ExpenseBox";
 import RecentExpenses from "@/components/shared/expenses/RecentExpenses";
 import Pagination from "@/components/shared/Pagination";
 import LoadingSkeleton from "@/components/shared/LoadingSkeleton";
+import SubCategoryBadge from "@/components/shared/expenses/SubCategoryBadge";
 
-const page = async ({ searchParams: { id, page, sub } }: any) => {
+const page = async ({ searchParams: { id, page, sub, q } }: any) => {
   const main = await getAllCategories();
   const mainId = !id ? main[0]?._id : id;
-  const { results, hasNextPage } = await getMainCategoriesWithExpenses({
-    id: mainId,
-    page: page ? +page : 1,
-    sub,
-  });
-
+  const [{ results, hasNextPage }, result] = await Promise.all([
+    getMainCategoriesWithExpenses({
+      id: mainId,
+      page: page ? +page : 1,
+      sub,
+      query: q,
+    }),
+    getFromMainCategorySubCategoriesTotal({ id: mainId }),
+  ]);
   return (
     <section className="  no-scrollbar flex h-full  w-full flex-row  scroll-smooth max-2xl:max-h-screen max-xl:overflow-y-scroll ">
       <div className="flex w-full flex-1 flex-col gap-8   scroll-smooth px-5 py-7 max-2xl:min-h-screen max-2xl:gap-2 max-2xl:py-8 sm:px-8 2xl:max-h-screen">
@@ -65,7 +70,15 @@ const page = async ({ searchParams: { id, page, sub } }: any) => {
           </Suspense>
         </div>
       </div>
-      <aside className="no-scrollbar  h-full w-[300px] flex-col border-l border-gray-200 xl:flex xl:overflow-y-scroll"></aside>
+      <aside className="no-scrollbar  min-h-[120vh] w-[300px] flex-col border-l border-gray-400  px-2 py-4 dark:border-gray-200 xl:flex xl:overflow-y-scroll">
+        <h1 className="mb-2 text-center text-dark-400 dark:text-light-700 ">
+          {" "}
+          Μηνιαία Έξοδα Yποκατηγορίας
+        </h1>
+        {result.map((item: any) => (
+          <SubCategoryBadge key={item.subcategory._id} sub={item} />
+        ))}
+      </aside>
     </section>
   );
 };

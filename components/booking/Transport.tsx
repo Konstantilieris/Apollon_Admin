@@ -13,7 +13,7 @@ import TimePicker from "./TimePicker";
 import ToggleTransport from "./ToggleTransport";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
-import Image from "next/image";
+
 import {
   cn,
   formCombinedParams,
@@ -26,8 +26,7 @@ const Transport = () => {
   const router = useRouter();
   const [tm1, setTm1] = useState<Date | null>(null);
   const [tm2, setTm2] = useState<Date | null>(null);
-  const [check1, setCheck1] = useState(false);
-  const [check2, setCheck2] = useState(false);
+
   const [open, setOpen] = useState(false);
   const handleDeleteURL = () => {
     const newUrl = removeKeysFromQuery({
@@ -81,24 +80,9 @@ const Transport = () => {
               </h1>
 
               <div className="flex flex-row items-center">
-                <Button
-                  className={cn(
-                    "relative flex max-h-[28px] min-w-[22px] cursor-pointer items-center rounded-2xl bg-slate-400/80 py-[0.1px] hover:bg-slate-500 hover:animate-pulse hover:cursor-pointer dark:bg-slate-500 dark:bg-opacity-80 dark:hover:bg-slate-500 dark:hover:animate-pulse dark:hover:cursor-pointer",
-                    { "opacity-50": check2 }
-                  )}
-                  onClick={() => setCheck1(!check1)}
-                >
-                  <Image
-                    src="/assets/icons/clock2.svg"
-                    alt="clock"
-                    width={20}
-                    height={20}
-                    className="hover:animate-spin"
-                  />
-                </Button>
                 <ToggleTransport type={"flag1"} />
               </div>
-              <TimePicker setTime={setTm1} check={check1} time={tm1} />
+              <TimePicker setTime={setTm1} time={tm1} />
             </span>
             <span className="flex h-full min-w-[150px] flex-col items-center gap-2">
               <h1 className=" text-lg font-medium">
@@ -107,24 +91,9 @@ const Transport = () => {
               </h1>
 
               <div className="flex flex-row items-center">
-                <Button
-                  className={cn(
-                    "relative flex max-h-[28px] min-w-[22px] cursor-pointer items-center rounded-2xl bg-slate-400/80 py-[0.1px] hover:bg-slate-500 hover:animate-pulse hover:cursor-pointer dark:bg-slate-500 dark:bg-opacity-80 dark:hover:bg-slate-500 dark:hover:animate-pulse dark:hover:cursor-pointer",
-                    { "opacity-50": check2 }
-                  )}
-                  onClick={() => setCheck2(!check2)}
-                >
-                  <Image
-                    src="/assets/icons/clock2.svg"
-                    alt="clock"
-                    width={20}
-                    height={20}
-                    className="hover:animate-spin"
-                  />
-                </Button>
                 <ToggleTransport type={"flag2"} />
               </div>
-              <TimePicker setTime={setTm2} check={check2} time={tm2} />
+              <TimePicker setTime={setTm2} time={tm2} />
             </span>
           </div>
         </AlertDialogHeader>

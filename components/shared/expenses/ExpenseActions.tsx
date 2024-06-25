@@ -18,15 +18,71 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
-import { deleteExpense } from "@/lib/actions/expenses.action";
-import { formatDateUndefined } from "@/lib/utils";
+import z from "zod";
+import { ExpensesValidation } from "@/lib/validation";
+import { deleteExpense, updateExpense } from "@/lib/actions/expenses.action";
+import { cn, formatDateUndefined } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { DateInput } from "@/components/datepicker/DateInput";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 const ExpenseActions = ({ expense }: { expense: any }) => {
   const [action, setAction] = React.useState<string>("");
+  const { toast } = useToast();
   const handleDelete = async () => {
     await deleteExpense({ id: expense._id, path: "/expenses" });
     setAction("");
     window.location.reload();
+  };
+  const form = useForm<z.infer<typeof ExpensesValidation>>({
+    resolver: zodResolver(ExpensesValidation),
+    defaultValues: {
+      amount: expense?.amount,
+      description: expense?.description,
+      date: new Date(expense?.date),
+    },
+  });
+  const onSubmit = async (values: z.infer<typeof ExpensesValidation>) => {
+    try {
+      const res = await updateExpense({
+        id: expense._id,
+        amount: parseFloat(values.amount),
+        description: values.description,
+        date: values.date,
+      });
+      if (res) {
+        toast({
+          title: "Επιτυχής ενημέρωση",
+          description: "Η δαπάνη ενημερώθηκε με επιτυχία",
+          className: cn(
+            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          ),
+          duration: 5000,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast({
+        className: cn(
+          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+        ),
+        title: "Αποτυχία",
+        description: `${error}`,
+      });
+    } finally {
+      setAction("");
+      window.location.reload();
+    }
   };
 
   return (
@@ -85,6 +141,110 @@ const ExpenseActions = ({ expense }: { expense: any }) => {
                 width={20}
                 height={20}
                 alt="delete"
+                className="invert-0"
+              />
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={action === "edit"}>
+        <AlertDialogContent className="background-light800_dark400 text-dark100_light900 min-h-[200px] font-noto_sans">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Επεξεργασία Δαπάνης{" "}
+              {formatDateUndefined(new Date(expense?.date), "el")}-{" "}
+              {expense?.description}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="text-dark200_light900 flex w-full flex-row   flex-wrap    gap-2"
+                >
+                  <FormField
+                    control={form.control}
+                    name="date"
+                    render={({ field }) => (
+                      <FormItem className="flex  min-w-[0.5vw] flex-col">
+                        <FormLabel className=" font-noto_sans text-base font-normal">
+                          Ημερομηνία δαπάνης
+                        </FormLabel>
+                        <FormControl>
+                          <DateInput field={field} maxwidth={"min-w-[220px]"} />
+                        </FormControl>
+                        <span className=" font-noto_sans text-sm text-blue-500">
+                          π.χ. 21/05/2025
+                        </span>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="amount"
+                    render={({ field }) => (
+                      <FormItem className="flex  min-w-[0.5vw] flex-col">
+                        <FormLabel className=" font-noto_sans text-base font-normal">
+                          Συνολικό Κόστος €
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            className=" paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700  no-focus min-h-[56px] max-w-[400px] border font-noto_sans font-bold"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <span className=" font-noto_sans text-sm text-blue-500">
+                          π.χ. 50.45
+                        </span>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem className="flex  min-w-[0.5vw] flex-col">
+                        <FormLabel className=" font-noto_sans text-base font-normal">
+                          Προσθέστε μια περιγραφή για τη δαπάνη σας
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] max-w-[400px] border"
+                            {...field}
+                          />
+                        </FormControl>
+                        <span className=" font-noto_sans text-sm text-blue-500">
+                          π.χ. Πληρωμή ηλεκτρικού ρεύματος
+                        </span>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className="h-11 w-24 rounded-lg border border-red-600 p-2 hover:scale-105"
+              onClick={() => {
+                setAction("");
+                form.reset();
+              }}
+            >
+              Ακύρωση
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={form.handleSubmit(onSubmit)}
+              className="h-11 w-24 rounded-lg border border-purple-500 bg-white p-2 text-white hover:border-none hover:!bg-purple-800 hover:text-white dark:bg-dark-200"
+            >
+              <Image
+                src="/assets/icons/edit.svg"
+                width={20}
+                height={20}
+                alt="edit"
                 className="invert-0"
               />
             </AlertDialogAction>

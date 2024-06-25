@@ -4,7 +4,8 @@ import Expenses, { Categories } from "@/database/models/expenses.model";
 import { connectToDatabase } from "../mongoose";
 import { revalidatePath } from "next/cache";
 import mongoose from "mongoose";
-
+import { replacePercent20 } from "../utils";
+import { startOfMonth, endOfMonth } from "date-fns";
 export async function createExpense({
   amount,
   date,
@@ -215,54 +216,21 @@ export async function getAllCategories() {
     throw error;
   }
 }
-export async function totalFromEachMainCategory() {
+export async function totalMonthFromEachMainCategory() {
   try {
-    connectToDatabase();
-    const totalAmountByCategory = await Expenses.aggregate([
-      {
-        $lookup: {
-          from: "categories",
-          localField: "category.main",
-          foreignField: "_id",
-          as: "category",
-        },
-      },
-      {
-        $unwind: "$category",
-      },
-      {
-        $group: {
-          _id: "$category.name",
+    await connectToDatabase();
 
-          totalAmount: { $sum: "$amount" },
-        },
-      },
-    ]);
-    return totalAmountByCategory;
-  } catch (error) {
-    console.error(
-      "Error fetching total amount by category for current month:",
-      error
-    );
-    throw error;
-  }
-}
-export async function totalFromMainCategoryWithId({ id }: { id: string }) {
-  try {
-    connectToDatabase();
-    if (!id) {
-      const firstMainCategory = await Categories.findOne({
-        parentCategory: null,
-      });
-      if (!firstMainCategory) {
-        throw new Error("No main categories available.");
-      }
-      id = firstMainCategory._id;
-    }
-    const match = { "category.main": new mongoose.Types.ObjectId(id) };
+    const startOfCurrentMonth = startOfMonth(new Date());
+    const endOfCurrentMonth = endOfMonth(new Date());
+
     const totalAmountByCategory = await Expenses.aggregate([
       {
-        $match: match,
+        $match: {
+          date: {
+            $gte: startOfCurrentMonth,
+            $lte: endOfCurrentMonth,
+          },
+        },
       },
       {
         $lookup: {
@@ -278,11 +246,11 @@ export async function totalFromMainCategoryWithId({ id }: { id: string }) {
       {
         $group: {
           _id: "$category.name",
-
           totalAmount: { $sum: "$amount" },
         },
       },
     ]);
+
     return totalAmountByCategory;
   } catch (error) {
     console.error(
@@ -292,10 +260,45 @@ export async function totalFromMainCategoryWithId({ id }: { id: string }) {
     throw error;
   }
 }
+export async function getTotalFromCategoryWithId({ id }: { id: string }) {
+  try {
+    connectToDatabase();
+    const totalAmount = await Expenses.aggregate([
+      {
+        $match: {
+          "category.main": new mongoose.Types.ObjectId(id),
+          date: {
+            $gte: startOfMonth(new Date()),
+            $lte: endOfMonth(new Date()),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$category.main",
+          totalAmount: { $sum: "$amount" },
+        },
+      },
+    ]);
+    return totalAmount;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error fetching total amount from category with id.");
+  }
+}
+
 export async function totalSumFromAllCategories() {
   try {
     connectToDatabase();
     const totalSumFromAllCategories = await Expenses.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: startOfMonth(new Date()),
+            $lte: endOfMonth(new Date()),
+          },
+        },
+      },
       {
         $group: {
           _id: "SumforThisMonth",
@@ -316,12 +319,16 @@ export async function getMainCategoriesWithExpenses({
   id,
   page,
   sub,
+  query,
 }: {
   id: string;
   page: number;
   sub: string;
+  query: string;
 }) {
   try {
+    connectToDatabase();
+    const search = replacePercent20(query);
     if (!id) {
       const firstMainCategory = await Categories.findOne({
         parentCategory: null,
@@ -342,6 +349,7 @@ export async function getMainCategoriesWithExpenses({
     const totalCount = await Expenses.countDocuments(match);
     const pipeline: mongoose.PipelineStage[] = [
       { $match: match },
+      { $match: { description: { $regex: search || "", $options: "i" } } },
       {
         $lookup: {
           from: "categories",
@@ -387,6 +395,7 @@ export async function getMainCategoriesWithExpenses({
           },
         },
       },
+
       {
         $project: {
           _id: 0,
@@ -417,5 +426,150 @@ export async function getFirstMainCategory() {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+}
+export async function updateExpense({
+  id,
+  amount,
+  date,
+  description,
+}: {
+  id: string;
+  amount: number;
+  date: Date;
+  description?: string;
+}) {
+  try {
+    connectToDatabase();
+    const updatedExpense = await Expenses.findByIdAndUpdate(
+      id,
+      { amount, date, description },
+      { new: true }
+    );
+    if (updatedExpense) {
+      revalidatePath("/expenses");
+      return JSON.parse(JSON.stringify(updatedExpense));
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function getFromMainCategorySubCategoriesTotal({
+  id,
+}: {
+  id: string;
+}) {
+  try {
+    await connectToDatabase();
+    console.log("Connected to database");
+
+    const startOfMonthDate = startOfMonth(new Date());
+    const endOfMonthDate = endOfMonth(new Date());
+
+    // Check if there are any expenses for the given main category within the date range
+    const expensesInDateRange = await Expenses.find({
+      "category.main": new mongoose.Types.ObjectId(id),
+      date: {
+        $gte: startOfMonthDate,
+        $lte: endOfMonthDate,
+      },
+    }).exec();
+
+    if (!expensesInDateRange.length) {
+      console.log(
+        `No expenses found for main category with ID: ${id} within the date range`
+      );
+      return [];
+    } else {
+      console.log(`Found ${expensesInDateRange.length} expenses`);
+    }
+
+    const totalAmount = await Expenses.aggregate([
+      {
+        $match: {
+          "category.main": new mongoose.Types.ObjectId(id),
+          date: {
+            $gte: startOfMonthDate,
+            $lte: endOfMonthDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$category.sub",
+          totalAmount: { $sum: "$amount" },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "subcategory",
+        },
+      },
+      {
+        $unwind: "$subcategory",
+      },
+      {
+        $project: {
+          _id: 0,
+          subcategory: "$subcategory",
+          totalAmount: 1,
+        },
+      },
+    ]);
+
+    return totalAmount;
+  } catch (error) {
+    console.error("Error fetching total amount from category with id:", error);
+    throw new Error("Error fetching total amount from category with id.");
+  }
+}
+export async function getTopSubCategory({ id }: { id: string }) {
+  try {
+    connectToDatabase();
+    const topSubCategory = await Expenses.aggregate([
+      {
+        $match: {
+          "category.main": new mongoose.Types.ObjectId(id),
+        },
+      },
+      {
+        $group: {
+          _id: "$category.sub",
+          totalAmount: { $sum: "$amount" },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "subcategory",
+        },
+      },
+      {
+        $unwind: "$subcategory",
+      },
+      {
+        $sort: { totalAmount: -1 },
+      },
+      {
+        $limit: 1,
+      },
+      {
+        $project: {
+          _id: 0,
+          subcategory: "$subcategory",
+          totalAmount: 1,
+        },
+      },
+    ]);
+    return JSON.parse(JSON.stringify(topSubCategory));
+  } catch (error) {
+    console.error("Error fetching top subcategory:", error);
+    throw new Error("Error fetching top subcategory.");
   }
 }

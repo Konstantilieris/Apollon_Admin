@@ -4,14 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { LogInValidation } from "@/lib/validation";
 import * as z from "zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { signIn } from "next-auth/react";
@@ -19,6 +17,9 @@ import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { MagicInput } from "../ui/magic-input";
+import { Label } from "../ui/magic-label";
+import { Loader } from "lucide-react";
 
 const LogInForm = () => {
   // eslint-disable-next-line no-unused-vars
@@ -65,71 +66,96 @@ const LogInForm = () => {
     form.reset();
   };
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="background-light900_dark300 flex min-h-[400px] w-full max-w-[800px] flex-col items-center justify-between gap-2 space-y-8  self-center rounded-lg p-12 shadow-lg"
-      >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="group/form  flex min-w-[0.5vw] flex-row items-center gap-4">
-              <FormLabel className="text-dark400_light800 font-noto_sans text-[1.30rem] font-bold group-focus-within/form:hidden">
-                Username
-              </FormLabel>
-              <FormControl>
-                <Input
-                  autoComplete="off"
-                  {...field}
-                  className="no-focus paragraph-regular  min-h-[56px] max-w-[400px] border-2 border-purple-400 bg-slate-500 font-noto_sans font-bold text-white group-focus-within/form:scale-105 dark:bg-white dark:text-black"
-                />
-              </FormControl>
-              <Image
-                src="/assets/icons/shield.svg"
-                width={40}
-                height={30}
-                alt={"something"}
-              />
-              <FormMessage className="text-red-500" />
-            </FormItem>
-          )}
+    <section className="   flex h-full  w-full  flex-col items-center gap-4 self-center px-4 font-inter max-sm:px-6">
+      <div className="mb-8 flex flex-row items-center gap-2   text-[60px] font-bold dark:text-light-700">
+        <Image
+          src="/assets/icons/bone.svg"
+          alt="asset"
+          width={60}
+          height={60}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem className="group/form  flex min-w-[0.5vw] flex-row items-center gap-4">
-              <FormLabel className="text-dark400_light800 font-noto_sans text-[1.30rem] font-bold group-focus-within/form:hidden">
-                Password
-              </FormLabel>
-              <FormControl>
-                <Input
-                  className="no-focus paragraph-regular  min-h-[56px] max-w-[400px] border-2 border-purple-400 bg-slate-500 font-noto_sans font-bold text-white group-focus-within/form:scale-105 dark:bg-white dark:text-black"
-                  type="password"
-                  {...field}
-                />
-              </FormControl>
-              <Image
-                src="/assets/icons/lock.svg"
-                width={30}
-                height={30}
-                alt={"something"}
-              />
-              <FormMessage className="text-red-500" />
-            </FormItem>
-          )}
-        />
-
-        <Button
-          type="submit"
-          className="  text-dark200_light900 min-h-[50px] min-w-[130px] justify-self-end border-2 border-purple-500 bg-amber-200 p-4 font-noto_sans text-lg font-bold hover:scale-105 hover:animate-pulse dark:bg-stone-800"
-          disabled={isSubmitting}
+        Apollon
+      </div>
+      <h1 className="mb-8  text-center text-2xl font-semibold italic text-light-500">
+        Συνδεθείτε με τα διαπιστευτήριά σας για να αποκτήσετε πρόσβαση στην
+        εφαρμογή{" "}
+      </h1>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-8"
         >
-          {isSubmitting ? <>{"Αναμονή"}</> : <>{"ΣΥΝΔΕΣΗ"}</>}
-        </Button>
-      </form>
-    </Form>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem className="group/form  flex min-w-[0.5vw] flex-col gap-2">
+                <Label className="flex flex-row items-center gap-2 text-xl">
+                  <Image
+                    src="/assets/icons/shield.svg"
+                    width={40}
+                    height={30}
+                    alt={"something"}
+                  />{" "}
+                  Όνομα Χρήστη{" "}
+                </Label>
+                <FormControl className="max-w-[300px]">
+                  <MagicInput
+                    autoComplete="off"
+                    {...field}
+                    className="min-h-[50px] max-w-[400px]"
+                  />
+                </FormControl>
+
+                <FormMessage className="text-red-500" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="group/form  flex min-w-[0.5vw] flex-col  gap-2">
+                <Label className="flex flex-row items-center gap-2 text-xl">
+                  <Image
+                    src="/assets/icons/lock.svg"
+                    width={30}
+                    height={30}
+                    alt={"something"}
+                    className="mb-2"
+                  />{" "}
+                  Κωδικός Πρόσβασης{" "}
+                </Label>
+                <FormControl>
+                  <MagicInput
+                    {...field}
+                    autoComplete={"false"}
+                    type="password"
+                    className="min-h-[50px] min-w-[300px] max-w-[400px]"
+                  />
+                </FormControl>
+
+                <FormMessage className="text-red-500" />
+              </FormItem>
+            )}
+          />
+          <button
+            className="group/btn relative  block h-14 w-full rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+            type="submit"
+          >
+            {isSubmitting ? (
+              <Loader className="mx-auto animate-spin" />
+            ) : (
+              <>Σύνδεση &rarr;</>
+            )}
+            <>
+              <span className="absolute inset-x-0 -bottom-px block h-px w-full bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-0 transition duration-500 group-hover/btn:opacity-100" />
+              <span className="absolute inset-x-10 -bottom-px mx-auto block h-px w-1/2 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 blur-sm transition duration-500 group-hover/btn:opacity-100" />
+            </>
+          </button>
+        </form>
+      </Form>
+    </section>
   );
 };
 

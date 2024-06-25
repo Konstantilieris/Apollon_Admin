@@ -5,6 +5,7 @@
   "hints": {
     "typescript-config/is-valid": "off",
     "no-inline-styles": "off",
-    "axe/name-role-value": "off"
+    "axe/name-role-value": "off",
+    "typescript-config/consistent-casing": "off"
   }
 }

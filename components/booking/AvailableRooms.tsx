@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 import Transport from "./Transport";
 import { usePathname } from "next/navigation";
 import Filter from "../shared/Filter";
-import SearchBar from "../shared/SearchBar";
+import SearchBar from "../shared/searchBar/SearchBar";
 
 type DogInRoom = {
   dogId: string;
