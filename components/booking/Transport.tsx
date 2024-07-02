@@ -18,7 +18,7 @@ import {
   cn,
   formCombinedParams,
   formatDateString2,
-  intToDate,
+  intToDate2,
   removeKeysFromQuery,
 } from "@/lib/utils";
 const Transport = () => {
@@ -76,7 +76,7 @@ const Transport = () => {
             <span className="flex h-full min-w-[150px] flex-col items-center gap-2 ">
               <h1 className=" text-lg font-medium">
                 {searchParams.get("flag1") ? "ΠΑΡΑΛΑΒΗ" : "ΑΦΙΞΗ"}{" "}
-                {formatDateString2(intToDate(+searchParams.get("fr")!))}
+                {formatDateString2(intToDate2(+searchParams.get("fr")!))}
               </h1>
 
               <div className="flex flex-row items-center">
@@ -87,7 +87,7 @@ const Transport = () => {
             <span className="flex h-full min-w-[150px] flex-col items-center gap-2">
               <h1 className=" text-lg font-medium">
                 {searchParams.get("flag2") ? "ΠΑΡΑΔΟΣΗ" : "ΑΝΑΧΩΡΗΣΗ"}{" "}
-                {formatDateString2(intToDate(+searchParams.get("to")!))}
+                {formatDateString2(intToDate2(+searchParams.get("to")!))}
               </h1>
 
               <div className="flex flex-row items-center">
