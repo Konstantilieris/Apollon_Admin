@@ -18,7 +18,7 @@ import {
   calculateTotalPrice,
   cn,
   formatDateUndefined2,
-  intToDate,
+  intToDate2,
   setLocalTime,
 } from "@/lib/utils";
 import { useToast } from "../ui/use-toast";
@@ -35,7 +35,7 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
   const [change, setChange] = React.useState(false);
   useEffect(() => {
     const validateBooking = async () => {
-      const frDate = intToDate(+searchParams.get("fr")!);
+      const frDate = intToDate2(+searchParams.get("fr")!);
       const today = new Date();
       frDate.setHours(0, 0, 0, 0);
       today.setHours(0, 0, 0, 0);
@@ -45,8 +45,8 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
         const check = await checkExistingBooking({
           clientId: client._id,
           rangeDate: {
-            from: intToDate(+searchParams.get("fr")!),
-            to: intToDate(+searchParams.get("to")!),
+            from: intToDate2(+searchParams.get("fr")!),
+            to: intToDate2(+searchParams.get("to")!),
           },
         });
         setValidate({
@@ -61,11 +61,11 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
   }, [searchParams.get("fr"), searchParams.get("to")]);
 
   const fromDate = setLocalTime(
-    intToDate(+searchParams.get("fr")!),
+    intToDate2(+searchParams.get("fr")!),
     searchParams.get("tm1")!
   );
   const toDate = setLocalTime(
-    intToDate(+searchParams.get("to")!),
+    intToDate2(+searchParams.get("to")!),
     searchParams.get("tm2")!
   );
   const [totalAmount, setTotalAmount] = React.useState(
