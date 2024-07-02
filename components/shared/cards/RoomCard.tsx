@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 
-import { formatDate, formatDateString2, intToDate } from "@/lib/utils";
+import { formatDate, formatDateString2, intToDate2 } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
@@ -103,8 +103,8 @@ const RoomCard = ({
               <span>Διαθέσιμο</span>{" "}
               {searchParams.get("fr") && searchParams.get("to") && (
                 <span>
-                  {formatDateString2(intToDate(+searchParams.get("fr")!))} -{" "}
-                  {formatDateString2(intToDate(+searchParams.get("to")!))}
+                  {formatDateString2(intToDate2(+searchParams.get("fr")!))} -{" "}
+                  {formatDateString2(intToDate2(+searchParams.get("to")!))}
                 </span>
               )}
               <Image
