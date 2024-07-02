@@ -526,6 +526,14 @@ export function dateToInt(date: Date | undefined) {
 }
 
 export function intToDate(dateInt: number | undefined) {
+  if (!dateInt) return undefined;
+  const dateStr = dateInt.toString();
+  const year = parseInt(dateStr.substring(0, 4));
+  const month = parseInt(dateStr.substring(4, 6)) - 1; // JavaScript months are 0-based
+  const day = parseInt(dateStr.substring(6, 8));
+  return new Date(Date.UTC(year, month, day));
+}
+export function intToDate2(dateInt: number | undefined) {
   if (!dateInt) return new Date();
   const dateStr = dateInt.toString();
   const year = parseInt(dateStr.substring(0, 4));

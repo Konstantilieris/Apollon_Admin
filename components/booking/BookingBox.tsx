@@ -24,7 +24,7 @@ const BookingBox = async ({
           />
           {client?.firstName.slice(0, 1)}.{client?.lastName}
         </span>
-        <DatePushUrl />
+        <DatePushUrl nodate={false} />
       </div>
     </section>
   );

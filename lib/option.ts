@@ -5,7 +5,7 @@ import { connectToDatabase } from "@/lib/mongoose";
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60 * 24,
+    maxAge: 30 * 60,
   },
   providers: [
     CredentialsProvider({

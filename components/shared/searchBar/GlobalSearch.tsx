@@ -14,6 +14,20 @@ const GlobalSearch = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !(searchContainerRef.current as HTMLElement).contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+        setSearchTerm("");
+      }
+    };
+    setIsOpen(false);
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, [pathname]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -32,10 +46,10 @@ const GlobalSearch = () => {
 
   return (
     <div
-      className="relative w-full max-w-[400px] self-center max-lg:hidden"
+      className="relative w-full max-w-[400px] max-lg:hidden"
       ref={searchContainerRef}
     >
-      <div className="background-light800_darkgradient relative z-50 flex min-h-[56px] grow items-center gap-1 rounded-xl px-4">
+      <div className="background-light800_darkgradient relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4">
         <Image
           src="/assets/icons/search.svg"
           alt="search"

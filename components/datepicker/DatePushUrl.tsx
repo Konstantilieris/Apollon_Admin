@@ -12,17 +12,21 @@ import { DatePickerWithRange } from "./DateRangePicker";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-const DatePushUrl = () => {
+const DatePushUrl = ({ nodate }: { nodate: boolean }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const [rangeDate, setRangeDate] = useState<DateRange>({
     from: searchParams.get("fr")
       ? intToDate(+searchParams.get("fr")!)
-      : new Date(),
+      : nodate
+        ? undefined
+        : new Date(),
     to: searchParams.get("to")
       ? intToDate(+searchParams.get("to")!)
-      : addDays(new Date(), 1),
+      : nodate
+        ? undefined
+        : addDays(new Date(), 1),
   });
 
   useEffect(() => {

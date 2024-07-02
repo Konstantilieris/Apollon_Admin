@@ -2,7 +2,7 @@ import BookingBox from "@/components/booking/BookingBox";
 import LoadingSkeleton from "@/components/shared/LoadingSkeleton";
 import { getClientByIdForBooking } from "@/lib/actions/client.action";
 import { getAllRoomsAndBookings } from "@/lib/actions/room.action";
-import { intToDate } from "@/lib/utils";
+import { intToDate2 } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 const RoomBox = dynamic(() => import("@/components/booking/AvailableRooms"), {
@@ -14,8 +14,8 @@ const EditChange = async ({ searchParams, params }: any) => {
     getClientByIdForBooking(params.id),
     getAllRoomsAndBookings({
       rangeDate: {
-        from: intToDate(+searchParams.fr),
-        to: intToDate(+searchParams.to),
+        from: intToDate2(+searchParams.fr),
+        to: intToDate2(+searchParams.to),
       },
       page: searchParams.page ? +searchParams.page : 1,
       filter: searchParams.filter,

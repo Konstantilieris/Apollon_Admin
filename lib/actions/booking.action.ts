@@ -667,3 +667,112 @@ export async function countBookingsByMonth() {
 
   return bookingsByMonth;
 }
+export async function getAllBookings({
+  fromDate,
+  toDate,
+  clientId,
+  page,
+  query,
+}: any) {
+  try {
+    connectToDatabase();
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    const dateOptions: any = {};
+    if (fromDate && toDate) {
+      dateOptions.fromDate = { $gte: fromDate };
+      dateOptions.toDate = { $lte: toDate };
+    }
+
+    const queryOptions: any = {};
+    if (clientId) {
+      dateOptions.clientId = clientId;
+    }
+    if (query) {
+      const sanitizeInput = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+      queryOptions.$or = [
+        { "client.firstName": { $regex: sanitizeInput, $options: "i" } },
+        { "client.lastName": { $regex: sanitizeInput, $options: "i" } },
+        { "client.phone.mobile": { $regex: sanitizeInput, $options: "i" } },
+        { "room.name": { $regex: sanitizeInput, $options: "i" } },
+        { "dogs.dogName": { $regex: sanitizeInput, $options: "i" } },
+      ];
+    }
+    const pipeline: any = [
+      {
+        $match: dateOptions,
+      },
+      {
+        $lookup: {
+          from: "clients",
+          localField: "clientId",
+          foreignField: "_id",
+          as: "client",
+        },
+      },
+      {
+        $unwind: "$client",
+      },
+      {
+        $lookup: {
+          from: "rooms",
+          localField: "dogs.roomId",
+          foreignField: "_id",
+          as: "room",
+        },
+      },
+      {
+        $unwind: "$room",
+      },
+      {
+        $match: queryOptions,
+      },
+      {
+        $project: {
+          _id: 1,
+          fromDate: 1,
+          toDate: 1,
+          totalAmount: 1,
+          dogs: 1,
+          flag1: 1,
+          flag2: 1,
+          client: {
+            _id: 1,
+            firstName: 1,
+            lastName: 1,
+            phone: 1,
+            location: 1,
+          },
+          room: {
+            _id: 1,
+            name: 1,
+          },
+        },
+      },
+
+      {
+        $sort: { fromDate: -1 },
+      },
+      {
+        $facet: {
+          data: [{ $skip: skip }, { $limit: limit }],
+          total: [{ $count: "total" }],
+          totalSum: [
+            { $group: { _id: null, total: { $sum: "$totalAmount" } } },
+          ],
+        },
+      },
+    ];
+    const bookings = await Booking.aggregate(pipeline);
+    const total = bookings[0].total[0]?.total || 0;
+    const isNext = total > page * limit;
+    return [
+      JSON.parse(JSON.stringify(bookings[0].data)),
+      isNext,
+      bookings[0].totalSum[0]?.total || 0,
+    ];
+  } catch (error) {
+    console.error("Failed to retrieve bookings:", error);
+    throw error;
+  }
+}

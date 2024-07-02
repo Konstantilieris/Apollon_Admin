@@ -3,16 +3,16 @@
 @tailwind utilities;
 @import url("../styles/theme.css");
 @import url("https://cdn.syncfusion.com/ej2/material.css");
-@import "node_modules/@syncfusion/ej2-base/styles/tailwind-dark.css";
-@import "node_modules/@syncfusion/ej2-buttons/styles/tailwind-dark.css";
-@import "node_modules/@syncfusion/ej2-calendars/styles/tailwind-dark.css";
-@import "node_modules/@syncfusion/ej2-dropdowns/styles/tailwind-dark.css";
-@import "node_modules/@syncfusion/ej2-inputs/styles/tailwind-dark.css";
-@import "node_modules/@syncfusion/ej2-lists/styles/tailwind-dark.css";
-@import "node_modules/@syncfusion/ej2-navigations/styles/tailwind-dark.css";
-@import "node_modules/@syncfusion/ej2-popups/styles/tailwind-dark.css";
-@import "node_modules/@syncfusion/ej2-splitbuttons/styles/tailwind-dark.css";
-@import "node_modules/@syncfusion/ej2-react-schedule/styles/tailwind-dark.css";
+@import "../node_modules/@syncfusion/ej2-base/styles/tailwind-dark.css";
+@import "../node_modules/@syncfusion/ej2-buttons/styles/tailwind-dark.css";
+@import "../node_modules/@syncfusion/ej2-calendars/styles/tailwind-dark.css";
+@import "../node_modules/@syncfusion/ej2-dropdowns/styles/tailwind-dark.css";
+@import "../node_modules/@syncfusion/ej2-inputs/styles/tailwind-dark.css";
+@import "../node_modules/@syncfusion/ej2-lists/styles/tailwind-dark.css";
+@import "../node_modules/@syncfusion/ej2-navigations/styles/tailwind-dark.css";
+@import "../node_modules/@syncfusion/ej2-popups/styles/tailwind-dark.css";
+@import "../node_modules/@syncfusion/ej2-splitbuttons/styles/tailwind-dark.css";
+@import "../node_modules/@syncfusion/ej2-react-schedule/styles/tailwind-dark.css";
 body {
   font-family: "Inter", sans-serif;
 }

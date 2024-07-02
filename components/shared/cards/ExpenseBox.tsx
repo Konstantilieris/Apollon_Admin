@@ -10,11 +10,11 @@ import AnimatedCounter from "../AnimatedCounter";
 import { getMonthlyIncome } from "@/lib/actions/service.action";
 
 const ExpenseBox = async ({ searchParams }: any) => {
-  const [total, totalSum] = await Promise.all([
+  const [total, totalSum, monthlyIncome] = await Promise.all([
     totalMonthFromEachMainCategory(),
     totalSumFromAllCategories(),
+    getMonthlyIncome(),
   ]);
-  const monthlyIncome = await getMonthlyIncome();
 
   return (
     <section
@@ -38,7 +38,7 @@ const ExpenseBox = async ({ searchParams }: any) => {
           </span>
           <div className="flex flex-row items-center justify-center gap-2">
             <span className=" flex flex-row text-center font-noto_sans text-lg font-bold text-red-700 dark:text-red-500">
-              <AnimatedCounter amount={totalSum ? totalSum[0].totalSum : 0} />
+              <AnimatedCounter amount={totalSum ? totalSum[0]?.totalSum : 0} />
             </span>
             {"/"}
             <span className=" text-center font-noto_sans text-lg font-bold text-blue-700 dark:text-blue-500">
