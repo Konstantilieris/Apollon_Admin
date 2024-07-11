@@ -34,7 +34,7 @@ const page = async ({ searchParams }: any) => {
       </section>
 
       <Image
-        src="/assets/images/clientform.webp"
+        src="/assets/images/clientform1.webp"
         height={1000}
         width={1000}
         alt="patient"
