@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${noto_sans.variable} custom-scrollbar  overscroll-y-auto bg-light-700 dark:bg-dark-300`}
+        className={`${inter.variable} ${noto_sans.variable} custom-scrollbar  overflow-y-hidden bg-light-700 dark:bg-dark-300`}
       >
         <ThemeProvider>
           <AuthProvider>

@@ -43,7 +43,7 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
                 href={`/clients/${booking?.client?._id}`}
                 className="cursor-help hover:scale-105"
               >
-                {booking?.client?.firstName} {booking?.client?.lastName}
+                {booking?.client?.name}
               </Link>
             </TableCell>
             <TableCell className="   mr-4 text-center text-base font-normal ">

@@ -20,7 +20,7 @@ export function DateInput({ field, maxwidth }: any) {
     <Popover>
       <div className={cn("relative form_input rounded-lg", maxwidth)}>
         <Input
-          className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input max-w-[400px] font-noto_sans font-bold"
+          className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input max-w-[400px] font-noto_sans "
           type="string"
           value={stringDate}
           onChange={(e) => {
@@ -51,7 +51,7 @@ export function DateInput({ field, maxwidth }: any) {
               !date && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="h-4 w-4  " />
+            <CalendarIcon className="h-4 w-4 dark:invert " />
           </Button>
         </PopoverTrigger>
       </div>

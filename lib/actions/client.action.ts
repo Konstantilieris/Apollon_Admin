@@ -21,8 +21,7 @@ export async function getDogsForClient(clientId: string) {
 }
 export async function CreateClient({ clientData, dogs }: any) {
   const clientPayload: IClient = {
-    firstName: clientData.firstName,
-    lastName: clientData.lastName,
+    name: clientData.name,
     email: clientData.email,
     profession: clientData.profession,
 
@@ -36,12 +35,14 @@ export async function CreateClient({ clientData, dogs }: any) {
       telephone: clientData.telephone,
       mobile: clientData.mobile,
       work_phone: clientData.workMobile,
+      emergencyContact: clientData.emergencyContact,
     },
-    vet: clientData.vet,
-    vetNumber: clientData.vetNumber,
-    emergencyContact: clientData.emergencyContact,
+    vet: {
+      name: clientData.vetName,
+      phone: clientData.vetNumber,
+    },
     isTraining: clientData.isTraining,
-    reference: clientData.referenceChoice,
+    reference: clientData.reference,
   };
   try {
     connectToDatabase();
@@ -69,24 +70,27 @@ export async function getAllClients() {
   }
 }
 
-export async function getAllClientsByQuery(searchQuery: string | undefined) {
+export async function getAllClientsByQuery(
+  searchQuery: string | undefined,
+  limit?: number
+) {
   try {
     connectToDatabase();
-
-    if (!searchQuery) {
-      const clients = await Client.find();
-      return JSON.parse(JSON.stringify(clients));
+    let query = {};
+    if (searchQuery) {
+      query = {
+        $or: [
+          { name: { $regex: searchQuery, $options: "i" } },
+          {
+            "dog.name": {
+              $regex: searchQuery,
+              $options: "i",
+            },
+          },
+        ],
+      };
     }
-
-    const clients = await Client.find({
-      $expr: {
-        $regexMatch: {
-          input: { $concat: ["$firstName", "", "$lastName"] },
-          regex: searchQuery,
-          options: "i",
-        },
-      },
-    });
+    const clients = await Client.find(query, { name: 1 }).limit(limit || 5);
     return JSON.parse(JSON.stringify(clients));
   } catch (error) {
     console.log(error);
@@ -106,10 +110,20 @@ export async function getClientById(id: string | undefined) {
     throw error;
   }
 }
+export async function getClientByIdForSuccess(id: string | undefined) {
+  try {
+    connectToDatabase();
+    const client = await Client.findById(id, { name: 1, createdAt: 1 });
+    return JSON.parse(JSON.stringify(client));
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 export async function getClientByIdForBooking(id: string | undefined) {
   try {
     connectToDatabase();
-    const client = await Client.findById(id, "firstName lastName dog");
+    const client = await Client.findById(id, { name: 1, dog: 1 });
     return client;
   } catch (error) {
     console.log(error);
@@ -286,25 +300,31 @@ export async function globalSearch({ query }: any) {
   try {
     connectToDatabase();
 
-    const clients = await Client.find({
-      $or: [
-        {
-          $expr: {
-            $regexMatch: {
-              input: { $concat: ["$firstName", " ", "$lastName"] },
-              regex: query,
-              options: "i",
+    const clients = await Client.find(
+      {
+        $or: [
+          {
+            name: {
+              $regex: query,
+              $options: "i",
             },
           },
-        },
-        {
-          "dog.name": {
-            $regex: query,
-            $options: "i",
+          {
+            profession: {
+              $regex: query,
+              $options: "i",
+            },
           },
-        },
-      ],
-    }).limit(5);
+          {
+            "dog.name": {
+              $regex: query,
+              $options: "i",
+            },
+          },
+        ],
+      },
+      { name: 1, profession: 1, dog: 1 }
+    ).limit(5);
 
     return JSON.stringify(clients);
   } catch (error) {

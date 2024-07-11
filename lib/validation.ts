@@ -34,41 +34,45 @@ export const ChargeValidation = z.object({
   date: z.date(),
 });
 export const ClientValidation = z.object({
-  firstName: z
-    .string()
-    .min(2, { message: "Πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
-    .max(20),
-  lastName: z
-    .string()
-    .min(2, { message: "Πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
-    .max(20),
-  email: z.string().optional(),
+  name: z.string().min(2).max(40),
+  email: z.string().email().optional(),
   profession: z.string().optional(),
-
+  numberOfDogs: z.string(),
   residence: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
   postalCode: z.string().optional(),
   telephone: z.string().optional(),
-
+  reference: z.object({
+    clientId: z.string().optional(),
+    google: z.boolean().optional(),
+    other: z.string().optional(),
+  }),
   mobile: z.string().min(6, {
     message: "Το τηλέφωνο πρέπει να είναι τουλάχιστον 6 χαρακτήρες",
   }),
   emergencyContact: z.string().optional(),
   workMobile: z.string().optional(),
-  vet: z.string().optional(),
+  vetName: z.string().optional(),
   vetNumber: z.string().optional(),
 });
 
 export const DogValidation = z.object({
   dogs: z.array(
     z.object({
-      name: z.string().min(2).max(20),
+      name: z
+        .string()
+        .min(2, {
+          message: "Το όνομα πρέπει να είναι μεγαλύτερο απο δύο χαρακτήρες",
+        })
+        .max(20, {
+          message: "Το όνομα πρέπει να είναι μικρότερο απο 20 χαρακτήρες",
+        }),
       gender: z.string(),
       birthdate: z
         .date({
           required_error: "Διάλεξε ημερομηνία",
-          invalid_type_error: "That's not a date!",
+          invalid_type_error: "Δεν ειναι σωστή η ημερομηνία!",
         })
         .optional(),
       food: z.string().optional(),

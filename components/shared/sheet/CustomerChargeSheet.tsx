@@ -10,10 +10,27 @@ import {
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import ChargeForm from "@/components/form/ChargeForm";
+import { useRouter } from "next/navigation";
 const CustomerChargeSheet = ({ client }: any) => {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   return (
-    <div>
+    <div className="flex flex-row gap-2">
+      <Button
+        className="gap-2 border-2 border-white bg-purple-600 p-4 font-noto_sans text-[17px] font-bold text-white hover:scale-105"
+        onClick={() => {
+          router.push(`/createbooking/${client._id}`);
+        }}
+      >
+        Νέα Κράτηση
+        <Image
+          src="/assets/icons/edit.svg"
+          alt="plus"
+          width={23}
+          height={20}
+          className="invert"
+        />
+      </Button>
       <Button
         className="gap-2 border-2 border-white bg-green-600 p-4 font-noto_sans text-[17px] font-bold text-white hover:scale-105"
         onClick={() => {
@@ -35,7 +52,7 @@ const CustomerChargeSheet = ({ client }: any) => {
             <SheetTitle>Καινούργια Χρέωση</SheetTitle>
             <SheetDescription>
               Συμπληρώστε τα παρακάτω πεδία για να πραγματοποιήσετε την χρέωση
-              στον πελάτη {client.firstName} {client.lastName}
+              στον πελάτη {client.name}
             </SheetDescription>
           </SheetHeader>
           <ChargeForm id={client._id} />

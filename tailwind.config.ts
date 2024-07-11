@@ -5,10 +5,12 @@ const {
 module.exports = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+
+    // Or if using `src` directory:
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     container: {
@@ -49,6 +51,8 @@ module.exports = {
           300: "#151821",
           400: "#212734",
           500: "#101012",
+          600: "#76828D",
+          700: "#ABB8C4",
         },
         light: {
           900: "#FFFFFF",

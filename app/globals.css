@@ -18,6 +18,70 @@ body {
 }
 
 @layer utilities {
+  .text-36-bold {
+    @apply text-[36px] leading-[40px] font-bold;
+  }
+
+  .text-24-bold {
+    @apply text-[24px] leading-[28px] font-bold;
+  }
+
+  .text-32-bold {
+    @apply text-[32px] leading-[36px] font-bold;
+  }
+  .shad-error {
+    @apply text-red-400 !important;
+  }
+
+  .text-18-bold {
+    @apply text-[18px] leading-[24px] font-bold;
+  }
+  .header {
+    @apply text-32-bold md:text-36-bold dark:text-light-700;
+  }
+  .sub-header {
+    @apply text-18-bold md:text-24-bold dark:text-light-700 text-dark-400;
+  }
+  .text-16-semibold {
+    @apply text-[16px] leading-[20px] font-semibold;
+  }
+  .checkbox-label {
+    @apply cursor-pointer text-sm font-medium text-dark-700 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 md:leading-none;
+  }
+  .radio-group {
+    @apply flex h-full flex-1 items-center gap-2 rounded-md border border-dashed dark:border-dark-500 border-light-400 dark:bg-dark-400 bg-light-900 p-3;
+  }
+
+  .text-16-regular {
+    @apply text-[16px] leading-[20px] font-normal;
+  }
+  .request-details {
+    @apply flex w-full flex-col items-center gap-8 border-y-2 border-dark-400 py-8 md:w-fit md:flex-row dark:text-light-700;
+  }
+  .text-14-medium {
+    @apply text-[14px] leading-[18px] font-medium;
+  }
+  .shad-primary-btn {
+    @apply hover:scale-105 bg-green-500 text-white !important;
+  }
+  .success-img {
+    @apply m-auto flex flex-1 flex-col items-center justify-between gap-10 py-10;
+  }
+  .copyright {
+    @apply text-14-regular justify-items-end text-center text-dark-600 xl:text-left;
+  }
+
+  .text-14-regular {
+    @apply text-[14px] leading-[18px] font-normal;
+  }
+
+  .text-12-regular {
+    @apply text-[12px] leading-[16px] font-normal;
+  }
+
+  .text-12-semibold {
+    @apply text-[12px] leading-[16px] font-semibold;
+  }
   .form_item {
     @apply flex flex-row items-center gap-4 min-w-[400px] justify-center;
   }
@@ -95,10 +159,46 @@ body {
   .tab {
     @apply min-h-full dark:bg-dark-400 bg-light-800 text-light-500 dark:data-[state=active]:bg-dark-300 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-500 !important;
   }
-}
+  .shad-textArea {
+    @apply bg-dark-400 placeholder:text-dark-600 border-dark-500 focus-visible:ring-0 focus-visible:ring-offset-0 !important;
+  }
 
-.no-focus {
-  @apply focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 !important;
+  .shad-combobox-item {
+    @apply data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 !important;
+  }
+
+  /* =====  REACT DATE PICKER OVERRIDES */
+  .date-picker {
+    @apply overflow-hidden border-transparent w-full placeholder:text-dark-600  h-11 text-14-medium rounded-md px-3 outline-none !important;
+  }
+
+  .shad-combobox-trigger {
+    @apply h-11 !important;
+  }
+  .shad-select-trigger {
+    @apply dark:bg-dark-400 bg-light-900   dark:text-light-700 text-dark-400 border-dark-500 h-11 focus:ring-0 focus:ring-offset-0 !important;
+  }
+
+  .shad-select-content {
+    @apply dark:bg-dark-400 dark:border-dark-500 bg-light-900 dark:text-light-700 !important;
+  }
+  .shad-input-label {
+    @apply text-14-medium dark:text-dark-700  text-dark-400 !important;
+  }
+
+  .shad-input {
+    @apply dark:bg-dark-400 dark:text-dark-700 text-dark-300 placeholder:text-dark-600 border-dark-500 h-11 focus-visible:ring-0 focus-visible:ring-offset-0 !important;
+  }
+
+  .shad-input-icon {
+    @apply dark:bg-dark-400 bg-light-700 placeholder:text-dark-600 border-dark-500 h-11 focus-visible:ring-0 focus-visible:ring-offset-0 !important;
+  }
+  .no-focus {
+    @apply focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 !important;
+  }
+  .input-phone {
+    @apply mt-2 h-11 rounded-md px-3 text-sm border dark:bg-dark-400 bg-light-900 placeholder:text-dark-600 border-dark-500 !important;
+  }
 }
 
 .active-theme {
@@ -125,6 +225,28 @@ body {
   width: 3px;
   height: 3px;
   border-radius: 2px;
+}
+.PhoneInputInput {
+  outline: none;
+  margin-left: 4px;
+  background: #ffffff; /* Light background */
+  color: #1a1d21; /* Text color for light mode */
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.PhoneInputInput::placeholder {
+  color: #1a1d21; /* Placeholder color for light mode */
+}
+
+/* Dark mode styles */
+.dark .PhoneInputInput {
+  background: #212734; /* Dark background */
+  color: #ffffff; /* Light text color */
+}
+
+.dark .PhoneInputInput::placeholder {
+  color: #888888; /* Placeholder color for dark mode */
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -208,3 +330,4 @@ code {
   border-radius: 5px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
+/* =====  REACT PHONE NUMBER INPUT OVERRIDES */

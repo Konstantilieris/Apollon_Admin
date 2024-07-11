@@ -22,7 +22,7 @@ export const columns: ColumnDef<any>[] = [
     columns: [
       {
         id: "grouped&sorted",
-        accessorFn: (row) => `${row.firstName} ${row.lastName} `,
+        accessorFn: (row) => `${row.name} `,
         header: ({ column }) => (
           <DataTableColumnHeader
             column={column}

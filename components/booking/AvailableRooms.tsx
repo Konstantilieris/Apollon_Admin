@@ -7,7 +7,7 @@ import RoomCard from "../shared/cards/RoomCard";
 import { cn } from "@/lib/utils";
 import CreateBook from "./CreateBook";
 import { Button } from "../ui/button";
-import Transport from "./Transport";
+
 import { usePathname } from "next/navigation";
 import Filter from "../shared/Filter";
 import SearchBar from "../shared/searchBar/SearchBar";
@@ -59,60 +59,54 @@ const AvailableRooms = ({ rooms, client, isNext, pageNumber }: any) => {
             { name: "Διαθέσιμο", value: "empty" },
           ]}
         />
-        <Transport />
+
+        <div className="flex flex-col gap-1 ">
+          {client?.dog.map((dog: any) => (
+            <Button
+              key={dog._id}
+              className={cn(
+                "text-dark200_light900 flex  flex-row items-center gap-2 rounded-xl justify-center px-4 py-2 font-noto_sans font-semibold hover:scale-105 hover:cursor-pointer w-full self-center",
+                { "!bg-dark-600": selectedDog.includes(dog) },
+                "dark:!bg-dark-500/50 bg-light-500/30"
+              )}
+              onClick={handleSelectDog(dog)}
+              disabled={dogsInRooms.some((item) => item.dogId === dog._id)}
+            >
+              {dog?.name}
+              {dogsInRooms.some((item) => item.dogId === dog._id) ? (
+                <Image
+                  src={"/assets/icons/check2.svg"}
+                  className="dark:invert"
+                  alt="check"
+                  width={25}
+                  height={25}
+                />
+              ) : selectedDog.includes(dog) ? (
+                <Image
+                  src={"/assets/icons/upvoted.svg"}
+                  alt="plus"
+                  width={20}
+                  height={20}
+                />
+              ) : (
+                <Image
+                  src={"/assets/icons/upvote.svg"}
+                  alt="plus"
+                  width={20}
+                  height={20}
+                />
+              )}
+            </Button>
+          ))}
+        </div>
 
         <CreateBook
           dogsInRooms={dogsInRooms}
           setDogsInRooms={setDogsInRooms}
           client={client}
         />
-        <div className="flex flex-col">
-          <h1>
-            {client.dog.length > 1 ? "Σκύλοι " : "Σκύλος "}
-            {client?.firstName.slice(0, 1)}. {client?.lastName}
-          </h1>
-          <div className="flex flex-col gap-1 ">
-            {client?.dog.map((dog: any) => (
-              <Button
-                key={dog._id}
-                className={cn(
-                  "text-dark200_light900 flex  flex-row items-center gap-2 rounded-xl justify-center px-4 py-2 font-noto_sans font-semibold hover:scale-105 hover:cursor-pointer max-w-[150px] self-center",
-                  { "!bg-dark-600": selectedDog.includes(dog) },
-                  "dark:!bg-dark-500/50 bg-light-500/30"
-                )}
-                onClick={handleSelectDog(dog)}
-                disabled={dogsInRooms.some((item) => item.dogId === dog._id)}
-              >
-                {dog?.name}
-                {dogsInRooms.some((item) => item.dogId === dog._id) ? (
-                  <Image
-                    src={"/assets/icons/check2.svg"}
-                    className="dark:invert"
-                    alt="check"
-                    width={25}
-                    height={25}
-                  />
-                ) : selectedDog.includes(dog) ? (
-                  <Image
-                    src={"/assets/icons/upvoted.svg"}
-                    alt="plus"
-                    width={20}
-                    height={20}
-                  />
-                ) : (
-                  <Image
-                    src={"/assets/icons/upvote.svg"}
-                    alt="plus"
-                    width={20}
-                    height={20}
-                  />
-                )}
-              </Button>
-            ))}
-          </div>
-        </div>
       </header>
-      <div className="flex w-full flex-col items-center justify-center gap-2 px-8 py-4">
+      <div className="mb-20 flex w-full flex-col items-center justify-center gap-2 px-8 py-4">
         {rooms.map((room: any) => (
           <RoomCard
             room={room}

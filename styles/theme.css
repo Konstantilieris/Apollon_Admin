@@ -1,6 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer base {
+  /* Remove scrollbar */
+  .remove-scrollbar::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    border-radius: 0px;
+  }
+
+  .remove-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .remove-scrollbar::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 0px;
+  }
+
+  .remove-scrollbar::-webkit-scrollbar-thumb:hover {
+    /* background: #1e2238; */
+    background: transparent;
+  }
+}
 
 @layer utilities {
   .word {
@@ -286,9 +308,9 @@
   .dark-gradient {
     background: linear-gradient(
       240deg,
-      rgba(0, 0, 0, 1) 0%,
-      /* Darker black color */ rgb(30, 90, 219) 100%
-        /* Darker grey color with 0.7 opacity */
+      rgba(30, 30, 30, 1) 0%,
+      /* Dark grey color */ rgba(30, 90, 219, 0.7) 100%
+        /* Blue color with 0.7 opacity */
     );
   }
   .light-gradient {

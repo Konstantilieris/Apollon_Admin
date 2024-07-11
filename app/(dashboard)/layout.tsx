@@ -5,7 +5,7 @@ import React from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="  z-10   mt-32 flex h-full w-full">
+    <main className="  z-10   mt-28 flex h-full w-full">
       <div className="basis-1/6">
         <Sidebar />
       </div>

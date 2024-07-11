@@ -118,7 +118,7 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
         <Button
           onClick={() => setShow(true)}
           className={cn(
-            "font-noto_sans  px-8 py-2 rounded-md bg-purple-700 min-h-[45px] text-white font-bold transition duration-200 hover:bg-white dark:hover:bg-dark-500 dark:hover:text-white hover:text-black border-2 border-transparent hover:border-purple-700  ",
+            "font-noto_sans  px-8 py-2 rounded-md bg-purple-700 min-h-[45px] text-white font-bold transition duration-200 hover:bg-white dark:hover:bg-dark-500 dark:hover:text-white hover:text-black border-2 border-transparent hover:border-purple-700  mr-2",
             {
               "opacity-50 text-red-400 cursor-not-allowed":
                 !searchParams.has("fr") && !searchParams.has("to"),

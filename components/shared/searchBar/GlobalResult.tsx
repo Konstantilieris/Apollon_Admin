@@ -65,12 +65,12 @@ const GlobalResult = () => {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="flex w-full flex-col gap-2">
             {client.length > 0 ? (
               client.map((client: any, index: number) => (
                 <Link
                   key={index}
-                  className="flex flex-row items-center"
+                  className="flex flex-row items-center hover:scale-105"
                   href={renderLink(type || "client", client._id)}
                 >
                   <Image
@@ -81,13 +81,18 @@ const GlobalResult = () => {
                     className="invert-colors  mb-4 object-contain"
                   />
 
-                  <div className="flex flex-col">
+                  <div className="flex w-full flex-col">
                     <p className="body-medium text-dark200_light800 line-clamp-1">
-                      {client?.firstName} {client?.lastName}
+                      {client?.name}
                     </p>
-                    <p className="text-light400_light500 small-medium mt-1 font-bold capitalize">
-                      {client.dog.map((dog: any) => dog.name).join(", ")}
-                    </p>
+                    <div className="flex w-full flex-row items-center justify-between">
+                      <p className="text-light400_light500 small-medium mt-1 font-bold capitalize">
+                        {client?.dog.map((dog: any) => dog?.name).join(", ")}
+                      </p>
+                      <p className="small-medium mt-1 font-bold capitalize text-orange-400">
+                        {client?.profession}
+                      </p>
+                    </div>
                   </div>
                 </Link>
               ))

@@ -1,8 +1,7 @@
 "use client";
 import ClientForm from "@/components/form/ClientForm";
-import Image from "next/image";
+
 import React, { useState } from "react";
-import { Progress } from "@/components/ui/progress";
 
 import { Button } from "@/components/ui/button";
 import DogForm from "@/components/form/DogForm";
@@ -19,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Pdf from "@/components/shared/Pdf";
+
 import ReferenceCommand from "../shared/reference/ReferenceCommand";
 import {
   Select,
@@ -71,34 +70,6 @@ const ClientStages = ({ clients }: any) => {
 
   return (
     <>
-      <Progress
-        value={stage}
-        className="sticky  left-0 top-0 w-full shadow-lg shadow-orange-500"
-      />
-      {stage === 25 && (
-        <div className="flex flex-col gap-8 ">
-          <div className="mt-20 flex flex-row items-center justify-center gap-8">
-            <h1 className=" text-center font-noto_sans text-[26px] font-bold">
-              Ας ξεκινήσουμε τη διαδικασία εγγραφής του πελάτη{" "}
-            </h1>
-            <Pdf />
-            <Button
-              className="bg-primary-500 font-noto_sans font-extrabold text-black hover:scale-105 hover:animate-pulse"
-              onClick={() => setStage(50)}
-            >
-              {" "}
-              ΕΠΟΜΕΝΟ
-            </Button>
-          </div>
-          <Image
-            src={"/assets/images/clientForm.webp"}
-            width={600}
-            height={100}
-            alt="dog client"
-            className="self-center rounded-lg shadow-light-300"
-          />
-        </div>
-      )}
       {stage === 50 && (
         <div className="flex h-full flex-col gap-2 lg:max-h-[900px] 2xl:max-h-[1100px]">
           <div className="flex flex-row items-center justify-center gap-8 2xl:mt-20"></div>

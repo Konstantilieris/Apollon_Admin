@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Home() {
   return (
     <main className="  mt-28 flex h-full w-full flex-col">

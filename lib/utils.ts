@@ -44,6 +44,20 @@ export function formatDateString(inputDateString: Date) {
 
   return formattedDate;
 }
+export function formatDateToTime(inputDateString: Date | undefined) {
+  // Parse the input date string
+  if (!inputDateString) return "";
+  const inputDate = new Date(inputDateString);
+
+  // Get the hours and minutes components
+  const hours = inputDate.getHours();
+  const minutes = inputDate.getMinutes();
+
+  // Format the time components
+  const formattedTime = `${hours}:${minutes}`;
+
+  return formattedTime;
+}
 
 interface URLQueryParams {
   params: string;
@@ -173,7 +187,8 @@ export const isTrainingOptions = {
   ],
 };
 
-export function formatDate(date: Date, language: string) {
+export function formatDate(date: Date | undefined, language: string) {
+  if (!date) return "";
   return new Intl.DateTimeFormat(language, {
     weekday: "short",
     month: "long",

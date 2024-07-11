@@ -60,13 +60,13 @@ const Client = async ({ params, searchParams }: URLProps) => {
           </AlertTitle>
           <AlertDescription className="flex w-full flex-row justify-center font-semibold">
             {" "}
-            Ο ΣΚΥΛΟΣ ΜΕ ΟΝΟΜΑ {undesired?.name} ΤΟΥ ΠΕΛΑΤΗ {client?.lastName}{" "}
-            ΕΙΝΑΙ ΑΝΕΠΙΘΥΜΗΤΟΣ
+            Ο ΣΚΥΛΟΣ ΜΕ ΟΝΟΜΑ {undesired?.name} ΤΟΥ ΠΕΛΑΤΗ {client?.name} ΕΙΝΑΙ
+            ΑΝΕΠΙΘΥΜΗΤΟΣ
           </AlertDescription>
         </Alert>
       )}
 
-      <div className="text-dark100_light900 flex flex-row  items-start p-8 ">
+      <div className="text-dark100_light900 flex flex-row  items-start overflow-x-hidden p-8 ">
         <div className="flex flex-1 flex-col items-start gap-4 lg:flex-row">
           <Image
             src={"/assets/icons/clients.svg"}
@@ -77,11 +77,9 @@ const Client = async ({ params, searchParams }: URLProps) => {
           />
           <div className="mt-3">
             <h2 className="h2-bold text-dark100_light900 font-noto_sans">
-              {client?.lastName}
+              {client?.name}
             </h2>
-            <p className=" text-dark200_light800 mt-1 font-noto_sans text-lg font-bold">
-              {client?.firstName}
-            </p>
+
             <p className="font-noto_sans font-semibold">
               {" "}
               ΔΗΜΙΟΥΡΓΗΘΗΚΕ {formatDateString(client?.createdAt)}
@@ -172,24 +170,26 @@ const Client = async ({ params, searchParams }: URLProps) => {
                 </TableCell>
                 <TableCell className=" flex-col items-center">
                   <span className="flex flex-row justify-center">
-                    &bull;{client?.vet}
+                    &bull;{client?.vet?.name}
                   </span>
-                  <span className="flex flex-row justify-center">
-                    <Image
-                      src={"/assets/icons/phone.svg"}
-                      alt="phone"
-                      width={20}
-                      height={20}
-                    />
-                    {client?.vetNumber}{" "}
-                  </span>
+                  {client?.vet?.phone && (
+                    <span className="flex flex-row justify-center">
+                      <Image
+                        src={"/assets/icons/phone.svg"}
+                        alt="phone"
+                        width={20}
+                        height={20}
+                      />
+                      {client?.vet?.phone}{" "}
+                    </span>
+                  )}
                 </TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </div>
       </div>
-      <div className="flex flex-row justify-end">
+      <div className="mr-2 flex flex-row justify-end">
         <CustomerChargeSheet client={JSON.parse(JSON.stringify(client))} />
       </div>
       <div className=" flex w-full flex-row  justify-center p-4">
@@ -238,7 +238,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
                       </span>
                       <span className="flex flex-row items-center gap-2">
                         {" "}
-                        Ημερομηνία: {formatDate(item.date, "el")}{" "}
+                        Ημερομηνία: {formatDate(item?.date, "el")}{" "}
                         <Image
                           src={"/assets/icons/calendar.svg"}
                           alt="calendar"
@@ -276,7 +276,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
                             item={JSON.parse(JSON.stringify(item))}
                           />
                           <span>
-                            Πληρώθηκε : {formatDate(item.paymentDate, "el")}
+                            Πληρώθηκε : {formatDate(item?.paymentDate, "el")}
                           </span>
                         </>
                       )}
@@ -297,15 +297,15 @@ const Client = async ({ params, searchParams }: URLProps) => {
                   ΚΡΑΤΗΣΕΙΣ-{client.lastName}
                 </h4>
 
-                {bookings.map((booking) => (
+                {bookings.map((booking: any) => (
                   <div key={booking._id}>
                     <div key={booking._id} className="flex flex-row gap-2 ">
                       {isBookingLive(booking) ? "Ενεργή" : "Ανενεργή"}
                       &bull;
                       <span>ID:{JSON.parse(JSON.stringify(booking._id))}</span>
                       <span>
-                        Ημερομηνία:{formatDate(booking.fromDate, "el")}-
-                        {formatDate(booking.toDate, "el")}
+                        Ημερομηνία:{formatDate(booking?.fromDate, "el")}-
+                        {formatDate(booking?.toDate, "el")}
                       </span>
                       <span className="flex flex-row gap-2">
                         ΣΚΥΛΙΑ:
@@ -318,9 +318,9 @@ const Client = async ({ params, searchParams }: URLProps) => {
                       </span>
                       <span>
                         Δημιουργία Κράτησης:{" "}
-                        {formatDate(booking.createdAt, "el")}
+                        {formatDate(booking?.createdAt, "el")}
                       </span>
-                      <span>Συνολικη Τιμη:{booking.totalAmount}€</span>
+                      <span>Συνολικη Τιμη:{booking?.totalAmount}€</span>
                     </div>
                     <Separator className="my-2 bg-black" />
                   </div>

@@ -21,8 +21,6 @@ export interface IReference {
   other?: string;
 }
 export interface IClient {
-  firstName: string;
-  lastName: string;
   email?: string;
   profession?: string;
 
@@ -31,17 +29,21 @@ export interface IClient {
     telephone?: string;
     mobile?: string;
     work_phone?: string;
+    emergencyContact?: string;
   };
   bookingPerDay?: number;
   createdAt?: Date;
   owes?: Schema.Types.ObjectId[];
   reference?: IReference;
   dog?: IDog;
-  vet?: string;
-  vetNumber?: string;
+  vet?: {
+    name: string;
+    phone: string;
+  };
   isTraining?: boolean;
-  emergencyContact?: string;
+
   notes?: string;
+  name: string;
 }
 
 export const DogSchema = new Schema<IDog>({
@@ -82,14 +84,6 @@ export const ReferenceSchema = new Schema<IReference>({
   },
 });
 const ClientSchema = new Schema<IClient>({
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
   email: {
     type: String,
   },
@@ -121,6 +115,9 @@ const ClientSchema = new Schema<IClient>({
     work_phone: {
       type: String,
     },
+    emergencyContact: {
+      type: String,
+    },
   },
   createdAt: {
     type: Date,
@@ -130,10 +127,8 @@ const ClientSchema = new Schema<IClient>({
   dog: [DogSchema],
 
   vet: {
-    type: String,
-  },
-  vetNumber: {
-    type: String,
+    name: { type: String },
+    phone: { type: String },
   },
   reference: ReferenceSchema,
   isTraining: {
@@ -146,9 +141,9 @@ const ClientSchema = new Schema<IClient>({
     type: Number,
     default: 30,
   },
-
-  emergencyContact: {
+  name: {
     type: String,
+    required: true,
   },
 });
 const Client = models.Client || model<IClient>("Client", ClientSchema);

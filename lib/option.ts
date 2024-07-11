@@ -5,7 +5,11 @@ import { connectToDatabase } from "@/lib/mongoose";
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
-    maxAge: 30 * 60,
+    maxAge: 1800,
+  },
+
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET as string,
   },
   providers: [
     CredentialsProvider({
@@ -41,7 +45,7 @@ export const authOptions: NextAuthOptions = {
       if (params.admin?.name) {
         params.token.name = params.admin.name;
         params.token.id = params.admin._id;
-        params.token.role = params.admin._role;
+        params.token.role = params.admin.role;
       }
       // return final token
       return params.token;

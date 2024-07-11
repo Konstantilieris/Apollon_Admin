@@ -561,7 +561,7 @@ export async function clientBookings(clientId: string) {
     connectToDatabase();
 
     const bookings = await Booking.find({ clientId });
-    return bookings;
+    return JSON.parse(JSON.stringify(bookings));
   } catch (error) {
     console.error("Error retrieving bookings for client:", error);
     throw error;
@@ -691,8 +691,8 @@ export async function getAllBookings({
     if (query) {
       const sanitizeInput = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
       queryOptions.$or = [
-        { "client.firstName": { $regex: sanitizeInput, $options: "i" } },
-        { "client.lastName": { $regex: sanitizeInput, $options: "i" } },
+        { "client.name": { $regex: sanitizeInput, $options: "i" } },
+
         { "client.phone.mobile": { $regex: sanitizeInput, $options: "i" } },
         { "room.name": { $regex: sanitizeInput, $options: "i" } },
         { "dogs.dogName": { $regex: sanitizeInput, $options: "i" } },
@@ -738,8 +738,7 @@ export async function getAllBookings({
           flag2: 1,
           client: {
             _id: 1,
-            firstName: 1,
-            lastName: 1,
+            name: 1,
             phone: 1,
             location: 1,
           },

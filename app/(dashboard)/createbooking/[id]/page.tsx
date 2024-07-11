@@ -1,3 +1,4 @@
+import AppointmentDailyPlan from "@/components/booking/AppointmentDailyPlan";
 import BookingBox from "@/components/booking/BookingBox";
 import LoadingSkeleton from "@/components/shared/LoadingSkeleton";
 import { getClientByIdForBooking } from "@/lib/actions/client.action";
@@ -22,10 +23,11 @@ const EditChange = async ({ searchParams, params }: any) => {
       query: searchParams.q ? searchParams.q : "",
     }),
   ]);
+
   const pageNumber = searchParams.page ? +searchParams.page : 1;
   return (
-    <section className=" no-scrollbar flex h-full  w-full flex-row  scroll-smooth font-noto_sans max-2xl:max-h-screen max-xl:overflow-y-scroll">
-      <div className="flex w-full flex-1 flex-col gap-8   scroll-smooth px-5 py-7 max-2xl:min-h-screen max-2xl:gap-2 max-2xl:py-8 sm:px-8 2xl:max-h-screen">
+    <section className=" flex h-screen max-h-[2200px]   flex-row   font-noto_sans  ">
+      <div className="  custom-scrollbar flex max-h-[2000px] min-h-screen w-full flex-1   flex-col  gap-8 overflow-y-auto scroll-smooth  px-5 py-7 max-2xl:gap-2 max-2xl:py-8 sm:px-8">
         <header className=" flex flex-col justify-between gap-8 max-2xl:gap-2">
           <div className="flex flex-col gap-2">
             <h1 className="text-dark100_light900 font-semibold max-lg:text-sm lg:text-lg">
@@ -53,7 +55,12 @@ const EditChange = async ({ searchParams, params }: any) => {
           />
         </Suspense>
       </div>
-      <aside className="no-scrollbar  h-full w-[300px] flex-col border-l border-gray-200 max-xl:hidden xl:flex xl:overflow-y-scroll"></aside>
+      <aside className="no-scrollbar  h-full w-[300px] flex-col border-l border-gray-200 py-2 max-xl:hidden xl:flex xl:overflow-y-scroll">
+        <h1 className="text-light850_dark500 mt-2 p-2 text-lg font-semibold ">
+          Πρόγραμμα Χρονικής Περιόδου
+        </h1>
+        <AppointmentDailyPlan date={intToDate2(+searchParams.fr)} />
+      </aside>
     </section>
   );
 };
