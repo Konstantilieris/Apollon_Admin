@@ -35,7 +35,7 @@ export const ChargeValidation = z.object({
 });
 export const ClientValidation = z.object({
   name: z.string().min(2).max(40),
-  email: z.string().email().optional(),
+  email: z.string().optional(),
   profession: z.string().optional(),
   numberOfDogs: z.string(),
   residence: z.string().optional(),
