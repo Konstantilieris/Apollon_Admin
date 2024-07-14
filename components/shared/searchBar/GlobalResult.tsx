@@ -74,11 +74,11 @@ const GlobalResult = () => {
                   href={renderLink(type || "client", client._id)}
                 >
                   <Image
-                    src="/assets/icons/client.svg"
+                    src="/assets/icons/noclient.svg"
                     alt="tags"
-                    width={24}
+                    width={28}
                     height={24}
-                    className="invert-colors  mb-4 object-contain"
+                    className="mb-1 object-contain"
                   />
 
                   <div className="flex w-full flex-col">

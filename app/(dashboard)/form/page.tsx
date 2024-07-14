@@ -13,9 +13,9 @@ const page = async ({ searchParams }: any) => {
 
   return (
     <div className="flex h-screen max-h-screen">
-      <section className="remove-scrollbar relative flex-1 overflow-y-auto px-[5%]">
-        <div className=" size-full mx-auto flex max-w-[860px] flex-1 flex-col py-10">
-          <span className="flex flex-row items-center justify-center gap-4">
+      <section className="remove-scrollbar relative mb-24 flex-1 overflow-y-auto px-[5%]">
+        <div className=" size-full mx-autoflex max-w-[860px] flex-1 flex-col py-10">
+          <span className=" flex flex-row items-center justify-center gap-4">
             <Image
               src="/assets/icons/bone.svg"
               height={40}
@@ -27,7 +27,7 @@ const page = async ({ searchParams }: any) => {
           </span>
           <ClientRegistration clients={clients} />
 
-          <p className=" justify-items-end py-12 text-center text-white xl:text-left">
+          <p className="  justify-items-end py-12 text-center text-white xl:text-left">
             © 2024 Apollon
           </p>
         </div>

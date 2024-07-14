@@ -775,3 +775,92 @@ export async function getAllBookings({
     throw error;
   }
 }
+
+export async function getAllRoomsAndBookings2({
+  rangeDate,
+  page,
+  filter,
+  query,
+}: {
+  rangeDate: DateRange;
+  page: number;
+  filter: string;
+  query: string;
+}) {
+  try {
+    connectToDatabase();
+    const itemsPerPage = 4;
+    const skipItems = (page - 1) * itemsPerPage;
+
+    const matchBookings = {
+      $or: [
+        {
+          $and: [
+            { fromDate: { $lte: rangeDate.to } },
+            { toDate: { $gte: rangeDate.to } },
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $lte: rangeDate.from } },
+            { toDate: { $gte: rangeDate.from } },
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $gte: rangeDate.from } },
+            { toDate: { $lte: rangeDate.to } },
+          ],
+        },
+      ],
+    };
+
+    const rooms = await Room.find({ name: { $regex: query, $options: "i" } });
+    const bookings = await Booking.find(matchBookings).populate("clientId", {
+      name: 1,
+    });
+    const roomMap = rooms.reduce((map, room) => {
+      map[room._id.toString()] = {
+        name: room.name,
+        _id: room._id,
+        currentBookings: [],
+      };
+      return map;
+    }, {});
+    bookings.forEach((booking) => {
+      booking.dogs.forEach((dog: any) => {
+        const roomId = dog.roomId.toString();
+        if (roomMap[roomId]) {
+          roomMap[roomId].currentBookings.push({
+            bookingId: booking._id,
+            clientId: booking.clientId,
+            fromDate: booking.fromDate,
+            toDate: booking.toDate,
+            dogs: booking.dogs,
+            totalAmount: booking.totalAmount,
+            flag1: booking.flag1,
+            flag2: booking.flag2,
+          });
+        }
+      });
+    });
+    let result = Object.values(roomMap);
+    if (filter === "full") {
+      result = result.filter((room: any) => room.currentBookings.length > 0);
+    } else if (filter === "empty") {
+      result = result.filter((room: any) => room.currentBookings.length === 0);
+    }
+
+    // Step 6: Implement pagination
+    const paginatedResult = result.slice(skipItems, skipItems + itemsPerPage);
+    const hasNextPage = result.length > skipItems + itemsPerPage;
+
+    return {
+      allRooms: paginatedResult,
+      isNext: hasNextPage,
+    };
+  } catch (error) {
+    console.error("Error finding bookings within date range:", error);
+    throw error;
+  }
+}

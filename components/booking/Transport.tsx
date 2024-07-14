@@ -63,7 +63,7 @@ const Transport = () => {
         disabled={!searchParams.has("fr") && !searchParams.has("to")}
       >
         <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 " />
-        <div className="group relative  rounded-[6px] bg-light-700 px-8  py-2 text-black transition duration-200 hover:bg-transparent dark:bg-dark-300 dark:text-white hover:dark:bg-transparent">
+        <div className="group relative  rounded-[6px] bg-light-700 px-8  py-2 font-semibold text-black transition duration-200 hover:bg-transparent dark:bg-dark-300 dark:text-white hover:dark:bg-transparent">
           ΧΡΟΝΟΔΙΑΓΡΑΜΜΑ
         </div>
       </AlertDialogTrigger>

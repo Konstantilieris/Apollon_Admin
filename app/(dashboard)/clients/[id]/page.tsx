@@ -24,17 +24,20 @@ import {
 import { clientBookings } from "@/lib/actions/booking.action";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import PendingPaid from "@/components/shared/PendingPaid";
+import PendingPaid from "@/components/shared/clientProfile/PendingPaid";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import CustomerChargeSheet from "@/components/shared/sheet/CustomerChargeSheet";
+import dynamic from "next/dynamic";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import UncheckPayment from "@/components/shared/clientProfile/UncheckPayment";
-
+const DynamicAlertBehavior = dynamic(
+  () => import("@/components/shared/clientProfile/AlertBehavior"),
+  { ssr: false }
+);
 const Client = async ({ params, searchParams }: URLProps) => {
   const { id } = params;
   const [client, bookings] = await Promise.all([
@@ -45,28 +48,13 @@ const Client = async ({ params, searchParams }: URLProps) => {
 
   const { totalOwes, totalSpent } = sumTotalOwesAndSpent(client?.owes);
   return (
-    <>
-      {undesired && (
-        <Alert className="mt-1 flex flex-col gap-2 border-2 border-white bg-red-500 font-noto_sans text-white dark:text-black">
-          <AlertTitle className="flex flex-row items-center justify-start gap-2 font-bold">
-            <Image
-              src="/assets/icons/nongrata.svg"
-              alt="dog"
-              width={60}
-              height={50}
-              className="justify-self-end"
-            />
-            ΠΡΟΣΟΧΗ!!!{" "}
-          </AlertTitle>
-          <AlertDescription className="flex w-full flex-row justify-center font-semibold">
-            {" "}
-            Ο ΣΚΥΛΟΣ ΜΕ ΟΝΟΜΑ {undesired?.name} ΤΟΥ ΠΕΛΑΤΗ {client?.name} ΕΙΝΑΙ
-            ΑΝΕΠΙΘΥΜΗΤΟΣ
-          </AlertDescription>
-        </Alert>
-      )}
+    <section className=" custom-scrollbar mb-32 flex max-h-[2400px] min-h-screen w-full flex-col justify-items-center overflow-y-scroll">
+      <DynamicAlertBehavior
+        status={JSON.parse(JSON.stringify(undesired))}
+        client={JSON.parse(JSON.stringify(client))}
+      />
 
-      <div className="text-dark100_light900 flex flex-row  items-start overflow-x-hidden p-8 ">
+      <div className="text-dark100_light900 flex  h-full flex-row items-start  overflow-x-hidden  p-8">
         <div className="flex flex-1 flex-col items-start gap-4 lg:flex-row">
           <Image
             src={"/assets/icons/clients.svg"}
@@ -297,15 +285,16 @@ const Client = async ({ params, searchParams }: URLProps) => {
                   ΚΡΑΤΗΣΕΙΣ-{client.lastName}
                 </h4>
 
-                {bookings.map((booking: any) => (
+                {bookings?.map((booking: any) => (
                   <div key={booking._id}>
                     <div key={booking._id} className="flex flex-row gap-2 ">
                       {isBookingLive(booking) ? "Ενεργή" : "Ανενεργή"}
                       &bull;
                       <span>ID:{JSON.parse(JSON.stringify(booking._id))}</span>
                       <span>
-                        Ημερομηνία:{formatDate(booking?.fromDate, "el")}-
-                        {formatDate(booking?.toDate, "el")}
+                        Ημερομηνία:
+                        {formatDate(new Date(booking?.fromDate), "el")}-
+                        {formatDate(new Date(booking?.toDate), "el")}
                       </span>
                       <span className="flex flex-row gap-2">
                         ΣΚΥΛΙΑ:
@@ -318,7 +307,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
                       </span>
                       <span>
                         Δημιουργία Κράτησης:{" "}
-                        {formatDate(booking?.createdAt, "el")}
+                        {formatDate(new Date(booking?.createdAt), "el")}
                       </span>
                       <span>Συνολικη Τιμη:{booking?.totalAmount}€</span>
                     </div>
@@ -330,7 +319,7 @@ const Client = async ({ params, searchParams }: URLProps) => {
           </TabsContent>
         </Tabs>
       </div>
-    </>
+    </section>
   );
 };
 

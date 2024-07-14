@@ -16,8 +16,8 @@ const Page = async ({ searchParams }: any) => {
   });
 
   return (
-    <section className="no-scrollbar flex h-full  w-full flex-row  scroll-smooth max-2xl:max-h-screen max-xl:overflow-y-scroll ">
-      <div className="flex w-full flex-1 flex-col gap-8   scroll-smooth px-5 py-7 max-2xl:min-h-screen max-2xl:gap-2 max-2xl:py-8 sm:px-8 2xl:max-h-screen">
+    <section className=" flex h-screen max-h-[2200px] w-full flex-row  py-2">
+      <div className="  custom-scrollbar flex w-full flex-1 flex-col   gap-8  overflow-y-auto scroll-smooth px-5  py-7 max-2xl:gap-2 max-2xl:py-8 sm:px-8">
         <header className=" flex flex-col justify-between gap-8 max-2xl:gap-2">
           <div className="flex flex-col gap-1">
             <h1 className="text-dark100_light900 font-semibold max-lg:text-sm lg:text-lg">
@@ -46,16 +46,18 @@ const Page = async ({ searchParams }: any) => {
             </p>
           </div>
         ) : (
-          <Suspense
-            fallback={<LoadingSkeleton size={20} animation="animate-spin" />}
-          >
-            {" "}
-            <BookingTable bookings={bookings} />
-            <Pagination
-              pageNumber={searchParams.page ? +searchParams.page : 1}
-              isNext={isNext}
-            />
-          </Suspense>
+          <div className="mb-32">
+            <Suspense
+              fallback={<LoadingSkeleton size={20} animation="animate-spin" />}
+            >
+              {" "}
+              <BookingTable bookings={bookings} />
+              <Pagination
+                pageNumber={searchParams.page ? +searchParams.page : 1}
+                isNext={isNext}
+              />
+            </Suspense>
+          </div>
         )}
       </div>
       <aside className="no-scrollbar  text-dark100_light900 min-h-[120vh] w-[300px] flex-col items-center   border-l border-gray-400 px-2 py-4 dark:border-gray-200 xl:flex xl:overflow-y-scroll">

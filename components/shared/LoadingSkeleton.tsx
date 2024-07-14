@@ -8,7 +8,7 @@ const LoadingSkeleton = ({
   animation?: string | "";
 }) => {
   return (
-    <>
+    <div className="flex  h-full w-full items-center justify-center">
       <Image
         src={"/assets/icons/skeleton.svg"}
         className={animation}
@@ -16,7 +16,7 @@ const LoadingSkeleton = ({
         width={size}
         height={size}
       />
-    </>
+    </div>
   );
 };
 

@@ -1,11 +1,12 @@
 import AppointmentDailyPlan from "@/components/booking/AppointmentDailyPlan";
 import BookingBox from "@/components/booking/BookingBox";
-import LoadingSkeleton from "@/components/shared/LoadingSkeleton";
+
+import { getAllRoomsAndBookings2 } from "@/lib/actions/booking.action";
 import { getClientByIdForBooking } from "@/lib/actions/client.action";
-import { getAllRoomsAndBookings } from "@/lib/actions/room.action";
+
 import { intToDate2 } from "@/lib/utils";
 import dynamic from "next/dynamic";
-import { Suspense } from "react";
+
 const RoomBox = dynamic(() => import("@/components/booking/AvailableRooms"), {
   ssr: false,
 });
@@ -13,7 +14,7 @@ const RoomBox = dynamic(() => import("@/components/booking/AvailableRooms"), {
 const EditChange = async ({ searchParams, params }: any) => {
   const [client, { allRooms, isNext }] = await Promise.all([
     getClientByIdForBooking(params.id),
-    getAllRoomsAndBookings({
+    getAllRoomsAndBookings2({
       rangeDate: {
         from: intToDate2(+searchParams.fr),
         to: intToDate2(+searchParams.to),
@@ -25,6 +26,7 @@ const EditChange = async ({ searchParams, params }: any) => {
   ]);
 
   const pageNumber = searchParams.page ? +searchParams.page : 1;
+
   return (
     <section className=" flex h-screen max-h-[2200px]   flex-row   font-noto_sans  ">
       <div className="  custom-scrollbar flex max-h-[2000px] min-h-screen w-full flex-1   flex-col  gap-8 overflow-y-auto scroll-smooth  px-5 py-7 max-2xl:gap-2 max-2xl:py-8 sm:px-8">
@@ -44,22 +46,22 @@ const EditChange = async ({ searchParams, params }: any) => {
 
           <BookingBox client={client} searchParams={searchParams} />
         </header>
-        <Suspense
-          fallback={<LoadingSkeleton size={20} animation="animate-spin" />}
-        >
-          <RoomBox
-            rooms={JSON.parse(JSON.stringify(allRooms))}
-            client={JSON.parse(JSON.stringify(client))}
-            isNext={isNext}
-            pageNumber={pageNumber}
-          />
-        </Suspense>
+
+        <RoomBox
+          rooms={JSON.parse(JSON.stringify(allRooms))}
+          client={JSON.parse(JSON.stringify(client))}
+          isNext={isNext}
+          pageNumber={pageNumber}
+        />
       </div>
-      <aside className="no-scrollbar  h-full w-[300px] flex-col border-l border-gray-200 py-2 max-xl:hidden xl:flex xl:overflow-y-scroll">
+      <aside className="  custom-scrollbar   flex h-screen max-h-[2200px] flex-col overflow-y-auto border-l border-gray-200 py-2 max-xl:hidden">
         <h1 className="text-light850_dark500 mt-2 p-2 text-lg font-semibold ">
           Πρόγραμμα Χρονικής Περιόδου
         </h1>
-        <AppointmentDailyPlan date={intToDate2(+searchParams.fr)} />
+        <div className=" mb-40 flex max-h-[2200px] min-h-screen flex-col items-center justify-between gap-2  ">
+          <AppointmentDailyPlan date={intToDate2(+searchParams.fr)} />
+          <AppointmentDailyPlan date={intToDate2(+searchParams.to)} />
+        </div>
       </aside>
     </section>
   );

@@ -44,6 +44,11 @@ export function formatDateString(inputDateString: Date) {
 
   return formattedDate;
 }
+export async function getDayAndMonth(date: Date) {
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  return `${day}/${month}`;
+}
 export function formatDateToTime(inputDateString: Date | undefined) {
   // Parse the input date string
   if (!inputDateString) return "";
@@ -394,8 +399,10 @@ export function findRoomNameById(id: string, rooms: any) {
 }
 export function isBookingLive(booking: any) {
   const currentDate = Date.now();
-  const fromDate = booking.fromDate.getTime();
-  const toDate = booking.toDate.getTime();
+  if (!booking) return false;
+
+  const fromDate = new Date(booking.fromDate).getTime();
+  const toDate = new Date(booking.toDate).getTime();
 
   return currentDate >= fromDate && currentDate <= toDate;
 }
@@ -426,7 +433,7 @@ export function ExpendsLabel({ total }: any) {
 export function findDogWithUndesiredBehavior(dogs: any[]) {
   if (!dogs) return null; // Return null if no dogs are provided
   for (const dog of dogs) {
-    if (dog.behavior === "Ενθουσιώδης") {
+    if (dog.behavior === "Ανεπιθύμητος") {
       return dog;
     }
   }

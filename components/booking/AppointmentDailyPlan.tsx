@@ -7,9 +7,8 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 const AppointmentDailyPlan = async ({ date }: { date: Date }) => {
-  console.log(date);
   const appointments = await getEventsByDate({ date });
-  console.log(appointments);
+
   return (
     <section className="text-dark100_light900 mt-4 flex flex-col items-center gap-2 py-2  ">
       <h1> Ημερήσια Ραντεβού {formatDateString2(new Date(date))}</h1>

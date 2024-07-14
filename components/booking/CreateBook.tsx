@@ -23,7 +23,7 @@ import {
 } from "@/lib/utils";
 import { useToast } from "../ui/use-toast";
 import { Input } from "../ui/input";
-
+import Image from "next/image";
 const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
   const searchParams = useSearchParams();
   const [show, setShow] = React.useState(false);
@@ -51,14 +51,15 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
         });
         setValidate({
           check,
-          message: check ? "Έχει κράτηση τις συγκεκριμένες ημερομηνίες" : "",
+          message: check ? "Έχει ήδη κράτηση" : "",
         });
+        if (validate.check) setShow(false);
       }
     };
     if (searchParams.get("fr") && searchParams.get("to")) {
       validateBooking();
     }
-  }, [searchParams.get("fr"), searchParams.get("to")]);
+  }, [searchParams.get("fr"), searchParams.get("to"), show]);
 
   const fromDate = setLocalTime(
     intToDate2(+searchParams.get("fr")!),
@@ -111,32 +112,37 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
       window.location.reload();
     }
   };
-
+  const isDisabled: boolean =
+    dogsInRooms.length === 0 ||
+    !searchParams.get("fr") ||
+    !searchParams.get("to") ||
+    !searchParams.get("tm1") ||
+    !searchParams.get("tm2");
   return (
     <>
       {!validate.check ? (
         <Button
           onClick={() => setShow(true)}
           className={cn(
-            "font-noto_sans  px-8 py-2 rounded-md bg-purple-700 min-h-[45px] text-white font-bold transition duration-200 hover:bg-white dark:hover:bg-dark-500 dark:hover:text-white hover:text-black border-2 border-transparent hover:border-purple-700  mr-2",
+            "font-noto_sans  px-8 py-2 rounded-md  min-h-[45px] text-white font-bold transition duration-200  border-2 min-w-[130px]",
             {
-              "opacity-50 text-red-400 cursor-not-allowed":
-                !searchParams.has("fr") && !searchParams.has("to"),
-            },
-            {
-              "opacity-100 hover:scale-105":
-                searchParams.has("fr") && searchParams.has("to"),
+              "bg-dark-300  border-green-500 hover:bg-green-500 hover:animate-pulse":
+                !isDisabled,
+              "bg-red-700 border-dark-100 border-4 ": isDisabled,
             }
           )}
-          disabled={
-            dogsInRooms.length === 0 ||
-            !searchParams.get("fr") ||
-            !searchParams.get("to") ||
-            !searchParams.get("tm1") ||
-            !searchParams.get("tm2")
-          }
+          disabled={isDisabled}
         >
-          ΚΡΑΤΗΣΗ
+          {isDisabled ? (
+            <Image
+              src={"/assets/icons/minus.svg"}
+              width={20}
+              height={20}
+              alt="not allowed"
+            />
+          ) : (
+            "Κράτηση"
+          )}
         </Button>
       ) : (
         <span className="max-w-[180px] animate-pulse rounded-lg bg-light-700 p-2 text-center text-sm font-bold text-red-500 dark:bg-dark-500">

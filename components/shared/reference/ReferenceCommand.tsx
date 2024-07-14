@@ -78,7 +78,10 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
       {reference === "client" && (
         <Popover open={reference === "client"}>
           <PopoverTrigger></PopoverTrigger>
-          <PopoverContent className=" w-80 bg-white" align="end">
+          <PopoverContent
+            className=" w-80 bg-white dark:bg-dark-100"
+            align="end"
+          >
             <LocalSearch
               route={"/form"}
               placeholder="Επώνυμο πελάτη"

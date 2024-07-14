@@ -17,7 +17,7 @@ const BookingBox = async ({
     <section className="total-balance background-light900_dark200 mt-4">
       <div className="flex w-full flex-row items-center   gap-8 ">
         <Link
-          className="text-dark200_light900 flex  flex-row items-center gap-2 rounded-xl bg-blue-500 px-4 py-2 font-noto_sans font-semibold hover:scale-105"
+          className="text-dark200_light900 flex  flex-row items-center gap-2 rounded-xl border-[3px] border-indigo-500 px-4 py-2 font-noto_sans font-semibold hover:scale-105 dark:bg-dark-300 "
           href={`/clients/${client?._id}`}
         >
           <Image
