@@ -106,7 +106,7 @@ const ClientForm = ({ setData, setStage, clients }: any) => {
               ))}
             </CustomFormField>
           </div>
-          <div className=" flex flex-col gap-6 2xl:flex-row">
+          <div className=" flex flex-col gap-6">
             <h2 className="sub-header ">Στοιχέια Επικοινωνίας</h2>
             <CustomFormField
               fieldType={FormFieldType.PHONE_INPUT}
