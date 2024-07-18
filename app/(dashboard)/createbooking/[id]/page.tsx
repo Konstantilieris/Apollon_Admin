@@ -10,8 +10,11 @@ import dynamic from "next/dynamic";
 const RoomBox = dynamic(() => import("@/components/booking/AvailableRooms"), {
   ssr: false,
 });
-
-const EditChange = async ({ searchParams, params }: any) => {
+type SearchParamsProps = {
+  params: { id: string };
+  searchParams: { [key: string]: string };
+};
+const EditChange = async ({ searchParams, params }: SearchParamsProps) => {
   const [client, { allRooms, isNext }] = await Promise.all([
     getClientByIdForBooking(params.id),
     getAllRoomsAndBookings2({
@@ -52,6 +55,7 @@ const EditChange = async ({ searchParams, params }: any) => {
           client={JSON.parse(JSON.stringify(client))}
           isNext={isNext}
           pageNumber={pageNumber}
+          searchParams={searchParams}
         />
       </div>
       <aside className="  custom-scrollbar   flex h-screen max-h-[2200px] flex-col overflow-y-auto border-l border-gray-200 py-2 max-xl:hidden">

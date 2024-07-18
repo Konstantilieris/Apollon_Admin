@@ -211,7 +211,7 @@ const ClientForm = ({ setData, setStage, clients }: any) => {
                       <RadioGroupItem value={option} id={option} />
                       <Label
                         htmlFor={option}
-                        className="cursor-pointer text-dark-300 dark:text-light-700"
+                        className="cursor-pointer text-dark-500 dark:text-light-700"
                       >
                         {option}
                       </Label>

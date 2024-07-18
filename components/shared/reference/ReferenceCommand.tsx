@@ -21,17 +21,34 @@ import {
 const ReferenceCommand = ({ clients, value, onChange }: any) => {
   const [reference, setReference] = React.useState("");
 
+  const [selectedClient, setSelectedClient] = React.useState<string>("");
+  const popoverRef = React.useRef(null);
   return (
     <div className="relative flex w-full">
       {reference !== "other" && (
         <Select
           onValueChange={(value) => {
+            setSelectedClient("");
+            onChange({});
             setReference(value);
-            reference === "google" && onChange({ google: true });
+            switch (value) {
+              case "client":
+                onChange({ clientId: "" });
+                break;
+              case "google":
+                onChange({ google: true });
+                break;
+              case "other":
+                onChange({ other: "" });
+                break;
+              default:
+                break;
+            }
           }}
+          value={reference}
         >
           <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] max-w-[246px] rounded-lg p-2 font-noto_sans ">
-            <SelectValue placeholder="Σύσταση" defaultValue={""} />
+            <SelectValue placeholder="Σύσταση" />
           </SelectTrigger>
           <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 font-noto_sans  ">
             <SelectItem
@@ -60,6 +77,7 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
           <span
             onClick={() => {
               setReference("");
+              onChange({});
             }}
             className="ml-2 rounded-lg bg-light-500 px-2 py-1 text-black hover:scale-105 hover:text-red-500"
           >
@@ -79,8 +97,11 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
         <Popover open={reference === "client"}>
           <PopoverTrigger></PopoverTrigger>
           <PopoverContent
-            className=" w-80 bg-white dark:bg-dark-100"
-            align="end"
+            className=" mr-40 w-80 bg-white dark:bg-dark-100"
+            align="center"
+            side="bottom"
+            sideOffset={10}
+            ref={popoverRef}
           >
             <LocalSearch
               route={"/form"}
@@ -94,14 +115,11 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
                     <div
                       onClick={() => {
                         onChange({ clientId: client._id });
+                        setSelectedClient(client.name);
                         setReference("");
                       }}
-                      className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1 font-noto_sans
-              ${
-                value.clientId === client._id
-                  ? "bg-celtic-green text-white"
-                  : "hover:bg-purple-300 "
-              }
+                      className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1 font-noto_sans hover:scale-105
+             
             `)}
                     >
                       <span className="font-bold">{client?.name}</span>
@@ -114,6 +132,11 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
             </ScrollArea>
           </PopoverContent>
         </Popover>
+      )}
+      {value.clientId && (
+        <span className="small-regular ml-4 self-center font-noto_sans text-indigo-300">
+          {selectedClient}
+        </span>
       )}
     </div>
   );

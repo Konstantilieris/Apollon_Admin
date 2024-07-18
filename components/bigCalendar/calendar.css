@@ -1,7 +1,4 @@
-.custom-red-background {
-  background-color: red; /* Adjust color as per your requirement */
-  color: white; /* Adjust text color if necessary */
-  /* Add any other styles you need */
+.e-schedule .e-appointment-details {
+  padding: 0 !important;
+  margin: 0 !important;
 }
-
-/* } */

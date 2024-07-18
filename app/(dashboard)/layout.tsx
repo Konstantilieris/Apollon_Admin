@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Sidebar />
       </div>
       {/* Flex container to fill remaining space */}
-      <section className="  h-full w-full basis-5/6">{children}</section>
+      <section className="min-h-screen w-full basis-5/6">{children}</section>
       <Toaster />
     </main>
   );

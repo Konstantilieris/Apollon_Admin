@@ -23,7 +23,7 @@ export interface IReference {
 export interface IClient {
   email?: string;
   profession?: string;
-
+  _id?: Schema.Types.ObjectId;
   location?: ILocation;
   phone: {
     telephone?: string;

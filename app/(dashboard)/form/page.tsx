@@ -13,7 +13,7 @@ const page = async ({ searchParams }: any) => {
 
   return (
     <div className="flex h-screen max-h-screen">
-      <section className="remove-scrollbar relative mb-24 flex-1 overflow-y-auto px-[5%]">
+      <section className="remove-scrollbar relative mb-24 flex-1 overflow-y-auto px-[5%] ">
         <div className=" size-full mx-autoflex max-w-[860px] flex-1 flex-col py-10">
           <span className=" flex flex-row items-center justify-center gap-4">
             <Image

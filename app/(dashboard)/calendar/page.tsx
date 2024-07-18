@@ -7,7 +7,7 @@ const page = async () => {
   const events = await getAllEvents();
 
   return (
-    <section className="flex w-full py-4 pr-2">
+    <section className="  h-screen min-h-screen  w-full px-2 py-8 ">
       <Scheduler appointments={events} />
     </section>
   );

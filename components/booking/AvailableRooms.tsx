@@ -4,34 +4,27 @@ import React, { Suspense } from "react";
 import Pagination from "../shared/Pagination";
 import RoomCard from "../shared/cards/RoomCard";
 
-import CreateBook from "./CreateBook";
-
 import { usePathname } from "next/navigation";
 import Filter from "../shared/Filter";
 import SearchBar from "../shared/searchBar/SearchBar";
-import DogButton from "./DogButton";
+
 import LoadingSkeleton from "../shared/LoadingSkeleton";
-
-type DogInRoom = {
-  dogId: string;
-  dogName: string;
-  roomId: string;
+import { IClient } from "@/database/models/client.model";
+type AvailableRoomProps = {
+  rooms: any;
+  client: IClient;
+  isNext: boolean;
+  pageNumber: number;
+  searchParams: { [key: string]: string };
 };
-const AvailableRooms = ({ rooms, client, isNext, pageNumber }: any) => {
-  const [dogsInRooms, setDogsInRooms] = React.useState<DogInRoom[]>([]);
-  const [selectedDog, setSelectedDog] = React.useState<any>([]);
-
+const AvailableRooms = ({
+  rooms,
+  client,
+  isNext,
+  pageNumber,
+  searchParams,
+}: AvailableRoomProps) => {
   const pathname = usePathname();
-  const handleSelectDog = (dog: any) => () => {
-    if (
-      selectedDog.includes(dog) ||
-      dogsInRooms.some((item) => item.dogId === dog._id)
-    ) {
-      setSelectedDog(selectedDog.filter((item: any) => item !== dog));
-    } else {
-      setSelectedDog([...selectedDog, dog]);
-    }
-  };
 
   return (
     <Suspense
@@ -57,20 +50,7 @@ const AvailableRooms = ({ rooms, client, isNext, pageNumber }: any) => {
             />
           </div>
           <div className=" flex flex-row  items-center gap-2 p-1 ">
-            {client?.dog.map((dog: any) => (
-              <DogButton
-                key={dog._id}
-                dog={dog}
-                selectedDog={selectedDog}
-                dogsInRooms={dogsInRooms}
-                handleSelectDog={handleSelectDog(dog)}
-              />
-            ))}
-            <CreateBook
-              dogsInRooms={dogsInRooms}
-              setDogsInRooms={setDogsInRooms}
-              client={client}
-            />
+            {/* <CreateBook client={client} /> */}
           </div>
         </header>
         <div className="mb-20 flex w-full flex-col items-center justify-center gap-2 px-8 py-4">
@@ -79,10 +59,7 @@ const AvailableRooms = ({ rooms, client, isNext, pageNumber }: any) => {
               room={room}
               client={client}
               key={room._id}
-              selectedDog={selectedDog}
-              setSelectedDog={setSelectedDog}
-              dogsInRooms={dogsInRooms}
-              setDogsInRooms={setDogsInRooms}
+              searchParams={searchParams}
             />
           ))}
 

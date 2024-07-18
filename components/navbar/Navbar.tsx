@@ -14,11 +14,11 @@ const Navbar = async () => {
   return (
     <nav
       className={cn(
-        "background-light900_dark200 fixed z-30  top-0 flex min-h-[10vh] w-full gap-5  p-6  sm:px-12 flex-row items-center",
+        "background-light900_dark200 fixed z-30  top-0 flex min-h-[10vh] w-full   p-6  sm:px-12 flex-row items-center",
         { "justify-between": !session }
       )}
     >
-      <div className="flex  basis-2/6 flex-row gap-8 justify-self-start">
+      <div className="flex  w-full flex-row gap-4">
         <Link
           href={"/main"}
           className=" animate-on-hover flex items-center gap-1"
@@ -39,12 +39,12 @@ const Navbar = async () => {
       </div>
 
       {session && (
-        <div className=" ml-20 flex basis-2/6 justify-items-center gap-4">
+        <div className=" ml-8 flex w-full justify-center">
           <GlobalSearch />
         </div>
       )}
 
-      <div className={cn("justify-end flex gap-5 basis-2/6")}>
+      <div className={cn("justify-end flex flex=row w-full gap-5 ")}>
         <AuthSwitch />
         <Theme />
         <MobileNav />

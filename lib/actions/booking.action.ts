@@ -85,18 +85,20 @@ export async function createBooking({
           throw new Error("Client not found");
         } else {
           if (flag1) {
-            const pickUpDescription = `${client.phone.mobile} -${
-              client.location.city
-            }-${client.residence}-${client.location.address}-${
-              client.location.postalCode
-            } - ${selectedDogsFiltered
-              .map(({ dogName }: any) => `${dogName}`)
-              .join(", ")} - ΠΑΡΑΛΑΒΗ`;
+            const pickUpDescription = `${client.name}-${client.phone.mobile} 
+              ${selectedDogsFiltered
+                .map(({ dogName }: any) => `${dogName}`)
+                .join(", ")} - ΠΑΡΑΛΑΒΗ`;
+            const location = `${client.location.city}-${client.residence}-${client.location.address}-${client.location.postalCode}`;
+
             const pickUpAppointment = await Appointment.create({
               Id: booking._id, // Use the training _id as the event Id
-              Type: "ΠΑΡΑΛΑΒΗ",
-              Subject: `${client.lastName} - ΜΕΤΑΦΟΡΑ`,
+
+              Subject: `${client.name} - ΜΕΤΑΦΟΡΑ`,
               Description: pickUpDescription,
+              isReadOnly: true,
+              Location: location,
+              Color: "#7f1d1d",
               StartTime: fromDate,
               EndTime: fromDate,
             });
@@ -111,8 +113,10 @@ export async function createBooking({
               .join(", ")}`;
             const ArrivalAppointment = await Appointment.create({
               Id: booking._id, // Use the training _id as the event Id
-              Type: "ΑΦΙΞΗ",
-              Subject: `${client.lastName} - ΑΦΙΞΗ ΣΚΥΛΟΥ `,
+
+              Subject: `${client.name} - ΑΦΙΞΗ ΣΚΥΛΟΥ `,
+              isReadOnly: true,
+              Color: "#1e3a8a",
               Description: ArrivalDescription,
               StartTime: fromDate,
               EndTime: fromDate,
@@ -122,18 +126,20 @@ export async function createBooking({
             }
           }
           if (flag2) {
-            const deliveryDescription = `${client.phone.mobile} -${
-              client.location.city
-            }-${client.residence}-${client.location.address}-${
-              client.location.postalCode
-            } - ${selectedDogsFiltered
+            const deliveryDescription = `${
+              client.phone.mobile
+            }- ${selectedDogsFiltered
               .map(({ dogName }: any) => `${dogName}`)
               .join(", ")} - ΠΑΡΑΔΟΣΗ`;
+            const locationDescription = ` ${client.location.city}-${client.residence}-${client.location.address}-${client.location.postalCode}`;
             const deliveryAppointment = await Appointment.create({
               Id: booking._id, // Use the training _id as the event Id
-              Type: "ΠΑΡΑΔΟΣΗ",
-              Subject: `${client.lastName} - ΜΕΤΑΦΟΡΑ`,
+
+              Subject: `${client.name} - ΜΕΤΑΦΟΡΑ`,
               Description: deliveryDescription,
+              Location: locationDescription,
+              isReadOnly: true,
+              Color: "#7f1d1d",
               StartTime: toDate,
               EndTime: toDate,
             });
@@ -148,9 +154,11 @@ export async function createBooking({
               .join(", ")}`;
             const DepartureAppointment = await Appointment.create({
               Id: booking._id, // Use the training _id as the event Id
-              Type: "ΑΝΑΧΩΡΗΣΗ",
-              Subject: `${client.lastName} - ΑΝΑΧΩΡΗΣΗ ΣΚΥΛΟΥ`,
+
+              Subject: `${client.name} - ΑΝΑΧΩΡΗΣΗ ΣΚΥΛΟΥ`,
               Description: DepartureDescription,
+              isReadOnly: true,
+              Color: "#1e3a8a",
               StartTime: toDate,
               EndTime: toDate,
             });

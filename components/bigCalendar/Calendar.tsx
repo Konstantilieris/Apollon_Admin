@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 
 import {
   Week,
@@ -10,6 +10,7 @@ import {
   ViewsDirective,
   ViewDirective,
   Inject,
+  TimelineMonth,
 } from "@syncfusion/ej2-react-schedule";
 import { registerLicense, L10n, loadCldr } from "@syncfusion/ej2-base";
 
@@ -18,6 +19,12 @@ import * as greekNumbers from "cldr-data/main/el/numbers.json";
 import * as greekTime from "cldr-data/main/el/timeZoneNames.json";
 import { cn } from "@/lib/utils";
 import "./calendar.css";
+
+import {
+  createEvent,
+  deleteEvent,
+  updateEvent,
+} from "@/lib/actions/event.action";
 const registerKey = process.env.NEXT_PUBLIC_REGISTER_KEY; // Set a default value if the key is undefined
 registerLicense(registerKey!);
 loadCldr(greekLocale, greekNumbers, greekTime);
@@ -106,72 +113,60 @@ L10n.load({
 });
 
 const Scheduler = ({ appointments }: any) => {
-  const [size, setSize] = React.useState({ width: 1600, height: 770 });
-  useEffect(() => {
-    const updatePageSize = () => {
-      if (window.matchMedia("(min-width: 2000px)").matches) {
-        setSize({ width: 2200, height: 1100 });
-      } else if (window.matchMedia("(min-width: 1024px)").matches) {
-        setSize({ width: 1600, height: 770 });
-      } else {
-        setSize({ width: 1200, height: 600 });
-      }
-    };
-
-    updatePageSize(); // Initial update
-
-    const resizeHandler = () => {
-      updatePageSize();
-    };
-
-    window.addEventListener("resize", resizeHandler);
-
-    return () => {
-      window.removeEventListener("resize", resizeHandler);
-    };
-  }, []);
   const eventTemplate = (props: any) => {
     return (
       <div
         className={cn(
-          "font-noto_sans p-1 text-center w-full text-white font-semibold",
-          {
-            "bg-red-500 relative":
-              props.Type === "ΑΦΙΞΗ" || props.Type === "ΑΝΑΧΩΡΗΣΗ",
-            "bg-blue-500 relative":
-              props.Type === "ΠΑΡΑΔΟΣΗ" || props.Type === "ΠΑΡΑΛΑΒΗ",
-          }
+          "font-noto_sans pb-4  w-full text-white  font-semibold   items-center flex justify-center min-h-[50px] gap-2"
         )}
+        style={{ backgroundColor: props.Color ? props.Color : "transparent" }}
       >
-        <div>{props.Subject}</div>
+        {" "}
+        {props.Subject}
       </div>
     );
   };
 
+  const onActionComplete = async (args: any) => {
+    if (args.requestType === "eventCreated") {
+      await createEvent({ event: args.addedRecords[0] });
+      window.location.reload();
+    } else if (args.requestType === "eventChanged") {
+      await updateEvent({ event: args.changedRecords[0] });
+      window.location.reload();
+    } else if (args.requestType === "eventRemoved") {
+      await deleteEvent({ event: args.deletedRecords[0] });
+      window.location.reload();
+    }
+  };
+
   return (
     <ScheduleComponent
-      className="w-full rounded-lg "
-      height={size.height}
-      width={size.width}
-      readonly={true}
+      className=" w-full rounded-lg"
+      height={"88%"}
+      width={"100%"}
+      startHour="07:00"
+      endHour="23:30"
       eventSettings={{
-        dataSource: appointments.map((appointment: any) => ({
-          ...appointment,
-        })),
+        dataSource: appointments,
+        fields: {
+          isReadonly: "IsReadonly",
+        },
+
         template: eventTemplate,
-        enableTooltip: true,
       }}
+      actionComplete={onActionComplete}
       selectedDate={new Date()}
-      quickInfoTemplates={{ footer: "Admin" }}
       locale="el"
     >
       <ViewsDirective>
         <ViewDirective option="Day" />
         <ViewDirective option="Week" />
         <ViewDirective option="Month" />
+        <ViewDirective option="TimelineMonth" />
       </ViewsDirective>
 
-      <Inject services={[Day, Week, Month]} />
+      <Inject services={[Day, Week, Month, TimelineMonth]} />
     </ScheduleComponent>
   );
 };
