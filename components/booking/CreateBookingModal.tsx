@@ -55,16 +55,21 @@ const CreateBookingModal = ({
     amount + costDeparture + costArrival
   );
   const { toast } = useToast();
-  console.log(searchParams.get("66300fa208635ac8cb004f64")?.split("_")[1]);
-  const cleanDogs = dogs.map((dog: any) => {
-    if (searchParams.has(dog._id)) {
-      return {
-        dogId: dog._id,
-        dogName: dog.name,
-        roomId: searchParams.get(dog._id)?.split("_")[1],
-      };
-    }
-  });
+
+  const cleanDogs = dogs
+    .map((dog: any) => {
+      if (searchParams.has(dog._id)) {
+        return {
+          dogId: dog._id,
+          dogName: dog.name,
+          roomId: searchParams.get(dog._id)?.split("_")[1],
+        };
+      } else {
+        return null;
+      }
+    })
+    .filter((dog: any) => dog !== null);
+  console.log(cleanDogs);
   useEffect(() => {
     setTotalAmount(amount + costDeparture + costArrival);
   }, [costDeparture, costArrival, amount]);
