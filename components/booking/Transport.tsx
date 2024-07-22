@@ -50,7 +50,7 @@ const Transport = () => {
     <AlertDialog onOpenChange={setOpen} open={open}>
       <AlertDialogTrigger
         className={cn(
-          "font-noto_sans  relative p-[3px] ",
+          "font-sans  relative p-[3px] ",
           {
             "opacity-50 text-red-400 cursor-not-allowed":
               !searchParams.has("fr") && !searchParams.has("to"),
@@ -63,11 +63,11 @@ const Transport = () => {
         disabled={!searchParams.has("fr") && !searchParams.has("to")}
       >
         <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 " />
-        <div className="group relative  rounded-[6px] bg-light-700 px-8  py-2 font-semibold text-black transition duration-200 hover:bg-transparent dark:bg-dark-300 dark:text-white hover:dark:bg-transparent">
+        <div className="group relative  rounded-[6px] bg-light-700 px-8  py-2 font-normal text-black transition duration-200 hover:bg-transparent dark:bg-dark-300 dark:text-white hover:dark:bg-transparent">
           ΧΡΟΝΟΔΙΑΓΡΑΜΜΑ
         </div>
       </AlertDialogTrigger>
-      <AlertDialogContent className="text-dark200_light900 min-h-[376px] border   border-orange-500 bg-light-700 font-noto_sans dark:bg-dark-200">
+      <AlertDialogContent className="text-dark200_light900 min-h-[376px] border   border-orange-500 bg-light-700 font-sans dark:bg-dark-200">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-center text-xl font-semibold">
             ΧΡΟΝΟΔΙΑΓΡΑΜΜΑ ΜΕΤΑΚΙΝΗΣΗΣ

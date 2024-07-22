@@ -44,9 +44,9 @@ const Page = () => {
   }, []);
 
   return (
-    <section className="flex h-full w-full flex-col items-center p-8">
+    <section className="flex h-full w-full flex-col items-center p-8 font-sans">
       {!openForm && (
-        <div className="text-dark200_light800 flex flex-row items-center gap-4 self-start font-noto_sans text-lg">
+        <div className="text-dark200_light800 flex flex-row items-center gap-4 self-start text-lg">
           <h1 className="flex flex-row gap-2">
             Με λιγα κλικ καταχώρησε ραντεβου{" "}
             <Image
@@ -58,7 +58,7 @@ const Page = () => {
           </h1>
           <Button
             onClick={() => setOpenForm(!openForm)}
-            className="btn text-dark500_light700  border-2 border-pink-800 p-4 font-noto_sans text-lg font-bold hover:scale-105 hover:animate-pulse"
+            className="btn text-dark500_light700  border-2 border-pink-800 p-4 text-lg font-bold hover:scale-105 hover:animate-pulse"
           >
             ΡΑΝΤΕΒΟΥ
           </Button>
@@ -69,7 +69,7 @@ const Page = () => {
         {!openForm && training && (
           <>
             {" "}
-            <h1 className="text-light850_dark500 font-noto_sans text-[30px] font-extrabold">
+            <h1 className="text-light850_dark500 text-[30px] font-extrabold">
               {" "}
               ΠΙΝΑΚΑΣ ΕΚΠΑΙΔΕΥΣΕΩΝ
             </h1>

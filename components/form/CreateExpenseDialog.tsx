@@ -69,7 +69,7 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
         if (expense) {
           toast({
             className: cn(
-              "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+              "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
             ),
             title: "Επιτυχία",
             description: `η δαπάνη δημιουργήθηκε με επιτυχία`,
@@ -83,7 +83,7 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
       } catch (error) {
         toast({
           className: cn(
-            "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Αποτυχία",
           description: `${error}`,
@@ -134,9 +134,9 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
         )}
       >
         <AlertDialogHeader className="gap-4">
-          <AlertDialogTitle className="text-center font-noto_sans">
+          <AlertDialogTitle className="text-center font-sans">
             {stage === 0 && (
-              <div className="flex flex-col gap-1 font-noto_sans">
+              <div className="flex flex-col gap-1 font-sans">
                 <span className="text-xl ">Επιλογή </span>{" "}
               </div>
             )}
@@ -153,14 +153,14 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
           <div>
             {stage === 0 ? (
               <div className="flex flex-col items-center gap-2">
-                <h1 className="font-noto_sans font-semibold">
+                <h1 className="font-sans font-semibold">
                   {parentCategory.name}
                 </h1>
                 <Select onValueChange={(value) => setSubCategory(value)}>
-                  <SelectTrigger className="w-[180px] font-noto_sans font-normal">
+                  <SelectTrigger className="w-[180px] font-sans font-normal">
                     <SelectValue placeholder="Υποκατηγορίες" />
                   </SelectTrigger>
-                  <SelectContent className="background-light900_dark200  text-dark100_light900 py-2 font-noto_sans ">
+                  <SelectContent className="background-light900_dark200  text-dark100_light900 py-2 font-sans ">
                     {parentCategory?.subCategories?.map((sub: any) => (
                       <SelectItem
                         key={sub._id}
@@ -188,13 +188,13 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
                     name="date"
                     render={({ field }) => (
                       <FormItem className="flex  min-w-[0.5vw] flex-col">
-                        <FormLabel className=" font-noto_sans text-base font-normal">
+                        <FormLabel className=" font-sans text-base font-normal">
                           Ημερομηνία δαπάνης
                         </FormLabel>
                         <FormControl>
                           <DateInput field={field} maxwidth={"min-w-[220px]"} />
                         </FormControl>
-                        <span className=" font-noto_sans text-sm text-blue-500">
+                        <span className=" font-sans text-sm text-blue-500">
                           π.χ. 21/05/2025
                         </span>
                         <FormMessage />
@@ -206,17 +206,17 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
                     name="amount"
                     render={({ field }) => (
                       <FormItem className="flex  min-w-[0.5vw] flex-col">
-                        <FormLabel className=" font-noto_sans text-base font-normal">
+                        <FormLabel className=" font-sans text-base font-normal">
                           Συνολικό Κόστος €
                         </FormLabel>
                         <FormControl>
                           <Input
-                            className=" paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700  no-focus min-h-[56px] max-w-[400px] border font-noto_sans font-bold"
+                            className=" paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700  no-focus min-h-[56px] max-w-[400px] border font-sans font-bold"
                             type="number"
                             {...field}
                           />
                         </FormControl>
-                        <span className=" font-noto_sans text-sm text-blue-500">
+                        <span className=" font-sans text-sm text-blue-500">
                           π.χ. 50.45
                         </span>
                         <FormMessage />
@@ -228,7 +228,7 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
                     name="description"
                     render={({ field }) => (
                       <FormItem className="flex  min-w-[0.5vw] flex-col">
-                        <FormLabel className=" font-noto_sans text-base font-normal">
+                        <FormLabel className=" font-sans text-base font-normal">
                           Προσθέστε μια περιγραφή για τη δαπάνη σας
                         </FormLabel>
                         <FormControl>
@@ -237,7 +237,7 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
                             {...field}
                           />
                         </FormControl>
-                        <span className=" font-noto_sans text-sm text-blue-500">
+                        <span className=" font-sans text-sm text-blue-500">
                           π.χ. Πληρωμή ηλεκτρικού ρεύματος
                         </span>
                         <FormMessage />
@@ -250,7 +250,7 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
           </div>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="absolute right-2 top-2 border-none font-noto_sans text-sm font-semibold text-black hover:scale-105 hover:text-red-500 dark:text-white">
+          <AlertDialogCancel className="absolute right-2 top-2 border-none font-sans text-sm font-semibold text-black hover:scale-105 hover:text-red-500 dark:text-white">
             X
           </AlertDialogCancel>
 

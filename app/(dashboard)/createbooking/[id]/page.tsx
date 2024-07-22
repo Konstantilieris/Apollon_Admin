@@ -1,10 +1,12 @@
 import AppointmentDailyPlan from "@/components/booking/AppointmentDailyPlan";
 import BookingBox from "@/components/booking/BookingBox";
+import BookingSearchFilter from "@/components/booking/BookingSearchFilter";
 
 import { getAllRoomsAndBookings2 } from "@/lib/actions/booking.action";
 import { getClientByIdForBooking } from "@/lib/actions/client.action";
 
 import { intToDate2 } from "@/lib/utils";
+
 import dynamic from "next/dynamic";
 
 const RoomBox = dynamic(() => import("@/components/booking/AvailableRooms"), {
@@ -31,7 +33,7 @@ const EditChange = async ({ searchParams, params }: SearchParamsProps) => {
   const pageNumber = searchParams.page ? +searchParams.page : 1;
 
   return (
-    <section className=" flex h-screen max-h-[2200px]   flex-row   font-noto_sans  ">
+    <section className=" flex h-screen max-h-[2200px]   flex-row   font-sans  ">
       <div className="  custom-scrollbar flex max-h-[2000px] min-h-screen w-full flex-1   flex-col  gap-8 overflow-y-auto scroll-smooth  px-5 py-7 max-2xl:gap-2 max-2xl:py-8 sm:px-8">
         <header className=" flex flex-col justify-between gap-8 max-2xl:gap-2">
           <div className="flex flex-col gap-2">
@@ -49,14 +51,15 @@ const EditChange = async ({ searchParams, params }: SearchParamsProps) => {
 
           <BookingBox client={client} searchParams={searchParams} />
         </header>
-
-        <RoomBox
-          rooms={JSON.parse(JSON.stringify(allRooms))}
-          client={JSON.parse(JSON.stringify(client))}
-          isNext={isNext}
-          pageNumber={pageNumber}
-          searchParams={searchParams}
-        />
+        <section className="recent-expenses text-dark400_light500 bg-light-700 font-sans dark:bg-dark-200">
+          <BookingSearchFilter />
+          <RoomBox
+            rooms={JSON.parse(JSON.stringify(allRooms))}
+            client={JSON.parse(JSON.stringify(client))}
+            isNext={isNext}
+            pageNumber={pageNumber}
+          />
+        </section>
       </div>
       <aside className="  custom-scrollbar   flex h-screen max-h-[2200px] flex-col overflow-y-auto border-l border-gray-200 py-2 max-xl:hidden">
         <h1 className="text-light850_dark500 mt-2 p-2 text-lg font-semibold ">

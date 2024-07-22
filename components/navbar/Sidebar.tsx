@@ -49,7 +49,7 @@ const Sidebar = () => {
               />
 
               <p
-                className={`font-noto_sans font-semibold max-lg:hidden 2xl:text-[26px] ${
+                className={`font-sans font-semibold max-lg:hidden 2xl:text-[26px] ${
                   isActive ? "base-bold" : "base-medium"
                 }`}
               >

@@ -361,20 +361,7 @@ export function calculateTotalPrice({
 
   return totalPrice;
 }
-export function ManageAvailability(
-  roomUnavailableDates: string[] | undefined,
-  rangeDate: { from: Date | undefined; to: Date | undefined }
-) {
-  if (!rangeDate.from || !rangeDate.to) return false; // if no range date provided, room is not available
-  if (!roomUnavailableDates || roomUnavailableDates.length === 0) return true; // if no unavailable dates, room is available
 
-  const fromISO = rangeDate.from.toISOString().split("T")[0];
-  const toISO = rangeDate.to.toISOString().split("T")[0];
-
-  return !roomUnavailableDates.some((date) => {
-    return date >= fromISO || date <= toISO;
-  });
-}
 export function resetHours(date: Date): Date {
   const newDate = new Date(date);
   newDate.setHours(0, 0, 0, 0); // Resetting hours, minutes, seconds, and milliseconds to 0

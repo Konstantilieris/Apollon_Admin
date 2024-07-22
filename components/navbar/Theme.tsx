@@ -57,7 +57,7 @@ const Theme = () => {
                 className={`${mode === item.value && "active-theme"}`}
               />
               <p
-                className={` font-chakra font-bold text-light-500 ${
+                className={` font-sans font-bold text-light-500 ${
                   mode === item.value
                     ? "text-primary-500"
                     : "text-dark100_light900"

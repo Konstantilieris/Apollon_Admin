@@ -5,7 +5,7 @@ export default function Home() {
     <main className="  mt-28 flex h-full w-full flex-col">
       <div className="  z-0 flex  w-full flex-row bg-black lg:max-h-[76.7vh] 2xl:max-h-[80vh]">
         {/* responsive text size ,responsive change of positionings */}
-        <p className="hero-text font-noto_sans tracking-widest">
+        <p className="hero-text font-sans tracking-widest">
           WELCOME TO APOLLON DOG CENTER
         </p>
         <video

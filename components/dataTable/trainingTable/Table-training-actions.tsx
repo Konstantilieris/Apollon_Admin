@@ -34,7 +34,7 @@ export function DataTableRowActions({ row }: any) {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="center"
-        className="background-light900_dark300 text-dark200_light800 w-[200px]  font-noto_sans font-bold"
+        className="background-light900_dark300 text-dark200_light800 w-[200px]  font-sans font-bold"
       >
         {" "}
         <DropdownMenuItem

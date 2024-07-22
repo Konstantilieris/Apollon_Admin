@@ -28,7 +28,7 @@ export const sidebarLinks: SidebarLink[] = [
     label: "Εισαγωγή Πελάτη",
   },
   {
-    imgURL: "/assets/icons/clients.svg",
+    imgURL: "/assets/icons/client.svg",
     route: "/clients",
     label: "Πελάτες",
   },

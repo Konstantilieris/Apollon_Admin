@@ -48,7 +48,7 @@ export function DataTableToolbar<TData>({
           placeholder="Αναζήτηση"
           value={filtering}
           onChange={(event) => setFiltering(event.target.value)}
-          className="background-light900_dark300 text-dark200_light800 h-10 w-[150px] font-noto_sans font-semibold lg:w-[250px]"
+          className="background-light900_dark300 text-dark200_light800 h-10 w-[150px] font-sans font-semibold lg:w-[250px]"
         />
 
         {facetedFilteringOptions &&

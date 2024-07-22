@@ -28,7 +28,7 @@ const AuthSwitch = () => {
           alt="logout"
           className="sm:hidden"
         />{" "}
-        <span className="font-chakra  max-sm:hidden">LOGOUT</span>
+        <span className="font-sans  max-sm:hidden">LOGOUT</span>
       </Button>
     );
   } else {
@@ -41,7 +41,7 @@ const AuthSwitch = () => {
           alt="logout"
           className="sm:hidden"
         />{" "}
-        <span className="font-chakra max-sm:hidden">LOGIN</span>
+        <span className="font-sans max-sm:hidden">LOGIN</span>
       </Button>
     );
   }

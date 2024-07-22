@@ -7,7 +7,7 @@ const AlertBehavior = ({ status, client }: { status: any; client: any }) => {
   const [open, setOpen] = React.useState(!!status);
   return (
     open && (
-      <Alert className="relative z-50 border-red-800 font-noto_sans text-xl font-semibold text-red-800">
+      <Alert className="relative z-50 border-red-800 font-sans text-xl font-semibold text-red-800">
         <Image
           src="/assets/icons/close2.svg"
           width={20}

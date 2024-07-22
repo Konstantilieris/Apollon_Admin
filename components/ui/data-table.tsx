@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="background-light700_dark300  text-dark200_light800 custom-scrollbar  max-h-[1280px] w-full gap-2 space-y-8 rounded-lg border-2 border-purple-700 lg:max-w-[1600px] 2xl:mt-4 2xl:max-w-[2230px]">
       <Table className="w-full">
-        <TableHeader className="border-b-2 border-black p-4 font-noto_sans text-[22px] font-extrabold">
+        <TableHeader className="border-b-2 border-black p-4 font-sans text-[22px] font-extrabold">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -99,7 +99,7 @@ export function DataTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className=" text-center font-noto_sans">
+        <TableBody className=" text-center font-sans">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow

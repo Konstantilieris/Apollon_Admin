@@ -35,14 +35,14 @@ export function DatePicker({ date, setDate }: any) {
         <PopoverTrigger asChild>
           <Button
             className={cn(
-              " w-[200px]  justify-start text-left   background-light900_dark300 font-noto_sans font-bold dark:text-white"
+              " w-[200px]  justify-start text-left   background-light900_dark300 font-sans font-bold dark:text-white"
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date ? format(date, "PPP") : <span>Pick a date</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="background-light900_dark200 text-dark200_light800 w-auto p-0 font-noto_sans text-xl font-bold">
+        <PopoverContent className="background-light900_dark200 text-dark200_light800 w-auto p-0 font-sans text-xl font-bold">
           <Calendar
             mode="single"
             selected={date}

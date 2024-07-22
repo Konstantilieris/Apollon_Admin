@@ -45,7 +45,7 @@ export function SearchCommand({
                     dogs: client.dog,
                   })
                 }
-                className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1 font-noto_sans
+                className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1 font-sans
                 ${
                   selectedClient?.id === client._id
                     ? "bg-celtic-green text-white"

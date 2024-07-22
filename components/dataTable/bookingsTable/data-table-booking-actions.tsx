@@ -43,7 +43,7 @@ export function DataTableBookingRowActions({ row }: any) {
         if (deletedRoom) {
           toast({
             className: cn(
-              "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+              "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
             ),
             title: "Επιτυχία",
             description: `Επιτυχής διαγραφή δωματίου ${deletedRoom.name}`,
@@ -53,7 +53,7 @@ export function DataTableBookingRowActions({ row }: any) {
         console.error("Error deleting room", error);
         toast({
           className: cn(
-            "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Αποτυχία",
           description: "Αποτυχία διαγραφής δωματίου",
@@ -67,7 +67,7 @@ export function DataTableBookingRowActions({ row }: any) {
         if (updatedRoom) {
           toast({
             className: cn(
-              "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+              "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
             ),
             title: "Επιτυχία",
             description: `Επιτυχής αλλαγή δωματίου ${updatedRoom.name}`,
@@ -77,7 +77,7 @@ export function DataTableBookingRowActions({ row }: any) {
         console.error("Error updating room", error);
         toast({
           className: cn(
-            "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Αποτυχία",
           description: "Αποτυχία αλλαγής δωματίου",
@@ -104,7 +104,7 @@ export function DataTableBookingRowActions({ row }: any) {
                   <Input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="background-light900_dark300 text-dark200_light800  h-8 w-24 max-w-[200px]  p-0 font-noto_sans font-bold"
+                    className="background-light900_dark300 text-dark200_light800  h-8 w-24 max-w-[200px]  p-0 font-sans font-bold"
                   />
                 </span>
               ) : (
@@ -140,7 +140,7 @@ export function DataTableBookingRowActions({ row }: any) {
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="center"
-          className="background-light900_dark300 text-dark200_light800 w-[160px] font-noto_sans font-bold"
+          className="background-light900_dark300 text-dark200_light800 w-[160px] font-sans font-bold"
         >
           <DropdownMenuSeparator />
           <DropdownMenuSub></DropdownMenuSub>
@@ -172,14 +172,14 @@ export function DataTableBookingRowActions({ row }: any) {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="data-[state=open]:bg-muted flex  p-0 font-noto_sans font-bold hover:bg-sky-300 hover:dark:bg-deep-purple"
+                  className="data-[state=open]:bg-muted flex  p-0 font-sans font-bold hover:bg-sky-300 hover:dark:bg-deep-purple"
                 >
                   <span>Επεργασία Κρατήσεων</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="center"
-                className="background-light900_dark300 text-dark200_light800 w-[180px] font-noto_sans font-bold"
+                className="background-light900_dark300 text-dark200_light800 w-[180px] font-sans font-bold"
               >
                 {row.original.currentBookings.map((booking: any) => {
                   return (
@@ -199,7 +199,7 @@ export function DataTableBookingRowActions({ row }: any) {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <span className="flex text-end font-noto_sans font-bold"></span>
+            <span className="flex text-end font-sans font-bold"></span>
           )}
         </DropdownMenuContent>
       </DropdownMenu>

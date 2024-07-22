@@ -105,7 +105,7 @@ const RoomChange = (
       if (updatedBooking) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `το booking του πελάτη ${booking.clientId.lastName} τροποποιήθηκε`,
@@ -114,7 +114,7 @@ const RoomChange = (
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία τροποποιήσης",
         description: `${error}`,
@@ -128,8 +128,8 @@ const RoomChange = (
   return (
     <div className="mb-2 flex flex-row justify-center gap-20 self-start">
       <ScrollArea className=" background-light700_dark400 h-72 w-48 rounded-md border-2 border-purple-700">
-        <div className="p-4 font-noto_sans">
-          <h4 className="mb-4 font-noto_sans text-lg font-bold leading-none">
+        <div className="p-4font-sans">
+          <h4 className="mb-4font-sans text-lg font-bold leading-none">
             Δίαλεξε Σκυλους
           </h4>
           <Separator className="my-2 bg-slate-500" />
@@ -153,8 +153,8 @@ const RoomChange = (
         </div>
       </ScrollArea>
       <ScrollArea className=" background-light700_dark400 h-72  w-48 rounded-md border-2 border-purple-600">
-        <div className="p-4 font-noto_sans">
-          <h4 className="mb-4 font-noto_sans text-lg font-bold leading-none">
+        <div className="p-4font-sans">
+          <h4 className="mb-4font-sans text-lg font-bold leading-none">
             Δίαλεξε Δωμάτιο
           </h4>
           <Separator className="my-2 bg-slate-500" />
@@ -179,14 +179,14 @@ const RoomChange = (
       </ScrollArea>
 
       <Button
-        className="btn self-center font-noto_sans font-bold"
+        className="btn self-centerfont-sans font-bold"
         onClick={handlePrev}
         disabled={selectedDogs.length === 0 || bookingData.length === 0}
       >
         Prev
       </Button>
       <Button
-        className="btn self-center font-noto_sans font-bold"
+        className="btn self-centerfont-sans font-bold"
         onClick={handleNext}
         disabled={
           dogs.length === 0 || selectedDogs.length === 0 || !selectedRoom
@@ -196,13 +196,13 @@ const RoomChange = (
       </Button>
       {bookingData.length > 0 && (
         <ScrollArea className=" background-light700_dark400 h-72 w-48 rounded-md border border-slate-600 dark:border-purple-500">
-          <div className="p-4 font-noto_sans">
-            <h4 className="mb-4 font-noto_sans text-lg font-bold leading-none">
+          <div className="p-4font-sans">
+            <h4 className="mb-4font-sans text-lg font-bold leading-none">
               Σκύλος - Δωμάτιο
             </h4>
             {bookingData.map((data: any) => (
               <div key={data.dogId}>
-                <div className=" rounded-md bg-sky-200 py-2 text-center font-noto_sans font-bold dark:text-dark-100">
+                <div className=" text-centerfont-sans rounded-md bg-sky-200 py-2 font-bold dark:text-dark-100">
                   {data.dogName} - ROOM{data.roomName}
                 </div>
                 <Separator className="my-2" />
@@ -213,7 +213,7 @@ const RoomChange = (
       )}
 
       <Button
-        className="btn self-center border-2 border-celtic-green font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+        className="btn border-celtic-greenfont-sans self-center border-2 font-bold hover:scale-105 hover:animate-pulse"
         disabled={bookingData.length === 0}
         onClick={() => setSubmitting(true)}
       >

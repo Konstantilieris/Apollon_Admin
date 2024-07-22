@@ -56,7 +56,7 @@ const Booking = ({ clients, rooms }: any) => {
       if (room) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `Επιτυχής προσθήκη δωματίου ${room.name}`,
@@ -66,7 +66,7 @@ const Booking = ({ clients, rooms }: any) => {
       console.error("Error creating room", error);
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία",
         description: "Αποτυχία προσθήκης δωματίου",
@@ -78,7 +78,7 @@ const Booking = ({ clients, rooms }: any) => {
   return (
     <section className="flex h-full flex-col gap-8 lg:p-8">
       {" "}
-      <h1 className="text-light850_dark500 font-noto_sans text-xl font-bold max-2xl:hidden">
+      <h1 className="text-light850_dark500 font-sans text-xl font-bold max-2xl:hidden">
         ΔΙΑΧΕΙΡΗΣΗ ΚΡΑΤΗΣΕΩΝ
       </h1>
       <div className=" flex flex-col gap-4">
@@ -90,7 +90,7 @@ const Booking = ({ clients, rooms }: any) => {
               className={"self-start"}
             />
             <Button
-              className="btn  self-start border-2 border-purple-600 font-noto_sans font-extrabold hover:scale-105 dark:text-white"
+              className="btn  self-start border-2 border-purple-600 font-sans font-extrabold hover:scale-105 dark:text-white"
               onClick={() => setOpenDrawer(true)}
             >
               ΚΡΑΤΗΣΗ
@@ -98,7 +98,7 @@ const Booking = ({ clients, rooms }: any) => {
           </div>
 
           <Button
-            className="max-h-[38px] border-2 border-white bg-sky-blue p-2 font-noto_sans font-bold text-black hover:scale-105"
+            className="max-h-[38px] border-2 border-white bg-sky-blue p-2 font-sans font-bold text-black hover:scale-105"
             onClick={() => setShow(!show)}
           >
             ΠΡΟΣΘΗΚΗ{" "}
@@ -127,7 +127,7 @@ const Booking = ({ clients, rooms }: any) => {
                   <span className="flex flex-row items-center gap-2 text-[20px]">
                     Προσθέστε όνομα :{" "}
                     <Input
-                      className="background-light900_dark300 text-dark200_light800  h-8 w-24 max-w-[240px]  p-0 font-noto_sans font-bold"
+                      className="background-light900_dark300 text-dark200_light800  h-8 w-24 max-w-[240px]  p-0 font-sans font-bold"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                     />

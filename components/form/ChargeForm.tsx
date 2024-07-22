@@ -39,7 +39,7 @@ const ChargeForm = ({ id }: any) => {
       if (client) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Success",
           description: "Η χρέωση πραγματοποιήθηκε με επιτυχία",
@@ -48,7 +48,7 @@ const ChargeForm = ({ id }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Failed to charge try again!",
         description: `${error}`,
@@ -76,7 +76,7 @@ const ChargeForm = ({ id }: any) => {
                 <Input
                   placeholder=""
                   {...field}
-                  className="background-light850_dark100 text-dark100_light900 font-noto_sans font-bold"
+                  className="background-light850_dark100 text-dark100_light900 font-sans font-bold"
                 />
               </FormControl>
 
@@ -95,7 +95,7 @@ const ChargeForm = ({ id }: any) => {
                   placeholder="1"
                   type="number"
                   {...field}
-                  className="background-light850_dark100 text-dark100_light900 font-noto_sans font-bold"
+                  className="background-light850_dark100 text-dark100_light900 font-sans font-bold"
                 />
               </FormControl>
 
@@ -120,7 +120,7 @@ const ChargeForm = ({ id }: any) => {
         />
         <Button
           type="submit"
-          className="background-light850_dark100 text-dark100_light900 max-w-[120px] self-center border-2 border-green-500 font-noto_sans font-bold hover:scale-105"
+          className="background-light850_dark100 text-dark100_light900 max-w-[120px] self-center border-2 border-green-500 font-sans font-bold hover:scale-105"
         >
           Submit
         </Button>

@@ -23,7 +23,7 @@ const SelectInput = ({ className, data, field, title }: any) => {
     <Popover>
       <div className={cn("relative max-w-[200px]", className)}>
         <Input
-          className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input max-w-[400px] font-noto_sans font-bold"
+          className="background-light900_dark300 text-dark300_light700 paragraph-regular light-border-2 form_input max-w-[400px] font-sans font-bold"
           type="string"
           disabled={field.value !== "other"}
           value={stringData}
@@ -52,7 +52,7 @@ const SelectInput = ({ className, data, field, title }: any) => {
           </Button>
         </PopoverTrigger>
       </div>
-      <PopoverContent className="background-light900_dark300 text-dark300_light700 absolute right-[-32px] top-0 min-h-[300px] w-auto min-w-[200px] p-0 font-changa">
+      <PopoverContent className="background-light900_dark300 text-dark300_light700 absolute right-[-32px] top-0 min-h-[300px] w-auto min-w-[200px] p-0 font-sans">
         <ScrollArea className="h-72 w-48 rounded-md text-center">
           <div className="p-4">
             <h4 className="mb-4 text-sm font-medium leading-none">{title}</h4>

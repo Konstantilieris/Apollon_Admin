@@ -17,7 +17,7 @@ const CustomerChargeSheet = ({ client }: any) => {
   return (
     <div className="flex flex-row gap-2">
       <Button
-        className="gap-2 border-2 border-white bg-purple-600 p-4 font-noto_sans text-[17px] font-bold text-white hover:scale-105"
+        className="gap-2 border-2 border-white bg-purple-600 p-4 font-sans text-[17px] font-bold text-white hover:scale-105"
         onClick={() => {
           router.push(`/createbooking/${client._id}`);
         }}
@@ -32,7 +32,7 @@ const CustomerChargeSheet = ({ client }: any) => {
         />
       </Button>
       <Button
-        className="gap-2 border-2 border-white bg-green-600 p-4 font-noto_sans text-[17px] font-bold text-white hover:scale-105"
+        className="gap-2 border-2 border-white bg-green-600 p-4 font-sans text-[17px] font-bold text-white hover:scale-105"
         onClick={() => {
           setOpen(!open);
         }}

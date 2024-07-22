@@ -56,7 +56,7 @@ const EditTraining = ({ training }: any) => {
       if (updatedBooking) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `η εκπαίδευση του πελάτη ${training.clientId.lastName} τροποποιήθηκε`,
@@ -65,7 +65,7 @@ const EditTraining = ({ training }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία τροποποιήσης",
         description: `${error}`,
@@ -87,7 +87,7 @@ const EditTraining = ({ training }: any) => {
               Η ώρα άφιξης για την κράτησή του {training.clientId.lastName} θα
               τροποποιηθεί.
             </AlertDialogTitle>
-            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+            <AlertDialogDescription className="font-sans text-[20px] font-semibold">
               Στοιχέια Κρατησης
               <br /> &bull; ID : {training._id} <br />
               &bull; Αρχική ώρα άφιξης : {training.timeDeparture}
@@ -96,11 +96,11 @@ const EditTraining = ({ training }: any) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+            <AlertDialogCancel className="btn border-2 border-red-dark font-sans font-bold hover:scale-105 hover:animate-pulse">
               ΑΚΥΡΩΣΗ
             </AlertDialogCancel>
             <Button
-              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              className="btn border-2 border-purple-300 font-sans font-bold hover:scale-105 hover:animate-pulse"
               onClick={submitDepartureChange}
             >
               ΣΥΝΕΧΕΙΑ
@@ -119,7 +119,7 @@ const EditTraining = ({ training }: any) => {
       if (updatedTraining) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `το booking του πελάτη ${training.clientId.lastName} τροποποιήθηκε`,
@@ -128,7 +128,7 @@ const EditTraining = ({ training }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία τροποποιήσης",
         description: `${error}`,
@@ -150,7 +150,7 @@ const EditTraining = ({ training }: any) => {
               Η ώρα άφιξης για την εκπαίδευση του {training.clientId.lastName}{" "}
               θα τροποποιηθεί.
             </AlertDialogTitle>
-            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+            <AlertDialogDescription className="font-sans text-[20px] font-semibold">
               Στοιχέια Κρατησης
               <br /> &bull; ID : {training._id} <br />
               &bull; Αρχική ώρα άφιξης : {training.timeArrival}
@@ -159,11 +159,11 @@ const EditTraining = ({ training }: any) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+            <AlertDialogCancel className="btn border-2 border-red-dark font-sans font-bold hover:scale-105 hover:animate-pulse">
               ΑΚΥΡΩΣΗ
             </AlertDialogCancel>
             <Button
-              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              className="btn border-2 border-purple-300 font-sans font-bold hover:scale-105 hover:animate-pulse"
               onClick={submitArrivalChange}
             >
               ΣΥΝΕΧΕΙΑ
@@ -179,7 +179,7 @@ const EditTraining = ({ training }: any) => {
       if (updatedTraining) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `το booking του πελάτη ${training.clientId.lastName} τροποποιήθηκε`,
@@ -188,7 +188,7 @@ const EditTraining = ({ training }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία τροποποιήσης",
         description: `${error}`,
@@ -210,7 +210,7 @@ const EditTraining = ({ training }: any) => {
               Πραγματοποιείται αλλαγή στην ημερομηνία της εκπαίδευσης του{" "}
               {training.clientId.lastName}
             </AlertDialogTitle>
-            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+            <AlertDialogDescription className="font-sans text-[20px] font-semibold">
               &bull; Αρχική ημερομηνία :{" "}
               {formatDate(new Date(training.date), "el")}
               <br />
@@ -218,11 +218,11 @@ const EditTraining = ({ training }: any) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+            <AlertDialogCancel className="btn border-2 border-red-dark font-sans font-bold hover:scale-105 hover:animate-pulse">
               ΑΚΥΡΩΣΗ
             </AlertDialogCancel>
             <Button
-              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              className="btn border-2 border-purple-300 font-sans font-bold hover:scale-105 hover:animate-pulse"
               onClick={submitDateChange}
             >
               ΣΥΝΕΧΕΙΑ
@@ -263,13 +263,13 @@ const EditTraining = ({ training }: any) => {
     return (
       <div className="flex flex-row gap-2">
         <Button
-          className="btn border-2 border-red-500 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+          className="btn border-2 border-red-500 font-sans font-bold hover:scale-105 hover:animate-pulse"
           onClick={() => setModeDelete(true)}
         >
           ΔΙΑΓΡΑΦΗ
         </Button>
         <Button
-          className="btn border-2 border-purple-500 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+          className="btn border-2 border-purple-500 font-sans font-bold hover:scale-105 hover:animate-pulse"
           onClick={() => setEdit(true)}
         >
           ΑΛΛΑΓΗ
@@ -278,7 +278,7 @@ const EditTraining = ({ training }: any) => {
     );
   if (edit && !editTimeArrival && !editTimeDeparture && !editDate) {
     return (
-      <div className="text-dark200_light900 background-light900_dark300 flex max-w-[600px] rounded-lg border-2 font-noto_sans font-bold">
+      <div className="text-dark200_light900 background-light900_dark300 flex max-w-[600px] rounded-lg border-2 font-sans font-bold">
         <Command>
           <CommandInput placeholder="Διάλεξε Ενέργεια" />
           <CommandList>
@@ -319,7 +319,7 @@ const EditTraining = ({ training }: any) => {
   }
   if (editTimeArrival) {
     return (
-      <div className="flex flex-row items-end justify-start gap-4 font-noto_sans text-lg font-bold ">
+      <div className="flex flex-row items-end justify-start gap-4 font-sans text-lg font-bold ">
         <span>ΑΛΛΑΓΗ ΣΤΗΝ ΩΡΑ ΑΦΙΞΗΣ </span>
         <TimePicker date={timeArrival} setDate={setTimeArrival} />{" "}
         <Button
@@ -342,7 +342,7 @@ const EditTraining = ({ training }: any) => {
   }
   if (editTimeDeparture) {
     return (
-      <div className="flex flex-row items-end justify-start gap-4 font-noto_sans text-lg font-bold ">
+      <div className="flex flex-row items-end justify-start gap-4 font-sans text-lg font-bold ">
         <span>ΑΛΛΑΓΗ ΣΤΗΝ ΩΡΑ ΑΝΑΧΩΡΗΣΗΣ</span>
 
         <TimePicker date={timeDeparture} setDate={setTimeDeparture} />
@@ -366,7 +366,7 @@ const EditTraining = ({ training }: any) => {
   }
   if (editDate) {
     return (
-      <div className="flex flex-row items-center justify-start gap-4 font-noto_sans text-lg font-bold ">
+      <div className="flex flex-row items-center justify-start gap-4 font-sans text-lg font-bold ">
         <span>ΑΛΛΑΓΗ ΣΤΗΝ ΗΜΕΡΟΜΗΝΙΑ</span>
         <DatePicker date={date} setDate={setDate} />
         <Button

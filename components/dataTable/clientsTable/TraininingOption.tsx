@@ -41,7 +41,7 @@ export function TrainingOption<TData, TValue>({
         <Button
           variant="outline"
           size="lg"
-          className="background-light900_dark300 text-dark200_light800 h-10 gap-2 border-solid border-black  font-noto_sans font-bold hover:scale-105 dark:border-white"
+          className="background-light900_dark300 text-dark200_light800 h-10 gap-2 border-solid border-black  font-sans font-bold hover:scale-105 dark:border-white"
         >
           <Image
             src={"/assets/icons/training.svg"}

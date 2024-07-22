@@ -50,7 +50,7 @@ const EditTransport = ({ transport }: any) => {
       if (updatedTransport) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `η μεταφορά του πελάτη ${transport.clientId.lastName} τροποποιήθηκε`,
@@ -59,7 +59,7 @@ const EditTransport = ({ transport }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία τροποποιήσης",
         description: `${error}`,
@@ -81,7 +81,7 @@ const EditTransport = ({ transport }: any) => {
               Η ώρα άφιξης για την μεταφορά του {transport.clientId.lastName} θα
               τροποποιηθεί.
             </AlertDialogTitle>
-            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+            <AlertDialogDescription className="font-sans text-[20px] font-semibold">
               Στοιχέια Κρατησης
               <br /> &bull; ID : {transport._id} <br />
               &bull; Αρχική ώρα άφιξης : {transport.timeArrival}
@@ -90,11 +90,11 @@ const EditTransport = ({ transport }: any) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+            <AlertDialogCancel className="btn border-2 border-red-dark font-sans font-bold hover:scale-105 hover:animate-pulse">
               ΑΚΥΡΩΣΗ
             </AlertDialogCancel>
             <Button
-              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              className="btn border-2 border-purple-300 font-sans font-bold hover:scale-105 hover:animate-pulse"
               onClick={submitArrivalChange}
             >
               ΣΥΝΕΧΕΙΑ
@@ -110,7 +110,7 @@ const EditTransport = ({ transport }: any) => {
       if (updatedTransport) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `το booking του πελάτη ${transport.clientId.lastName} τροποποιήθηκε`,
@@ -119,7 +119,7 @@ const EditTransport = ({ transport }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία τροποποιήσης",
         description: `${error}`,
@@ -141,7 +141,7 @@ const EditTransport = ({ transport }: any) => {
               Πραγματοποιείται αλλαγή στην ημερομηνία της μεταφοράς του{" "}
               {transport.clientId.lastName}
             </AlertDialogTitle>
-            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+            <AlertDialogDescription className="font-sans text-[20px] font-semibold">
               &bull; Αρχική ημερομηνία :{" "}
               {formatDate(new Date(transport.date), "el")}
               <br />
@@ -149,11 +149,11 @@ const EditTransport = ({ transport }: any) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+            <AlertDialogCancel className="btn border-2 border-red-dark font-sans font-bold hover:scale-105 hover:animate-pulse">
               ΑΚΥΡΩΣΗ
             </AlertDialogCancel>
             <Button
-              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              className="btn border-2 border-purple-300 font-sans font-bold hover:scale-105 hover:animate-pulse"
               onClick={submitDateChange}
             >
               ΣΥΝΕΧΕΙΑ
@@ -194,13 +194,13 @@ const EditTransport = ({ transport }: any) => {
     return (
       <div className="flex flex-row gap-2">
         <Button
-          className="btn border-2 border-red-500 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+          className="btn border-2 border-red-500 font-sans font-bold hover:scale-105 hover:animate-pulse"
           onClick={() => setModeDelete(true)}
         >
           ΔΙΑΓΡΑΦΗ
         </Button>
         <Button
-          className="btn border-2 border-purple-500 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+          className="btn border-2 border-purple-500 font-sans font-bold hover:scale-105 hover:animate-pulse"
           onClick={() => setEdit(true)}
         >
           ΑΛΛΑΓΗ
@@ -209,7 +209,7 @@ const EditTransport = ({ transport }: any) => {
     );
   if (edit && !editTimeArrival && !editDate) {
     return (
-      <div className="text-dark200_light900 background-light900_dark300 flex max-w-[600px] rounded-lg border-2 font-noto_sans font-bold">
+      <div className="text-dark200_light900 background-light900_dark300 flex max-w-[600px] rounded-lg border-2 font-sans font-bold">
         <Command>
           <CommandInput placeholder="Διάλεξε Ενέργεια" />
           <CommandList>
@@ -244,7 +244,7 @@ const EditTransport = ({ transport }: any) => {
   }
   if (editTimeArrival) {
     return (
-      <div className="flex flex-row items-end justify-start gap-4 font-noto_sans text-lg font-bold ">
+      <div className="flex flex-row items-end justify-start gap-4 font-sans text-lg font-bold ">
         <span>ΑΛΛΑΓΗ ΣΤΗΝ ΩΡΑ ΑΦΙΞΗΣ </span>
         <TimePicker date={timeArrival} setDate={setTimeArrival} />{" "}
         <Button
@@ -267,7 +267,7 @@ const EditTransport = ({ transport }: any) => {
   }
   if (editDate) {
     return (
-      <div className="flex flex-row items-center justify-start gap-4 font-noto_sans text-lg font-bold ">
+      <div className="flex flex-row items-center justify-start gap-4 font-sans text-lg font-bold ">
         <span>ΑΛΛΑΓΗ ΣΤΗΝ ΗΜΕΡΟΜΗΝΙΑ</span>
         <DatePicker date={date} setDate={setDate} />
         <Button

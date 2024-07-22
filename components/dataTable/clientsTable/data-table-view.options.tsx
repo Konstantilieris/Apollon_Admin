@@ -32,7 +32,7 @@ export function DataTableViewOptions<TData>({
       <DropdownMenuTrigger asChild>
         <Button
           size="lg"
-          className="ml-auto hidden h-10 border border-black font-noto_sans font-bold hover:scale-110 dark:border-white lg:flex"
+          className="ml-auto hidden h-10 border border-black font-sans font-bold hover:scale-110 dark:border-white lg:flex"
         >
           <MixerHorizontalIcon className="mr-2 h-4 w-4" />
           Όψη

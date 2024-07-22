@@ -111,7 +111,7 @@ const AdminForm = () => {
           name="role"
           render={({ field }) => (
             <FormItem className="flex w-full flex-row items-center gap-2">
-              <FormLabel className="mt-2 font-inter text-lg font-bold text-white">
+              <FormLabel className="mt-2 font-sans text-lg font-bold text-white">
                 Status
               </FormLabel>
               <FormControl className="rounded-full bg-white font-bold">

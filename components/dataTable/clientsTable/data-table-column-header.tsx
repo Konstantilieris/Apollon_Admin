@@ -44,7 +44,7 @@ export function DataTableColumnHeader<TData, TValue>({
             {imgurl && (
               <Image src={imgurl} alt={"image"} height={26} width={30} />
             )}
-            <span className="font-noto_sans text-[22px] font-extrabold">
+            <span className="font-sans text-[22px] font-extrabold">
               {title}
             </span>
             {column.getIsSorted() === "desc" ? (
@@ -62,11 +62,11 @@ export function DataTableColumnHeader<TData, TValue>({
         >
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
             <ArrowUpIcon className="text-muted-foreground/70 mr-2 h-3.5 w-3.5" />
-            <span className="font-noto_sans font-bold"> Asc</span>
+            <span className="font-sans font-bold"> Asc</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
             <ArrowDownIcon className="text-muted-foreground/70 mr-2 h-3.5 w-3.5" />
-            <span className="font-noto_sans font-bold"> Desc</span>
+            <span className="font-sans font-bold"> Desc</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
         </DropdownMenuContent>

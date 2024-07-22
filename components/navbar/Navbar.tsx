@@ -32,8 +32,8 @@ const Navbar = async () => {
           />
         </Link>
         <p className="max-sm:hidden">
-          <span className=" text-dark300_light900   font-noto_sans text-[36px] font-extrabold lg:text-[50px]">
-            Apollon Admin
+          <span className=" text-dark300_light900   font-sans text-[36px] font-bold tracking-widest lg:text-[50px]">
+            Apollon <span className="text-sky-500">Admin</span>
           </span>
         </p>
       </div>

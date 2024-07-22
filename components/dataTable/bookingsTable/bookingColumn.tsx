@@ -39,7 +39,7 @@ export const roomColumns = (): ColumnDef<any>[] => [
         cell: ({ row }) => {
           return (
             <Link href={``}>
-              <div className="text-center font-noto_sans text-lg font-bold">
+              <div className="text-center font-sans text-lg font-bold">
                 {row.getValue("name")}
               </div>{" "}
             </Link>
@@ -85,14 +85,14 @@ export const roomColumns = (): ColumnDef<any>[] => [
 
           if (see.length === 0) {
             return (
-              <div className="flex items-center justify-center gap-2 text-start font-noto_sans font-bold">
+              <div className="flex items-center justify-center gap-2 text-start font-sans font-bold">
                 <Badge className="h-6 w-6 rounded-full bg-celtic-green" />
                 ΔΙΑθΕΣΙΜΟ
               </div>
             );
           } else {
             return (
-              <div className=" flex flex-row items-center justify-center  gap-4 font-noto_sans text-sm font-bold">
+              <div className=" flex flex-row items-center justify-center  gap-4 font-sans text-sm font-bold">
                 <Badge className="h-6 w-6 rounded-full bg-red-dark" />
                 <div className="flex flex-col gap-2 ">
                   {see.map((name, index) => (
@@ -131,7 +131,7 @@ export const roomColumns = (): ColumnDef<any>[] => [
           const see: Array<String> = row.getValue("Clients");
           if (see.length === 0) {
             return (
-              <div className="ml-2 flex  justify-center gap-2 text-start font-noto_sans font-bold">
+              <div className="ml-2 flex  justify-center gap-2 text-start font-sans font-bold">
                 <Image
                   src="/assets/icons/noclient.svg"
                   alt="client"
@@ -142,7 +142,7 @@ export const roomColumns = (): ColumnDef<any>[] => [
             );
           }
           return (
-            <div className=" ml-2 flex flex-col justify-center gap-2 font-noto_sans text-lg font-bold ">
+            <div className=" ml-2 flex flex-col justify-center gap-2 font-sans text-lg font-bold ">
               {see.map((name, index) => (
                 <h1 key={index}> {name}</h1>
               ))}
@@ -178,13 +178,13 @@ export const roomColumns = (): ColumnDef<any>[] => [
           const see: Array<any> = row.getValue("ReservationsStart");
           if (see.length === 0) {
             return (
-              <div className="ml-8 flex justify-center gap-2 text-center font-noto_sans font-bold">
+              <div className="ml-8 flex justify-center gap-2 text-center font-sans font-bold">
                 -
               </div>
             );
           }
           return (
-            <div className=" ml-8 flex flex-col gap-2 text-start font-noto_sans text-lg font-bold ">
+            <div className=" ml-8 flex flex-col gap-2 text-start font-sans text-lg font-bold ">
               {see.map((item, index) => (
                 <h1 key={index} className="flex">
                   {formatDate(new Date(item.fromDate), "el")} {item.timeArrival}
@@ -230,13 +230,13 @@ export const roomColumns = (): ColumnDef<any>[] => [
           const see: Array<any> = row.getValue("ReservationEnd");
           if (see.length === 0) {
             return (
-              <div className="ml-8 flex justify-center gap-2 text-center font-noto_sans font-bold">
+              <div className="ml-8 flex justify-center gap-2 text-center font-sans font-bold">
                 -
               </div>
             );
           }
           return (
-            <div className=" ml-8 flex flex-col gap-2 text-start font-noto_sans text-lg font-bold ">
+            <div className=" ml-8 flex flex-col gap-2 text-start font-sans text-lg font-bold ">
               {see.map((item, index) => (
                 <h1 key={index} className="flex">
                   {" "}
@@ -281,7 +281,7 @@ export const roomColumns = (): ColumnDef<any>[] => [
           const see: Array<string> = row.getValue("Total");
           if (see.length === 0) {
             return (
-              <div className=" flex items-center justify-center gap-2 font-noto_sans font-bold">
+              <div className=" flex items-center justify-center gap-2 font-sans font-bold">
                 <Image
                   src="/assets/icons/noDollar.svg"
                   alt="dollar"
@@ -292,7 +292,7 @@ export const roomColumns = (): ColumnDef<any>[] => [
             );
           }
           return (
-            <div className="flex flex-col justify-center gap-2 font-noto_sans text-lg font-bold">
+            <div className="flex flex-col justify-center gap-2 font-sans text-lg font-bold">
               {see.map((total, index) => (
                 <h1 key={index}>{total}</h1>
               ))}

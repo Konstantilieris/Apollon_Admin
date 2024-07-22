@@ -123,7 +123,11 @@ export async function getClientByIdForSuccess(id: string | undefined) {
 export async function getClientByIdForBooking(id: string | undefined) {
   try {
     connectToDatabase();
-    const client = await Client.findById(id, { name: 1, dog: 1 });
+    const client = await Client.findById(id, {
+      name: 1,
+      dog: 1,
+      bookingPerDay: 1,
+    });
     return client;
   } catch (error) {
     console.log(error);
@@ -329,6 +333,35 @@ export async function globalSearch({ query }: any) {
     return JSON.stringify(clients);
   } catch (error) {
     console.error("Error searching clients:", error);
+    throw error;
+  }
+}
+export async function updateClientPrice({
+  clientId,
+  price,
+  path,
+}: {
+  clientId: string;
+  price: number;
+  path: string;
+}) {
+  try {
+    connectToDatabase();
+    if (!price) {
+      throw new Error("Price is required");
+    }
+    const client = await Client.findByIdAndUpdate(
+      clientId,
+      { bookingPerDay: price },
+      { new: true }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    revalidatePath(path);
+    return true;
+  } catch (error) {
+    console.error("Error updating client price:", error);
     throw error;
   }
 }

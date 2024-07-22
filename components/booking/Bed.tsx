@@ -1,33 +1,71 @@
 "use client";
-import { cn, getDayAndMonth, removeKeysFromQuery } from "@/lib/utils";
-import React, { useState } from "react";
-import Image from "next/image";
-import DogButton from "./DogButton";
-import { Button } from "../ui/button";
+import { cn, intToDate2, removeKeysFromQuery } from "@/lib/utils";
+import React, { Suspense, useEffect, useState } from "react";
+
 import { useRouter, useSearchParams } from "next/navigation";
+import DogButton from "./DogButton";
+import LineSkeleton from "../shared/LineSkeleton";
+import { ExpandableCard } from "../shared/cards/OccupiedBed";
+import PendingBed from "../shared/cards/PendingBed";
+import dynamic from "next/dynamic";
+const DynamicModal = dynamic(() => import("./CreateBookingModal"), {
+  ssr: false,
+});
 
 interface BedProps {
   isDog: any;
   name: string;
   clientDogs: any;
   roomName: string;
+  roomId: string;
+  clientName: string;
+  clientId: string;
+  dailyPrice: number;
 }
 export type BedType = {
   name: string;
   occupied: boolean;
-  pending: any;
+  pending: {
+    dogName: string;
+    bedName: string;
+    roomName: string;
+    dogId: string;
+  } | null;
   data: any;
 };
-const Bed = ({ isDog, name, clientDogs, roomName }: BedProps) => {
+const Bed = ({
+  isDog,
+  name,
+  clientDogs,
+  roomName,
+  roomId,
+  clientName,
+  clientId,
+  dailyPrice,
+}: BedProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const [bed, setBed] = useState<BedType>({
     name,
-    occupied: !!isDog,
+    occupied: false,
     pending: null,
-    data: isDog,
+    data: null,
   });
+  useEffect(() => {
+    const newUrl = removeKeysFromQuery({
+      params: searchParams.toString(),
+      keysToRemove: [clientDogs.map((dog: any) => dog._id)],
+    });
+    router.push(newUrl, { scroll: false });
+    setBed((prevBed) => ({
+      ...prevBed,
+      pending: null,
+      occupied: isDog,
+    }));
+  }, [searchParams.get("fr"), searchParams.get("to")]);
   const handleDeleteDogFromBed = () => {
+    if (!bed.pending) return;
     const newUrl = removeKeysFromQuery({
       params: searchParams.toString(),
       keysToRemove: [bed.pending.dogId],
@@ -38,82 +76,58 @@ const Bed = ({ isDog, name, clientDogs, roomName }: BedProps) => {
       pending: null,
     });
   };
-  return (
-    <div
-      className={cn(
-        "flex h-32 w-full flex-col items-center justify-center p-2 text-start font-noto_sans text-white bg-slate-500",
-        { "bg-red-800": bed.occupied },
-        { "bg-blue-700": bed?.pending }
-      )}
-    >
-      {bed.occupied ? (
-        <div className="flex w-full flex-col  items-start gap-2 p-2 font-noto_sans">
-          <span className=" flex  w-full  gap-2 text-lg">
-            <Image
-              src={"/assets/icons/noclient.svg"}
-              alt="dog"
-              width={30}
-              height={30}
-            />
-            {bed?.data?.clientName}
-          </span>
-          <span className=" flex  w-full  gap-2 text-lg">
-            <Image
-              src={"/assets/icons/dog.svg"}
-              alt="dog"
-              width={30}
-              height={30}
-            />
-            {bed?.data?.dogName}
-          </span>
 
-          <span className=" ml-1 flex gap-2">
-            <Image
-              src={"/assets/icons/calendar.svg"}
-              alt="calendar"
-              width={23}
-              height={23}
-              className="mb-1 invert max-lg:hidden"
-            />
-            {getDayAndMonth(new Date(bed.data?.fromDate))} -{" "}
-            {getDayAndMonth(new Date(bed.data?.toDate))}
-          </span>
-        </div>
-      ) : bed.pending ? (
-        <div className="line-clamp-3 flex flex-row items-center text-center">
-          {" "}
-          <Image
-            src={"/assets/icons/dog.svg"}
-            alt="dog"
-            width={30}
-            height={30}
-          />
-          {bed?.pending?.dogName}
-          <Button onClick={handleDeleteDogFromBed}>
-            <Image
-              width={30}
-              height={30}
-              src={"/assets/icons/delete.svg"}
-              alt="check"
-              className=" hover:animate-pulse hover:cursor-pointer "
-            />
-          </Button>
-        </div>
-      ) : (
-        <div>
-          {clientDogs.map((dog: any) => (
-            <DogButton
-              dog={dog}
-              key={dog._id}
-              bedName={name}
-              roomName={roomName}
-              setBed={setBed}
-              bed={bed}
-            />
-          ))}
-        </div>
+  return (
+    <Suspense fallback={<LineSkeleton />}>
+      {open && bed.pending && (
+        <DynamicModal
+          setOpen={setOpen}
+          isOpen={open}
+          dogs={clientDogs}
+          clientId={clientId}
+          clientDaily={dailyPrice}
+        />
       )}
-    </div>
+      <div
+        className={cn(
+          "flex h-32 w-full max-w-[230px] relative flex-col items-center justify-center text-start font-sans text-white bg-slate-500",
+          { "bg-red-800": bed.occupied },
+          { "bg-indigo-400 dark:bg-indigo-700": bed?.pending }
+        )}
+      >
+        {bed.occupied ? (
+          <ExpandableCard data={JSON.parse(JSON.stringify(bed.occupied))} />
+        ) : bed.pending ? (
+          <PendingBed
+            pending={bed.pending}
+            onDelete={handleDeleteDogFromBed}
+            clientName={clientName}
+            fromDate={intToDate2(+searchParams.get("fr")!)}
+            toDate={intToDate2(+searchParams.get("to")!)}
+            setOpen={setOpen}
+            clientId={clientId}
+          />
+        ) : (
+          <div>
+            {clientDogs.map((dog: any) =>
+              searchParams.has(dog._id) ? (
+                <></>
+              ) : (
+                <DogButton
+                  key={dog._id}
+                  dog={dog}
+                  bedName={name}
+                  roomName={roomName}
+                  setBed={setBed}
+                  bed={bed}
+                  roomId={roomId}
+                />
+              )
+            )}
+          </div>
+        )}
+      </div>
+    </Suspense>
   );
 };
 

@@ -28,10 +28,10 @@ const TimePicker = ({
     String(i * 5).padStart(2, "0")
   );
   return (
-    <div className="flex flex-row gap-1 font-noto_sans">
+    <div className="flex flex-row gap-1 font-sans">
       {" "}
       <div className="flex flex-col">
-        <ScrollArea className="scrollbar-custom background-light900_dark200 h-[160px] w-12 rounded-md border font-noto_sans hover:overflow-y-scroll ">
+        <ScrollArea className="scrollbar-custom background-light900_dark200 h-[160px] w-12 rounded-md border font-sans hover:overflow-y-scroll ">
           <div className="mt-2 flex flex-col items-center justify-center ">
             {hoursArray.map((hour) => (
               <React.Fragment key={hour}>
@@ -54,7 +54,7 @@ const TimePicker = ({
         </ScrollArea>
       </div>
       <div className="flex flex-col">
-        <ScrollArea className="scrollbar-custom background-light900_dark200 h-[160px] w-12 rounded-md border font-noto_sans hover:overflow-y-scroll ">
+        <ScrollArea className="scrollbar-custom background-light900_dark200 h-[160px] w-12 rounded-md border font-sans hover:overflow-y-scroll ">
           <div className="mt-2 flex flex-col items-center justify-center ">
             {minutesArray.map((minute) => (
               <React.Fragment key={minute}>

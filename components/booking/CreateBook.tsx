@@ -92,7 +92,7 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
       if (res) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: "Η κράτηση δημιουργήθηκε",
@@ -101,7 +101,7 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Failed to create Booking",
         description: `${error}`,
@@ -124,7 +124,7 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
         <Button
           onClick={() => setShow(true)}
           className={cn(
-            "font-noto_sans  px-8 py-2 rounded-md  min-h-[45px] text-white font-bold transition duration-200  border-2 min-w-[130px]",
+            "font-sans  px-8 py-2 rounded-md  min-h-[45px] text-white font-bold transition duration-200  border-2 min-w-[130px]",
             {
               "bg-dark-300  border-green-500 hover:bg-green-500 hover:animate-pulse":
                 !isDisabled,
@@ -150,7 +150,7 @@ const CreateBook = ({ dogsInRooms, setDogsInRooms, client }: any) => {
         </span>
       )}
       <AlertDialog onOpenChange={setShow} open={show}>
-        <AlertDialogContent className="background-light900_dark300 text-dark100_light900 min-w-[650px] font-noto_sans">
+        <AlertDialogContent className="background-light900_dark300 text-dark100_light900 min-w-[650px] font-sans">
           <AlertDialogHeader className="w-full">
             <AlertDialogTitle>Δημιουργία Κράτησης</AlertDialogTitle>
             <div className="flex flex-col items-start justify-center gap-2">

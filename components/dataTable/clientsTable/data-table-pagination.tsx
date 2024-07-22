@@ -23,7 +23,7 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className=" flex   justify-end px-2 font-noto_sans font-bold">
+    <div className=" flex   justify-end px-2 font-sans font-bold">
       <div className="  m-4 flex space-x-6 lg:space-x-8">
         <div className=" flex items-center space-x-2">
           <p className="text-sm font-medium">Σειρές ανά σελίδα</p>

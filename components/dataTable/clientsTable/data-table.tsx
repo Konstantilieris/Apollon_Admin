@@ -133,9 +133,9 @@ export function DataTable<TData, TValue>({
         viewOptions={viewOptions}
         isTrainingOptions={isTrainingOptions}
       />
-      <div className="w-full rounded-md  font-noto_sans font-semibold ">
+      <div className="w-full rounded-md  font-sans font-semibold ">
         <Table>
-          <TableHeader className=" p-4 font-noto_sans text-[22px] font-extrabold">
+          <TableHeader className=" p-4 font-sans text-[22px] font-extrabold">
             <TableRow key={headerGroup.id} className="w-full">
               {headerGroup.headers.map((header) => {
                 return (
@@ -155,7 +155,7 @@ export function DataTable<TData, TValue>({
               })}
             </TableRow>
           </TableHeader>
-          <TableBody className=" w-full text-center font-noto_sans">
+          <TableBody className=" w-full text-center font-sans">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow

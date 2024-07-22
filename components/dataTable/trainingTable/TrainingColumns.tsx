@@ -184,7 +184,7 @@ export const trainingColumns: ColumnDef<any>[] = [
               </HoverCardTrigger>
               <HoverCardContent
                 align="center"
-                className="background-light800_dark400 font-noto_sans font-bold "
+                className="background-light800_dark400 font-sans font-bold "
               >
                 {row.getValue("notes")}
               </HoverCardContent>

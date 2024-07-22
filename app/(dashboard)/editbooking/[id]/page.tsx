@@ -24,17 +24,17 @@ const EditChange = async ({ params }: any) => {
   return (
     <Suspense>
       <section className="text-dark100_light900 flex flex-col gap-4">
-        <h1 className="font-noto_sans text-[40px] font-extrabold">
+        <h1 className="font-sans text-[40px] font-extrabold">
           ΚΑΛΩΣΗΡΘΑΤΕ ΣΤΗΝ ΕΠΕΞΕΡΓΑΣΙΑ ΚΡΑΤΗΣΗΣ
         </h1>
         <Card className="background-light800_dark400 border-2 border-purple-700">
           <CardHeader>
-            <CardTitle className="font-noto_sans font-extrabold">
+            <CardTitle className="font-sans font-extrabold">
               {" "}
               Πραγματοποιείται αλλαγή στην κράτηση με αριθμό : &nbsp; {"  "}
               {booking._id} &nbsp;{" "}
             </CardTitle>
-            <CardDescription className="font-noto_sans text-lg font-bold">
+            <CardDescription className="font-sans text-lg font-bold">
               {" "}
               Πελάτης : &nbsp;
               {booking.clientId.lastName} &nbsp; {booking.clientId.firstName}

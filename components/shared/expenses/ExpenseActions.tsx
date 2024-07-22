@@ -65,7 +65,7 @@ const ExpenseActions = ({ expense }: { expense: any }) => {
           title: "Επιτυχής ενημέρωση",
           description: "Η δαπάνη ενημερώθηκε με επιτυχία",
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           duration: 5000,
         });
@@ -74,7 +74,7 @@ const ExpenseActions = ({ expense }: { expense: any }) => {
       console.log(error);
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία",
         description: `${error}`,
@@ -114,7 +114,7 @@ const ExpenseActions = ({ expense }: { expense: any }) => {
         </SelectContent>
       </Select>
       <AlertDialog open={action === "delete"}>
-        <AlertDialogContent className="background-light800_dark400 text-dark100_light900 min-h-[200px] font-noto_sans">
+        <AlertDialogContent className="background-light800_dark400 text-dark100_light900 min-h-[200px] font-sans">
           <AlertDialogHeader>
             <AlertDialogTitle>
               Διαγραφή Δαπάνης{" "}
@@ -148,7 +148,7 @@ const ExpenseActions = ({ expense }: { expense: any }) => {
         </AlertDialogContent>
       </AlertDialog>
       <AlertDialog open={action === "edit"}>
-        <AlertDialogContent className="background-light800_dark400 text-dark100_light900 min-h-[200px] font-noto_sans">
+        <AlertDialogContent className="background-light800_dark400 text-dark100_light900 min-h-[200px] font-sans">
           <AlertDialogHeader>
             <AlertDialogTitle>
               Επεξεργασία Δαπάνης{" "}
@@ -166,13 +166,13 @@ const ExpenseActions = ({ expense }: { expense: any }) => {
                     name="date"
                     render={({ field }) => (
                       <FormItem className="flex  min-w-[0.5vw] flex-col">
-                        <FormLabel className=" font-noto_sans text-base font-normal">
+                        <FormLabel className=" font-sans text-base font-normal">
                           Ημερομηνία δαπάνης
                         </FormLabel>
                         <FormControl>
                           <DateInput field={field} maxwidth={"min-w-[220px]"} />
                         </FormControl>
-                        <span className=" font-noto_sans text-sm text-blue-500">
+                        <span className=" font-sans text-sm text-blue-500">
                           π.χ. 21/05/2025
                         </span>
                         <FormMessage />
@@ -184,17 +184,17 @@ const ExpenseActions = ({ expense }: { expense: any }) => {
                     name="amount"
                     render={({ field }) => (
                       <FormItem className="flex  min-w-[0.5vw] flex-col">
-                        <FormLabel className=" font-noto_sans text-base font-normal">
+                        <FormLabel className=" font-sans text-base font-normal">
                           Συνολικό Κόστος €
                         </FormLabel>
                         <FormControl>
                           <Input
-                            className=" paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700  no-focus min-h-[56px] max-w-[400px] border font-noto_sans font-bold"
+                            className=" paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700  no-focus min-h-[56px] max-w-[400px] border font-sans font-bold"
                             type="number"
                             {...field}
                           />
                         </FormControl>
-                        <span className=" font-noto_sans text-sm text-blue-500">
+                        <span className=" font-sans text-sm text-blue-500">
                           π.χ. 50.45
                         </span>
                         <FormMessage />
@@ -206,7 +206,7 @@ const ExpenseActions = ({ expense }: { expense: any }) => {
                     name="description"
                     render={({ field }) => (
                       <FormItem className="flex  min-w-[0.5vw] flex-col">
-                        <FormLabel className=" font-noto_sans text-base font-normal">
+                        <FormLabel className=" font-sans text-base font-normal">
                           Προσθέστε μια περιγραφή για τη δαπάνη σας
                         </FormLabel>
                         <FormControl>
@@ -215,7 +215,7 @@ const ExpenseActions = ({ expense }: { expense: any }) => {
                             {...field}
                           />
                         </FormControl>
-                        <span className=" font-noto_sans text-sm text-blue-500">
+                        <span className=" font-sans text-sm text-blue-500">
                           π.χ. Πληρωμή ηλεκτρικού ρεύματος
                         </span>
                         <FormMessage />

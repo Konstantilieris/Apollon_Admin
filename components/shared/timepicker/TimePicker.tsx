@@ -16,7 +16,7 @@ export function TimePicker({ date, setDate }: TimePickerDemoProps) {
   return (
     <div className="flex items-end gap-2">
       <div className="grid gap-1 text-center ">
-        <Label htmlFor="hours" className="font-noto_sans text-lg">
+        <Label htmlFor="hours" className="font-sans text-lg">
           Ώρα
         </Label>
         <TimePickerInput
@@ -29,7 +29,7 @@ export function TimePicker({ date, setDate }: TimePickerDemoProps) {
         />
       </div>
       <div className="grid gap-1 text-center">
-        <Label htmlFor="minutes" className="font-noto_sans text-lg">
+        <Label htmlFor="minutes" className="font-sans text-lg">
           Λεπτά
         </Label>
         <TimePickerInput

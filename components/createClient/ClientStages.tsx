@@ -48,7 +48,7 @@ const ClientStages = ({ clients }: any) => {
       if (newClient) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: "Ο πελάτης καταχωρήθηκε",
@@ -57,7 +57,7 @@ const ClientStages = ({ clients }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία δημιουργίας",
         description: `${error}`,
@@ -79,7 +79,7 @@ const ClientStages = ({ clients }: any) => {
 
       {stage === 55 && (
         <div className="mt-20 flex flex-col items-center justify-center gap-8">
-          <h1 className=" text-center font-noto_sans text-[24px] font-bold">
+          <h1 className=" text-center font-sans text-[24px] font-bold">
             Απο που βρήκε το κατάστημα μας;
           </h1>
           <Select
@@ -100,10 +100,10 @@ const ClientStages = ({ clients }: any) => {
               }
             }}
           >
-            <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] max-w-[246px] rounded-lg p-2 font-noto_sans font-bold">
+            <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] max-w-[246px] rounded-lg p-2 font-sans font-bold">
               <SelectValue placeholder="Σύσταση" />
             </SelectTrigger>
-            <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 font-noto_sans font-bold ">
+            <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 font-sans font-bold ">
               <SelectItem
                 className={`rounded-lg hover:bg-sky-blue  `}
                 value="client"
@@ -143,7 +143,7 @@ const ClientStages = ({ clients }: any) => {
           )}
           <div className="flex flex-row items-center justify-center gap-8">
             <Button
-              className="   self-center bg-red-dark  font-noto_sans text-[18px] font-extrabold text-white hover:scale-105 hover:animate-pulse"
+              className="   self-center bg-red-dark  font-sans text-[18px] font-extrabold text-white hover:scale-105 hover:animate-pulse"
               onClick={() => {
                 setStage(50);
               }}
@@ -152,7 +152,7 @@ const ClientStages = ({ clients }: any) => {
               ΠΙΣΩ
             </Button>
             <Button
-              className="bg-primary-500 font-noto_sans text-[18px] font-extrabold text-black hover:scale-105 hover:animate-pulse"
+              className="bg-primary-500 font-sans text-[18px] font-extrabold text-black hover:scale-105 hover:animate-pulse"
               onClick={() => setStage(60)}
               disabled={!referenceChoice}
             >
@@ -173,10 +173,10 @@ const ClientStages = ({ clients }: any) => {
               }
             }}
           >
-            <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] max-w-[150px] rounded-lg p-2 font-noto_sans font-bold">
+            <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] max-w-[150px] rounded-lg p-2 font-sans font-bold">
               <SelectValue placeholder="Εκπαίδευση" />
             </SelectTrigger>
-            <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 font-noto_sans font-bold ">
+            <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 font-sans font-bold ">
               <SelectItem
                 className={`rounded-lg hover:bg-sky-blue  `}
                 value={"true"}
@@ -192,7 +192,7 @@ const ClientStages = ({ clients }: any) => {
             </SelectContent>
           </Select>
           <Button
-            className="   self-center bg-red-dark  font-noto_sans text-[18px] font-extrabold text-white hover:scale-105 hover:animate-pulse"
+            className="   self-center bg-red-dark  font-sans text-[18px] font-extrabold text-white hover:scale-105 hover:animate-pulse"
             onClick={() => {
               setStage(55);
             }}
@@ -201,7 +201,7 @@ const ClientStages = ({ clients }: any) => {
             ΠΙΣΩ
           </Button>
           <Button
-            className="max-w-[200px] self-center bg-primary-500 font-noto_sans font-extrabold text-black hover:scale-105 hover:animate-pulse"
+            className="max-w-[200px] self-center bg-primary-500 font-sans font-extrabold text-black hover:scale-105 hover:animate-pulse"
             onClick={() => setStage(65)}
           >
             ΕΠΟΜΕΝΟ
@@ -222,7 +222,7 @@ const ClientStages = ({ clients }: any) => {
           />
 
           <Button
-            className="bg-primary-500 font-noto_sans font-extrabold text-black hover:scale-105 hover:animate-pulse"
+            className="bg-primary-500 font-sans font-extrabold text-black hover:scale-105 hover:animate-pulse"
             onClick={() => setStage(75)}
             disabled={parseInt(number) === 0 || !number}
           >
@@ -234,7 +234,7 @@ const ClientStages = ({ clients }: any) => {
       {stage === 75 && (
         <div className="flex flex-col gap-2">
           <div className="mt-20 flex flex-row items-center justify-center gap-8">
-            <h1 className=" text-center font-noto_sans text-[24px] font-bold">
+            <h1 className=" text-center font-sans text-[24px] font-bold">
               Παρακαλούμε δώστε τα στοιχεία των σκύλων για να συνεχίσετε
             </h1>
           </div>
@@ -247,11 +247,11 @@ const ClientStages = ({ clients }: any) => {
       )}
       {stage === 100 && (
         <div className="mt-12 flex h-full flex-col  gap-2">
-          <h1 className="text-center font-noto_sans text-[40px]">
+          <h1 className="text-center font-sans text-[40px]">
             {" "}
             Σχεδόν ολοκληρώσαμε την διαδικασία εγγραφής
           </h1>
-          <Table className="background-light800_darkgradient  mt-12 font-noto_sans text-lg font-bold">
+          <Table className="background-light800_darkgradient  mt-12 font-sans text-lg font-bold">
             <TableCaption>Τα στοιχέια του πελάτη</TableCaption>
             <TableHeader>
               <TableRow>
@@ -282,7 +282,7 @@ const ClientStages = ({ clients }: any) => {
               </TableRow>
             </TableBody>
           </Table>
-          <Table className="background-light800_darkgradient  font-noto_sans text-lg font-bold">
+          <Table className="background-light800_darkgradient  font-sans text-lg font-bold">
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[300px]">Επάγγελμα</TableHead>
@@ -318,14 +318,14 @@ const ClientStages = ({ clients }: any) => {
           </Table>
           <div className="mt-20 flex flex-row items-center gap-8 self-center">
             <Button
-              className="  min-h-[60px] min-w-[150px] max-w-[230px] self-center bg-red-dark py-6 font-noto_sans text-[20px] font-extrabold text-white hover:scale-105 hover:animate-pulse"
+              className="  min-h-[60px] min-w-[150px] max-w-[230px] self-center bg-red-dark py-6 font-sans text-[20px] font-extrabold text-white hover:scale-105 hover:animate-pulse"
               onClick={() => setStage(75)}
             >
               {" "}
               ΠΙΣΩ
             </Button>
             <Button
-              className="min-h-[60px] max-w-[230px] self-center bg-primary-500 font-noto_sans text-[20px] font-extrabold text-white hover:scale-105 hover:animate-pulse"
+              className="min-h-[60px] max-w-[230px] self-center bg-primary-500 font-sans text-[20px] font-extrabold text-white hover:scale-105 hover:animate-pulse"
               onClick={handleCreate}
             >
               {" "}

@@ -74,7 +74,7 @@ const WeatherRow = () => {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="background-light900_dark200 text-dark400_light700 flex flex-row items-center justify-between gap-2 rounded-lg p-4 font-noto_sans text-lg font-semibold">
+      <div className="background-light900_dark200 text-dark400_light700 flex flex-row items-center justify-between gap-2 rounded-lg p-4 font-sans text-lg font-semibold">
         <span className="flex flex-row items-center gap-2">
           <Image
             src="/assets/icons/clock.svg"

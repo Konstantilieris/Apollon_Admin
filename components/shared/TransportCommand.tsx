@@ -53,7 +53,7 @@ export function TransportCommand({
                     location: client.location,
                   })
                 }
-                className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1 font-noto_sans font-bold
+                className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1 font-sans font-bold
                 ${
                   selectedClient?.email === client.email
                     ? "bg-yellow-500 text-black"

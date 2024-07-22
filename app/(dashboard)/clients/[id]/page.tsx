@@ -64,11 +64,11 @@ const Client = async ({ params, searchParams }: URLProps) => {
             className="rounded-full object-cover"
           />
           <div className="mt-3">
-            <h2 className="h2-bold text-dark100_light900 font-noto_sans">
+            <h2 className="h2-bold text-dark100_light900 font-sans">
               {client?.name}
             </h2>
 
-            <p className="font-noto_sans font-semibold">
+            <p className=" font-semibold">
               {" "}
               ΔΗΜΙΟΥΡΓΗΘΗΚΕ {formatDateString(client?.createdAt)}
             </p>

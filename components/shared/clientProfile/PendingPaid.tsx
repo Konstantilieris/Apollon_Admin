@@ -30,7 +30,7 @@ const PendingPaid = ({ clientId, item, firstName, lastName }: any) => {
       if (res) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία πληρωμής",
           description: "Η πληρωμή πραγματοποιήθηκε με επιτυχία",
@@ -40,7 +40,7 @@ const PendingPaid = ({ clientId, item, firstName, lastName }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία πληρωμής",
         description: `${error}`,
@@ -54,7 +54,7 @@ const PendingPaid = ({ clientId, item, firstName, lastName }: any) => {
     <>
       <Button
         onClick={() => setOpen(!open)}
-        className="form-button2 ml-12 font-noto_sans font-bold"
+        className="form-button2 ml-12 font-sans font-bold"
       >
         Εξόφληση
       </Button>

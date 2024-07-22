@@ -11,7 +11,7 @@ import { cn, formatDateString } from "@/lib/utils";
 import Link from "next/link";
 const BookingTable = ({ bookings }: { bookings: any }) => {
   return (
-    <Table className="text-dark400_light700 mt-12 font-noto_sans ">
+    <Table className="text-dark400_light700 mt-12 font-sans ">
       <TableHeader className="  border-b-8 border-light-700  bg-white  text-base font-semibold text-black dark:border-dark-400 dark:bg-slate-700 dark:text-light-700 xl:text-lg">
         <TableRow>
           <TableHead className="ml-2 text-start max-md:hidden">
@@ -31,7 +31,7 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
           <TableRow
             key={booking?._id}
             className={cn(
-              "font-noto_sans background-light800_dark300 text-dark100_light900"
+              "font-sans background-light800_dark300 text-dark100_light900"
             )}
           >
             <TableCell className="max-w-[250px] pl-4 pr-10 text-base font-normal ">

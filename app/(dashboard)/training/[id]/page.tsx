@@ -16,17 +16,17 @@ const page = async ({ params }: any) => {
   const training = await getTrainingById(params.id);
   return (
     <Suspense>
-      <section className="text-dark100_light900 flex flex-col gap-4">
-        <h1 className="font-noto_sans text-[40px] font-extrabold">
+      <section className="text-dark100_light900 flex flex-col gap-4 font-sans">
+        <h1 className=" text-[40px] font-extrabold">
           ΚΑΛΩΣΗΡΘΑΤΕ ΣΤΗΝ ΕΠΕΞΕΡΓΑΣΙΑ ΕΚΠΑΙΔΕΥΣΗΣ
         </h1>
         <Card className="background-light800_dark400 border-2 border-purple-700">
           <CardHeader>
-            <CardTitle className="font-noto_sans font-extrabold">
+            <CardTitle className=" font-extrabold">
               Πραγματοποιείται αλλαγή στην εκπαίδευση με αριθμό : &nbsp; {"  "}
               {training._id} &nbsp;{" "}
             </CardTitle>
-            <CardDescription className="font-noto_sans text-lg font-bold">
+            <CardDescription className=" text-lg font-bold">
               {" "}
               Πελάτης : &nbsp;
               {training.clientId.lastName} &nbsp; {training.clientId.firstName}

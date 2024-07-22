@@ -600,7 +600,7 @@ export async function checkExistingBooking({ rangeDate, clientId }: any) {
   try {
     connectToDatabase();
     if (!rangeDate.from || !rangeDate.to) {
-      return false;
+      return true;
     }
     const existingBooking = await Booking.findOne({
       clientId,

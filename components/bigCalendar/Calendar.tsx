@@ -117,7 +117,7 @@ const Scheduler = ({ appointments }: any) => {
     return (
       <div
         className={cn(
-          "font-noto_sans pb-4  w-full text-white  font-semibold   items-center flex justify-center min-h-[50px] gap-2"
+          "font-sans pb-4  w-full text-white  font-semibold   items-center flex justify-center min-h-[50px] gap-2"
         )}
         style={{ backgroundColor: props.Color ? props.Color : "transparent" }}
       >

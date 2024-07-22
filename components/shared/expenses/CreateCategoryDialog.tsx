@@ -42,7 +42,7 @@ const CreateCategoryDialog = ({ parentCategory }: { parentCategory: any }) => {
       if (result) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `Επιτυχής προσθήκη υποκατηγορίας ${result?.name} στην κατηγορία ${parentCategory.name}`,
@@ -52,7 +52,7 @@ const CreateCategoryDialog = ({ parentCategory }: { parentCategory: any }) => {
       console.log("Error creating subcategory");
       toast({
         className: cn(
-          "bg-rose-950 border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-rose-950 border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Σφάλμα",
         description: `Αποτυχία προσθήκης υποκατηγορίας στην κατηγορία ${parentCategory.name}`,
@@ -67,12 +67,12 @@ const CreateCategoryDialog = ({ parentCategory }: { parentCategory: any }) => {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="mb-4 border-green-400 bg-green-700 text-base text-white hover:bg-green-600 hover:text-white"
+          className="mb-4 border-green-400 bg-green-700 text-base  text-white hover:bg-green-600 hover:text-white"
         >
           Νέα Υποκατηγορία
         </Button>
       </DialogTrigger>
-      <DialogContent className="text-dark500_light700 background-light850_dark100 font-noto_sans">
+      <DialogContent className="text-dark500_light700 background-light850_dark100 font-sans">
         <DialogHeader className="gap-4 ">
           <DialogTitle className="flex flex-row items-center gap-2 text-start">
             Προσθήκη στην κατηγορία{" "}
@@ -89,21 +89,21 @@ const CreateCategoryDialog = ({ parentCategory }: { parentCategory: any }) => {
 
           <DialogDescription className=" flex flex-col justify-center gap-4">
             <p className="flex flex-col gap-2">
-              <span className="text-start font-noto_sans text-lg">Όνομα</span>
+              <span className="text-start font-sans text-lg">Όνομα</span>
               <Input
-                className="text-dark200_light800 background-light900_dark200  min-h-[30px] max-w-[200px] border font-noto_sans"
+                className="text-dark200_light800 background-light900_dark200  min-h-[30px] max-w-[200px] border font-sans"
                 value={name}
                 placeholder="Όνομα"
                 onChange={(e) => setName(e.target.value)}
               />
-              <span className="subtle-regular font-noto_sans text-blue-500">
+              <span className="subtle-regular font-sans text-blue-500">
                 {" "}
                 Έτσι θα εμφανίζεται η κατηγορία σας στην εφαρμογή
               </span>
             </p>
 
             <Popover>
-              <span className="font-noto_sans text-lg">Διάλεξε εικονίδιο</span>
+              <span className="font-sans text-lg">Διάλεξε εικονίδιο</span>
               <PopoverTrigger asChild>
                 <Button variant={"outline"} className="h-[100px] w-full">
                   {icon ? (
@@ -134,7 +134,7 @@ const CreateCategoryDialog = ({ parentCategory }: { parentCategory: any }) => {
                   }}
                 />
               </PopoverContent>
-              <span className="subtle-regular font-noto_sans text-blue-500">
+              <span className="subtle-regular font-sans text-blue-500">
                 {" "}
                 Έτσι θα εμφανίζεται η κατηγορία σας στην εφαρμογή
               </span>
@@ -142,10 +142,10 @@ const CreateCategoryDialog = ({ parentCategory }: { parentCategory: any }) => {
 
             <div className="flex flex-row  gap-8 ">
               <div className="flex flex-col gap-2 ">
-                <span className="font-noto_sans text-lg">Χρώμα</span>
+                <span className="font-sans text-lg">Χρώμα</span>
                 <ColorPicker color={color} setColor={setColor} />
                 <span
-                  className="subtle-regular flex  flex-row items-center gap-2 font-noto_sans "
+                  className="subtle-regular flex  flex-row items-center gap-2 font-sans "
                   style={{ color }}
                 >
                   Έτσι θα εμφανίζεται η κατηγορία σας στην εφαρμογή

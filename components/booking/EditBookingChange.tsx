@@ -75,13 +75,13 @@ const EditbookingChange = ({ booking, rooms }: any) => {
     return (
       <div className="flex flex-row gap-2">
         <Button
-          className="btn border-2 border-red-500 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+          className="btn border-2 border-red-500 font-sans font-bold hover:scale-105 hover:animate-pulse"
           onClick={() => setModeDelete(true)}
         >
           ΔΙΑΓΡΑΦΗ
         </Button>
         <Button
-          className="btn border-2 border-purple-500 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+          className="btn border-2 border-purple-500 font-sans font-bold hover:scale-105 hover:animate-pulse"
           onClick={() => setEdit(true)}
         >
           ΑΛΛΑΓΗ
@@ -94,7 +94,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
       if (deletedBooking) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία Διαγραφής",
           description: `Η κράτηση του πελάτη ${booking.clientId.lastName} διαγράφηκε`,
@@ -103,7 +103,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία Διαγραφής",
         description: `${error}`,
@@ -116,7 +116,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
       if (updatedBooking) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `το booking του πελάτη ${booking.clientId.lastName} τροποποιήθηκε`,
@@ -125,7 +125,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία τροποποιήσης",
         description: `${error}`,
@@ -143,7 +143,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
       if (updatedBooking) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `το booking του πελάτη ${booking.clientId.lastName} τροποποιήθηκε`,
@@ -152,7 +152,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία τροποποιήσης",
         description: `${error}`,
@@ -173,7 +173,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
       if (updatedBooking) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `το booking του πελάτη ${booking.clientId.lastName} τροποποιήθηκε`,
@@ -182,7 +182,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-noto_sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία τροποποιήσης",
         description: `${error}`,
@@ -234,7 +234,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
               Πραγματοποιείται αλλαγή στην ημερομηνία της κράτησης του{" "}
               {booking.clientId.lastName}
             </AlertDialogTitle>
-            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+            <AlertDialogDescription className="font-sans text-[20px] font-semibold">
               &bull; Αρχική κράτηση απο{" "}
               {formatDate(new Date(booking.fromDate), "el")}
               {" μεχρι "}
@@ -253,11 +253,11 @@ const EditbookingChange = ({ booking, rooms }: any) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+            <AlertDialogCancel className="btn border-2 border-red-dark font-sans font-bold hover:scale-105 hover:animate-pulse">
               ΑΚΥΡΩΣΗ
             </AlertDialogCancel>
             <Button
-              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              className="btn border-2 border-purple-300 font-sans font-bold hover:scale-105 hover:animate-pulse"
               onClick={submitDateChange}
             >
               ΣΥΝΕΧΕΙΑ
@@ -277,7 +277,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
               Η ώρα άφιξης για την κράτησή του {booking.clientId.lastName} θα
               τροποποιηθεί.
             </AlertDialogTitle>
-            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+            <AlertDialogDescription className="font-sans text-[20px] font-semibold">
               Στοιχέια Κρατησης
               <br /> &bull; ID : {booking._id} <br />
               &bull; Αρχική ώρα άφιξης : {booking.timeArrival}
@@ -286,11 +286,11 @@ const EditbookingChange = ({ booking, rooms }: any) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+            <AlertDialogCancel className="btn border-2 border-red-dark font-sans font-bold hover:scale-105 hover:animate-pulse">
               ΑΚΥΡΩΣΗ
             </AlertDialogCancel>
             <Button
-              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              className="btn border-2 border-purple-300 font-sans font-bold hover:scale-105 hover:animate-pulse"
               onClick={submitArrivalChange}
             >
               ΣΥΝΕΧΕΙΑ
@@ -310,7 +310,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
               Η ώρα άφιξης για την κράτησή του {booking.clientId.lastName} θα
               τροποποιηθεί.
             </AlertDialogTitle>
-            <AlertDialogDescription className="font-noto_sans text-[20px] font-semibold">
+            <AlertDialogDescription className="font-sans text-[20px] font-semibold">
               Στοιχέια Κρατησης
               <br /> &bull; ID : {booking._id} <br />
               &bull; Αρχική ώρα άφιξης : {booking.timeDeparture}
@@ -319,11 +319,11 @@ const EditbookingChange = ({ booking, rooms }: any) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="btn border-2 border-red-dark font-noto_sans font-bold hover:scale-105 hover:animate-pulse">
+            <AlertDialogCancel className="btn border-2 border-red-dark font-sans font-bold hover:scale-105 hover:animate-pulse">
               ΑΚΥΡΩΣΗ
             </AlertDialogCancel>
             <Button
-              className="btn border-2 border-purple-300 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+              className="btn border-2 border-purple-300 font-sans font-bold hover:scale-105 hover:animate-pulse"
               onClick={submitDepartureChange}
             >
               ΣΥΝΕΧΕΙΑ
@@ -341,7 +341,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
     !editRoom
   ) {
     return (
-      <div className="text-dark200_light900 background-light900_dark300 flex max-w-[600px] rounded-lg border-2 font-noto_sans font-bold">
+      <div className="text-dark200_light900 background-light900_dark300 flex max-w-[600px] rounded-lg border-2 font-sans font-bold">
         <Command>
           <CommandInput placeholder="Διάλεξε Ενέργεια" />
           <CommandList>
@@ -388,7 +388,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
   }
   if (editTimeArrival) {
     return (
-      <div className="flex flex-row items-end justify-start gap-4 font-noto_sans text-lg font-bold ">
+      <div className="flex flex-row items-end justify-start gap-4 font-sans text-lg font-bold ">
         <span>ΑΛΛΑΓΗ ΣΤΗΝ ΩΡΑ ΑΦΙΞΗΣ </span>
         <TimePicker date={timeArrival} setDate={setTimeArrival} />{" "}
         <Button
@@ -411,7 +411,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
   }
   if (editTimeDeparture) {
     return (
-      <div className="flex flex-row items-end justify-start gap-4 font-noto_sans text-lg font-bold ">
+      <div className="flex flex-row items-end justify-start gap-4 font-sans text-lg font-bold ">
         <span>ΑΛΛΑΓΗ ΣΤΗΝ ΩΡΑ ΑΝΑΧΩΡΗΣΗΣ</span>
 
         <TimePicker date={timeDeparture} setDate={setTimeDeparture} />
@@ -435,7 +435,7 @@ const EditbookingChange = ({ booking, rooms }: any) => {
   }
   if (editDate) {
     return (
-      <div className="flex flex-row items-center justify-start gap-4 font-noto_sans text-lg font-bold ">
+      <div className="flex flex-row items-center justify-start gap-4 font-sans text-lg font-bold ">
         <span>ΑΛΛΑΓΗ ΣΤΙΣ ΗΜΕΡΟΜΗΝΙΕΣ</span>
         <DatePickerWithRange
           rangeDate={dateBooking}
@@ -463,11 +463,11 @@ const EditbookingChange = ({ booking, rooms }: any) => {
   }
   if (editRoom) {
     return (
-      <div className=" flex flex-col items-center justify-center gap-4 font-noto_sans text-lg font-bold ">
+      <div className=" flex flex-col items-center justify-center gap-4 font-sans text-lg font-bold ">
         <div className="mt-8 flex flex-row items-center gap-8 self-start">
           <span className="self-start">ΑΛΛΑΓΗ ΣΤΑ ΔΩΜΑΤΙΑ ΤΩΝ ΣΚΥΛΩΝ</span>
           <Button
-            className="btn self-start border-2 border-red-500 font-noto_sans font-bold hover:scale-105 hover:animate-pulse"
+            className="btn self-start border-2 border-red-500 font-sans font-bold hover:scale-105 hover:animate-pulse"
             onClick={() => setEditRoom(false)}
           >
             ΑΚΥΡΩΣΗ

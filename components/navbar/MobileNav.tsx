@@ -37,7 +37,7 @@ const NavContent = () => {
                 className={`${isActive ? "" : "invert-colors"}`}
               />
               <p
-                className={`font-chakra text-[30px] font-semibold ${
+                className={`font-sans text-[30px] font-semibold ${
                   isActive ? "font-extrabold" : ""
                 }`}
               >
@@ -81,7 +81,7 @@ const MobileNav = () => {
               alt="Bone"
             />
 
-            <span className="ml-4 font-noto_sans text-[35px] font-bold text-sky-blue">
+            <span className="ml-4 font-sans text-[35px] font-bold text-sky-blue">
               Apollo Guard{" "}
             </span>
           </Link>

@@ -86,7 +86,7 @@ body {
     @apply flex flex-row items-center gap-4 min-w-[400px] justify-center;
   }
   .form_input {
-    @apply no-focus   min-h-[56px] border font-noto_sans max-w-[250px];
+    @apply no-focus   min-h-[56px] border font-sans max-w-[250px];
   }
   .form_label {
     @apply min-w-[130px] font-semibold text-[20px] max-w-[150px];
@@ -107,16 +107,16 @@ body {
     @apply bg-light-900 dark:dark-gradient shadow-light-400 dark:shadow-dark-100 drop-shadow-2xl;
   }
   .auth_btn {
-    @apply dark-gradient dark:primary-gradient max-w-[100px] 2xl:max-w-[130px] 2xl:min-h-[40px] 2xl:p-6 object-contain p-4 text-center  font-noto_sans text-[1em] font-extrabold text-white hover:scale-105 hover:animate-pulse hover:text-[1.05em]  tracking-widest !important;
+    @apply dark-gradient dark:primary-gradient max-w-[100px] 2xl:max-w-[130px] 2xl:min-h-[40px] 2xl:p-6 object-contain p-4 text-center  font-sans text-[1em] font-extrabold text-white hover:scale-105 hover:animate-pulse hover:text-[1.05em]  tracking-widest !important;
   }
   .drawer_btn {
-    @apply dark-gradient dark:primary-gradient max-w-[100px]  p-4 text-center  font-noto_sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
+    @apply dark-gradient dark:primary-gradient max-w-[100px]  p-4 text-center  font-sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
   }
   .dialog_btn {
-    @apply dark-gradient dark:primary-gradient max-w-[120px]  p-4 text-center  font-noto_sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
+    @apply dark-gradient dark:primary-gradient max-w-[120px]  p-4 text-center  font-sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
   }
   .drawer_btn_close {
-    @apply bg-red-dark max-w-[100px]  p-4 text-center  font-noto_sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
+    @apply bg-red-dark max-w-[100px]  p-4 text-center  font-sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
   }
   .btn {
     @apply bg-light-800 dark:bg-dark-300 !important;
