@@ -5,9 +5,10 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import React from "react";
 
 import "./globals.css";
-import { ThemeProvider } from "@/context/ThemeProvider";
+
 import AuthProvider from "@/context/AuthProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/shared/theme-provider";
 
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -30,10 +31,17 @@ export default function RootLayout({
       <body
         className={` ${fontSans.variable} custom-scrollbar  h-screen bg-light-700 dark:bg-dark-300`}
       >
-        <ThemeProvider>
+        {" "}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <AuthProvider>{children}</AuthProvider>
+
+          <Toaster />
         </ThemeProvider>
-        <Toaster />
       </body>
     </html>
   );

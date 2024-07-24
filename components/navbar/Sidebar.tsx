@@ -15,6 +15,8 @@ import {
   IconHomeCog,
   IconExposure,
   IconArrowLeft,
+  IconSun,
+  IconMoon,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -22,9 +24,11 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
 export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { setTheme, theme } = useTheme();
   const links = [
     {
       label: "Επισκόπηση",
@@ -107,6 +111,22 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div className="mt-8 flex flex-col gap-2">
+            <SidebarButton
+              className="items-end gap-4"
+              handleClick={
+                theme === "dark"
+                  ? () => setTheme("light")
+                  : () => setTheme("dark")
+              }
+              label={theme === "dark" ? "Φωτεινό" : "Σκοτεινό"}
+              icon={
+                theme === "dark" ? (
+                  <IconSun className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+                ) : (
+                  <IconMoon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+                )
+              }
+            />
             <SidebarButton
               handleClick={() => {
                 sessionStorage.clear();
