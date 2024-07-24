@@ -348,8 +348,12 @@ export async function getMainCategoriesWithExpenses({
     const skipItems = (page - 1) * itemsPerPage;
     const totalCount = await Expenses.countDocuments(match);
     const pipeline: mongoose.PipelineStage[] = [
-      { $match: match },
-      { $match: { description: { $regex: search || "", $options: "i" } } },
+      {
+        $match: {
+          ...match,
+          description: { $regex: search || "", $options: "i" },
+        },
+      },
       {
         $lookup: {
           from: "categories",
@@ -462,7 +466,6 @@ export async function getFromMainCategorySubCategoriesTotal({
 }) {
   try {
     await connectToDatabase();
-    console.log("Connected to database");
 
     const startOfMonthDate = startOfMonth(new Date());
     const endOfMonthDate = endOfMonth(new Date());

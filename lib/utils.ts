@@ -17,6 +17,19 @@ import {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+export function sanitizeQuery(query: string): string {
+  if (typeof query !== "string") {
+    throw new Error("Invalid query type");
+  }
+
+  // Trim whitespace
+  let sanitizedQuery = query.trim();
+
+  // Escape special regex characters
+  sanitizedQuery = sanitizedQuery.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  return sanitizedQuery;
+}
 export function formatDateString2(inputDateString: Date) {
   // Parse the input date string
   const inputDate = new Date(inputDateString);

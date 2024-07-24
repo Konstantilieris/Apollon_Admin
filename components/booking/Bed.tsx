@@ -4,10 +4,11 @@ import React, { Suspense, useEffect, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import DogButton from "./DogButton";
-import LineSkeleton from "../shared/LineSkeleton";
+
 import { ExpandableCard } from "../shared/cards/OccupiedBed";
 import PendingBed from "../shared/cards/PendingBed";
 import dynamic from "next/dynamic";
+import CardSkeleton from "../shared/skeletons/CardSkeleton";
 const DynamicModal = dynamic(() => import("./CreateBookingModal"), {
   ssr: false,
 });
@@ -21,6 +22,7 @@ interface BedProps {
   clientName: string;
   clientId: string;
   dailyPrice: number;
+  transportFee: number;
 }
 export type BedType = {
   name: string;
@@ -42,6 +44,7 @@ const Bed = ({
   clientName,
   clientId,
   dailyPrice,
+  transportFee,
 }: BedProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -55,7 +58,7 @@ const Bed = ({
   useEffect(() => {
     const newUrl = removeKeysFromQuery({
       params: searchParams.toString(),
-      keysToRemove: [clientDogs.map((dog: any) => dog._id)],
+      keysToRemove: [...clientDogs.map((dog: any) => dog._id)],
     });
     router.push(newUrl, { scroll: false });
     setBed((prevBed) => ({
@@ -78,9 +81,10 @@ const Bed = ({
   };
 
   return (
-    <Suspense fallback={<LineSkeleton />}>
+    <Suspense fallback={<CardSkeleton />}>
       {open && bed.pending && (
         <DynamicModal
+          transportFee={transportFee}
           setOpen={setOpen}
           isOpen={open}
           dogs={clientDogs}

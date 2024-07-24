@@ -1,12 +1,10 @@
 import React from "react";
-import LoadingSkeleton from "@/components/shared/LoadingSkeleton";
+import LoadingSkeleton from "@/components/shared/skeletons/LoadingSkeleton";
 
 const loading = () => {
   return (
-    <div className="flex-center  background-light700_dark400 flex h-screen w-full flex-col gap-8 ">
-      <div className="mt-8  flex flex-row justify-center">
-        <LoadingSkeleton size={200} animation="animate-spin" />
-      </div>
+    <div className="background-light700_dark400 flex  h-full w-full items-center justify-center  ">
+      <LoadingSkeleton size={200} animation="animate-pulse" />
     </div>
   );
 };

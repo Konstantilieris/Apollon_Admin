@@ -8,8 +8,9 @@ import React, { Suspense } from "react";
 import ExpenseBox from "@/components/shared/cards/ExpenseBox";
 import RecentExpenses from "@/components/shared/expenses/RecentExpenses";
 import Pagination from "@/components/shared/Pagination";
-import LoadingSkeleton from "@/components/shared/LoadingSkeleton";
+
 import SubCategoryBadge from "@/components/shared/expenses/SubCategoryBadge";
+import LoadingSkeleton from "@/components/shared/skeletons/LoadingSkeleton";
 
 const page = async ({ searchParams: { id, page, sub, q } }: any) => {
   const main = await getAllCategories();
@@ -24,10 +25,10 @@ const page = async ({ searchParams: { id, page, sub, q } }: any) => {
     getFromMainCategorySubCategoriesTotal({ id: mainId }),
   ]);
   return (
-    <section className=" flex h-screen max-h-[2000px] w-full flex-row  py-2 font-sans">
+    <section className=" flex h-full w-full flex-row  py-2 font-sans">
       <div className="  custom-scrollbar flex w-full flex-1 flex-col   gap-8  overflow-y-auto scroll-smooth px-5  py-7 max-2xl:gap-2 max-2xl:py-8 sm:px-8">
         <header className=" flex flex-col justify-between gap-8 max-2xl:gap-2">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <h1 className="text-dark100_light900 font-semibold max-lg:text-sm lg:text-lg">
               {" "}
               ΔΙΑΧΕΙΡΙΣΗ<span className="text-bankGradient">&nbsp;ΕΞΟΔΩΝ</span>
@@ -52,12 +53,7 @@ const page = async ({ searchParams: { id, page, sub, q } }: any) => {
 
           <div>
             {results.length > 0 ? (
-              <div className="mb-24">
-                <Pagination
-                  pageNumber={page ? +page : 1}
-                  isNext={hasNextPage}
-                />
-              </div>
+              <Pagination pageNumber={page ? +page : 1} isNext={hasNextPage} />
             ) : (
               <div className="mt-12 flex justify-center">
                 <LoadingSkeleton size={140} animation="animate-pulse" />

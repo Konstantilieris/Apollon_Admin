@@ -11,7 +11,7 @@ export async function getMonthlyIncome() {
   const result = await Service.aggregate([
     {
       $match: {
-        date: {
+        paymentDate: {
           $gte: startDate,
           $lt: endDate,
         },

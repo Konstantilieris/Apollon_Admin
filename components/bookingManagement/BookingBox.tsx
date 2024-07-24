@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import DatePushUrl from "../datepicker/DatePushUrl";
 import LocalSearch from "../shared/searchBar/LocalSearch";
 import AnimatedCounter from "../shared/AnimatedCounter";
-import LoadingSkeleton from "../shared/LoadingSkeleton";
+import LoadingSkeleton from "../shared/skeletons/LoadingSkeleton";
 
 const BookingBox = ({ totalSum }: { totalSum: number }) => {
   return (
@@ -13,7 +13,7 @@ const BookingBox = ({ totalSum }: { totalSum: number }) => {
       <div className="flex w-full flex-row items-center justify-between gap-8">
         <div className="flex gap-6">
           <LocalSearch
-            route="/createbooking"
+            route="/booking"
             placeholder="Αναζήτηση Κρατήσεων"
             otherClasses="max-w-[220px]"
           />

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../mongoose";
 import Client, { IClient } from "@/database/models/client.model";
 import Service from "@/database/models/service.model";
+import { sanitizeQuery } from "../utils";
 
 export async function getDogsForClient(clientId: string) {
   try {
@@ -127,6 +128,7 @@ export async function getClientByIdForBooking(id: string | undefined) {
       name: 1,
       dog: 1,
       bookingPerDay: 1,
+      transportFee: 1,
     });
     return client;
   } catch (error) {
@@ -303,26 +305,23 @@ export async function countClientsByMonth() {
 export async function globalSearch({ query }: any) {
   try {
     connectToDatabase();
-
+    const cleanQuery = sanitizeQuery(query);
     const clients = await Client.find(
       {
         $or: [
           {
             name: {
-              $regex: query,
-              $options: "i",
+              $regex: new RegExp(`^${cleanQuery}`, "i"), // Prefix-based regex
             },
           },
           {
             profession: {
-              $regex: query,
-              $options: "i",
+              $regex: new RegExp(`^${cleanQuery}`, "i"), // Prefix-based regex
             },
           },
           {
             "dog.name": {
-              $regex: query,
-              $options: "i",
+              $regex: new RegExp(`^${cleanQuery}`, "i"), // Prefix-based regex
             },
           },
         ],
@@ -365,3 +364,32 @@ export async function updateClientPrice({
     throw error;
   }
 }
+export const updateClientTransportationFee = async ({
+  clientId,
+  price,
+  path,
+}: {
+  clientId: string;
+  price: number;
+  path: string;
+}) => {
+  try {
+    connectToDatabase();
+    if (!price) {
+      throw new Error("Price is required");
+    }
+    const client = await Client.findByIdAndUpdate(
+      clientId,
+      { transportFee: price },
+      { new: true }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    revalidatePath(path);
+    return true;
+  } catch (error) {
+    console.error("Error updating client transportation fee:", error);
+    throw error;
+  }
+};

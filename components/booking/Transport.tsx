@@ -67,7 +67,7 @@ const Transport = () => {
           ΧΡΟΝΟΔΙΑΓΡΑΜΜΑ
         </div>
       </AlertDialogTrigger>
-      <AlertDialogContent className="text-dark200_light900 min-h-[376px] border   border-orange-500 bg-light-700 font-sans dark:bg-dark-200">
+      <AlertDialogContent className="text-dark200_light900 min-h-[600px] border   border-indigo-500 bg-light-700 font-sans dark:bg-dark-200">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-center text-xl font-semibold">
             ΧΡΟΝΟΔΙΑΓΡΑΜΜΑ ΜΕΤΑΚΙΝΗΣΗΣ
@@ -105,7 +105,7 @@ const Transport = () => {
             ΑΚΥΡΩΣΗ
           </AlertDialogCancel>
           <Button
-            className="border border-green-400 hover:scale-105 hover:border-green-600"
+            className="border border-indigo-500 hover:scale-105 hover:border-indigo-700"
             disabled={!tm1 || !tm2}
             onClick={handleTimeUrl}
           >

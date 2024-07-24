@@ -40,13 +40,17 @@ const AlertValidate = ({
 }) => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogContent className="bg-light-500 text-dark-100 dark:bg-dark-100 dark:text-light-700">
+      <AlertDialogContent className="bg-light-500 font-sans text-dark-100 dark:bg-dark-100 dark:text-light-700">
         <AlertDialogHeader>
-          <AlertDialogTitle>Aποτυχημένη Eπικύρωση</AlertDialogTitle>
-          <AlertDialogDescription>{message}</AlertDialogDescription>
+          <AlertDialogTitle className="text-xl font-semibold text-red-500">
+            Aποτυχημένη Eπικύρωση
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-lg">
+            {message}. Προσπαθήστε ξανά !!
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Ακυρωση</AlertDialogCancel>
+          <AlertDialogCancel>Κλείσιμο</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -63,6 +67,7 @@ const PendingBed = ({
 }: PendingProps) => {
   const searchParams = useSearchParams();
   const [validate, setValidate] = React.useState(false);
+  const [show, setShow] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const validateBooking = async () => {
     const frDate = intToDate2(+searchParams.get("fr")!);
@@ -83,11 +88,11 @@ const PendingBed = ({
       setMessage("Έχει ήδη κράτηση");
       setValidate(check);
     }
-    if (!validate) setOpen(true);
+    validate ? setShow(true) : setOpen(true);
   };
   return (
     <>
-      <AlertValidate open={validate} setOpen={setValidate} message={message} />
+      <AlertValidate open={show} setOpen={setShow} message={message} />
       <div className=" flex w-full flex-col items-start pt-1 text-center font-sans text-dark-100 dark:text-light-800">
         <h2 className="flex max-w-[200px] flex-row  gap-2  truncate">
           {" "}

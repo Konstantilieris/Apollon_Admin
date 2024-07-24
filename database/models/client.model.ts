@@ -32,6 +32,7 @@ export interface IClient {
     emergencyContact?: string;
   };
   bookingPerDay?: number;
+  transportFee?: number;
   createdAt?: Date;
   owes?: Schema.Types.ObjectId[];
   reference?: IReference;
@@ -140,6 +141,10 @@ const ClientSchema = new Schema<IClient>({
   bookingPerDay: {
     type: Number,
     default: 30,
+  },
+  transportFee: {
+    type: Number,
+    default: 0,
   },
   name: {
     type: String,

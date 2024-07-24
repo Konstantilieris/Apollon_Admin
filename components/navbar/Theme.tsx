@@ -21,17 +21,17 @@ const Theme = () => {
             <Image
               src="/assets/icons/sun.svg"
               alt="sun"
-              width={22}
-              height={30}
-              className="active-theme"
+              width={24}
+              height={24}
+              className="active-theme object-contain"
             />
           ) : (
             <Image
               src="/assets/icons/moon.svg"
               alt="moon"
-              width={22}
-              height={30}
-              className="active-theme"
+              width={24}
+              height={24}
+              className="active-theme object-contain"
             />
           )}
         </MenubarTrigger>

@@ -88,13 +88,13 @@ export async function createBooking({
             const pickUpDescription = `${client.name}-${client.phone.mobile} 
               ${selectedDogsFiltered
                 .map(({ dogName }: any) => `${dogName}`)
-                .join(", ")} - ΠΑΡΑΛΑΒΗ`;
+                .join(", ")} - ΜΕΤΑΦΟΡΑ`;
             const location = `${client.location.city}-${client.residence}-${client.location.address}-${client.location.postalCode}`;
 
             const pickUpAppointment = await Appointment.create({
               Id: booking._id, // Use the training _id as the event Id
 
-              Subject: `${client.name} - ΜΕΤΑΦΟΡΑ`,
+              Subject: `${client.name} - ΠΑΡΑΛΑΒΗ`,
               Description: pickUpDescription,
               isReadOnly: true,
               Location: location,
@@ -130,12 +130,12 @@ export async function createBooking({
               client.phone.mobile
             }- ${selectedDogsFiltered
               .map(({ dogName }: any) => `${dogName}`)
-              .join(", ")} - ΠΑΡΑΔΟΣΗ`;
+              .join(", ")} - ΜΕΤΑΦΟΡΑ`;
             const locationDescription = ` ${client.location.city}-${client.residence}-${client.location.address}-${client.location.postalCode}`;
             const deliveryAppointment = await Appointment.create({
               Id: booking._id, // Use the training _id as the event Id
 
-              Subject: `${client.name} - ΜΕΤΑΦΟΡΑ`,
+              Subject: `${client.name} - ΠΑΡΑΔΟΣΗ`,
               Description: deliveryDescription,
               Location: locationDescription,
               isReadOnly: true,
@@ -292,7 +292,7 @@ export async function editBookingDate(id: string, rangeDate: DateRange) {
       }
     }
     revalidatePath("/calendar");
-    revalidatePath("/createbooking");
+    revalidatePath("/booking");
     return JSON.stringify(updatedBooking);
   } catch (error) {
     console.log(error);
@@ -375,7 +375,7 @@ export async function editBookingArrival(
       }
     }
     revalidatePath("/calendar");
-    revalidatePath("/createbooking");
+    revalidatePath("/booking");
     return JSON.stringify(updatedBooking);
   } catch (error) {
     console.log(error);
@@ -451,7 +451,7 @@ export async function editBookingDeparture(
       }
     }
     revalidatePath("/calendar");
-    revalidatePath("/createbooking");
+    revalidatePath("/booking");
     return JSON.stringify(updatedBooking);
   } catch (error) {
     console.log(error);
@@ -589,7 +589,7 @@ export async function deleteBooking(id: string) {
       });
     }
 
-    revalidatePath("/createbooking");
+    revalidatePath("/booking");
     return JSON.parse(JSON.stringify(booking));
   } catch (error) {
     console.error("Failed to delete booking:", error);

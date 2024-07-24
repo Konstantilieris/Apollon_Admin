@@ -11,8 +11,11 @@ import { DateRange } from "react-day-picker";
 import { DatePickerWithRange } from "./DateRangePicker";
 
 import { useRouter, useSearchParams } from "next/navigation";
-
-const DatePushUrl = ({ nodate }: { nodate: boolean }) => {
+interface DatePushProps {
+  nodate?: boolean;
+  disabled?: boolean;
+}
+const DatePushUrl = ({ nodate, disabled }: DatePushProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -67,7 +70,11 @@ const DatePushUrl = ({ nodate }: { nodate: boolean }) => {
 
   return (
     <div className="flex flex-row items-center gap-4">
-      <DatePickerWithRange rangeDate={rangeDate} setRangeDate={setRangeDate} />
+      <DatePickerWithRange
+        rangeDate={rangeDate}
+        setRangeDate={setRangeDate}
+        disabled={disabled}
+      />
     </div>
   );
 };

@@ -143,12 +143,13 @@ const Scheduler = ({ appointments }: any) => {
   return (
     <ScheduleComponent
       className=" w-full rounded-lg"
-      height={"88%"}
+      height={"10%"}
       width={"100%"}
       startHour="07:00"
       endHour="23:30"
       eventSettings={{
         dataSource: appointments,
+
         fields: {
           isReadonly: "IsReadonly",
         },

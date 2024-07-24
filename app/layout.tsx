@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 // eslint-disable-next-line camelcase
 import { Plus_Jakarta_Sans } from "next/font/google";
 import React from "react";
-import Navbar from "@/components/navbar/Navbar";
+
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import AuthProvider from "@/context/AuthProvider";
@@ -28,14 +28,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={` ${fontSans.variable} custom-scrollbar  overflow-y-hidden bg-light-700 dark:bg-dark-300`}
+        className={` ${fontSans.variable} custom-scrollbar  h-screen bg-light-700 dark:bg-dark-300`}
       >
         <ThemeProvider>
-          <AuthProvider>
-            <Navbar />
-
-            {children}
-          </AuthProvider>
+          <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
         <Toaster />
       </body>

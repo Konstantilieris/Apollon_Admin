@@ -38,7 +38,7 @@ const GlobalResult = () => {
       case "client":
         return `/clients/${id}`;
       case "booking":
-        return `/createbooking/${id}`;
+        return `/booking/${id}`;
       case "training":
         return `/training/${id}`;
 
@@ -48,7 +48,7 @@ const GlobalResult = () => {
   };
 
   return (
-    <div className="absolute  top-full z-30 mt-3 w-full min-w-[400px] rounded-xl border border-sky-300 bg-light-800 px-4 py-5 shadow-sm dark:bg-dark-400">
+    <div className="  fixed inset-x-[-20vw] top-12 z-50 mx-auto  mt-3 w-full min-w-[400px] rounded-xl border border-light-700 bg-light-800 px-4 py-5 shadow-sm dark:bg-dark-300">
       <GlobalFilters />
       <div className="my-5 h-[1px] bg-light-700/50 dark:bg-dark-500/50" />
 
@@ -70,11 +70,11 @@ const GlobalResult = () => {
               client.map((client: any, index: number) => (
                 <Link
                   key={index}
-                  className="flex flex-row items-center hover:scale-105"
+                  className="flex flex-row items-center gap-2 hover:scale-105"
                   href={renderLink(type || "client", client._id)}
                 >
                   <Image
-                    src="/assets/icons/noclient.svg"
+                    src="/assets/icons/client.svg"
                     alt="tags"
                     width={28}
                     height={24}

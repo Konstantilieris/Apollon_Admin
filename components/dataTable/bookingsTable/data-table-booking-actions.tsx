@@ -187,7 +187,7 @@ export function DataTableBookingRowActions({ row }: any) {
                       key={booking._id}
                       className="hover:bg-sky-200 hover:dark:bg-deep-purple"
                     >
-                      <Link href={`/createbooking/${booking._id}`}>
+                      <Link href={`/booking/${booking._id}`}>
                         <span className="flex ">
                           {booking.dogs.map((dog: any) => dog.dogName)}
                           <h1>-{booking.clientId.lastName}</h1>

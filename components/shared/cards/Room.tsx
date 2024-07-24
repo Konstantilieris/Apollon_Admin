@@ -48,6 +48,7 @@ const Room = ({ room, client }: any) => {
             clientName={client.name}
             clientId={client._id}
             dailyPrice={client.bookingPerDay}
+            transportFee={client.transportFee}
           />
         ))}
       </div>

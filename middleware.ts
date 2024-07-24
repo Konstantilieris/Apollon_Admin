@@ -7,7 +7,7 @@ export const config = {
     "/form/:path*",
 
     // Booking Routes
-    "/createbooking/:path*",
+    "/booking/:path*",
 
     // Logistics Routes
     "/logistics/:path*",

@@ -18,11 +18,13 @@ interface Props {
   className?: string;
   rangeDate?: DateRange;
   setRangeDate?: any;
+  disabled?: boolean;
 }
 export function DatePickerWithRange({
   className,
   rangeDate,
   setRangeDate,
+  disabled,
 }: Props) {
   return (
     <div className={cn("grid gap-2", className)}>
@@ -56,6 +58,7 @@ export function DatePickerWithRange({
         >
           <Calendar
             className="font-sans"
+            disabled={disabled && { before: new Date() }}
             initialFocus
             mode="range"
             defaultMonth={rangeDate?.from}

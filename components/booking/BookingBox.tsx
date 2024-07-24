@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Transport from "./Transport";
 import ClientBookingPrice from "./ClientBookingPrice";
+import ClientTransferFee from "./ClientTransferFee";
 
 const BookingBox = async ({
   client,
@@ -35,7 +36,12 @@ const BookingBox = async ({
           price={client.bookingPerDay}
           name={client.name}
         />
-        <DatePushUrl nodate={false} />
+        <ClientTransferFee
+          transportationFee={client.transportFee}
+          id={JSON.parse(JSON.stringify(client?._id))}
+          name={client.name}
+        />
+        <DatePushUrl nodate={false} disabled={true} />
         <Transport />
       </div>
     </section>

@@ -31,7 +31,7 @@ const TimePicker = ({
     <div className="flex flex-row gap-1 font-sans">
       {" "}
       <div className="flex flex-col">
-        <ScrollArea className="scrollbar-custom background-light900_dark200 h-[160px] w-12 rounded-md border font-sans hover:overflow-y-scroll ">
+        <ScrollArea className="scrollbar-custom background-light900_dark200 h-[400px] w-12 rounded-md border font-sans hover:overflow-y-scroll ">
           <div className="mt-2 flex flex-col items-center justify-center ">
             {hoursArray.map((hour) => (
               <React.Fragment key={hour}>
@@ -41,8 +41,8 @@ const TimePicker = ({
                   }
                   className={`cursor-pointer rounded-md p-2 text-sm ${
                     selectedTime.getHours() === +hour
-                      ? "bg-orange-700"
-                      : "hover:bg-orange-600"
+                      ? "bg-indigo-700"
+                      : "hover:bg-indigo-600"
                   }`}
                 >
                   {format(new Date().setHours(+hour), "HH")}
@@ -54,7 +54,7 @@ const TimePicker = ({
         </ScrollArea>
       </div>
       <div className="flex flex-col">
-        <ScrollArea className="scrollbar-custom background-light900_dark200 h-[160px] w-12 rounded-md border font-sans hover:overflow-y-scroll ">
+        <ScrollArea className="scrollbar-custom background-light900_dark200 h-[400px] w-12 rounded-md border font-sans hover:overflow-y-scroll ">
           <div className="mt-2 flex flex-col items-center justify-center ">
             {minutesArray.map((minute) => (
               <React.Fragment key={minute}>
@@ -64,8 +64,8 @@ const TimePicker = ({
                   }
                   className={`cursor-pointer rounded-md p-2 text-sm ${
                     selectedTime.getMinutes() === +minute
-                      ? "bg-orange-700"
-                      : "hover:bg-orange-600"
+                      ? "bg-indigo-700"
+                      : "hover:bg-indigo-600"
                   }`}
                 >
                   {format(new Date().setMinutes(+minute), "mm")}

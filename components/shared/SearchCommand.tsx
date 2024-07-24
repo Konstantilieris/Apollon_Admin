@@ -27,7 +27,7 @@ export function SearchCommand({
   return (
     <>
       <LocalSearch
-        route={"/createbooking"}
+        route={"/booking"}
         placeholder="Επώνυμο πελάτη"
         otherClasses="max-w-[280px]"
       />

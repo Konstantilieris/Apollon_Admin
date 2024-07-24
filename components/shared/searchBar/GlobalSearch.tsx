@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+
 import { Input } from "@/components/ui/input";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import GlobalResult from "./GlobalResult";
+import { IconEyeSearch } from "@tabler/icons-react";
 
 const GlobalSearch = () => {
   const router = useRouter();
@@ -63,18 +64,12 @@ const GlobalSearch = () => {
       className="relative w-full max-w-[400px] max-lg:hidden"
       ref={searchContainerRef}
     >
-      <div className="background-lightgrad_darkgrad relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4">
-        <Image
-          src="/assets/icons/search.svg"
-          alt="search"
-          width={24}
-          height={24}
-          className="cursor-pointer"
-        />
+      <div className="relative flex min-h-[56px] grow items-center gap-1 rounded-xl border border-white bg-neutral-900 px-4 font-sans">
+        <IconEyeSearch size={24} stroke={1.5} className="invert" />
 
         <Input
           type="text"
-          placeholder="Αναζήτηση σε όλη την εφαρμογή"
+          placeholder="Αναζήτηση "
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
@@ -82,7 +77,7 @@ const GlobalSearch = () => {
             if (!isOpen) setIsOpen(true);
             if (e.target.value === "" && isOpen) setIsOpen(false);
           }}
-          className="paragraph-regular no-focus placeholder text-dark400_light700 border-none bg-transparent shadow-none outline-none"
+          className="paragraph-regular no-focus placeholde:text-light-800 text-dark400_light700 border-none bg-transparent shadow-none outline-none"
         />
       </div>
       {isOpen && <GlobalResult />}

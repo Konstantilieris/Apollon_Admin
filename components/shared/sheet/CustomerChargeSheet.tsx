@@ -19,7 +19,7 @@ const CustomerChargeSheet = ({ client }: any) => {
       <Button
         className="gap-2 border-2 border-white bg-purple-600 p-4 font-sans text-[17px] font-bold text-white hover:scale-105"
         onClick={() => {
-          router.push(`/createbooking/${client._id}`);
+          router.push(`/booking/${client._id}`);
         }}
       >
         Νέα Κράτηση

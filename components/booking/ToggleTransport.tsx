@@ -40,7 +40,7 @@ const ToggleTransport = ({ type }: { type: string }) => {
         "relative min-w-[55px] min-h-[30px] rounded-2xl bg-slate-500 py-[0.1px] flex items-center cursor-pointer self-start",
         {
           "bg-slate-500 opacity-80": !checked,
-          "bg-orange-500 opacity-100 justify-end": checked,
+          "bg-indigo-500 opacity-100 justify-end": checked,
         }
       )}
     >
@@ -49,7 +49,7 @@ const ToggleTransport = ({ type }: { type: string }) => {
           "rounded-full min-w-[30px] flex relative items-center min-h-[28px]",
           {
             "bg-slate-400 pl-1 ": !checked,
-            "bg-orange-400 justify-end": checked,
+            "bg-indigo-400 justify-end": checked,
           }
         )}
       >

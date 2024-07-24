@@ -66,15 +66,16 @@ const LogInForm = () => {
     form.reset();
   };
   return (
-    <section className="   flex h-full  w-full  flex-col items-center gap-4 self-center px-4 font-sans max-sm:px-6">
-      <div className="mb-8 flex flex-row items-center gap-2   text-[60px] font-bold dark:text-light-700">
+    <section className="   flex   w-full  flex-col items-center gap-4 self-center px-4 font-sans max-sm:px-6">
+      <div className="mb-8 flex flex-row items-center gap-3  text-[60px] font-bold dark:text-light-700">
+        Apollon
         <Image
           src="/assets/icons/bone.svg"
           alt="asset"
-          width={60}
+          width={55}
           height={60}
+          className="object-contain dark:invert"
         />
-        Apollon
       </div>
       <h1 className="mb-8  text-center text-2xl font-semibold italic text-light-500">
         Συνδεθείτε με τα διαπιστευτήριά σας για να αποκτήσετε πρόσβαση στην

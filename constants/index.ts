@@ -39,7 +39,7 @@ export const sidebarLinks: SidebarLink[] = [
   },
   {
     imgURL: "/assets/icons/reservation.svg",
-    route: "/createbooking",
+    route: "/booking",
     label: "Κρατήσεις",
   },
 

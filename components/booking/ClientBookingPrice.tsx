@@ -59,7 +59,7 @@ const ClientBookingPrice = ({ id, price, name }: Props) => {
           "border-2 min-h-[46px] rounded-lg py-1 px-2 cursor-pointer hover:scale-105",
           {
             "border-green-500": price !== null,
-            "border-red-500 text-red-700 font-bold animate-bounce":
+            "border-red-500 text-red-700 font-bold animate-pulse":
               price === null,
           }
         )}
@@ -73,6 +73,7 @@ const ClientBookingPrice = ({ id, price, name }: Props) => {
               height={20}
               className="invert dark:invert-0"
             />
+            <span className="font-normal text-light-700">Ημερήσιο </span>{" "}
             {price} €
           </span>
         ) : (

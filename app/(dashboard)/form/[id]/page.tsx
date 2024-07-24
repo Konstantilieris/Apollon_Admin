@@ -55,7 +55,7 @@ const RequestSuccess = async ({ params }: any) => {
         </section>
 
         <Button variant="outline" className="shad-primary-btn" asChild>
-          <Link href={`/createbooking/${params.id}`}>ΝΕΑ ΚΡΑΤΗΣΗ</Link>
+          <Link href={`/booking/${params.id}`}>ΝΕΑ ΚΡΑΤΗΣΗ</Link>
         </Button>
 
         <p className="copyright">© 2024 Apollon Admin</p>

@@ -8,15 +8,9 @@ import {
 } from "../ui/animated-modal";
 
 import { Button } from "../ui/button";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useToast } from "../ui/use-toast";
-import {
-  calculateTotalPrice,
-  cn,
-  intToDate2,
-  removeKeysFromQuery,
-  setLocalTime,
-} from "@/lib/utils";
+import { calculateTotalPrice, cn, intToDate2, setLocalTime } from "@/lib/utils";
 import { createBooking } from "@/lib/actions/booking.action";
 import { Loader } from "lucide-react";
 
@@ -26,6 +20,7 @@ interface BookingProps {
   clientId: string;
   dogs: any;
   clientDaily: number;
+  transportFee: number;
 }
 const CreateBookingModal = ({
   isOpen,
@@ -33,8 +28,8 @@ const CreateBookingModal = ({
   clientId,
   dogs,
   clientDaily,
+  transportFee,
 }: BookingProps) => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const fromDate = setLocalTime(
     intToDate2(+searchParams.get("fr")!),
@@ -44,15 +39,16 @@ const CreateBookingModal = ({
     intToDate2(+searchParams.get("to")!),
     searchParams.get("tm2")!
   );
+  const pathname = usePathname();
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [costDeparture, setCostDeparture] = React.useState(0);
-  const [costArrival, setCostArrival] = React.useState(0);
+  const transportFeeArrival = searchParams.has("flag1") ? transportFee : 0;
+  const transportFeeDeparture = searchParams.has("flag2") ? transportFee : 0;
   const [amount, setAmount] = useState(
     calculateTotalPrice({ fromDate, toDate, dailyPrice: clientDaily })
   );
   const [totalAmount, setTotalAmount] = React.useState(
-    amount + costDeparture + costArrival
+    amount + transportFeeArrival + transportFeeDeparture
   );
   const { toast } = useToast();
 
@@ -69,10 +65,10 @@ const CreateBookingModal = ({
       }
     })
     .filter((dog: any) => dog !== null);
-  console.log(cleanDogs);
+
   useEffect(() => {
-    setTotalAmount(amount + costDeparture + costArrival);
-  }, [costDeparture, costArrival, amount]);
+    setTotalAmount(() => amount + transportFeeArrival + transportFeeDeparture);
+  }, [amount]);
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -88,7 +84,7 @@ const CreateBookingModal = ({
         bookingData: cleanDogs,
         flag1: searchParams.has("flag1"),
         flag2: searchParams.has("flag2"),
-        path: "/createbooking",
+        path: pathname,
       });
 
       if (res) {
@@ -109,22 +105,10 @@ const CreateBookingModal = ({
         description: `${error}`,
       });
     } finally {
-      const newUrl = removeKeysFromQuery({
-        params: searchParams.toString(),
-        keysToRemove: [
-          ...dogs.map((dog: any) => dog._id),
-          "fr",
-          "to",
-          "tm1",
-          "tm2",
-          "flag1",
-          "flag2",
-        ],
-      });
-      router.push(newUrl, { scroll: false });
-      window.location.reload();
+      window.location.replace(pathname);
     }
   };
+
   return (
     <Modal>
       <ModalBody
@@ -151,24 +135,14 @@ const CreateBookingModal = ({
             </div>
             {searchParams.has("flag1") && (
               <div className="flex flex-row justify-between">
-                <h2 className="font-semibold">Κόστος Αναχώρησης:</h2>
-                <input
-                  type="number"
-                  className="border-2 border-dark-100 bg-dark-200 text-light-700"
-                  value={costDeparture}
-                  onChange={(e) => setCostDeparture(+e.target.value)}
-                />
+                <h2 className="font-semibold">Κόστος Παραλαβής:</h2>
+                <h2 className="font-semibold">{transportFee || 0}€</h2>
               </div>
             )}
             {searchParams.has("flag2") && (
               <div className="flex flex-row justify-between">
-                <h2 className="font-semibold">Κόστος Άφιξης:</h2>
-                <input
-                  type="number"
-                  className="border-2 border-dark-100 bg-dark-200 text-light-700"
-                  value={costArrival}
-                  onChange={(e) => setCostArrival(+e.target.value)}
-                />
+                <h2 className="font-semibold">Κόστος Παράδοσης:</h2>
+                <h2 className="font-semibold">{transportFee || 0}€</h2>
               </div>
             )}
 

@@ -11,7 +11,7 @@ const BookingSearchFilter = () => {
           imgSrc="/assets/icons/search.svg"
           iconPosition="left"
           placeholder="Αναζήτηση..."
-          route={"/createbooking"}
+          route={"/booking"}
         />
         <Filter
           containerClasses="min-w-[145px] "

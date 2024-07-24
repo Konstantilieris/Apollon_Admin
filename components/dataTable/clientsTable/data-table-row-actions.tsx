@@ -21,7 +21,7 @@ export function DataTableRowActions({ row }: any) {
     router.push(`/clients/${row?.original?._id ?? ""}`);
   };
   const handleBooking = () => {
-    router.push(`/createbooking/${row?.original?._id ?? ""}`);
+    router.push(`/booking/${row?.original?._id ?? ""}`);
   };
   return (
     <DropdownMenu>

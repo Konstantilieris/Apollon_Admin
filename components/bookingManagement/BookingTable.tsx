@@ -47,7 +47,7 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
               </Link>
             </TableCell>
             <TableCell className="   mr-4 text-center text-base font-normal ">
-              {booking?.client?.phone.mobile}
+              {booking?.client?.phone?.mobile}
             </TableCell>
             <TableCell className="  text-center text-base  font-normal">
               {" "}
