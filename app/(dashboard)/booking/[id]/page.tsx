@@ -1,25 +1,22 @@
 import AppointmentDailyPlan from "@/components/booking/AppointmentDailyPlan";
 import BookingBox from "@/components/booking/BookingBox";
 import BookingSearchFilter from "@/components/booking/BookingSearchFilter";
+import Room from "@/components/shared/cards/Room";
+import Pagination from "@/components/shared/Pagination";
 
-import { getAllRoomsAndBookings2 } from "@/lib/actions/booking.action";
+import { getAllRoomsAndBookings } from "@/lib/actions/booking.action";
 import { getClientByIdForBooking } from "@/lib/actions/client.action";
 
 import { intToDate2 } from "@/lib/utils";
 
-import dynamic from "next/dynamic";
-
-const RoomBox = dynamic(() => import("@/components/booking/AvailableRooms"), {
-  ssr: false,
-});
 type SearchParamsProps = {
   params: { id: string };
   searchParams: { [key: string]: string };
 };
 const EditChange = async ({ searchParams, params }: SearchParamsProps) => {
-  const [client, { allRooms, isNext }] = await Promise.all([
+  const [client, { allRooms: rooms, isNext }] = await Promise.all([
     getClientByIdForBooking(params.id),
-    getAllRoomsAndBookings2({
+    getAllRoomsAndBookings({
       rangeDate: {
         from: intToDate2(+searchParams.fr),
         to: intToDate2(+searchParams.to),
@@ -53,12 +50,17 @@ const EditChange = async ({ searchParams, params }: SearchParamsProps) => {
         </header>
         <section className="recent-expenses text-dark400_light500 bg-light-700 font-sans dark:bg-dark-200">
           <BookingSearchFilter />
-          <RoomBox
-            rooms={JSON.parse(JSON.stringify(allRooms))}
-            client={JSON.parse(JSON.stringify(client))}
-            isNext={isNext}
-            pageNumber={pageNumber}
-          />
+          <div className="mb-20 flex w-full flex-col items-center justify-center gap-2 px-8 py-4">
+            {rooms.map((room: any) => (
+              <Room
+                room={JSON.parse(JSON.stringify(room))}
+                client={JSON.parse(JSON.stringify(client))}
+                key={room.name}
+              />
+            ))}
+
+            <Pagination pageNumber={pageNumber} isNext={isNext} />
+          </div>
         </section>
       </div>
       <aside className="  custom-scrollbar   flex h-screen max-h-[2200px] flex-col overflow-y-auto border-l border-gray-200 py-2 max-xl:hidden">

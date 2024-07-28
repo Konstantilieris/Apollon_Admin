@@ -1,7 +1,14 @@
 import { Schema, models, model } from "mongoose";
 
 export interface IBooking {
-  clientId: Schema.Types.ObjectId;
+  client: {
+    clientId: Schema.Types.ObjectId;
+    clientName: string;
+    transportFee?: number;
+    bookingPerDay?: number;
+    phone: string;
+    location: string;
+  };
   fromDate: Date;
   toDate: Date;
 
@@ -13,10 +20,13 @@ export interface IBooking {
 }
 const BookingSchema = new Schema<IBooking>(
   {
-    clientId: {
-      type: Schema.Types.ObjectId,
-      ref: "Client",
-      required: true,
+    client: {
+      clientId: { type: Schema.Types.ObjectId, ref: "Client", required: true },
+      clientName: { type: String, required: true },
+      phone: { type: String, required: true },
+      location: { type: String, required: true },
+      transportFee: { type: Number, default: 0 },
+      bookingFee: { type: Number, default: 30 },
     },
     fromDate: { type: Date, required: true },
     toDate: { type: Date, required: true },
@@ -28,6 +38,7 @@ const BookingSchema = new Schema<IBooking>(
         dogId: { type: Schema.Types.ObjectId, ref: "Dog", required: true },
         dogName: { type: String, required: true },
         roomId: { type: Schema.Types.ObjectId, ref: "Room", required: true },
+        roomName: { type: String, required: true },
       },
     ],
     flag1: { type: Boolean, default: false, required: true },

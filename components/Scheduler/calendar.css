@@ -1,9 +1,9 @@
 .e-schedule .e-appointment-details {
-  padding: 0 !important;
+  padding: 4 !important;
   margin: 0 !important;
   max-width: 100% !important;
   min-width: 100% !important;
-  color: cyan;
+  min-height: 100% !important;
 }
 .e-schedule {
   min-width: 100%;
@@ -12,7 +12,10 @@
   min-height: 100%;
 }
 .e-schedule .e-appointment {
-  padding: 0 !important;
+  padding: 2 !important;
   margin: 0 !important;
-  background-color: none !important;
+  text-align: center !important;
+  border: none !important;
+
+  background-color: transparent !important;
 }

@@ -3,10 +3,30 @@
 
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../mongoose";
-import Client, { IClient } from "@/database/models/client.model";
+import Client, { IClient, IDog } from "@/database/models/client.model";
 import Service from "@/database/models/service.model";
 import { sanitizeQuery } from "../utils";
-
+import mongoose from "mongoose";
+interface CreateClientProps {
+  clientData: {
+    name: string;
+    email: string;
+    profession: string;
+    residence: string;
+    address: string;
+    city: string;
+    postalCode: string;
+    telephone: string;
+    mobile: string;
+    workMobile: string;
+    emergencyContact: string;
+    vetName: string;
+    vetNumber: string;
+    isTraining: boolean;
+    reference: any;
+  };
+  dogs: IDog[];
+}
 export async function getDogsForClient(clientId: string) {
   try {
     connectToDatabase();
@@ -20,7 +40,8 @@ export async function getDogsForClient(clientId: string) {
     throw error;
   }
 }
-export async function CreateClient({ clientData, dogs }: any) {
+
+export async function CreateClient({ clientData, dogs }: CreateClientProps) {
   const clientPayload: IClient = {
     name: clientData.name,
     email: clientData.email,
@@ -43,7 +64,11 @@ export async function CreateClient({ clientData, dogs }: any) {
       phone: clientData.vetNumber,
     },
     isTraining: clientData.isTraining,
-    reference: clientData.reference,
+    references: {
+      isReferenced: clientData.reference,
+
+      hasReferenced: [],
+    },
   };
   try {
     connectToDatabase();
@@ -53,18 +78,6 @@ export async function CreateClient({ clientData, dogs }: any) {
       dog: dogs,
     });
     if (client) return JSON.stringify(client);
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
-
-export async function getAllClients() {
-  try {
-    connectToDatabase();
-
-    const clients = await Client.find();
-    return JSON.parse(JSON.stringify(clients));
   } catch (error) {
     console.log(error);
     throw error;
@@ -123,16 +136,58 @@ export async function getClientByIdForSuccess(id: string | undefined) {
 }
 export async function getClientByIdForBooking(id: string | undefined) {
   try {
-    connectToDatabase();
-    const client = await Client.findById(id, {
-      name: 1,
-      dog: 1,
-      bookingPerDay: 1,
-      transportFee: 1,
-    });
-    return client;
+    await connectToDatabase();
+
+    const client = await Client.aggregate([
+      { $match: { _id: id ? new mongoose.Types.ObjectId(id) : null } },
+      {
+        $project: {
+          name: 1,
+          dog: 1,
+          "phone.mobile": 1,
+          "location.address": 1,
+          "location.city": 1,
+          bookingFee: {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: "$serviceFees",
+                  as: "fee",
+                  cond: { $eq: ["$$fee.type", "bookingFee"] },
+                },
+              },
+              0,
+            ],
+          },
+          transportFee: {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: "$serviceFees",
+                  as: "fee",
+                  cond: { $eq: ["$$fee.type", "transportFee"] },
+                },
+              },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $addFields: {
+          bookingFee: {
+            $ifNull: ["$bookingFee.value", null],
+          },
+          transportFee: {
+            $ifNull: ["$transportFee.value", null],
+          },
+        },
+      },
+    ]);
+
+    return client.length ? client[0] : null;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }
@@ -335,7 +390,7 @@ export async function globalSearch({ query }: any) {
     throw error;
   }
 }
-export async function updateClientPrice({
+export async function updateClientBookingFee({
   clientId,
   price,
   path,
@@ -345,17 +400,84 @@ export async function updateClientPrice({
   path: string;
 }) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
+
     if (!price) {
       throw new Error("Price is required");
     }
-    const client = await Client.findByIdAndUpdate(
-      clientId,
-      { bookingPerDay: price },
+
+    const client = await Client.findOneAndUpdate(
+      {
+        _id: clientId,
+        "serviceFees.type": "bookingFee",
+      },
+      {
+        $set: { "serviceFees.$.value": price },
+      },
+      { new: true }
+    );
+
+    if (!client) {
+      const updatedClient = await Client.findByIdAndUpdate(
+        clientId,
+        { $push: { serviceFees: { type: "bookingFee", value: price } } },
+        { new: true }
+      );
+
+      if (!updatedClient) {
+        throw new Error("Client not found");
+      }
+
+      revalidatePath(path);
+      return true;
+    }
+
+    revalidatePath(path);
+    return true;
+  } catch (error) {
+    console.error("Error updating client price:", error);
+    throw error;
+  }
+}
+export async function updateClientTransportationFee({
+  clientId,
+  price,
+  path,
+}: {
+  clientId: string;
+  price: number;
+  path: string;
+}) {
+  try {
+    await connectToDatabase();
+
+    if (!price) {
+      throw new Error("Price is required");
+    }
+
+    const client = await Client.findOneAndUpdate(
+      {
+        _id: clientId,
+        "serviceFees.type": "transportFee",
+      },
+      {
+        $set: { "serviceFees.$.value": price },
+      },
       { new: true }
     );
     if (!client) {
-      throw new Error("Client not found");
+      const updatedClient = await Client.findByIdAndUpdate(
+        clientId,
+        { $push: { serviceFees: { type: "transportFee", value: price } } },
+        { new: true }
+      );
+
+      if (!updatedClient) {
+        throw new Error("Client not found");
+      }
+
+      revalidatePath(path);
+      return true;
     }
     revalidatePath(path);
     return true;
@@ -364,32 +486,64 @@ export async function updateClientPrice({
     throw error;
   }
 }
-export const updateClientTransportationFee = async ({
-  clientId,
-  price,
-  path,
+
+export async function getAllClients({
+  page,
+  query,
+  fromDate,
+  toDate,
 }: {
-  clientId: string;
-  price: number;
-  path: string;
-}) => {
+  page: number;
+  query: string;
+  fromDate: Date | undefined;
+  toDate: Date | undefined;
+}) {
   try {
-    connectToDatabase();
-    if (!price) {
-      throw new Error("Price is required");
+    // Connect to the database
+    await connectToDatabase();
+
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    const queryObject: any = {};
+
+    // Build query object for search
+    if (query) {
+      queryObject.$or = [
+        { name: { $regex: query, $options: "i" } },
+        { "phone.mobile": { $regex: query, $options: "i" } },
+        { profession: { $regex: query, $options: "i" } },
+        { "dog.name": { $regex: query, $options: "i" } },
+        { "location.city": { $regex: query, $options: "i" } },
+        { "location.address": { $regex: query, $options: "i" } },
+      ];
     }
-    const client = await Client.findByIdAndUpdate(
-      clientId,
-      { transportFee: price },
-      { new: true }
-    );
-    if (!client) {
-      throw new Error("Client not found");
+
+    // Add date range to query object
+    if (fromDate && toDate) {
+      queryObject.createdAt = { $gte: fromDate, $lte: toDate };
     }
-    revalidatePath(path);
-    return true;
+
+    // Use aggregation to match, skip, and limit results
+    const clients = await Client.aggregate([
+      { $match: queryObject },
+      { $skip: skip },
+      { $limit: limit },
+    ]);
+
+    // Count total clients matching the query
+    const totalClients = await Client.countDocuments(queryObject);
+
+    // Determine if there are more pages
+    const isNext = skip + limit < totalClients;
+
+    // Return clients, isNext, and totalClients
+    return {
+      clients,
+      isNext,
+      totalClients,
+    };
   } catch (error) {
-    console.error("Error updating client transportation fee:", error);
+    console.error(error);
     throw error;
   }
-};
+}

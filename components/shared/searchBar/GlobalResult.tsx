@@ -78,7 +78,7 @@ const GlobalResult = () => {
                     alt="tags"
                     width={28}
                     height={24}
-                    className="mb-1 object-contain"
+                    className="mb-1 object-contain invert dark:invert-0"
                   />
 
                   <div className="flex w-full flex-col">

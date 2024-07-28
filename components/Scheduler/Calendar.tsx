@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Week,
@@ -113,13 +113,20 @@ L10n.load({
 });
 
 const Scheduler = ({ appointments }: any) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
   const eventTemplate = (props: any) => {
     return (
       <div
         className={cn(
           "font-sans pb-4  w-full text-white  font-semibold   items-center flex justify-center min-h-[50px] gap-2"
         )}
-        style={{ backgroundColor: props.Color ? props.Color : "transparent" }}
+        style={{ backgroundColor: props.Color ? props.Color : "yellowgreen" }}
       >
         {" "}
         {props.Subject}
@@ -149,11 +156,9 @@ const Scheduler = ({ appointments }: any) => {
       endHour="23:30"
       eventSettings={{
         dataSource: appointments,
-
         fields: {
-          isReadonly: "IsReadonly",
+          isReadonly: "isReadonly",
         },
-
         template: eventTemplate,
       }}
       actionComplete={onActionComplete}

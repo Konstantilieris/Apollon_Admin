@@ -1,16 +1,19 @@
 "use client";
 import React from "react";
 import CountUp from "react-countup";
-
-const AnimatedCounter = ({ amount }: { amount: number }) => {
+interface CounterProps {
+  amount: number;
+  noPrefix?: boolean;
+}
+const AnimatedCounter = ({ amount, noPrefix = false }: CounterProps) => {
   return (
     <div>
       <CountUp
         end={amount}
         duration={3}
-        prefix="€"
+        prefix={noPrefix ? "" : "€"}
         separator=""
-        decimals={2}
+        decimals={noPrefix ? 0 : 2}
         decimal=","
       />
     </div>

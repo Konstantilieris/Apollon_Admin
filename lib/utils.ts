@@ -48,8 +48,8 @@ export function formatDateString(inputDateString: Date) {
   const inputDate = new Date(inputDateString);
 
   // Get the day, month, and year components
-  const day = inputDate.getDate();
-  const month = inputDate.getMonth() + 1; // Months are zero-based
+  const day = String(inputDate.getDate()).padStart(2, "0"); // Pad day with leading zero if needed
+  const month = String(inputDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based and pad month with leading zero if needed
   const year = inputDate.getFullYear();
 
   // Format the date components
@@ -58,8 +58,8 @@ export function formatDateString(inputDateString: Date) {
   return formattedDate;
 }
 export async function getDayAndMonth(date: Date) {
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
+  const day = String(date.getDate()).padStart(2, "0"); // Pad day with leading zero if needed
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based and pad month with leading zero if needed
   return `${day}/${month}`;
 }
 export function formatDateToTime(inputDateString: Date | undefined) {

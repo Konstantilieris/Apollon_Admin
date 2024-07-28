@@ -36,7 +36,7 @@ const Page = async ({ searchParams }: any) => {
 
         {bookings.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-4">
-            <LoadingSkeleton size={40} animation="animate-pulse" />
+            <LoadingSkeleton size={80} animation="animate-pulse" />
             <h2 className="text-dark100_light900 text-lg font-semibold">
               Δεν υπάρχουν κρατήσεις
             </h2>
@@ -48,7 +48,7 @@ const Page = async ({ searchParams }: any) => {
         ) : (
           <div className="mb-32">
             <Suspense
-              fallback={<LoadingSkeleton size={20} animation="animate-spin" />}
+              fallback={<LoadingSkeleton size={40} animation="animate-spin" />}
             >
               {" "}
               <BookingTable bookings={bookings} />

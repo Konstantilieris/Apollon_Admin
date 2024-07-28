@@ -19,10 +19,14 @@ interface BedProps {
   clientDogs: any;
   roomName: string;
   roomId: string;
-  clientName: string;
-  clientId: string;
-  dailyPrice: number;
-  transportFee: number;
+  client: {
+    clientId: string;
+    clientName: string;
+    bookingFee: number;
+    transportFee: number;
+    phone: string;
+    location: string;
+  };
 }
 export type BedType = {
   name: string;
@@ -41,10 +45,7 @@ const Bed = ({
   clientDogs,
   roomName,
   roomId,
-  clientName,
-  clientId,
-  dailyPrice,
-  transportFee,
+  client,
 }: BedProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -84,12 +85,10 @@ const Bed = ({
     <Suspense fallback={<CardSkeleton />}>
       {open && bed.pending && (
         <DynamicModal
-          transportFee={transportFee}
+          client={client}
           setOpen={setOpen}
           isOpen={open}
           dogs={clientDogs}
-          clientId={clientId}
-          clientDaily={dailyPrice}
         />
       )}
       <div
@@ -105,11 +104,11 @@ const Bed = ({
           <PendingBed
             pending={bed.pending}
             onDelete={handleDeleteDogFromBed}
-            clientName={clientName}
+            clientName={client.clientName}
             fromDate={intToDate2(+searchParams.get("fr")!)}
             toDate={intToDate2(+searchParams.get("to")!)}
             setOpen={setOpen}
-            clientId={clientId}
+            clientId={client.clientId}
           />
         ) : (
           <div>

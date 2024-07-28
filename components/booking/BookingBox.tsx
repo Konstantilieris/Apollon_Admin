@@ -33,7 +33,7 @@ const BookingBox = async ({
         </Link>
         <ClientBookingPrice
           id={JSON.parse(JSON.stringify(client?._id))}
-          price={client.bookingPerDay}
+          price={client.bookingFee}
           name={client.name}
         />
         <ClientTransferFee

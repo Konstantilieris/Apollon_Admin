@@ -1,0 +1,30 @@
+.rc-slider-mark-text {
+  color: white; /* Set text color to white */
+}
+
+/* Styling for the slider rail */
+.rc-slider-rail {
+  background-color: #121212; /* Dark rail color */
+}
+
+/* Styling for the track (line) */
+.rc-slider-track {
+  background-color: #7c43bd; /* Track color */
+}
+
+/* Styling for the handles (dots) */
+.rc-slider-handle {
+  background-color: #ffffff; /* Handle color */
+  border-color: #7c43bd; /* Handle border color */
+}
+
+/* Styling for the dot style */
+.rc-slider-dot {
+  background-color: #121212; /* Dot background color */
+  border-color: #dce3f1; /* Dot border color */
+}
+
+/* Styling for the active dot */
+.rc-slider-dot-active {
+  background-color: #7c43bd; /* Active dot color */
+}

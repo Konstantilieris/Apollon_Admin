@@ -15,8 +15,6 @@ import {
   IconHomeCog,
   IconExposure,
   IconArrowLeft,
-  IconSun,
-  IconMoon,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -24,11 +22,10 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
-
+import Toggle from "./Toggle";
 export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { setTheme, theme } = useTheme();
+
   const links = [
     {
       label: "Επισκόπηση",
@@ -39,7 +36,7 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
     },
 
     {
-      label: "Φόρμα",
+      label: "Εγγραφή",
       href: "/form",
       icon: (
         <IconListDetails className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
@@ -87,17 +84,17 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1  mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden z-50",
+        "rounded-md flex flex-col md:flex-row bg-neutral-200 dark:bg-neutral-800 w-full flex-1  mx-auto border border-neutral-500 dark:border-neutral-700 overflow-hidden z-50",
         "h-screen" // for your use case, use `h-screen` instead of `h-[60vh]`
       )}
     >
       <Sidebar open={open} setOpen={setOpen} animate={true}>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-1 flex-col overflow-y-auto">
-            <div className="mt-2 flex flex-row items-center gap-2 font-sans text-light-900">
+            <div className="mt-2 flex flex-row items-center gap-2 font-sans text-dark-100 dark:text-light-900">
               <Image
                 src="/assets/icons/bone.svg"
-                className="h-8 w-5 shrink-0 rounded-full invert"
+                className="h-8 w-5 shrink-0 rounded-full dark:invert"
                 width={15}
                 height={15}
                 alt="Avatar"
@@ -111,22 +108,7 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div className="mt-8 flex flex-col gap-2">
-            <SidebarButton
-              className="items-end gap-4"
-              handleClick={
-                theme === "dark"
-                  ? () => setTheme("light")
-                  : () => setTheme("dark")
-              }
-              label={theme === "dark" ? "Φωτεινό" : "Σκοτεινό"}
-              icon={
-                theme === "dark" ? (
-                  <IconSun className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-                ) : (
-                  <IconMoon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-                )
-              }
-            />
+            <Toggle />
             <SidebarButton
               handleClick={() => {
                 sessionStorage.clear();

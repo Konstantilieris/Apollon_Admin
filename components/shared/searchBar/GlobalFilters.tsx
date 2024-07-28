@@ -39,7 +39,7 @@ const GlobalFilters = () => {
           <button
             key={item.value}
             type="button"
-            className={`light-border-2 small-medium :text-light-800 text-dark200_light800 rounded-2xl px-5 py-2 capitalize hover:scale-105 dark:hover:!text-primary-500
+            className={`light-border-2 small-medium :text-light-800 text-dark200_light800 rounded-2xl px-5 py-2 capitalize hover:scale-105 
               ${
                 active === item.value
                   ? "bg-primary-500 text-light-900"

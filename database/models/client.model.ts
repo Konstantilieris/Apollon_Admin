@@ -31,18 +31,19 @@ export interface IClient {
     work_phone?: string;
     emergencyContact?: string;
   };
-  bookingPerDay?: number;
-  transportFee?: number;
+  serviceFees?: { type: String; value: Number }[];
   createdAt?: Date;
   owes?: Schema.Types.ObjectId[];
-  reference?: IReference;
+  references?: {
+    isReferenced?: IReference;
+    hasReferenced?: IReference[];
+  };
   dog?: IDog;
   vet?: {
     name: string;
     phone: string;
   };
   isTraining?: boolean;
-
   notes?: string;
   name: string;
 }
@@ -131,21 +132,22 @@ const ClientSchema = new Schema<IClient>({
     name: { type: String },
     phone: { type: String },
   },
-  reference: ReferenceSchema,
+  references: {
+    isReferenced: ReferenceSchema,
+    hasReferenced: [ReferenceSchema],
+  },
   isTraining: {
     type: Boolean,
   },
   notes: {
     type: String,
   },
-  bookingPerDay: {
-    type: Number,
-    default: 30,
-  },
-  transportFee: {
-    type: Number,
-    default: 0,
-  },
+  serviceFees: [
+    {
+      type: { type: String },
+      value: { type: Number },
+    },
+  ],
   name: {
     type: String,
     required: true,

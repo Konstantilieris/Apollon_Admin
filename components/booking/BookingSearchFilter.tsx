@@ -22,9 +22,6 @@ const BookingSearchFilter = () => {
           ]}
         />
       </div>
-      <div className=" flex flex-row  items-center gap-2 p-1 ">
-        {/* <CreateBook client={client} /> */}
-      </div>
     </header>
   );
 };

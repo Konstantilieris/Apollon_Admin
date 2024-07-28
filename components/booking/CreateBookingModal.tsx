@@ -17,18 +17,21 @@ import { Loader } from "lucide-react";
 interface BookingProps {
   isOpen: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  clientId: string;
   dogs: any;
-  clientDaily: number;
-  transportFee: number;
+  client: {
+    clientId: string;
+    clientName: string;
+    bookingFee: number;
+    transportFee: number;
+    phone: string;
+    location: string;
+  };
 }
 const CreateBookingModal = ({
   isOpen,
   setOpen,
-  clientId,
   dogs,
-  clientDaily,
-  transportFee,
+  client,
 }: BookingProps) => {
   const searchParams = useSearchParams();
   const fromDate = setLocalTime(
@@ -42,23 +45,28 @@ const CreateBookingModal = ({
   const pathname = usePathname();
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const transportFeeArrival = searchParams.has("flag1") ? transportFee : 0;
-  const transportFeeDeparture = searchParams.has("flag2") ? transportFee : 0;
+  const transportFeeArrival = searchParams.has("flag1")
+    ? client.transportFee
+    : 0;
+  const transportFeeDeparture = searchParams.has("flag2")
+    ? client.transportFee
+    : 0;
   const [amount, setAmount] = useState(
-    calculateTotalPrice({ fromDate, toDate, dailyPrice: clientDaily })
+    calculateTotalPrice({ fromDate, toDate, dailyPrice: client.bookingFee })
   );
   const [totalAmount, setTotalAmount] = React.useState(
     amount + transportFeeArrival + transportFeeDeparture
   );
   const { toast } = useToast();
 
-  const cleanDogs = dogs
+  const bookingData = dogs
     .map((dog: any) => {
       if (searchParams.has(dog._id)) {
         return {
           dogId: dog._id,
           dogName: dog.name,
           roomId: searchParams.get(dog._id)?.split("_")[1],
+          roomName: searchParams.get(dog._id)?.split("_")[0],
         };
       } else {
         return null;
@@ -77,11 +85,11 @@ const CreateBookingModal = ({
     setLoading(true);
     try {
       const res = await createBooking({
-        clientId_string: clientId,
+        client,
         fromDate,
         toDate,
         totalprice: totalAmount,
-        bookingData: cleanDogs,
+        bookingData,
         flag1: searchParams.has("flag1"),
         flag2: searchParams.has("flag2"),
         path: pathname,
@@ -136,13 +144,13 @@ const CreateBookingModal = ({
             {searchParams.has("flag1") && (
               <div className="flex flex-row justify-between">
                 <h2 className="font-semibold">Κόστος Παραλαβής:</h2>
-                <h2 className="font-semibold">{transportFee || 0}€</h2>
+                <h2 className="font-semibold">{client.transportFee || 0}€</h2>
               </div>
             )}
             {searchParams.has("flag2") && (
               <div className="flex flex-row justify-between">
                 <h2 className="font-semibold">Κόστος Παράδοσης:</h2>
-                <h2 className="font-semibold">{transportFee || 0}€</h2>
+                <h2 className="font-semibold">{client.transportFee || 0}€</h2>
               </div>
             )}
 

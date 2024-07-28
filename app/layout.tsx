@@ -29,19 +29,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={` ${fontSans.variable} custom-scrollbar  h-screen bg-light-700 dark:bg-dark-300`}
+        className={` ${fontSans.variable}  h-screen bg-light-700 dark:bg-dark-300`}
       >
         {" "}
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
 
-          <Toaster />
-        </ThemeProvider>
+            <Toaster />
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 
 import { useToast } from "../ui/use-toast";
-import { updateClientPrice } from "@/lib/actions/client.action";
+import { updateClientBookingFee } from "@/lib/actions/client.action";
 import { usePathname, useRouter } from "next/navigation";
 interface Props {
   id: string;
@@ -31,7 +31,11 @@ const ClientBookingPrice = ({ id, price, name }: Props) => {
   const router = useRouter();
   const handleDailyPrice = async () => {
     try {
-      const res = await updateClientPrice({ clientId: id, price: daily, path });
+      const res = await updateClientBookingFee({
+        clientId: id,
+        price: daily,
+        path,
+      });
       if (res) {
         router.refresh();
         toast({

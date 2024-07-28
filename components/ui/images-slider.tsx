@@ -164,6 +164,7 @@ export const ImageCarousel = () => {
     "/assets/images/imag6.png",
   ];
   const { data: session } = useSession() as { data: any };
+
   return (
     <ImagesSlider className="min-h-[90vh]" images={images}>
       <motion.div

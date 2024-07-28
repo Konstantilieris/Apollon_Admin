@@ -12,7 +12,8 @@ const Room = ({ room, client }: any) => {
       ...dog,
       fromDate: booking.fromDate,
       toDate: booking.toDate,
-      clientName: booking?.clientId.name,
+      clientName: booking?.clientName,
+      clientId: booking?.clientId,
     }))
   );
 
@@ -45,10 +46,14 @@ const Room = ({ room, client }: any) => {
             roomId={room._id}
             name={`${index + 1}`}
             clientDogs={client.dog}
-            clientName={client.name}
-            clientId={client._id}
-            dailyPrice={client.bookingPerDay}
-            transportFee={client.transportFee}
+            client={{
+              clientId: client._id,
+              clientName: client.name,
+              bookingFee: client.bookingFee,
+              transportFee: client.transportFee,
+              phone: client.phone.mobile,
+              location: client.location.city + "," + client.location.address,
+            }}
           />
         ))}
       </div>

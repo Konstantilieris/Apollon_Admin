@@ -4,9 +4,11 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { getDayAndMonth } from "@/lib/utils";
+import Link from "next/link";
 
 interface OccupiedBedProps {
   clientName: string;
+  clientId: string;
   dogName: string;
   fromDate: string;
   toDate: string;
@@ -74,9 +76,12 @@ export function ExpandableCard({ data }: ExpandableCardProps) {
                   </motion.div>
                   <motion.h3
                     layoutId={`title-${active.clientName}-${id}`}
+                    whileHover={{ scale: 1.1, color: "blue" }}
                     className=" text-base font-semibold text-dark-100 dark:text-light-800"
                   >
-                    Πελάτης: {active.clientName}
+                    <Link href={`/clients/${active.clientId}`}>
+                      Πελάτης: {active.clientName}
+                    </Link>
                   </motion.h3>
                   <motion.p
                     layoutId={`description-${active.dogName}-${id}`}

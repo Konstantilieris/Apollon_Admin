@@ -4,6 +4,7 @@ interface IEvent {
   Id: Schema.Types.ObjectId;
   Subject: String;
   Description?: string;
+  Type?: string;
   StartTime: Date;
   EndTime: Date;
   isReadonly?: boolean;
@@ -21,14 +22,19 @@ const EventSchema = new mongoose.Schema<IEvent>({
     type: String,
     required: true,
   },
+  Type: {
+    type: String,
+  },
   Location: {
     type: String,
   },
   Description: {
     type: String,
   },
+
   isReadonly: {
     type: Boolean,
+    default: false,
   },
   Color: {
     type: String,

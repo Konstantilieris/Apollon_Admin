@@ -64,8 +64,8 @@ const GlobalSearch = () => {
       className="relative w-full max-w-[400px] max-lg:hidden"
       ref={searchContainerRef}
     >
-      <div className="relative flex min-h-[56px] grow items-center gap-1 rounded-xl border border-white bg-neutral-900 px-4 font-sans">
-        <IconEyeSearch size={24} stroke={1.5} className="invert" />
+      <div className="relative flex min-h-[56px] grow items-center gap-1 rounded-xl border border-white bg-light-700 px-4 font-sans dark:bg-neutral-900">
+        <IconEyeSearch size={24} stroke={1.5} className="" />
 
         <Input
           type="text"
