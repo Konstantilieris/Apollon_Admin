@@ -11,7 +11,15 @@ import { DateRange } from "react-day-picker";
 import Appointment from "@/database/models/event.model";
 import Service from "@/database/models/service.model";
 import mongoose from "mongoose";
-
+interface TNTPROPS {
+  type: string;
+  time: string;
+  initialDate: Date;
+  hasTransport: boolean;
+  setTransport: string;
+  transportFee: number;
+  path:string;
+}
 interface ICreateBooking {
   client: {
     clientId: string;
@@ -499,4 +507,87 @@ export async function getAllRoomsAndBookings({
     console.error("Error finding bookings within date range:", error);
     throw error;
   }
+}
+export async function updateBookingDates({path,fromDate,toDate,price,bookingId}:any){
+  const session = await mongoose.startSession();
+  try {
+    connectToDatabase();
+    session.startTransaction();
+    const updatedBooking= await Booking.findOneAndUpdate({_id:bookingId},{
+      fromDate:fromDate,
+      toDate:toDate,
+      totalAmount:price
+    },{new:true,session:session})
+    const service =await Service.findOneAndUpdate({bookingId:bookingId},{
+      amount:price,
+      date:fromDate
+      },{new:true,session:session})
+    if (!updatedBooking || !service) {
+      throw new Error("Failed to update booking");
+    }
+    const oldAppointments= await Appointment.find({Id:bookingId},{},{session:session}).sort({StartTime:1})
+     const updateFirstAppointment=await Appointment.findOneAndUpdate
+      ({_id:oldAppointments[0]._id},{
+        StartTime:fromDate,
+        EndTime:fromDate
+      },{new:true,session:session})
+    const updateSecondAppointment=await Appointment.findOneAndUpdate 
+      ({_id:oldAppointments[1]._id},{
+        StartTime:toDate,
+        EndTime:toDate
+      },{new:true,session:session})
+    if (!updateFirstAppointment || !updateSecondAppointment) {
+      throw new Error("Failed to update appointments");
+    }
+    await session.commitTransaction();
+    session.endSession();
+    revalidatePath(path);
+    return JSON.stringify(updatedBooking);
+
+    
+  } catch (error) {
+    
+    await session.abortTransaction();
+    session.endSession();
+    console.log("Failed to update booking", error);
+    throw error;
+  }}
+  export async function deleteBooking({id,clientId,}:{id:string,clientId:string}){
+    const session=await mongoose.startSession();
+    try {
+      connectToDatabase()
+      session.startTransaction();
+      const deletedBooking=await Booking.findByIdAndDelete(id,{session:session})
+      const deletedService=await Service.findOneAndDelete({bookingId:id},{session:session})
+      const updatedClient=await Client.findOneAndUpdate
+      ({_id:clientId},{
+        $pull:{owes:deletedService._id}
+      },{new:true,session:session})
+      if (!deletedBooking || !deletedService || !updatedClient) {
+        throw new Error("Failed to delete booking")
+      }
+  
+      const deleteAppointments=await Appointment.deleteMany({Id:id},{session:session})
+      if (!deleteAppointments) {
+        throw new Error("Failed to delete appointments")
+      }
+
+      await session.commitTransaction();
+      session.endSession();
+      return JSON.stringify(deletedBooking)
+      
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.log("Failed to delete booking", error);
+    }
+  }
+
+export async function updateTransportAndTime({type,time,initialDate,hasTransport,setTransport,transportFee,path}:TNTPROPS)
+{
+  const session=await mongoose.startSession();
+  try {
+    connectToDatabase();
+    session.startTransaction();
+    const updatedBooking=await Booking
 }

@@ -37,7 +37,7 @@ const ToggleTransport = ({ type }: { type: string }) => {
         handleToggle();
       }}
       className={cn(
-        "relative min-w-[55px] min-h-[30px] rounded-2xl bg-slate-500 py-[0.1px] flex items-center cursor-pointer self-start",
+        "relative min-w-[55px] min-h-[30px] rounded-2xl bg-slate-500 py-[0.1px] flex items-center cursor-pointer self-center",
         {
           "bg-slate-500 opacity-80": !checked,
           "bg-indigo-500 opacity-100 justify-end": checked,
