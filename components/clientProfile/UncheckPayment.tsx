@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import { Button } from "../../ui/button";
+import { Button } from "../ui/button";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { uncheckedPayment } from "@/lib/actions/client.action";
-import { useToast } from "../../ui/use-toast";
+import { useToast } from "../ui/use-toast";
 import { cn } from "@/lib/utils";
 
 const UncheckPayment = ({ clientId, item }: any) => {
