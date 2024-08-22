@@ -587,13 +587,16 @@ export const GlobalSearchFilters = [
   { name: "Κράτηση", value: "booking" },
   { name: "Εκπαίδευση", value: "training" },
 ];
-export function setLocalTime(date: Date, time: string) {
-  // Split the tm1 string to extract hours and minutes
+export function setLocalTime(date: Date, time: string): Date {
+  // Return the original date if no time is provided
   if (!time) return date;
+
+  // Split the time string to extract hours and minutes
   const [hours, minutes] = time.split("-").map(Number);
 
-  // Set the hours and minutes in local time
+  // Set the hours and minutes using the local time
   date.setHours(hours, minutes, 0, 0); // setting seconds and milliseconds to 0
 
+  // Return the updated date object
   return date;
 }

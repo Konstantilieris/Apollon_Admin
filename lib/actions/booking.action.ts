@@ -196,6 +196,7 @@ export async function createBooking({
 
     await session.commitTransaction();
     session.endSession();
+    revalidatePath("/calendar");
 
     revalidatePath(path);
     return JSON.stringify(booking[0]);
@@ -568,6 +569,7 @@ export async function updateBookingDates({
     await session.commitTransaction();
     session.endSession();
     revalidatePath(path);
+    revalidatePath("/calendar");
     return JSON.stringify(updatedBooking);
   } catch (error) {
     await session.abortTransaction();
@@ -616,6 +618,7 @@ export async function deleteBooking({
     await session.commitTransaction();
     session.endSession();
     revalidatePath(path);
+    revalidatePath("/calendar");
     return JSON.stringify(deletedBooking);
   } catch (error) {
     await session.abortTransaction();
@@ -733,6 +736,7 @@ export async function updateTnt({
 
     await session.commitTransaction();
     revalidatePath(path);
+    revalidatePath("/calendar");
     return JSON.stringify(updateBooking);
   } catch (error) {
     await session.abortTransaction();

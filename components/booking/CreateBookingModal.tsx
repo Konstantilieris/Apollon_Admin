@@ -81,6 +81,7 @@ const CreateBookingModal = ({
     setMounted(true);
   }, []);
   if (!mounted) return null;
+
   const handleCreateBooking = async () => {
     setLoading(true);
     try {
