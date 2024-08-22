@@ -14,6 +14,8 @@ export interface IDog {
   breed?: string;
   behavior?: string;
   microchip?: string;
+  note?: string;
+  dead?: boolean;
 }
 export interface IReference {
   clientId?: Schema.Types.ObjectId;
@@ -46,6 +48,7 @@ export interface IClient {
   isTraining?: boolean;
   notes?: string;
   name: string;
+  points?: number;
 }
 
 export const DogSchema = new Schema<IDog>({
@@ -71,6 +74,14 @@ export const DogSchema = new Schema<IDog>({
   },
   behavior: {
     type: String,
+  },
+  note: {
+    type: String,
+    default: null,
+  },
+  dead: {
+    type: Boolean,
+    default: false,
   },
 });
 export const ReferenceSchema = new Schema<IReference>({
@@ -134,7 +145,7 @@ const ClientSchema = new Schema<IClient>({
   },
   references: {
     isReferenced: ReferenceSchema,
-    hasReferenced: [ReferenceSchema],
+    hasReferenced: [{ type: Schema.Types.ObjectId, ref: "Client" }],
   },
   isTraining: {
     type: Boolean,
@@ -148,6 +159,10 @@ const ClientSchema = new Schema<IClient>({
       value: { type: Number },
     },
   ],
+  points: {
+    type: Number,
+    default: 0,
+  },
   name: {
     type: String,
     required: true,

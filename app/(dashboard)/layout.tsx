@@ -4,7 +4,11 @@ import React from "react";
 import { AnimatedSidebar } from "@/components/navbar/Sidebar";
 import { FloatingSearch } from "@/components/shared/searchBar/GlobalSearchReveal";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <main className="  flex h-full w-full">
       <AnimatedSidebar>

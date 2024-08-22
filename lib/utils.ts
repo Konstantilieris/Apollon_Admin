@@ -13,6 +13,7 @@ import {
   ArrowRightIcon,
   ArrowUpIcon,
 } from "lucide-react";
+import moment from "moment";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -563,6 +564,29 @@ export function intToDate2(dateInt: number | undefined) {
   const day = parseInt(dateStr.substring(6, 8));
   return new Date(Date.UTC(year, month, day));
 }
+export function setTimeOnDate(date: Date, time: string) {
+  // Parse the date using moment
+  let dateTime = moment(date);
+
+  // Parse the time input into hours and minutes
+  const [hours, minutes] = time.split(":").map(Number);
+
+  // Set the time on the parsed date
+  dateTime = dateTime.set({
+    hour: hours,
+    minute: minutes,
+    second: 0,
+    millisecond: 0,
+  });
+
+  // Return the updated date with the new time
+  return dateTime.toDate();
+}
+export const GlobalSearchFilters = [
+  { name: "Προφίλ ", value: "client" },
+  { name: "Κράτηση", value: "booking" },
+  { name: "Εκπαίδευση", value: "training" },
+];
 export function setLocalTime(date: Date, time: string) {
   // Split the tm1 string to extract hours and minutes
   if (!time) return date;
@@ -573,8 +597,3 @@ export function setLocalTime(date: Date, time: string) {
 
   return date;
 }
-export const GlobalSearchFilters = [
-  { name: "Προφίλ ", value: "client" },
-  { name: "Κράτηση", value: "booking" },
-  { name: "Εκπαίδευση", value: "training" },
-];

@@ -1,10 +1,16 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 
 import { cn, formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
-const ToggleTransport = ({ type }: { type: string }) => {
+const ToggleTransport = ({
+  type,
+  hasTransport,
+}: {
+  type: string;
+  hasTransport?: boolean;
+}) => {
   const [checked, setChecked] = React.useState(useSearchParams().has(type));
 
   const router = useRouter();
@@ -30,6 +36,17 @@ const ToggleTransport = ({ type }: { type: string }) => {
     setChecked(newChecked);
     handleFlagUrl(newChecked);
   };
+  useEffect(() => {
+    if (hasTransport) {
+      setChecked(hasTransport);
+      const newUrl = formUrlQuery({
+        params: searchParams.toString(),
+        key: type,
+        value: hasTransport ? "true" : "false",
+      });
+      router.push(newUrl, { scroll: false });
+    }
+  }, [hasTransport]);
 
   return (
     <div

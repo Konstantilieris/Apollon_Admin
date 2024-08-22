@@ -7,14 +7,21 @@ import moment from "moment";
 interface TimeSliderProps {
   initialTime: string;
   onTimeChange: (time: string) => void;
+  handleClick: () => Promise<void>;
 }
 
-const TimeSlider: React.FC<TimeSliderProps> = ({ initialTime, onTimeChange }) => {
+const TimeSlider: React.FC<TimeSliderProps> = ({
+  initialTime,
+  onTimeChange,
+  handleClick,
+}) => {
   // Define time range in 15-minute intervals
   const times = Array.from({ length: 60 }, (_, i) => {
     const hour = Math.floor(i / 4) + 8; // Start from 8 AM
     const minutes = (i % 4) * 15; // 0, 15, 30, 45 minutes
-    return `${hour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+    return `${hour.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
   });
 
   // Convert time to numeric value
@@ -51,8 +58,8 @@ const TimeSlider: React.FC<TimeSliderProps> = ({ initialTime, onTimeChange }) =>
   const timeDisplay = valueToTime(value);
 
   return (
-    <div className="flex flex-col justify-between p-[1rem] text-light-700 w-full">
-      <div className="mb-2 px-4 h-full">
+    <div className="flex w-full flex-col justify-between p-[1rem] text-light-700">
+      <div className="mb-2 h-full px-4">
         <Slider
           styles={{
             track: { backgroundColor: "#86efac" },
@@ -71,10 +78,13 @@ const TimeSlider: React.FC<TimeSliderProps> = ({ initialTime, onTimeChange }) =>
           onChange={handleSliderChange}
         />
       </div>
-      <div className="mt-6 flex w-full font-sans text-md font-medium justify-between items-end text-dark-100 dark:text-light-700">
+      <div className="mt-6 flex w-full items-end justify-between font-sans font-medium text-dark-100 dark:text-light-700">
         <p>Επιλεγμένος Χρόνος: {timeDisplay}</p>
         <div className="flex flex-row items-center gap-2 p-1">
-          <button className="px-3 py-1 rounded-full bg-[#1ED760] font-bold text-white tracking-widest transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200">
+          <button
+            className="rounded-full bg-[#1ED760] px-3 py-1 font-bold tracking-widest text-white transition-colors duration-200 hover:scale-105 hover:bg-[#21e065]"
+            onClick={() => handleClick()}
+          >
             Ενημέρωση
           </button>
         </div>
@@ -84,4 +94,3 @@ const TimeSlider: React.FC<TimeSliderProps> = ({ initialTime, onTimeChange }) =>
 };
 
 export default TimeSlider;
-

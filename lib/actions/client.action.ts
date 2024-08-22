@@ -7,6 +7,7 @@ import Client, { IClient, IDog } from "@/database/models/client.model";
 import Service from "@/database/models/service.model";
 import { sanitizeQuery } from "../utils";
 import mongoose from "mongoose";
+
 interface CreateClientProps {
   clientData: {
     name: string;
@@ -544,6 +545,104 @@ export async function getAllClients({
     };
   } catch (error) {
     console.error(error);
+    throw error;
+  }
+}
+export async function updateClientDogNote({
+  clientId,
+  dogId,
+  note,
+  path,
+}: {
+  clientId: string;
+  dogId: string;
+  note: string;
+  path: string;
+}) {
+  try {
+    connectToDatabase();
+    const client = await Client.findOneAndUpdate(
+      { _id: clientId, "dog._id": dogId },
+      { $set: { "dog.$.note": note } },
+      { new: true }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    revalidatePath(path);
+    return JSON.stringify(client);
+  } catch (error) {
+    console.error("Error updating dog note:", error);
+    throw error;
+  }
+}
+export async function updateClient({
+  id,
+  data,
+  path,
+}: {
+  id: string;
+  data: any;
+  path: string;
+}) {
+  const clientPayload: IClient = {
+    name: data.name,
+    email: data.email,
+    profession: data.profession,
+    location: {
+      residence: data.residence,
+      address: data.address,
+      city: data.city,
+      postalCode: data.postalCode,
+    },
+    phone: {
+      telephone: data.telephone,
+      mobile: data.mobile,
+      work_phone: data.workMobile,
+      emergencyContact: data.emergencyContact,
+    },
+    vet: {
+      name: data.vetName,
+      phone: data.vetNumber,
+    },
+  };
+  try {
+    connectToDatabase();
+    const client = await Client.findByIdAndUpdate(id, clientPayload, {
+      new: true,
+    });
+    if (client) {
+      revalidatePath(path);
+      return JSON.stringify(client);
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function updateClientNote({
+  clientId,
+  note,
+  path,
+}: {
+  clientId: string;
+  note: string;
+  path: string;
+}) {
+  try {
+    connectToDatabase();
+    const client = await Client.findByIdAndUpdate(
+      clientId,
+      { notes: note },
+      { new: true }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    revalidatePath(path);
+    return JSON.stringify(client);
+  } catch (error) {
+    console.error("Error updating client note:", error);
     throw error;
   }
 }

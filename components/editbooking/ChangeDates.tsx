@@ -5,7 +5,7 @@ import Slider from "rc-slider";
 import moment from "moment"; // For date manipulation
 import "./slider.module.css";
 import { calculateTotalPrice, cn } from "@/lib/utils";
-import { Button } from "../ui/button";
+
 import { updateBookingDates } from "@/lib/actions/booking.action";
 import { useToast } from "../ui/use-toast";
 import { usePathname } from "next/navigation";
@@ -32,7 +32,7 @@ const ChangeDates = ({
   amount,
 }: UpdateDateProps) => {
   const isFirstRender = useRef(true);
- const pathname=usePathname();
+  const pathname = usePathname();
   const [totalAmount, setAmount] = useState(amount);
   const taxiArrivalFee = taxiArrival ? transportFee : 0;
   const taxiDepartureFee = taxiDeparture ? transportFee : 0;
@@ -62,7 +62,7 @@ const ChangeDates = ({
   const handleSliderChange = (newRange: any) => {
     setRange(newRange);
   };
- const {toast}=useToast();
+  const { toast } = useToast();
   // Generate marks for each day
   const generateMarks = () => {
     const marks: any = {};
@@ -114,39 +114,50 @@ const ChangeDates = ({
       .month(sourceDate.month())
       .date(sourceDate.date());
   };
- const handleUpdate = async() => {
-  try {
-    const res= await updateBookingDates({path:pathname,bookingId:id, fromDate:valueToDate(range[0]).toDate(),toDate: valueToDate(range[1]).toDate(), price:totalAmount});
-    const booking= JSON.parse(res);
-    if (booking) {
+  const handleUpdate = async () => {
+    try {
+      const res = await updateBookingDates({
+        path: pathname,
+        bookingId: id,
+        fromDate: valueToDate(range[0]).toDate(),
+        toDate: valueToDate(range[1]).toDate(),
+        price: totalAmount,
+      });
+      const booking = JSON.parse(res);
+      if (booking) {
+        toast({
+          className: cn(
+            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          ),
+          title: "Επιτυχία",
+          description: "Η κράτηση ενημερώθηκε",
+        });
+      }
+    } catch (error) {
       toast({
         className: cn(
-          "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
-        title: "Επιτυχία",
-        description: "Η κράτηση ενημερώθηκε",
+        title: "Αποτυχία ενημέρωσης",
+        description: `${error}`,
       });
+    } finally {
+      window.location.reload();
     }
-  } catch (error) {
-    toast({
-      className: cn(
-        "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-      ),
-      title: "Αποτυχία ενημέρωσης",
-      description: `${error}`,
-    });
-    
-  }finally{
-    window.location.reload();
-  }
-
-}
+  };
   return (
-    <div className="mt-4 flex h-full w-full flex-col justify-between p-[1rem] text-dark-100 dark:text-light-800 dark:bg-dark-100 bg-neutral-100 rounded-lg">
-     <div className="flex flex-row w-full items-center justify-between mb-4"> <h3 className=" text-lg dark:text-green-300 text-dark-100 font-semibold"> Αλλαγή Ημερομηνιών</h3>
-     <span className="font-semibold py-2 px-1 bg-light-800 dark:bg-dark-100  rounded-full">{totalAmount} €</span>
-     </div>
-      <div className="mb-2 px-4 h-full">
+    <div className="mt-4 flex h-full max-h-[20vh] w-full flex-col justify-between rounded-lg bg-neutral-100 p-[1rem] text-dark-100 dark:bg-dark-100 dark:text-light-800">
+      <div className="mb-4 flex w-full flex-row items-center justify-between">
+        {" "}
+        <h3 className=" text-lg font-normal text-dark-100 dark:text-green-300">
+          {" "}
+          Αλλαγή Ημερομηνιών
+        </h3>
+        <span className="rounded-full bg-light-800 px-1 py-2 font-semibold  dark:bg-dark-100">
+          {totalAmount} €
+        </span>
+      </div>
+      <div className="mb-2 h-full px-4">
         <Slider
           styles={{
             track: { backgroundColor: "#86efac" },
@@ -169,16 +180,18 @@ const ChangeDates = ({
           pushable={1}
         />
       </div>
-      <div className="mt-6 flex w-full font-sans text-md font-medium">
+      <div className="text-md mt-6 flex w-full font-sans font-medium">
         <div className="flex flex-col">
           <p>Αρχή Κράτησης: {startDateDisplay}</p>
           <p>Τέλος Κράτησης: {endDateDisplay}</p>
         </div>
         <div className=" ml-auto mr-4 mt-4 flex flex-row items-center gap-2 ">
-          
-          <button onClick={handleUpdate} className="px-3 py-1 rounded-full bg-[#1ED760] font-bold text-white tracking-widest  transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200">
+          <button
+            onClick={handleUpdate}
+            className="rounded-full bg-[#1ED760] px-3 py-1 font-bold tracking-widest text-white  transition-colors duration-200 hover:scale-105 hover:bg-[#21e065]"
+          >
             Ενημέρωση
-</button>
+          </button>
         </div>
       </div>
     </div>

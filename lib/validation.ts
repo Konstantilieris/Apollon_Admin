@@ -56,6 +56,24 @@ export const ClientValidation = z.object({
   vetName: z.string().optional(),
   vetNumber: z.string().optional(),
 });
+export const UpdateClientValidation = z.object({
+  name: z.string().min(2).max(40),
+  email: z.string().optional(),
+  profession: z.string().optional(),
+
+  residence: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  postalCode: z.string().optional(),
+  telephone: z.string().optional(),
+  mobile: z.string().min(6, {
+    message: "Το τηλέφωνο πρέπει να είναι τουλάχιστον 6 χαρακτήρες",
+  }),
+  emergencyContact: z.string().optional(),
+  workMobile: z.string().optional(),
+  vetName: z.string().optional(),
+  vetNumber: z.string().optional(),
+});
 
 export const DogValidation = z.object({
   dogs: z.array(
