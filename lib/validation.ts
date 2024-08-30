@@ -43,11 +43,7 @@ export const ClientValidation = z.object({
   city: z.string().optional(),
   postalCode: z.string().optional(),
   telephone: z.string().optional(),
-  reference: z.object({
-    clientId: z.string().optional(),
-    google: z.boolean().optional(),
-    other: z.string().optional(),
-  }),
+
   mobile: z.string().min(6, {
     message: "Το τηλέφωνο πρέπει να είναι τουλάχιστον 6 χαρακτήρες",
   }),
@@ -99,6 +95,28 @@ export const DogValidation = z.object({
       microchip: z.string().optional(),
     })
   ),
+});
+export const SingleDogValidation = z.object({
+  name: z
+    .string()
+    .min(2, {
+      message: "Το όνομα πρέπει να είναι μεγαλύτερο απο δύο χαρακτήρες",
+    })
+    .max(20, {
+      message: "Το όνομα πρέπει να είναι μικρότερο απο 20 χαρακτήρες",
+    }),
+  gender: z.string(),
+  birthdate: z
+    .date({
+      required_error: "Διάλεξε ημερομηνία",
+      invalid_type_error: "Δεν ειναι σωστή η ημερομηνία!",
+    })
+    .optional(),
+  food: z.string().optional(),
+  breed: z.string().optional(),
+  behavior: z.string().optional(),
+  microchip: z.string().optional(),
+  sterilized: z.string().optional(),
 });
 
 export const BookingValidation1 = z.object({

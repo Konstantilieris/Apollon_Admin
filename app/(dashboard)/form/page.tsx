@@ -1,15 +1,19 @@
 /* eslint-disable tailwindcss/no-custom-classname */
 
 import { getAllClientsByQuery } from "@/lib/actions/client.action";
-import { replacePercent20 } from "@/lib/utils";
+import { sanitizeQuery } from "@/lib/utils";
 import React from "react";
 import Image from "next/image";
 import ClientRegistration from "@/components/createClient/ClientRegistration";
+import { getConstant } from "@/lib/actions/constant.action";
 const page = async ({ searchParams }: any) => {
-  const clients = await getAllClientsByQuery(
-    replacePercent20(searchParams.q),
-    5
-  );
+  const clients = await getAllClientsByQuery(sanitizeQuery(searchParams.q), 5);
+  const [professions, breeds, behaviors, foods] = await Promise.all([
+    getConstant("Professions"),
+    getConstant("Breeds"),
+    getConstant("Behaviors"),
+    getConstant("Foods"),
+  ]);
 
   return (
     <div className="flex h-full">
@@ -25,7 +29,13 @@ const page = async ({ searchParams }: any) => {
             />
             <h1 className="header">Εγγραφή Πελάτη</h1>
           </span>
-          <ClientRegistration clients={clients} />
+          <ClientRegistration
+            clients={clients}
+            professions={professions}
+            breeds={breeds}
+            behaviors={behaviors}
+            foods={foods}
+          />
 
           <p className="  justify-items-end py-12 text-center text-white xl:text-left">
             © 2024 Apollon

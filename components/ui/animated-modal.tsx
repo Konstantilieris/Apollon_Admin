@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { ReactNode, useEffect } from "react";
-
+import { IconSquareRoundedX } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
 interface ModalProps {
@@ -33,7 +33,7 @@ export const ModalBody = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, backdropFilter: "blur(10px)" }}
           exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-          className="fixed inset-0 z-50 flex h-full w-full items-center justify-center"
+          className="fixed inset-0 z-50 flex h-full w-full items-center justify-center "
         >
           <Overlay />
           <motion.div
@@ -68,28 +68,10 @@ const Overlay = ({ className }: { className?: string }) => {
 
 const CloseIcon = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   return (
-    <button
+    <IconSquareRoundedX
       onClick={() => setOpen(false)}
-      className="group absolute right-4 top-4 invert"
-      type="button"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-4 w-4 text-black transition duration-200 group-hover:rotate-3 group-hover:scale-125 dark:text-white"
-      >
-        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-        <path d="M18 6l-12 12" />
-        <path d="M6 6l12 12" />
-      </svg>
-    </button>
+      className="absolute right-4 top-4 cursor-pointer text-red-600 transition duration-200 hover:scale-110"
+    />
   );
 };
 
@@ -101,7 +83,7 @@ export const ModalContent = ({
   className?: string;
 }) => {
   return (
-    <div className={cn("flex flex-col flex-1 p-8 md:p-10", className)}>
+    <div className={cn("flex flex-col flex-1 p-8 md:p-10 ", className)}>
       {children}
     </div>
   );

@@ -4,7 +4,7 @@ import Expenses, { Categories } from "@/database/models/expenses.model";
 import { connectToDatabase } from "../mongoose";
 import { revalidatePath } from "next/cache";
 import mongoose from "mongoose";
-import { replacePercent20 } from "../utils";
+import { sanitizeQuery } from "../utils";
 import { startOfMonth, endOfMonth } from "date-fns";
 export async function createExpense({
   amount,
@@ -328,7 +328,7 @@ export async function getMainCategoriesWithExpenses({
 }) {
   try {
     connectToDatabase();
-    const search = replacePercent20(query);
+    const search = sanitizeQuery(query);
     if (!id) {
       const firstMainCategory = await Categories.findOne({
         parentCategory: null,

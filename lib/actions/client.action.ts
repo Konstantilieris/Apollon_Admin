@@ -27,6 +27,7 @@ interface CreateClientProps {
     reference: any;
   };
   dogs: IDog[];
+  path: string;
 }
 export async function getDogsForClient(clientId: string) {
   try {
@@ -42,7 +43,11 @@ export async function getDogsForClient(clientId: string) {
   }
 }
 
-export async function CreateClient({ clientData, dogs }: CreateClientProps) {
+export async function CreateClient({
+  clientData,
+  dogs,
+  path,
+}: CreateClientProps) {
   const clientPayload: IClient = {
     name: clientData.name,
     email: clientData.email,
@@ -67,8 +72,6 @@ export async function CreateClient({ clientData, dogs }: CreateClientProps) {
     isTraining: clientData.isTraining,
     references: {
       isReferenced: clientData.reference,
-
-      hasReferenced: [],
     },
   };
   try {
@@ -78,6 +81,7 @@ export async function CreateClient({ clientData, dogs }: CreateClientProps) {
       ...clientPayload,
       dog: dogs,
     });
+    revalidatePath(path);
     if (client) return JSON.stringify(client);
   } catch (error) {
     console.log(error);
@@ -527,6 +531,17 @@ export async function getAllClients({
     // Use aggregation to match, skip, and limit results
     const clients = await Client.aggregate([
       { $match: queryObject },
+      {
+        $addFields: {
+          dog: {
+            $filter: {
+              input: "$dog",
+              as: "dog",
+              cond: { $eq: ["$$dog.dead", false] },
+            },
+          },
+        },
+      },
       { $skip: skip },
       { $limit: limit },
     ]);
@@ -643,6 +658,86 @@ export async function updateClientNote({
     return JSON.stringify(client);
   } catch (error) {
     console.error("Error updating client note:", error);
+    throw error;
+  }
+}
+export async function updateClientDogDead({
+  clientId,
+  dogId,
+  path,
+}: {
+  clientId: string;
+  dogId: string;
+  path: string;
+}) {
+  try {
+    connectToDatabase();
+    const client = await Client.findOneAndUpdate(
+      { _id: clientId, "dog._id": dogId },
+      { $set: { "dog.$.dead": true } },
+      { new: true }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    revalidatePath(path);
+    return JSON.stringify(client);
+  } catch (error) {
+    console.error("Error updating dog dead:", error);
+    throw error;
+  }
+}
+export async function addClientDog({
+  clientId,
+  dog,
+  path,
+}: {
+  clientId: string;
+  dog: IDog;
+  path: string;
+}) {
+  try {
+    connectToDatabase();
+    const client = await Client.findByIdAndUpdate(
+      clientId,
+      { $push: { dog } },
+      { new: true }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    revalidatePath(path);
+    return JSON.stringify(client);
+  } catch (error) {
+    console.error("Error adding client dog:", error);
+    throw error;
+  }
+}
+export async function updateClientDog({
+  clientId,
+  dog,
+  dogId,
+  path,
+}: {
+  clientId: string;
+  dogId: string;
+  dog: any;
+  path: string;
+}) {
+  try {
+    connectToDatabase();
+    const client = await Client.findOneAndUpdate(
+      { _id: clientId, "dog._id": dogId },
+      { $set: { "dog.$": dog } },
+      { new: true }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    revalidatePath(path);
+    return JSON.parse(JSON.stringify(client));
+  } catch (error) {
+    console.error("Error updating client dog:", error);
     throw error;
   }
 }

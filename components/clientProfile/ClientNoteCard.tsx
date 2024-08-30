@@ -11,7 +11,7 @@ import {
   IconNotes,
 } from "@tabler/icons-react";
 
-import NoteDogForm from "./NoteDogForm";
+import NoteDogForm from "./Dog/NoteDogForm";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { updateClientNote } from "@/lib/actions/client.action";
@@ -67,7 +67,7 @@ export function ClientNoteCard({ client }: { client: any }) {
       </AnimatePresence>
       <AnimatePresence>
         {active && typeof active === "object" ? (
-          <div className="fixed inset-0  z-[100] grid place-items-center">
+          <div className="fixed inset-0  z-[100] grid place-items-center ">
             <motion.button
               key={`button-${active._id}-${id}`}
               layout
@@ -187,7 +187,7 @@ export function ClientNoteCard({ client }: { client: any }) {
         layoutId={`card-${client?.name}-${id}`}
         key={`card-${client?.name}-${id}`}
         onClick={() => setActive(client)}
-        className="relative flex min-h-[15vh]  w-full flex-col gap-4 rounded-lg border border-indigo-400 p-4 shadow-sm shadow-MediumPurple dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8"
+        className="relative flex min-h-[15vh]  w-full flex-col gap-4 rounded-lg border border-indigo-400 p-4 shadow-sm shadow-MediumPurple dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8 "
       >
         <motion.div
           className="absolute right-2 top-2"
@@ -196,14 +196,14 @@ export function ClientNoteCard({ client }: { client: any }) {
           <Image
             src={"/assets/icons/client.svg"}
             alt="client"
-            width={20}
-            height={20}
+            width={30}
+            height={30}
           />
         </motion.div>
-        <h1 className="text-lg font-semibold text-gray-800 dark:text-indigo-300 max-md:hidden">
+        <h1 className="text-2xl font-semibold text-gray-800 dark:text-indigo-300 max-md:hidden">
           ΠΡΟΣΩΠΙΚΑ ΣΤΟΙΧΕΙΑ
         </h1>
-        <div className="flex w-full flex-col items-start gap-4 ">
+        <div className="flex w-full flex-col items-start gap-4 text-lg">
           <div className="flex w-full flex-row justify-between">
             <motion.p
               layoutId={`email-${client?.email}-${id}`}

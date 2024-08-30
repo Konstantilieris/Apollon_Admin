@@ -6,14 +6,31 @@ import dynamic from "next/dynamic";
 
 const DynamicDogForm = dynamic(() => import("../form/DogForm"), { ssr: false });
 
-const ClientRegistration = ({ clients }: { clients: any }) => {
+const ClientRegistration = ({
+  clients,
+  professions,
+  breeds,
+  behaviors,
+  foods,
+}: {
+  clients: any;
+  professions: any;
+  breeds: any;
+  behaviors: any;
+  foods: any;
+}) => {
   const [stage, setStage] = React.useState(0);
   const [data, setData] = React.useState();
 
   switch (stage) {
     case 0:
       return (
-        <ClientForm setData={setData} setStage={setStage} clients={clients} />
+        <ClientForm
+          setData={setData}
+          setStage={setStage}
+          clients={clients}
+          professions={professions}
+        />
       );
     case 1:
       return (
@@ -21,6 +38,9 @@ const ClientRegistration = ({ clients }: { clients: any }) => {
           setStage={setStage}
           number={parseInt(data?.numberOfDogs)}
           client={data}
+          breeds={breeds}
+          behaviors={behaviors}
+          foods={foods}
         />
       );
 

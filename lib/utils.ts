@@ -1,24 +1,14 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import qs from "query-string";
-import {
-  QuestionMarkCircledIcon,
-  StopwatchIcon,
-  CheckCircledIcon,
-  CrossCircledIcon,
-} from "@radix-ui/react-icons";
-import {
-  CircleIcon,
-  ArrowDownIcon,
-  ArrowRightIcon,
-  ArrowUpIcon,
-} from "lucide-react";
-import moment from "moment";
+
+import moment from "moment-timezone";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-export function sanitizeQuery(query: string): string {
+export function sanitizeQuery(query: string | undefined): string {
+  if (query === "" || !query) return "";
   if (typeof query !== "string") {
     throw new Error("Invalid query type");
   }
@@ -135,51 +125,7 @@ export function formCombinedParams(params: any, updates: any) {
     { skipNull: true }
   );
 }
-export const statuses = [
-  {
-    value: "backlog",
-    label: "Backlog",
-    icon: QuestionMarkCircledIcon,
-  },
-  {
-    value: "todo",
-    label: "Todo",
-    icon: CircleIcon,
-  },
-  {
-    value: "in progress",
-    label: "In Progress",
-    icon: StopwatchIcon,
-  },
-  {
-    value: "done",
-    label: "Done",
-    icon: CheckCircledIcon,
-  },
-  {
-    value: "canceled",
-    label: "Canceled",
-    icon: CrossCircledIcon,
-  },
-];
 
-export const priorities = [
-  {
-    label: "Low",
-    value: "low",
-    icon: ArrowDownIcon,
-  },
-  {
-    label: "Medium",
-    value: "medium",
-    icon: ArrowRightIcon,
-  },
-  {
-    label: "High",
-    value: "high",
-    icon: ArrowUpIcon,
-  },
-];
 export const viewClientOptions = [
   {
     label: "Dog",
@@ -320,12 +266,13 @@ export function getTotalDays(
 
   return totalDays;
 }
+
 export function replacePercent20(inputString: string | null) {
   // Use regular expression to replace all occurrences of %20 with a space
   if (!inputString) {
     return;
   }
-  return inputString.replace(/%20/g, "").split(" ").join("");
+  return inputString.replace(/%20/g, " ");
 }
 export function calculateTotalPrice({
   fromDate,
@@ -588,15 +535,19 @@ export const GlobalSearchFilters = [
   { name: "Εκπαίδευση", value: "training" },
 ];
 export function setLocalTime(date: Date, time: string): Date {
-  // Return the original date if no time is provided
   if (!time) return date;
 
   // Split the time string to extract hours and minutes
   const [hours, minutes] = time.split("-").map(Number);
 
-  // Set the hours and minutes using the local time
-  date.setHours(hours, minutes, 0, 0); // setting seconds and milliseconds to 0
+  // Create a moment object from the date
+  let m = moment(date);
 
-  // Return the updated date object
-  return date;
+  // Set the time in UTC+3 (Greece, Eastern European Summer Time)
+  m = m
+    .tz("Europe/Athens")
+    .set({ hour: hours, minute: minutes, second: 0, millisecond: 0 });
+
+  // Return the updated Date object
+  return m.toDate();
 }

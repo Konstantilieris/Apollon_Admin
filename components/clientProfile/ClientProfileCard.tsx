@@ -50,7 +50,7 @@ export function ClientProfileCard({ client }: any) {
           </div>
         </div>
         <Link href={`/booking/${client._id}`} prefetch={true}>
-          <IconMapCog className="absolute right-4 top-4 z-50 text-green-300 hover:scale-110" />
+          <IconMapCog className="absolute right-4 top-4 z-10 text-green-300 hover:scale-110" />
         </Link>
       </div>
     </div>

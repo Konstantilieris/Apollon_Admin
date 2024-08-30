@@ -9,18 +9,18 @@ import { ClientValidation } from "@/lib/validation";
 import * as z from "zod";
 
 import { SelectItem } from "@/components/ui/select";
-import { TypesOfProfessions, TypesOfResidence } from "@/constants";
+import { TypesOfResidence } from "@/constants";
 import CustomFormField, { FormFieldType } from "./CustomFormField";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import ReferenceCommand from "../shared/reference/ReferenceCommand";
+import ConstantSwitcher from "../shared/constantManagement/ConstantSwitcher";
 
-const ClientForm = ({ setData, setStage, clients }: any) => {
+const ClientForm = ({ setData, setStage, clients, professions }: any) => {
   const form = useForm<z.infer<typeof ClientValidation>>({
     resolver: zodResolver(ClientValidation),
     defaultValues: {
       name: "",
-      reference: {},
       email: "",
       profession: "",
       residence: "",
@@ -36,11 +36,11 @@ const ClientForm = ({ setData, setStage, clients }: any) => {
       numberOfDogs: "1",
     },
   });
-
+  const [reference, setReference] = React.useState<any>();
   async function onSubmit(values: z.infer<typeof ClientValidation>) {
-    setData({ ...values });
-
+    setData({ ...values, reference });
     setStage(1);
+    setReference(null);
     form.reset();
   }
 
@@ -62,20 +62,12 @@ const ClientForm = ({ setData, setStage, clients }: any) => {
             iconSrc="/assets/icons/account.svg"
             iconAlt="user"
           />
-          <CustomFormField
-            fieldType={FormFieldType.SKELETON}
-            control={form.control}
-            name="reference"
-            label="Σύσταση"
-            renderSkeleton={(field) => (
-              <ReferenceCommand
-                clients={clients}
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
+          <ReferenceCommand
+            clients={clients}
+            value={reference}
+            onChange={setReference}
           />
-          <div className="flex flex-col gap-6 xl:flex-row">
+          <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
             <CustomFormField
               fieldType={FormFieldType.INPUT}
               control={form.control}
@@ -87,24 +79,24 @@ const ClientForm = ({ setData, setStage, clients }: any) => {
             />
 
             <CustomFormField
-              fieldType={FormFieldType.SELECT}
+              fieldType={FormFieldType.SKELETON}
               control={form.control}
               name="profession"
               label="Επάγγελμα"
-              placeholder="Δικηγόρος"
-              iconSrc="/assets/icons/user.svg"
-              iconAlt="user"
-            >
-              {TypesOfProfessions.map((profession, i) => (
-                <SelectItem
-                  key={profession + i}
-                  value={profession}
-                  className="flex cursor-pointer items-center gap-2"
-                >
-                  <p>{profession} </p>
-                </SelectItem>
-              ))}
-            </CustomFormField>
+              renderSkeleton={(field) => (
+                <FormControl>
+                  <ConstantSwitcher
+                    items={professions.value}
+                    type="Professions"
+                    label="Επάγγελμα"
+                    placeholder="Επάγγελμα"
+                    heading="ΕΠΑΓΓΕΛΜΑΤΑ"
+                    selectedItem={field.value}
+                    setSelectedItem={field.onChange}
+                  />
+                </FormControl>
+              )}
+            />
           </div>
           <div className=" flex flex-col gap-6">
             <h2 className="sub-header ">Στοιχέια Επικοινωνίας</h2>

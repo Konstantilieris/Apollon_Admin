@@ -1,18 +1,14 @@
 import React from "react";
 import { FormControl } from "../ui/form";
-import { SelectItem } from "../ui/select";
-import {
-  TypesOfBehavior,
-  TypesOfBreed,
-  TypesOfFood,
-  TypesOfGender,
-} from "@/constants";
+
+import { TypesOfGender } from "@/constants";
 
 import CustomFormField, { FormFieldType } from "./CustomFormField";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
+import ConstantSwitcher from "../shared/constantManagement/ConstantSwitcher";
 
-const DogField = ({ form, index }: any) => {
+const DogField = ({ form, index, breeds, behaviors, foods }: any) => {
   const namePrefix = `dogs[${index}]`;
   return (
     <section className="mb-4 w-full space-y-4 ">
@@ -54,40 +50,73 @@ const DogField = ({ form, index }: any) => {
           </FormControl>
         )}
       />
+      <div className="flex w-full flex-row gap-7">
+        <CustomFormField
+          fieldType={FormFieldType.SKELETON}
+          control={form.control}
+          name={`${namePrefix}.behavior`}
+          label="Συμπεριφορά"
+          renderSkeleton={(field) => (
+            <FormControl>
+              <ConstantSwitcher
+                items={behaviors.value}
+                type="Behaviors"
+                label="Συμπεριφορά"
+                placeholder="Συμπεριφορά"
+                heading="ΣΥΜΠΕΡΙΦΟΡΕΣ"
+                selectedItem={field.value}
+                setSelectedItem={field.onChange}
+              />
+            </FormControl>
+          )}
+        />
+        <CustomFormField
+          fieldType={FormFieldType.SKELETON}
+          control={form.control}
+          name={`${namePrefix}.breed`}
+          label="Ράτσα"
+          renderSkeleton={(field) => (
+            <FormControl>
+              <ConstantSwitcher
+                items={breeds.value}
+                type="Breeds"
+                label="Ράτσα"
+                placeholder="Ράτσα"
+                heading="ΡΑΤΣΕΣ"
+                selectedItem={field.value}
+                setSelectedItem={field.onChange}
+              />
+            </FormControl>
+          )}
+        />
+      </div>
+      <div className="flex w-[21.7vw] flex-row ">
+        <CustomFormField
+          fieldType={FormFieldType.SKELETON}
+          control={form.control}
+          name={`${namePrefix}.food`}
+          label="Τυπος Τροφής"
+          renderSkeleton={(field) => (
+            <FormControl>
+              <ConstantSwitcher
+                items={foods.value}
+                type="Foods"
+                label="Τροφή"
+                placeholder="Τροφές"
+                heading="ΤΡΟΦΕΣ"
+                selectedItem={field.value}
+                setSelectedItem={field.onChange}
+              />
+            </FormControl>
+          )}
+        />
+      </div>
       <CustomFormField
-        fieldType={FormFieldType.SELECT}
+        fieldType={FormFieldType.DATE_PICKER}
         control={form.control}
-        name={`${namePrefix}.behavior`}
-        label="Συμπεριφορά"
-        placeholder="Συμπεριφορά"
-      >
-        {TypesOfBehavior.map((behavior, i) => (
-          <SelectItem
-            key={behavior + i}
-            value={behavior}
-            className="flex cursor-pointer items-center gap-2"
-          >
-            <p>{behavior} </p>
-          </SelectItem>
-        ))}
-      </CustomFormField>
-      <CustomFormField
-        fieldType={FormFieldType.SELECT}
-        control={form.control}
-        name={`${namePrefix}.breed`}
-        label="Ράτσα"
-        placeholder="Ράτσα"
-      >
-        {TypesOfBreed.map((breed, i) => (
-          <SelectItem
-            key={breed + i}
-            value={breed}
-            className="flex cursor-pointer items-center gap-2"
-          >
-            <p>{breed} </p>
-          </SelectItem>
-        ))}
-      </CustomFormField>
+        name={`${namePrefix}.birthdate`}
+        label="Ημ.Γέννησης"
+      />
       <CustomFormField
         fieldType={FormFieldType.INPUT}
         control={form.control}
@@ -97,29 +126,6 @@ const DogField = ({ form, index }: any) => {
         iconSrc="/assets/icons/chip.svg"
         iconAlt="chip"
       />
-      <CustomFormField
-        fieldType={FormFieldType.DATE_PICKER}
-        control={form.control}
-        name={`${namePrefix}.birthdate`}
-        label="Ημ.Γέννησης"
-      />
-      <CustomFormField
-        fieldType={FormFieldType.SELECT}
-        control={form.control}
-        name={`${namePrefix}.food`}
-        label="Tύπος Τροφής"
-        placeholder="Επέλεξε Τροφή"
-      >
-        {TypesOfFood.map((food, i) => (
-          <SelectItem
-            key={food + i}
-            value={food}
-            className="flex cursor-pointer items-center gap-2"
-          >
-            <p>{food} </p>
-          </SelectItem>
-        ))}
-      </CustomFormField>
     </section>
   );
 };

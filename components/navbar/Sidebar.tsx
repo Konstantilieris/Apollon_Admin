@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Toggle from "./Toggle";
+
 export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
@@ -31,7 +32,7 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
       label: "Επισκόπηση",
       href: "/main",
       icon: (
-        <IconBrandTabler className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconBrandTabler className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
 
@@ -39,35 +40,35 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
       label: "Εγγραφή",
       href: "/form",
       icon: (
-        <IconListDetails className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconListDetails className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
       label: "Πελάτες",
       href: "/clients",
       icon: (
-        <IconUserBolt className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconUserBolt className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
       label: "Ημερολόγιο",
       href: "/calendar",
       icon: (
-        <IconCalendarCode className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconCalendarCode className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
       label: "Κρατήσεις",
       href: "/booking",
       icon: (
-        <IconHomeCog className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconHomeCog className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
       label: "Ανάλυση",
       href: "/logistics",
       icon: (
-        <IconChartBar className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconChartBar className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
 
@@ -75,7 +76,7 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
       label: "Έξοδα",
       href: "/expenses",
       icon: (
-        <IconExposure className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconExposure className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
   ];
@@ -84,30 +85,31 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "rounded-md flex flex-col md:flex-row bg-neutral-200 dark:bg-neutral-800 w-full flex-1  mx-auto border border-neutral-500 dark:border-neutral-700 overflow-hidden z-50",
+        "rounded-md flex flex-col md:flex-row bg-neutral-200 dark:bg-neutral-800 w-full flex-1  mx-auto border border-neutral-500 dark:border-neutral-700 overflow-hidden z-50 ",
         "h-screen" // for your use case, use `h-screen` instead of `h-[60vh]`
       )}
     >
       <Sidebar open={open} setOpen={setOpen} animate={true}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-1 flex-col overflow-y-auto">
-            <div className="mt-2 flex flex-row items-center gap-2 font-sans text-dark-100 dark:text-light-900">
+        <SidebarBody className="w-full">
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="mt-2 flex flex-row items-center gap-2 font-sans text-xl text-dark-100 dark:text-light-900">
               <Image
                 src="/assets/icons/bone.svg"
-                className="h-8 w-5 shrink-0 rounded-full dark:invert"
-                width={15}
-                height={15}
+                className="ml-1 h-8 w-6 shrink-0 rounded-full dark:invert"
+                width={16}
+                height={16}
                 alt="Avatar"
               />
               Apollon
             </div>
-            <div className="mt-8 flex flex-col gap-2">
+            <div className="ml-1 mt-8 flex  flex-col items-start gap-2">
               {links.map((link, idx) => (
                 <SidebarLink key={idx} link={link} />
               ))}
             </div>
           </div>
-          <div className="mt-8 flex flex-col gap-2">
+
+          <div className="flex w-full flex-col items-start  gap-4">
             <Toggle />
             <SidebarButton
               handleClick={() => {
@@ -120,31 +122,15 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
               }}
               label={"Αποσύνδεση"}
               icon={
-                <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+                <IconArrowLeft className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
               }
-            />
-            <SidebarLink
-              className="cursor-default"
-              link={{
-                label: "Σάββας Ντούνης",
-                href: "#",
-                icon: (
-                  <Image
-                    src="/assets/images/success.webp"
-                    className="h-7 w-7 shrink-0 rounded-full"
-                    width={50}
-                    height={50}
-                    alt="Avatar"
-                  />
-                ),
-              }}
             />
           </div>
         </SidebarBody>
       </Sidebar>
       <div
         className={cn(
-          "flex-1   rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 h-full ml-12 w-full"
+          "flex-1 rounded-tl-2xl border transition-colors duration-500 ease-in-out border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 h-full ml-12 w-full"
         )}
       >
         {children}

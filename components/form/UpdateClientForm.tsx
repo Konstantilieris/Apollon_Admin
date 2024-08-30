@@ -3,7 +3,7 @@ import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Form } from "@/components/ui/form";
+import { Form, FormControl } from "@/components/ui/form";
 import "react-phone-number-input/style.css";
 import { UpdateClientValidation } from "@/lib/validation";
 import * as z from "zod";
@@ -16,8 +16,9 @@ import { updateClient } from "@/lib/actions/client.action";
 import { useToast } from "../ui/use-toast";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import ConstantSwitcher from "../shared/constantManagement/ConstantSwitcher";
 
-const UpdateClientForm = ({ client }: any) => {
+const UpdateClientForm = ({ client, professions }: any) => {
   const { toast } = useToast();
   const path = usePathname();
   const form = useForm<z.infer<typeof UpdateClientValidation>>({
@@ -99,24 +100,24 @@ const UpdateClientForm = ({ client }: any) => {
             />
 
             <CustomFormField
-              fieldType={FormFieldType.SELECT}
+              fieldType={FormFieldType.SKELETON}
               control={form.control}
               name="profession"
               label="Επάγγελμα"
-              placeholder="Δικηγόρος"
-              iconSrc="/assets/icons/user.svg"
-              iconAlt="user"
-            >
-              {TypesOfProfessions.map((profession, i) => (
-                <SelectItem
-                  key={profession + i}
-                  value={profession}
-                  className="flex cursor-pointer items-center gap-2"
-                >
-                  <p>{profession} </p>
-                </SelectItem>
-              ))}
-            </CustomFormField>
+              renderSkeleton={(field) => (
+                <FormControl>
+                  <ConstantSwitcher
+                    items={professions.value}
+                    type="Professions"
+                    label="Επάγγελμα"
+                    placeholder="Επάγγελμα"
+                    heading="ΕΠΑΓΓΕΛΜΑΤΑ"
+                    selectedItem={field.value}
+                    setSelectedItem={field.onChange}
+                  />
+                </FormControl>
+              )}
+            />
           </div>
           <div className=" flex flex-col gap-6">
             <h2 className="sub-header ">Στοιχέια Επικοινωνίας</h2>

@@ -392,6 +392,7 @@ export const TypesOfBreed = [
   "Xoloitzcuintli",
   "Yorkshire Terrier",
 ];
+export const TypesOfSterilized = ["Ναί", "Όχι"];
 
 export const colors = [
   { label: "Tomato", value: "#FF6347" },

@@ -10,11 +10,19 @@ import { Loader } from "lucide-react";
 import { CreateClient } from "@/lib/actions/client.action";
 import { cn } from "@/lib/utils";
 import { useToast } from "../ui/use-toast";
-import { useRouter } from "next/navigation";
-const DogForm = ({ number, setStage, client }: any) => {
+import { usePathname, useRouter } from "next/navigation";
+const DogForm = ({
+  number,
+  setStage,
+  client,
+  breeds,
+  foods,
+  behaviors,
+}: any) => {
   const [isCreating, setIsCreating] = React.useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const path = usePathname();
   const form = useForm<z.infer<typeof DogValidation>>({
     resolver: zodResolver(DogValidation),
     defaultValues: {
@@ -29,11 +37,20 @@ const DogForm = ({ number, setStage, client }: any) => {
       })),
     },
   });
-
+  console.log(behaviors);
   const renderDogFields = () => {
     const dogFields = [];
     for (let i = 0; i < number; i++) {
-      dogFields.push(<DogField key={i} form={form} index={i} />);
+      dogFields.push(
+        <DogField
+          key={i}
+          form={form}
+          index={i}
+          breeds={breeds}
+          behaviors={behaviors}
+          foods={foods}
+        />
+      );
     }
     return dogFields;
   };
@@ -43,6 +60,7 @@ const DogForm = ({ number, setStage, client }: any) => {
       const newClient = await CreateClient({
         clientData: { ...client },
         dogs: values.dogs,
+        path,
       });
       if (newClient) {
         const client = JSON.parse(newClient);
@@ -70,7 +88,7 @@ const DogForm = ({ number, setStage, client }: any) => {
     }
   };
   return (
-    <div>
+    <div className="flex h-full w-full flex-col">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -80,7 +98,7 @@ const DogForm = ({ number, setStage, client }: any) => {
           {renderDogFields()}
         </form>
       </Form>
-      <div className="mb-20 mt-12 flex flex-row justify-center gap-8 self-center">
+      <div className="mb-20 mt-12 flex h-full w-full flex-row justify-center gap-8 self-end">
         <button className="relative p-[3px]" onClick={() => setStage(0)}>
           <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-500 to-orange-950" />
           <div className="group relative  rounded-[6px] bg-light-700 px-8  py-2 font-semibold text-dark-300 transition duration-200 hover:bg-transparent dark:bg-black dark:text-white dark:hover:bg-transparent">

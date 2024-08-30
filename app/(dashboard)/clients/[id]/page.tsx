@@ -1,8 +1,11 @@
+import AddDog from "@/components/clientProfile/Dog/AddDog";
 import ClientInfoCard from "@/components/clientProfile/ClientInfoCard";
 import { ClientNoteCard } from "@/components/clientProfile/ClientNoteCard";
 
-import { DogCards } from "@/components/clientProfile/DogCard";
+import { DogCards } from "@/components/clientProfile/Dog/DogCard";
+import { DeadDogTooltip } from "@/components/ui/deadDogTooltip";
 import { getClientById } from "@/lib/actions/client.action";
+
 import React from "react";
 
 const page = async ({ params }: { params: any }) => {
@@ -13,6 +16,10 @@ const page = async ({ params }: { params: any }) => {
     return <div>No client Found</div>;
   }
 
+  const livingDogs = client.dog.filter((dog: any) => dog.dead === false);
+  const deadDogs = JSON.parse(
+    JSON.stringify(client.dog.filter((dog: any) => dog.dead === true))
+  );
   const phonelist = [
     [
       {
@@ -70,8 +77,8 @@ const page = async ({ params }: { params: any }) => {
   ];
 
   return (
-    <div className="flex h-full w-full flex-row justify-between gap-1 py-4 max-md:flex-col">
-      <div className="ml-4   flex w-full   flex-col items-start gap-4 font-sans">
+    <div className="relative flex h-full w-full flex-row justify-between gap-1 py-4 max-md:flex-col">
+      <div className="ml-4   flex w-full   flex-col items-start gap-4 ">
         <ClientNoteCard client={JSON.parse(JSON.stringify(client))} />
         <ClientInfoCard
           title="ΣΤΟΙΧΕΙΑ ΕΠΙΚΟΙΝΩΝΙΑΣ"
@@ -95,10 +102,15 @@ const page = async ({ params }: { params: any }) => {
         <h1 className="font-sans text-2xl font-semibold text-indigo-300">
           ΚΑΤΟΙΚΙΔΙΑ ΠΕΛΑΤΗ{" "}
         </h1>
+        <AddDog clientId={JSON.parse(JSON.stringify(client._id))} />
+
         <DogCards
-          dogs={JSON.parse(JSON.stringify(client.dog))}
+          dogs={JSON.parse(JSON.stringify(livingDogs))}
           clientId={JSON.parse(JSON.stringify(client._id))}
         />
+        <div className="mb-8 flex min-h-[5rem] w-full  flex-row items-center gap-12  rounded-xl bg-neutral-900 px-4 py-2">
+          {deadDogs.length > 0 && <DeadDogTooltip items={deadDogs} />}
+        </div>
       </div>
     </div>
   );

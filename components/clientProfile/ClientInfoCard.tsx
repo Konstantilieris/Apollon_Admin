@@ -42,14 +42,14 @@ const ClientInfoCard = ({
         <div
           key={index}
           className={cn(
-            "flex w-full flex-row justify-between max-md:flex-col max-md:gap-2 max-md:items-start ",
+            "flex w-full flex-row justify-between max-md:flex-col max-md:gap-2 max-md:items-start text-lg ",
             listStyle
           )}
         >
           {info.map((item: any, index) => (
             <div key={item.key} className="flex flex-row gap-2">
-              <p className="text-sm dark:text-light-700">{item.key}</p>
-              <p className="flex flex-row items-center text-sm text-gray-800 dark:text-indigo-300">
+              <p className=" dark:text-light-700">{item.key}</p>
+              <p className="flex flex-row items-center  text-gray-800 dark:text-indigo-300">
                 {item.value}{" "}
                 {isVet && index === 0 && (
                   <Link
@@ -73,8 +73,8 @@ const ClientInfoCard = ({
           src={iconRight}
           alt="icon"
           className={cn("absolute top-3 right-2 ", iconStyle)}
-          width={20}
-          height={20}
+          width={25}
+          height={25}
         />
       )}
     </div>

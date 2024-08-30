@@ -16,9 +16,29 @@ export interface IDog {
   microchip?: string;
   note?: string;
   dead?: boolean;
+  sterilized?: boolean;
+  medicalHistory?: [
+    {
+      illness: string;
+      treatment: {
+        name: string;
+        frequency: string;
+        notes: string;
+      };
+    },
+  ];
+  likes?: [
+    {
+      clientId: Schema.Types.ObjectId;
+      dogName: string;
+    },
+  ];
 }
 export interface IReference {
-  clientId?: Schema.Types.ObjectId;
+  client?: {
+    clientId: Schema.Types.ObjectId;
+    name: string;
+  };
   google?: boolean;
   other?: string;
 }
@@ -38,7 +58,12 @@ export interface IClient {
   owes?: Schema.Types.ObjectId[];
   references?: {
     isReferenced?: IReference;
-    hasReferenced?: IReference[];
+    hasReferenced?: [
+      {
+        name?: string;
+        clientId?: Schema.Types.ObjectId;
+      },
+    ];
   };
   dog?: IDog;
   vet?: {
@@ -83,11 +108,40 @@ export const DogSchema = new Schema<IDog>({
     type: Boolean,
     default: false,
   },
+
+  sterilized: {
+    type: Boolean,
+    default: false,
+  },
+  medicalHistory: [
+    {
+      illness: {
+        type: String,
+      },
+      treatment: {
+        name: {
+          type: String,
+        },
+        frequency: {
+          type: String,
+        },
+        notes: {
+          type: String,
+        },
+      },
+    },
+  ],
+  likes: [
+    {
+      clientId: { type: Schema.Types.ObjectId, ref: "Client" },
+      dogName: { type: String },
+    },
+  ],
 });
 export const ReferenceSchema = new Schema<IReference>({
-  clientId: {
-    type: Schema.Types.ObjectId,
-    ref: "Client",
+  client: {
+    clientId: { type: Schema.Types.ObjectId, ref: "Client" },
+    name: { type: String },
   },
   google: {
     type: Boolean,
@@ -145,7 +199,12 @@ const ClientSchema = new Schema<IClient>({
   },
   references: {
     isReferenced: ReferenceSchema,
-    hasReferenced: [{ type: Schema.Types.ObjectId, ref: "Client" }],
+    hasReferenced: [
+      {
+        name: { type: String },
+        clientId: { type: Schema.Types.ObjectId, ref: "Client" },
+      },
+    ],
   },
   isTraining: {
     type: Boolean,

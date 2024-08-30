@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+
 import React, { useState } from "react";
 import {
   motion,
@@ -9,16 +9,16 @@ import {
   useSpring,
 } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { IconGrave } from "@tabler/icons-react";
 
-export const AnimatedTooltip = ({
+export const DeadDogTooltip = ({
   items,
 }: {
   items: {
-    id: number;
+    _id: any;
     name: string;
     breed: string;
     behavior: string;
-    image: string;
   }[];
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -45,11 +45,11 @@ export const AnimatedTooltip = ({
         <div
           className="group  relative -mr-4"
           key={item.name}
-          onMouseEnter={() => setHoveredIndex(item.id)}
+          onMouseEnter={() => setHoveredIndex(item._id)}
           onMouseLeave={() => setHoveredIndex(null)}
         >
           <AnimatePresence mode="popLayout">
-            {hoveredIndex === item.id && (
+            {hoveredIndex === item._id && (
               <motion.div
                 initial={{ opacity: 0, y: 20, scale: 0.6 }}
                 animate={{
@@ -76,20 +76,14 @@ export const AnimatedTooltip = ({
                   {item.name}
                 </div>
                 <div className="mt-2 text-xs text-white">{item.breed}</div>
-                <div className="mt-2 text-xs text-white">{item.behavior}</div>
               </motion.div>
             )}
           </AnimatePresence>
-          <Image
-            onMouseMove={handleMouseMove}
-            height={100}
-            width={100}
-            src={item.image}
-            alt={item.name}
+          <IconGrave
             className={cn(
-              "relative !m-0 h-14 w-14 rounded-full border-2 object-cover border-green-500 object-top !p-0 transition  duration-500 group-hover:z-30 group-hover:scale-105",
-              { "border-red-600 !important": item.behavior === "Ανεπιθύμητος" }
+              "relative !m-0 h-14 w-14 rounded-full border-2 object-cover border-light-700 object-top !p-0 transition  duration-500 group-hover:z-30 group-hover:scale-105"
             )}
+            onMouseMove={handleMouseMove}
           />
         </div>
       ))}

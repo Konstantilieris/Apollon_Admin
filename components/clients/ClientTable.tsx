@@ -50,8 +50,12 @@ const ClientTable = ({ clients }: { clients: any }) => {
                 {client?.name}
               </Link>
             </TableCell>
-            <TableCell className="text-center text-base font-normal  ">
-              {client?.dog?.map((dog: any) => dog.name) || "N/A"}
+            <TableCell className="text-center text-base font-normal ">
+              <div className="flex flex-col items-center ">
+                {client?.dog?.map((dog: any) => (
+                  <span key={dog._id}>{dog.name}</span>
+                )) || "N/A"}
+              </div>
             </TableCell>
             <TableCell className="text-center text-base font-normal max-lg:hidden">
               {client?.profession || "N/A"}
@@ -61,9 +65,7 @@ const ClientTable = ({ clients }: { clients: any }) => {
             </TableCell>
 
             <TableCell className="text-center text-base font-normal max-lg:hidden">
-              {client?.location?.city
-                ? `${client.location.city} (${client.vet.phone})`
-                : "N/A"}
+              {client?.location?.city ? `${client.location.city} ` : "N/A"}
             </TableCell>
             <TableCell className="text-center text-base font-normal max-lg:hidden">
               {client?.location?.address || "N/A"}

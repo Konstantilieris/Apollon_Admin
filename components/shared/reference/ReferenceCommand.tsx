@@ -12,6 +12,7 @@ import LocalSearch from "../searchBar/LocalSearch";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Input } from "@/components/ui/input";
 import React from "react";
+import { IconUserPlus, IconBrandGoogle, IconNote } from "@tabler/icons-react";
 import {
   Popover,
   PopoverContent,
@@ -20,7 +21,6 @@ import {
 
 const ReferenceCommand = ({ clients, value, onChange }: any) => {
   const [reference, setReference] = React.useState("");
-
   const [selectedClient, setSelectedClient] = React.useState<string>("");
   const popoverRef = React.useRef(null);
   return (
@@ -32,9 +32,6 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
             onChange({});
             setReference(value);
             switch (value) {
-              case "client":
-                onChange({ clientId: "" });
-                break;
               case "google":
                 onChange({ google: true });
                 break;
@@ -50,24 +47,15 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
           <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] max-w-[246px] rounded-lg p-2 font-sans ">
             <SelectValue placeholder="Σύσταση" />
           </SelectTrigger>
-          <SelectContent className="background-light900_dark300 text-dark300_light700 rounded-lg p-4 font-sans  ">
-            <SelectItem
-              className={`rounded-lg hover:bg-sky-blue  `}
-              value="client"
-            >
-              Πελάτης
+          <SelectContent className="background-light900_dark300 text-dark300_light700 w-full rounded-lg p-4 font-sans">
+            <SelectItem className=" hover:scale-105" value="client">
+              <IconUserPlus className="h-6 w-6 text-indigo-400" />
             </SelectItem>
-            <SelectItem
-              className={`rounded-lg hover:bg-sky-blue  `}
-              value="google"
-            >
-              Google
+            <SelectItem value="google">
+              <IconBrandGoogle className="h-6 w-6 text-pink-600 hover:scale-110" />
             </SelectItem>
-            <SelectItem
-              className={`rounded-lg hover:bg-sky-blue  `}
-              value="other"
-            >
-              Άλλο
+            <SelectItem value="other">
+              <IconNote className="h-6 w-6 text-yellow-500 hover:scale-110" />
             </SelectItem>
           </SelectContent>
         </Select>
@@ -114,7 +102,9 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
                   <div key={client._id}>
                     <div
                       onClick={() => {
-                        onChange({ clientId: client._id });
+                        onChange({
+                          client: { clientId: client._id, name: client.name },
+                        });
                         setSelectedClient(client.name);
                         setReference("");
                       }}
@@ -122,7 +112,7 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
              
             `)}
                     >
-                      <span className="font-bold">{client?.name}</span>
+                      <span className="font-sans">{client?.name}</span>
                       <span className="subtle-email">{client.email}</span>
                     </div>
                     <Separator className="my-2" />
@@ -133,7 +123,7 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
           </PopoverContent>
         </Popover>
       )}
-      {value.clientId && (
+      {selectedClient && (
         <span className="small-regular ml-4 self-center font-sans text-indigo-300">
           {selectedClient}
         </span>

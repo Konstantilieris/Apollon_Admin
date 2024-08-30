@@ -16,6 +16,10 @@
 body {
   font-family: "Inter", sans-serif;
 }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
 @layer base {
   :root {
     --chart-1: 12 76% 61%;

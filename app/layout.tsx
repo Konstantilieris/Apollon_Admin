@@ -28,14 +28,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={` ${fontSans.variable}  h-screen bg-light-700 dark:bg-dark-300`}
-      >
+      <body className={` ${fontSans.variable}  h-screen`}>
         {" "}
         <AuthProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >

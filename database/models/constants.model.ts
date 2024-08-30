@@ -5,13 +5,11 @@ interface IConstant {
   value: string[];
 }
 
-const ConstantSchema = new Schema<IConstant>(
-  {
-    type: { type: String, required: true },
-    value: [{ type: String, required: true }],
-  },
-  { timestamps: true }
-);
+const ConstantSchema = new Schema<IConstant>({
+  type: { type: String, required: true },
+  value: [{ type: String, unique: true, required: true }],
+});
 
-export const Constant =
+const Constant =
   models.Constant || model<IConstant>("Constant", ConstantSchema);
+export default Constant;

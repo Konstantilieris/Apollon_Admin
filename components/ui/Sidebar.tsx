@@ -94,7 +94,7 @@ export const DesktopSidebar = ({
           className
         )}
         animate={{
-          width: animate ? (open ? "150px" : "60px") : "300px",
+          width: animate ? (open ? "200px" : "60px") : "300px",
         }}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
@@ -170,7 +170,7 @@ export const SidebarLink = ({
     <Link
       href={link.href}
       className={cn(
-        "flex items-center justify-start gap-2  group/sidebar py-2",
+        "items-center flex justify-center gap-2  group/sidebar py-2",
         className
       )}
       {...props}
@@ -182,7 +182,7 @@ export const SidebarLink = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="!m-0 inline-block whitespace-pre !p-0 text-sm text-neutral-700 transition duration-150 group-hover/sidebar:translate-x-1 dark:text-neutral-200"
+        className="!m-0 inline-block whitespace-pre !p-0  text-lg text-neutral-700 transition duration-150 group-hover/sidebar:translate-x-1 dark:text-neutral-200"
       >
         {link.label}
       </motion.span>
@@ -194,13 +194,15 @@ export const SidebarButton = ({
   handleClick,
   className,
   label,
+  thisref,
   ...props
 }: any) => {
   const { open, animate } = useSidebar();
   return (
     <Button
       onClick={handleClick}
-      className={cn("flex gap-2  group/sidebar ", className)}
+      className={cn(" gap-2   ", className)}
+      ref={thisref}
       {...props}
     >
       {icon}
@@ -213,7 +215,7 @@ export const SidebarButton = ({
           translateX: 7,
           transition: { duration: 0.2 },
         }}
-        className="inline-block whitespace-pre text-sm text-neutral-700  dark:text-neutral-200"
+        className="inline-block whitespace-pre text-lg text-neutral-700  dark:text-neutral-200"
       >
         {label}
       </motion.span>
