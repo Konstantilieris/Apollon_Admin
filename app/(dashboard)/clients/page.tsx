@@ -3,13 +3,13 @@ import ClientTable from "@/components/clients/ClientTable";
 import Pagination from "@/components/shared/Pagination";
 import LoadingSkeleton from "@/components/shared/skeletons/LoadingSkeleton";
 import { getAllClients } from "@/lib/actions/client.action";
-import { intToDate } from "@/lib/utils";
+import { intToDate, sanitizeQuery } from "@/lib/utils";
 import React, { Suspense } from "react";
 
 const Clients = async ({ searchParams }: any) => {
   const { clients, isNext, totalClients } = await getAllClients({
     page: searchParams.page ? +searchParams.page : 1,
-    query: searchParams.q ? searchParams.q : "",
+    query: sanitizeQuery(searchParams.q),
     fromDate: intToDate(+searchParams.fr),
     toDate: intToDate(+searchParams.to),
   });
