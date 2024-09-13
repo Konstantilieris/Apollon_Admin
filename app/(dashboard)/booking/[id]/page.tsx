@@ -1,6 +1,7 @@
 import AppointmentDailyPlan from "@/components/booking/AppointmentDailyPlan";
 import BookingBox from "@/components/booking/BookingBox";
-import BookingSearchFilter from "@/components/booking/BookingSearchFilter";
+import BookingSearchFilter from "@/components/clientProfile/Book/RoomResults/BookingSearchFilter";
+
 import Room from "@/components/shared/cards/Room";
 import Pagination from "@/components/shared/Pagination";
 

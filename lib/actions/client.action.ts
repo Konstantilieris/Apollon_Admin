@@ -7,6 +7,7 @@ import Client, { IClient, IDog } from "@/database/models/client.model";
 import Service from "@/database/models/service.model";
 import { sanitizeQuery } from "../utils";
 import mongoose from "mongoose";
+import Booking, { IBooking } from "@/database/models/booking.model";
 
 interface CreateClientProps {
   clientData: {
@@ -23,6 +24,7 @@ interface CreateClientProps {
     emergencyContact: string;
     vetName: string;
     vetNumber: string;
+    vetWorkPhone: string;
     isTraining: boolean;
     reference: any;
   };
@@ -68,6 +70,7 @@ export async function CreateClient({
     vet: {
       name: clientData.vetName,
       phone: clientData.vetNumber,
+      work_phone: clientData.vetWorkPhone,
     },
     isTraining: clientData.isTraining,
     references: {
@@ -152,6 +155,7 @@ export async function getClientByIdForBooking(id: string | undefined) {
           "phone.mobile": 1,
           "location.address": 1,
           "location.city": 1,
+          roomPreference: 1,
           bookingFee: {
             $arrayElemAt: [
               {
@@ -175,6 +179,17 @@ export async function getClientByIdForBooking(id: string | undefined) {
               },
               0,
             ],
+          },
+        },
+      },
+      {
+        $addFields: {
+          dog: {
+            $filter: {
+              input: "$dog",
+              as: "dog",
+              cond: { $eq: ["$$dog.dead", false] },
+            },
           },
         },
       },
@@ -738,6 +753,90 @@ export async function updateClientDog({
     return JSON.parse(JSON.stringify(client));
   } catch (error) {
     console.error("Error updating client dog:", error);
+    throw error;
+  }
+}
+const checkBookingInRangeWithRoomId = async (
+  roomId: string,
+  fromDate: Date,
+  toDate: Date
+) => {
+  try {
+    connectToDatabase();
+    const booking = await Booking.findOne({
+      $or: [{ fromDate: { $lte: toDate }, toDate: { $gte: fromDate } }],
+      // Check if any dog has the specified roomId
+      "dogs.roomId": roomId,
+    });
+    return !!booking;
+  } catch (error) {
+    console.error("Error checking booking in range with room id:", error);
+    throw error;
+  }
+};
+export async function getLastBookingOfClient({
+  clientId,
+
+  rangeDate,
+}: {
+  clientId: string;
+
+  rangeDate: { from: Date; to: Date };
+}) {
+  try {
+    connectToDatabase();
+
+    let rooms: any = [];
+    const client = await Client.findById(clientId);
+
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    const lastBooking: IBooking[] = await Booking.find(
+      { "client.clientId": clientId },
+      {},
+      { sort: { createdAt: -1 } }
+    ).limit(1);
+
+    if (lastBooking.length === 0) {
+      return { type: client.roomPreference, rooms: [] };
+    }
+
+    if (client.roomPreference === "Join") {
+      const availability = await checkBookingInRangeWithRoomId(
+        (lastBooking[0].dogs[0] as any).roomId,
+        rangeDate.from,
+        rangeDate.to
+      );
+      rooms = {
+        roomId: JSON.parse(
+          JSON.stringify((lastBooking[0].dogs[0] as any).roomId)
+        ),
+        roomName: (lastBooking[0].dogs[0] as any).roomName,
+        dogName: (lastBooking[0].dogs[0] as any).dogName,
+        availability,
+      };
+    } else {
+      for (const dog of lastBooking[0].dogs) {
+        const room = {
+          roomId: JSON.parse(JSON.stringify((dog as any).roomId)),
+          roomName: (dog as any).roomName,
+          dogName: (dog as any).dogName,
+          dogId: JSON.parse(JSON.stringify((dog as any).dogId)),
+          availability: await checkBookingInRangeWithRoomId(
+            (dog as any).roomId,
+            rangeDate.from,
+            rangeDate.to
+          ),
+        };
+
+        rooms.push(room);
+      }
+    }
+    console.log(rooms);
+    return { type: client.roomPreference, rooms };
+  } catch (error) {
+    console.error("Error retrieving last booking of client:", error);
     throw error;
   }
 }

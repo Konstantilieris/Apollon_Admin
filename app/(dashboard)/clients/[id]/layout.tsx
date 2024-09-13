@@ -16,9 +16,11 @@ export default async function Layout({
     return <div>No client Found</div>;
   }
   return (
-    <main className=" custom-scrollbar relative flex h-full  w-full flex-col items-center  overflow-y-scroll p-4">
-      <ClientProfileCard client={JSON.parse(JSON.stringify(client))} />
-      <section className=" h-full w-full ">{children}</section>
+    <main className=" relative flex min-h-screen w-full flex-col items-center  ">
+      <div className=" w-full rounded-lg px-2 py-4 dark:bg-dark-100">
+        <ClientProfileCard client={JSON.parse(JSON.stringify(client))} />
+      </div>
+      <div className="flex min-h-[80vh] w-full">{children}</div>
 
       <FloatingDockClient id={id} />
     </main>

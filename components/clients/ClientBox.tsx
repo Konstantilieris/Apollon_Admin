@@ -15,7 +15,7 @@ const ClientBox = ({ total }: { total: number }) => {
           <LocalSearch
             route="/clients"
             placeholder="Αναζήτηση Πελατών"
-            otherClasses="max-w-[300px] min-w-[300px] font-sans"
+            otherClasses="max-w-[300px] min-w-[300px] "
           />
           <DatePushUrl nodate={true} />
         </div>

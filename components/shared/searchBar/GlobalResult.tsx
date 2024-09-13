@@ -48,18 +48,18 @@ const GlobalResult = () => {
   };
 
   return (
-    <div className="  fixed inset-x-[-20vw] top-12 z-50 mx-auto  mt-3 w-full min-w-[400px] rounded-xl border border-light-700 bg-light-800 px-4 py-5 shadow-sm dark:bg-dark-300">
+    <div className="  fixed inset-x-[-20vw] top-12 z-50 mx-auto  mt-3 w-full min-w-[40vw] rounded-xl border border-light-700 bg-light-800 px-4 py-5 shadow-sm dark:bg-neutral-950">
       <GlobalFilters />
       <div className="my-5 h-[1px] bg-light-700/50 dark:bg-dark-500/50" />
 
       <div className="space-y-5">
-        <p className="text-dark400_light900 paragraph-semibold px-5">
+        <p className="text-dark400_light900 paragraph-semibold px-5 text-lg">
           Κορυφαίες Αντιστοιχίες
         </p>
 
         {isLoading ? (
           <div className="flex-center flex-col px-5">
-            <ReloadIcon className="my-2 h-10 w-10 animate-spin text-primary-500" />
+            <ReloadIcon className="my-2 h-10 w-10 animate-spin text-yellow-600" />
             <p className="text-dark200_light800 body-regular">
               Browsing the entire database
             </p>
@@ -70,7 +70,7 @@ const GlobalResult = () => {
               client.map((client: any, index: number) => (
                 <Link
                   key={index}
-                  className="flex flex-row items-center gap-2 hover:scale-105"
+                  className="flex flex-row items-center gap-2 px-2 hover:scale-105"
                   href={renderLink(type || "client", client._id)}
                 >
                   <Image
@@ -89,7 +89,7 @@ const GlobalResult = () => {
                       <p className="text-light400_light500 small-medium mt-1 font-bold capitalize">
                         {client?.dog.map((dog: any) => dog?.name).join(", ")}
                       </p>
-                      <p className="small-medium mt-1 font-bold capitalize text-orange-400">
+                      <p className="small-medium mt-1 font-bold capitalize text-yellow-500">
                         {client?.profession}
                       </p>
                     </div>

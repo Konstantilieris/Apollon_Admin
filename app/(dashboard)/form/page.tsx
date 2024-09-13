@@ -19,16 +19,6 @@ const page = async ({ searchParams }: any) => {
     <div className="flex h-full">
       <section className="remove-scrollbar relative flex-1 overflow-y-auto px-[5%] ">
         <div className=" size-full mx-auto flex max-w-[860px] flex-1 flex-col py-10   2xl:justify-items-center">
-          <span className=" flex flex-row items-center justify-center gap-4">
-            <Image
-              src="/assets/icons/bone.svg"
-              height={40}
-              width={50}
-              alt="patient"
-              className="  h-12 w-11 invert"
-            />
-            <h1 className="header">Εγγραφή Πελάτη</h1>
-          </span>
           <ClientRegistration
             clients={clients}
             professions={professions}

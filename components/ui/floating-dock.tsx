@@ -10,6 +10,7 @@ import {
   useTransform,
 } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { useRef, useState } from "react";
 
 export const FloatingDock = ({
@@ -97,7 +98,7 @@ const FloatingDockDesktop = ({
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto hidden md:flex h-16 gap-4 items-end  rounded-2xl bg-gray-50 dark:bg-neutral-900 px-4 pb-3",
+        "mx-auto hidden md:flex h-16 gap-4 items-end  rounded-2xl bg-gray-50 dark:bg-neutral-800 px-4 pb-3",
         className
       )}
     >
@@ -164,7 +165,7 @@ function IconContainer({
   });
 
   const [hovered, setHovered] = useState(false);
-
+  const path = usePathname();
   return (
     <Link href={href}>
       <motion.div
@@ -172,7 +173,12 @@ function IconContainer({
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="relative flex aspect-square items-center justify-center rounded-full bg-gray-200 dark:bg-neutral-800"
+        className={cn(
+          "relative flex aspect-square items-center justify-center rounded-full bg-gray-200 dark:bg-neutral-950",
+          {
+            "bg-gray-100 dark:bg-yellow-600": path === href,
+          }
+        )}
       >
         <AnimatePresence>
           {hovered && (
@@ -180,7 +186,7 @@ function IconContainer({
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="absolute -top-8 left-1/2 w-fit -translate-x-1/2 whitespace-pre rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white"
+              className="absolute -top-8 left-1/2 w-fit -translate-x-1/2 whitespace-pre rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-lg text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-light-800"
             >
               {title}
             </motion.div>

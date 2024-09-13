@@ -7,6 +7,7 @@ import { DeadDogTooltip } from "@/components/ui/deadDogTooltip";
 import { getClientById } from "@/lib/actions/client.action";
 
 import React from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const page = async ({ params }: { params: any }) => {
   const { id } = params;
@@ -74,45 +75,66 @@ const page = async ({ params }: { params: any }) => {
         value: client?.vet.phone ? client?.vet.phone : "N/A",
       },
     ],
+    [
+      {
+        key: "ΤΗΛ.ΕΡΓΑΣΙΑΣ: ",
+        value: client?.vet.work_phone ? client?.vet.work_phone : "N/A",
+      },
+    ],
   ];
 
   return (
-    <div className="relative flex h-full w-full flex-row justify-between gap-1 py-4 max-md:flex-col">
-      <div className="ml-4   flex w-full   flex-col items-start gap-4 ">
-        <ClientNoteCard client={JSON.parse(JSON.stringify(client))} />
-        <ClientInfoCard
-          title="ΣΤΟΙΧΕΙΑ ΕΠΙΚΟΙΝΩΝΙΑΣ"
-          iconRight="/assets/icons/phone.svg"
-          infolist={phonelist}
-        />
-        <ClientInfoCard
-          title="ΣΤΟΙΧΕΙΑ ΚΑΤΟΙΚΙΑΣ"
-          iconRight="/assets/icons/location.svg"
-          infolist={locationlist}
-          iconStyle="dark:invert"
-        />
-        <ClientInfoCard
-          title="ΚΤΗΝΙΑΤΡΙΚΑ ΣΤΟΙΧΕΙΑ"
-          iconRight="/assets/icons/vet.svg"
-          infolist={vetlist}
-          isVet={true}
-        />
-      </div>
-      <div className="flex h-full w-full flex-col gap-4 rounded-2xl bg-neutral-800 px-4 py-2">
-        <h1 className="font-sans text-2xl font-semibold text-indigo-300">
-          ΚΑΤΟΙΚΙΔΙΑ ΠΕΛΑΤΗ{" "}
-        </h1>
-        <AddDog clientId={JSON.parse(JSON.stringify(client._id))} />
+    <ScrollArea className="h-full w-full ">
+      <div className="no-scrollbar relative mb-20 flex h-full w-full flex-row justify-between gap-1 overflow-y-scroll py-4 max-md:flex-col">
+        <div className="ml-4   flex w-full   flex-col items-start gap-4 ">
+          <ClientInfoCard
+            title="ΣΤΟΙΧΕΙΑ ΠΕΛΑΤΗ"
+            iconRight="/assets/icons/client.svg"
+            infolist={[
+              [
+                { key: "ΟΝΟΜΑ: ", value: client?.name ? client?.name : "N/A" },
+                {
+                  key: "EMAIL: ",
+                  value: client?.email ? client?.email : "N/A",
+                },
+              ],
+            ]}
+          />
+          <ClientInfoCard
+            title="ΣΤΟΙΧΕΙΑ ΕΠΙΚΟΙΝΩΝΙΑΣ"
+            iconRight="/assets/icons/phone.svg"
+            infolist={phonelist}
+          />
+          <ClientInfoCard
+            title="ΣΤΟΙΧΕΙΑ ΚΑΤΟΙΚΙΑΣ"
+            iconRight="/assets/icons/location.svg"
+            infolist={locationlist}
+            iconStyle="dark:invert"
+          />
+          <ClientInfoCard
+            title="ΚΤΗΝΙΑΤΡΙΚΑ ΣΤΟΙΧΕΙΑ"
+            iconRight="/assets/icons/vet.svg"
+            infolist={vetlist}
+            isVet={true}
+          />
+          <ClientNoteCard client={JSON.parse(JSON.stringify(client))} />
+        </div>
+        <div className="flex w-full flex-col gap-4 rounded-2xl bg-neutral-800 px-4 py-2">
+          <h1 className="font-sans text-2xl font-semibold text-yellow-500">
+            ΚΑΤΟΙΚΙΔΙΑ ΠΕΛΑΤΗ{" "}
+          </h1>
+          <AddDog clientId={JSON.parse(JSON.stringify(client._id))} />
 
-        <DogCards
-          dogs={JSON.parse(JSON.stringify(livingDogs))}
-          clientId={JSON.parse(JSON.stringify(client._id))}
-        />
-        <div className="mb-8 flex min-h-[5rem] w-full  flex-row items-center gap-12  rounded-xl bg-neutral-900 px-4 py-2">
-          {deadDogs.length > 0 && <DeadDogTooltip items={deadDogs} />}
+          <DogCards
+            dogs={JSON.parse(JSON.stringify(livingDogs))}
+            clientId={JSON.parse(JSON.stringify(client._id))}
+          />
+          <div className="mb-8 flex min-h-[5rem] w-full  flex-row items-center justify-center gap-12  overflow-visible rounded-xl bg-neutral-900 px-4 py-2">
+            {deadDogs.length > 0 && <DeadDogTooltip items={deadDogs} />}
+          </div>
         </div>
       </div>
-    </div>
+    </ScrollArea>
   );
 };
 

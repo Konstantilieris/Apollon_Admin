@@ -7,6 +7,7 @@ import {
   IconExchange,
   IconMapCog,
   IconUserCircle,
+  IconBrandBooking,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,6 +21,8 @@ export function ClientProfileCard({ client }: any) {
         return (
           <IconEditCircle className="h-10 w-10 rounded-full border-2 object-cover" />
         );
+      case `/clients/${client._id}/book`:
+        return <IconBrandBooking className="h-10 w-10  object-cover" />;
       case `/clients/${client._id}/services`:
         return (
           <IconExchange className="h-10 w-10 rounded-full border-2 object-cover" />
@@ -34,7 +37,7 @@ export function ClientProfileCard({ client }: any) {
     <div className="group/card w-full max-w-xs self-start  ">
       <div
         className={cn(
-          "overflow-hidden relative card h-34 rounded-md shadow-xl  max-w-sm mx-auto backgroundImage flex flex-col justify-between p-4"
+          "overflow-hidden relative card h-36 rounded-md shadow-xl  max-w-sm mx-auto backgroundImage flex flex-col justify-between p-4"
         )}
       >
         <div className="absolute left-0 top-0 h-full w-full bg-neutral-700 opacity-60 transition duration-300 group-hover/card:bg-black"></div>

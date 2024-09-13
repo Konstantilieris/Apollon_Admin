@@ -17,22 +17,27 @@ import {
   IconArrowLeft,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Toggle from "./Toggle";
 
 export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-
+  const path = usePathname();
   const links = [
     {
       label: "Επισκόπηση",
       href: "/main",
       icon: (
-        <IconBrandTabler className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconBrandTabler
+          className={cn(
+            "h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200",
+            { "text-primary-500 dark:text-yellow-500 w-7": path === "/main" }
+          )}
+        />
       ),
     },
 
@@ -40,35 +45,65 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
       label: "Εγγραφή",
       href: "/form",
       icon: (
-        <IconListDetails className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconListDetails
+          className={cn(
+            "h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200",
+            { "text-primary-500 dark:text-yellow-500 w-7": path === "/form" }
+          )}
+        />
       ),
     },
     {
       label: "Πελάτες",
       href: "/clients",
       icon: (
-        <IconUserBolt className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconUserBolt
+          className={cn(
+            "h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200",
+            { "text-primary-500 dark:text-yellow-500 w-7": path === "/clients" }
+          )}
+        />
       ),
     },
     {
       label: "Ημερολόγιο",
       href: "/calendar",
       icon: (
-        <IconCalendarCode className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconCalendarCode
+          className={cn(
+            "h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200",
+            {
+              "text-primary-500 dark:text-yellow-500 w-7": path === "/calendar",
+            }
+          )}
+        />
       ),
     },
     {
       label: "Κρατήσεις",
       href: "/booking",
       icon: (
-        <IconHomeCog className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconHomeCog
+          className={cn(
+            "h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200",
+            { "text-primary-500 dark:text-yellow-500 w-7": path === "/booking" }
+          )}
+        />
       ),
     },
     {
       label: "Ανάλυση",
       href: "/logistics",
       icon: (
-        <IconChartBar className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconChartBar
+          className={cn(
+            "h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200",
+            {
+              "text-primary-500 dark:text-yellow-500 w-7":
+                path === "/logistics",
+            }
+          )}
+        />
       ),
     },
 
@@ -76,7 +111,14 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
       label: "Έξοδα",
       href: "/expenses",
       icon: (
-        <IconExposure className="h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconExposure
+          className={cn(
+            "h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200",
+            {
+              "text-primary-500 dark:text-yellow-500 w-7": path === "/expenses",
+            }
+          )}
+        />
       ),
     },
   ];
@@ -128,13 +170,34 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
           </div>
         </SidebarBody>
       </Sidebar>
-      <div
-        className={cn(
-          "flex-1 rounded-tl-2xl border transition-colors duration-500 ease-in-out border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 h-full ml-12 w-full"
-        )}
-      >
-        {children}
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          className={cn(
+            "flex-1 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 h-full ml-12 w-full "
+          )}
+          key={path}
+          initial="initialState"
+          animate="animateState"
+          exit="exitState"
+          transition={{ duration: 0.4, ease: "easeIn" }}
+          variants={{
+            initialState: {
+              opacity: 0,
+              clipPath: "polygon(50% 0, 50% 0, 50% 100%, 50% 100%)",
+            },
+            animateState: {
+              opacity: 1,
+              clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)",
+            },
+            exitState: {
+              opacity: 0,
+              clipPath: "polygon(50% 0, 50% 0, 50% 100%, 50% 100%)",
+            },
+          }}
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

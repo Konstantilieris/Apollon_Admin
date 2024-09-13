@@ -7,11 +7,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { IconArrowBigRightLineFilled, IconEdit } from "@tabler/icons-react";
 import { formatDateString } from "@/lib/utils";
 import Link from "next/link";
 const BookingTable = ({ bookings }: { bookings: any }) => {
   return (
-    <Table className="text-dark400_light700 mt-12 font-sans">
+    <Table className="text-dark400_light700 mt-12 ">
       <TableHeader className="border-b-8 border-light-700 bg-white text-base font-semibold text-black dark:border-dark-400 dark:bg-slate-700 dark:text-light-700 xl:text-lg">
         <TableRow>
           <TableHead className="ml-2 text-center max-md:hidden">
@@ -22,7 +23,9 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
           </TableHead>
           <TableHead className="text-center">Ονοματεπώνυμο</TableHead>
           <TableHead className="text-center">Τηλέφωνο</TableHead>
-          <TableHead className="px-2 text-center">Σκύλοι</TableHead>
+          <TableHead className="flex items-center justify-center gap-1 px-2 text-center">
+            Σκύλοι <IconArrowBigRightLineFilled size={20} />
+          </TableHead>
           <TableHead className="px-2 text-center">Δωμάτιο</TableHead>
           <TableHead className="px-2 text-center">Μεταφορά</TableHead>
           <TableHead className="px-2 text-center max-md:hidden">
@@ -34,21 +37,24 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
         {bookings?.map((booking: any) => (
           <TableRow
             key={booking?._id}
-            className="background-light800_dark300 text-dark100_light900 font-sans"
+            className="background-light800_dark300 text-dark100_light900 items-center "
           >
-            <TableCell className="max-w-[250px] pl-8 pr-10 text-center text-base font-normal">
+            <TableCell className="m-auto   max-w-[250px]  pl-12 text-base ">
               <Link href={`/editbooking/${booking?._id}`}>
-                <span className="cursor-pointer hover:scale-105"> ...</span>
+                <IconEdit
+                  size={23}
+                  className="cursor-pointer hover:scale-105 dark:text-yellow-500"
+                />
               </Link>
             </TableCell>
             <TableCell className="max-w-[250px] pl-4 pr-10 text-center text-base font-normal">
               {formatDateString(booking.fromDate)}-{" "}
               {formatDateString(booking.toDate)}
             </TableCell>
-            <TableCell className="ml-4 flex max-w-[500px] justify-center truncate pr-10 text-center text-base font-normal 2xl:max-w-[600px]">
+            <TableCell className="my-auto ml-4  max-w-[500px] truncate pr-10 text-center text-base font-normal uppercase 2xl:max-w-[600px]">
               <Link
                 href={`/clients/${booking?.client?.clientId}`}
-                className="cursor-help hover:scale-105"
+                className="cursor-pointer hover:scale-105"
               >
                 {booking?.client?.clientName}
               </Link>
@@ -56,7 +62,7 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
             <TableCell className="mr-4 text-center text-base font-normal">
               {booking?.client?.phone}
             </TableCell>
-            <TableCell className="flex w-full max-w-[250px] items-center justify-center max-md:hidden">
+            <TableCell className="flex w-full max-w-[250px] flex-col items-center justify-center uppercase max-md:hidden">
               {booking?.dogs?.map((dog: any) => (
                 <span
                   key={dog._id}
@@ -73,18 +79,20 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
                 </span>
               ))}
             </TableCell>
-            <TableCell className="flex flex-col items-center pl-4 text-center text-base font-normal">
+            <TableCell className="  h-full  items-center pl-4 text-center text-base font-normal">
               {booking?.flag1 && (
-                <span className="text-sm text-green-500">
-                  Παραλαβή {booking?.client?.transportFee}€
-                </span>
+                <div className="font-semibold uppercase dark:text-green-400">
+                  Παραλαβη {booking?.client?.transportFee}€
+                </div>
               )}
               {booking?.flag2 && (
-                <span className="text-indigo-500">
-                  Παράδοση {booking?.client?.transportFee}€
-                </span>
+                <div className="font-semibold uppercase dark:text-green-400">
+                  Παραδοση {booking?.client?.transportFee}€
+                </div>
               )}
-              {!booking?.flag1 && !booking?.flag2 && "ΟΧΙ"}
+              {!booking?.flag1 && !booking?.flag2 && (
+                <span className="my-auto">ΟΧΙ</span>
+              )}
             </TableCell>
             <TableCell className="pl-4 pr-10 text-center text-base font-normal">
               {booking?.totalAmount} €

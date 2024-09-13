@@ -32,7 +32,7 @@ const ClientInfoCard = ({
     >
       <h1
         className={cn(
-          "text-2xl font-semibold text-gray-800 dark:text-indigo-300 max-md:hidden",
+          "text-2xl font-semibold text-gray-800 dark:text-light-900 max-md:hidden",
           titleStyle
         )}
       >
@@ -49,9 +49,9 @@ const ClientInfoCard = ({
           {info.map((item: any, index) => (
             <div key={item.key} className="flex flex-row gap-2">
               <p className=" dark:text-light-700">{item.key}</p>
-              <p className="flex flex-row items-center  text-gray-800 dark:text-indigo-300">
+              <p className="flex flex-row items-center  text-gray-800 dark:text-yellow-400/90">
                 {item.value}{" "}
-                {isVet && index === 0 && (
+                {isVet && item.key === "ΟΝΟΜΑ: " && (
                   <Link
                     href={`https://www.google.com/search?q=${
                       item.value.replace(" ", "+") + "+κτηνιατρος"

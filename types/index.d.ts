@@ -1,3 +1,5 @@
+import { Schema } from "mongoose";
+import { ILocation, IDog, IReference } from "../database/models/client.model";
 export interface SidebarLink {
   imgURL: string;
   route: string;
@@ -55,4 +57,71 @@ export interface CreateTrainingParams {
   timeDeparture: string;
   notes: string;
   path: string;
+}
+export interface ClientProfileProps {
+  email?: string;
+  profession?: string;
+  _id: string;
+  location?: ILocation;
+  phone: {
+    telephone?: string;
+    mobile?: string;
+    work_phone?: string;
+    emergencyContact?: string;
+  };
+  serviceFees?: { type: String; value: Number }[];
+  createdAt?: Date;
+  owes?: Schema.Types.ObjectId[];
+  references?: {
+    isReferenced?: IReference;
+    hasReferenced?: [
+      {
+        name?: string;
+        clientId?: Schema.Types.ObjectId;
+      },
+    ];
+  };
+  dog: DogProp[];
+  vet?: {
+    name: string;
+    phone: string;
+    work_phone?: string;
+  };
+  roomPreference?: string;
+
+  isTraining?: boolean;
+  notes?: string;
+  name: string;
+  points?: number;
+}
+export interface DogProp {
+  name: string;
+  _id: any;
+  gender: string;
+  birthdate?: Date;
+  food?: string;
+  breed?: string;
+  behavior?: string;
+  microchip?: string;
+  note?: string;
+  dead?: boolean;
+  deathDate?: Date;
+  weight?: number;
+  sterilized?: boolean;
+  medicalHistory?: [
+    {
+      illness: string;
+      treatment: {
+        name: string;
+        frequency: string;
+        notes: string;
+      };
+    },
+  ];
+  likes?: [
+    {
+      clientId: Schema.Types.ObjectId;
+      dogName: string;
+    },
+  ];
 }

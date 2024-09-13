@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 "use client";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { Calendar } from "../ui/calendar";
+import { Calendar } from "../ui/reshapedCalendar";
 import React from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -12,7 +13,6 @@ export function DateInput({ field, maxwidth }: any) {
   const [stringDate, setStringDate] = React.useState<string>(
     field.value ? format(new Date(field.value), "dd/MM/yyyy") : ""
   );
-  // eslint-disable-next-line no-unused-vars
   const [date, setDate] = React.useState<Date>();
   const [errorMessage, setErrorMessage] = React.useState<string>("");
 
@@ -24,17 +24,24 @@ export function DateInput({ field, maxwidth }: any) {
           type="string"
           value={stringDate}
           onChange={(e) => {
-            const inputDate = e.target.value;
+            const inputDate = e.target.value.trim(); // Trim whitespace
             setStringDate(inputDate);
             field.onChange(inputDate);
+
             const [day, month, year] = inputDate.split("/");
-            const parsedDate = new Date(`${year}-${month}-${day}`);
+
+            // Ensure the date parts are valid before creating a new Date object
+            const isValidDate = day && month && year;
+            const parsedDate = isValidDate
+              ? new Date(`${year}-${month}-${day}`)
+              : new Date(NaN);
+
             if (isNaN(parsedDate.getTime())) {
               setErrorMessage("Invalid Date");
-              field.onChange("");
+              field.onChange(""); // Clear the field on invalid date
             } else {
               setErrorMessage("");
-              field.onChange(parsedDate);
+              field.onChange(parsedDate); // Pass the valid date
             }
           }}
         />

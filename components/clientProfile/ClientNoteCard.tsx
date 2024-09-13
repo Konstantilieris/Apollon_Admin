@@ -4,7 +4,6 @@ import React, { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import {
-  IconMailOpened,
   IconSquareRoundedXFilled,
   IconSquarePlus,
   IconSquareCheckFilled,
@@ -105,29 +104,9 @@ export function ClientNoteCard({ client }: { client: any }) {
 
               <div className="min-h-[70vh]">
                 <div className="mt-4  flex w-full flex-col items-start gap-4 p-7">
-                  <div className="flex w-full flex-col gap-4">
-                    <motion.h3
-                      layoutId={`email-${active.email}-${id}`}
-                      className="font-bold text-neutral-700 dark:text-neutral-200"
-                    >
-                      EMAIL: {active?.email ? active.email : "N/A"}
-                    </motion.h3>
-                    <motion.p
-                      layoutId={`profession-${active.profession}-${id}`}
-                      className="text-neutral-700 dark:text-neutral-200"
-                    >
-                      ΕΠΑΓΓΕΛΜΑ: {active?.profession}
-                    </motion.p>
-                    <motion.h3
-                      layoutId={`training-${active.isTraining}-${id}`}
-                      className=" text-neutral-700 dark:text-neutral-200"
-                    >
-                      ΕΚΠΑΙΔΕΥΣΗ: {active?.isTraining ? "ΝΑΙ" : "ΟΧΙ"}
-                    </motion.h3>
-                  </div>
                   <div className="flex min-h-[40vh] w-full flex-col  gap-4 rounded-2xl p-2 dark:bg-neutral-800">
                     <div className=" flex w-full flex-row items-center justify-between">
-                      <span className="flex items-center gap-2 font-semibold text-indigo-300">
+                      <span className="flex items-center gap-2 font-semibold dark:text-yellow-500">
                         <IconNotes />
                         <h1>ΣΗΜΕΙΩΣΕΙΣ</h1>
                       </span>
@@ -194,56 +173,22 @@ export function ClientNoteCard({ client }: { client: any }) {
           layoutId={`image-${client?._id}-${id}`}
         >
           <Image
-            src={"/assets/icons/client.svg"}
+            src={"/assets/icons/notes.svg"}
             alt="client"
             width={30}
             height={30}
           />
         </motion.div>
-        <h1 className="text-2xl font-semibold text-gray-800 dark:text-indigo-300 max-md:hidden">
-          ΠΡΟΣΩΠΙΚΑ ΣΤΟΙΧΕΙΑ
+        <h1 className="text-2xl font-semibold text-gray-800 dark:text-light-900 max-md:hidden">
+          ΣΗΜΕΙΩΣΕΙΣ ΠΕΛΑΤΗ
         </h1>
         <div className="flex w-full flex-col items-start gap-4 text-lg">
-          <div className="flex w-full flex-row justify-between">
-            <motion.p
-              layoutId={`email-${client?.email}-${id}`}
-              className="flex flex-row gap-2  text-center text-neutral-800 dark:text-light-800"
-            >
-              EMAIL:{"  "}
-              <span className=" text-indigo-300">
-                {client?.email ? client?.email : "N/A"}
-              </span>
-            </motion.p>
-            <motion.p
-              layoutId={`profession-${client?.profession}-${id}`}
-              className="gap-4 text-center uppercase text-neutral-600 dark:text-light-700 md:text-left"
-            >
-              ΕΠΑΓΓΕΛΜΑ:{" "}
-              <span className="text-indigo-300">{client?.profession}</span>
-            </motion.p>
-          </div>
-          <div className="flex w-full flex-row justify-between">
-            <motion.p
-              layoutId={`training-${client?.isTraining}-${id}`}
-              className="text-center  text-neutral-800 dark:text-light-800 md:text-left"
-            >
-              ΕΚΠΑΙΔΕΥΣΗ:{"   "}
-              <span className="dark:text-indigo-300">
-                {client?.isTraining ? "ΝΑΙ" : "ΟΧΙ"}
-              </span>
-            </motion.p>
-            <motion.p
-              layoutId={`notes-${client?.notes}-${id}`}
-              className="flex flex-row items-center gap-2 text-center uppercase text-neutral-600 dark:text-light-700 md:text-left"
-            >
-              ΣΗΜΕΙΩΣΕΙΣ:{" "}
-              {client?.notes ? (
-                <IconMailOpened className="text-indigo-400" />
-              ) : (
-                <IconSquareRoundedXFilled className="text-indigo-500" />
-              )}
-            </motion.p>
-          </div>
+          <motion.p
+            layoutId={`notes-${client?.notes}-${id}`}
+            className="ml-8 flex flex-row items-start gap-2 text-start uppercase text-neutral-600 dark:text-light-800 md:text-left "
+          >
+            {client?.notes ? client.notes : "Δεν υπάρχουν σημειώσεις"}
+          </motion.p>
         </div>
       </motion.div>
     </>

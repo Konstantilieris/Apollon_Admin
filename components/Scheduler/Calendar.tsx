@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { memo } from "react";
 
 import {
   Week,
@@ -112,14 +112,7 @@ L10n.load({
   },
 });
 
-const Scheduler = ({ appointments }: any) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
+const Scheduler: React.FC<{ appointments: any }> = memo(({ appointments }) => {
   const eventTemplate = (props: any) => {
     return (
       <div
@@ -175,6 +168,8 @@ const Scheduler = ({ appointments }: any) => {
       <Inject services={[Day, Week, Month, TimelineMonth]} />
     </ScheduleComponent>
   );
-};
+});
+
+Scheduler.displayName = "Scheduler";
 
 export default Scheduler;

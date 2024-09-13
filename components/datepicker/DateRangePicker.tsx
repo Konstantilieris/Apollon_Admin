@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { el } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "../ui/reshapedCalendar";
 import {
   Popover,
   PopoverContent,
@@ -34,7 +34,7 @@ export function DatePickerWithRange({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-sans  background-light800_dark300 text-dark300_light700 hover:scale-105 border-indigo-500 border-[3px] min-h-[46px] font-semibold",
+              "w-[300px] justify-start text-left font-sans  background-light800_dark300 text-dark300_light700 hover:scale-105 border-yellow-500 border-2 min-h-[46px] font-semibold",
               !rangeDate && "text-muted-foreground"
             )}
           >

@@ -51,6 +51,7 @@ export const ClientValidation = z.object({
   workMobile: z.string().optional(),
   vetName: z.string().optional(),
   vetNumber: z.string().optional(),
+  vetWorkPhone: z.string().optional(),
 });
 export const UpdateClientValidation = z.object({
   name: z.string().min(2).max(40),
@@ -93,6 +94,7 @@ export const DogValidation = z.object({
       breed: z.string().optional(),
       behavior: z.string().optional(),
       microchip: z.string().optional(),
+      sterilized: z.boolean().optional(),
     })
   ),
 });

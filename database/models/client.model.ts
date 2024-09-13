@@ -16,6 +16,8 @@ export interface IDog {
   microchip?: string;
   note?: string;
   dead?: boolean;
+  deathDate?: Date;
+  weight?: number;
   sterilized?: boolean;
   medicalHistory?: [
     {
@@ -65,11 +67,14 @@ export interface IClient {
       },
     ];
   };
-  dog?: IDog;
+  dog?: IDog[];
   vet?: {
     name: string;
     phone: string;
+    work_phone?: string;
   };
+  roomPreference?: string;
+
   isTraining?: boolean;
   notes?: string;
   name: string;
@@ -107,6 +112,12 @@ export const DogSchema = new Schema<IDog>({
   dead: {
     type: Boolean,
     default: false,
+  },
+  deathDate: {
+    type: Date,
+  },
+  weight: {
+    type: Number,
   },
 
   sterilized: {
@@ -196,6 +207,7 @@ const ClientSchema = new Schema<IClient>({
   vet: {
     name: { type: String },
     phone: { type: String },
+    work_phone: { type: String },
   },
   references: {
     isReferenced: ReferenceSchema,
@@ -218,6 +230,9 @@ const ClientSchema = new Schema<IClient>({
       value: { type: Number },
     },
   ],
+  roomPreference: {
+    type: String,
+  },
   points: {
     type: Number,
     default: 0,

@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Form, FormControl } from "@/components/ui/form";
-import "react-phone-number-input/style.css";
+
 import { ClientValidation } from "@/lib/validation";
 import * as z from "zod";
 
@@ -33,6 +33,7 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
       workMobile: "",
       vetName: "",
       vetNumber: "",
+      vetWorkPhone: "",
       numberOfDogs: "1",
     },
   });
@@ -58,7 +59,6 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
             fieldType={FormFieldType.INPUT}
             control={form.control}
             name="name"
-            placeholder="Σάββας Ντούνης "
             iconSrc="/assets/icons/account.svg"
             iconAlt="user"
           />
@@ -105,21 +105,18 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
               control={form.control}
               name="mobile"
               label="Κινητό"
-              placeholder="6971234567"
             />
             <CustomFormField
               fieldType={FormFieldType.PHONE_INPUT}
               control={form.control}
               name="telephone"
               label="Τηλ.Οικίας"
-              placeholder="2101234567"
             />
             <CustomFormField
               fieldType={FormFieldType.PHONE_INPUT}
               control={form.control}
               name="workMobile"
               label="Τηλέφωνο Εργασίας"
-              placeholder="2101234567"
             />
             <CustomFormField
               fieldType={FormFieldType.INPUT}
@@ -158,7 +155,6 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
             control={form.control}
             name="city"
             label="Πόλη"
-            placeholder="Αθήνα"
             iconSrc="/assets/icons/location.svg"
             iconAlt="location"
           />
@@ -167,7 +163,6 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
             control={form.control}
             name="address"
             label="Διεύθυνση"
-            placeholder="Λεωφόρος Κηφισίας 123"
             iconSrc="/assets/icons/location.svg"
             iconAlt="location"
           />
@@ -176,7 +171,6 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
             control={form.control}
             name="postalCode"
             label="Ταχυδρομικός Κώδικας"
-            placeholder="12345"
             iconSrc="/assets/icons/location.svg"
             iconAlt="location"
           />
@@ -186,6 +180,27 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
             {" "}
             <h2 className="sub-header">Στοιχεία Κτηνιάτρου Και Σκύλοι</h2>
           </div>
+
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="vetName"
+            label="Κτηνίατρος Πελάτη"
+            iconSrc="/assets/icons/vet.svg"
+            iconAlt="vet"
+          />
+          <CustomFormField
+            fieldType={FormFieldType.PHONE_INPUT}
+            control={form.control}
+            name="vetNumber"
+            label="Τηλ. Κτηνίατρου"
+          />
+          <CustomFormField
+            fieldType={FormFieldType.PHONE_INPUT}
+            control={form.control}
+            name="vetWorkPhone"
+            label="Τηλ. Εργ. Κτηνίατρου"
+          />
           <CustomFormField
             fieldType={FormFieldType.SKELETON}
             control={form.control}
@@ -212,22 +227,6 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
                 </RadioGroup>
               </FormControl>
             )}
-          />
-          <CustomFormField
-            fieldType={FormFieldType.INPUT}
-            control={form.control}
-            name="vetName"
-            label="Κτηνίατρος Πελάτη"
-            placeholder="Κτηνίατρος"
-            iconSrc="/assets/icons/vet.svg"
-            iconAlt="vet"
-          />
-          <CustomFormField
-            fieldType={FormFieldType.PHONE_INPUT}
-            control={form.control}
-            name="vetNumber"
-            label="Τηλέφωνο Κτηνίατρου"
-            placeholder="2101234567"
           />
         </section>
 

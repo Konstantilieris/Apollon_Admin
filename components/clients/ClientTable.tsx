@@ -12,7 +12,7 @@ import Link from "next/link";
 
 const ClientTable = ({ clients }: { clients: any }) => {
   return (
-    <Table className="text-dark400_light700 mt-12 w-full font-sans">
+    <Table className="text-dark400_light700 mt-12 w-full">
       <TableHeader className="border-b-8 border-light-700 bg-white text-base font-semibold text-black dark:border-dark-400 dark:bg-slate-700 dark:text-light-700 xl:text-lg">
         <TableRow>
           <TableHead className="ml-2 text-start max-lg:hidden">
@@ -37,7 +37,7 @@ const ClientTable = ({ clients }: { clients: any }) => {
         {clients?.map((client: any) => (
           <TableRow
             key={client?._id?.toString()}
-            className="background-light800_dark300 text-dark100_light900 font-sans"
+            className="background-light800_dark300 text-dark100_light900 "
           >
             <TableCell className="max-w-[250px] pl-4 pr-10 text-base font-normal max-lg:hidden">
               {client.createdAt ? formatDateString(client.createdAt) : "N/A"}

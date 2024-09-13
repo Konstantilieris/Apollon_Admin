@@ -5,6 +5,7 @@ import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { Button } from "./button";
+import { usePathname } from "next/navigation";
 
 interface Links {
   label: string;
@@ -90,11 +91,12 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-200 dark:bg-neutral-800 w-[300px] flex-shrink-0",
+          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-200 dark:bg-neutral-800 flex-shrink-0",
           className
         )}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
         animate={{
-          width: animate ? (open ? "200px" : "60px") : "300px",
+          width: animate ? (open ? "180px" : "65px") : "300px",
         }}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
@@ -166,6 +168,7 @@ export const SidebarLink = ({
   props?: LinkProps;
 }) => {
   const { open, animate } = useSidebar();
+  const path = usePathname();
   return (
     <Link
       href={link.href}
@@ -182,7 +185,10 @@ export const SidebarLink = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="!m-0 inline-block whitespace-pre !p-0  text-lg text-neutral-700 transition duration-150 group-hover/sidebar:translate-x-1 dark:text-neutral-200"
+        className={cn(
+          "!m-0 inline-block whitespace-pre !p-0  text-lg text-neutral-700 transition duration-150 group-hover/sidebar:translate-x-1 dark:text-neutral-200",
+          { "text-primary-500 dark:text-yellow-500": path === link.href }
+        )}
       >
         {link.label}
       </motion.span>

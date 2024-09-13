@@ -151,6 +151,12 @@ export const isTrainingOptions = {
     { label: "Όχι", value: false },
   ],
 };
+export function formatDateForBooking(date: Date, language: string) {
+  return new Intl.DateTimeFormat(language, {
+    month: "long",
+    day: "numeric",
+  }).format(date);
+}
 
 export function formatDate(date: Date | undefined, language: string) {
   if (!date) return "";
@@ -530,9 +536,9 @@ export function setTimeOnDate(date: Date, time: string) {
   return dateTime.toDate();
 }
 export const GlobalSearchFilters = [
-  { name: "Προφίλ ", value: "client" },
-  { name: "Κράτηση", value: "booking" },
-  { name: "Εκπαίδευση", value: "training" },
+  { name: "Προφιλ ", value: "client" },
+  { name: "Κρατηση", value: "booking" },
+  { name: "Εκπαιδευση", value: "training" },
 ];
 export function setLocalTime(date: Date, time: string): Date {
   if (!time) return date;
@@ -551,3 +557,12 @@ export function setLocalTime(date: Date, time: string): Date {
   // Return the updated Date object
   return m.toDate();
 }
+export const addMinutes = (
+  date: moment.Moment,
+  minutes: number
+): moment.Moment => {
+  return date.clone().add(minutes, "minutes");
+};
+export const getTime = (date: Date): string => {
+  return moment(date).format("HH:mm");
+};

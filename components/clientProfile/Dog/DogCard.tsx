@@ -74,6 +74,7 @@ export function DogCards({
       console.error(e);
     } finally {
       setActiveForm(false);
+      window.location.reload();
     }
   };
   const handleDeadDog = async () => {

@@ -3,11 +3,8 @@ import { getAllEvents } from "@/lib/actions/event.action";
 import React, { Suspense } from "react";
 import LoadingSkeleton from "@/components/shared/skeletons/LoadingSkeleton";
 
-import dynamic from "next/dynamic";
+import Scheduler from "@/components/Scheduler/Calendar";
 
-const NoSSR = dynamic(() => import("@/components/Scheduler/Calendar"), {
-  ssr: false,
-});
 const Page = async () => {
   const events = await getAllEvents();
 
@@ -16,7 +13,7 @@ const Page = async () => {
       <Suspense
         fallback={<LoadingSkeleton size={24} animation="animate-pulse" />}
       >
-        <NoSSR appointments={events} />
+        <Scheduler appointments={events} />
       </Suspense>
     </section>
   );

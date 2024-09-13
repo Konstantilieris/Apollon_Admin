@@ -34,14 +34,15 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
             onDoubleClick={() => setVisible(false)}
             initial={{
               opacity: 1,
-              y: -100,
+              y: 40,
             }}
             animate={{
-              y: visible ? -40 : -100,
+              y: visible ? -30 : 40,
               opacity: visible ? 1 : 0,
             }}
             transition={{
-              duration: 0.2,
+              duration: 0.8,
+              ease: "easeInOut",
             }}
             className={cn(
               "flex max-w-fit  fixed top-10 inset-x-0 mx-auto  z-50",
@@ -65,7 +66,7 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
           <IconEyeSearch
             size={35}
             stroke={1.5}
-            className="cursor-pointer text-neutral-800  dark:text-neutral-200"
+            className="cursor-pointer text-neutral-800  dark:text-yellow-500"
             onClick={() => {
               setVisible(true);
             }}

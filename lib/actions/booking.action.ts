@@ -12,6 +12,7 @@ import Appointment from "@/database/models/event.model";
 import Service from "@/database/models/service.model";
 import mongoose from "mongoose";
 import { setTimeOnDate } from "../utils";
+
 interface TNTPROPS {
   id: string;
   type: string;
@@ -39,6 +40,7 @@ interface ICreateBooking {
   bookingData: any;
   flag1: boolean;
   flag2: boolean;
+  roomPreference: string;
 }
 
 export async function createBooking({
@@ -50,13 +52,18 @@ export async function createBooking({
   flag1,
   flag2,
   bookingData,
+  roomPreference,
 }: ICreateBooking) {
   const session = await mongoose.startSession();
 
   try {
     connectToDatabase();
     session.startTransaction();
-
+    await Client.findByIdAndUpdate(
+      client.clientId,
+      { $set: { roomPreference } },
+      { session }
+    );
     const booking = await Booking.create(
       [
         {
@@ -436,9 +443,14 @@ export async function getAllRoomsAndBookings({
 }) {
   try {
     connectToDatabase();
-    const itemsPerPage = 4;
+    const itemsPerPage = 6;
     const skipItems = (page - 1) * itemsPerPage;
-
+    if (!rangeDate.from || !rangeDate.to) {
+      return {
+        allRooms: [],
+        isNext: false,
+      };
+    }
     const matchBookings = {
       $or: [
         {
@@ -462,8 +474,16 @@ export async function getAllRoomsAndBookings({
       ],
     };
 
-    const rooms = await Room.find({ name: { $regex: query, $options: "i" } });
-    const bookings = await Booking.find(matchBookings);
+    const rooms = await Room.find(
+      { name: { $regex: query, $options: "i" } },
+      {},
+      { sort: { name: -1 } }
+    );
+    const bookings = await Booking.find(
+      matchBookings,
+      {},
+      { sort: { fromDate: 1 } }
+    );
 
     const roomMap = rooms.reduce((map, room) => {
       map[room._id.toString()] = {
@@ -477,26 +497,45 @@ export async function getAllRoomsAndBookings({
       booking.dogs.forEach((dog: any) => {
         const roomId = dog.roomId.toString();
         if (roomMap[roomId]) {
-          roomMap[roomId].currentBookings.push({
-            bookingId: booking._id,
-            clientId: booking.client.clientId,
-            clientName: booking.client.clientName,
-            fromDate: booking.fromDate,
-            toDate: booking.toDate,
-            dogs: booking.dogs,
-            totalAmount: booking.totalAmount,
-            flag1: booking.flag1,
-            flag2: booking.flag2,
-          });
+          // Check if the booking is already added to the room's currentBookings
+          const isBookingAlreadyAdded = roomMap[roomId].currentBookings.some(
+            (b: any) => b.bookingId.toString() === booking._id.toString()
+          );
+
+          // If not added, push the booking to the currentBookings array
+          if (!isBookingAlreadyAdded) {
+            roomMap[roomId].currentBookings.push({
+              bookingId: booking._id,
+              clientId: booking.client.clientId,
+              clientName: booking.client.clientName,
+              fromDate: booking.fromDate,
+              toDate: booking.toDate,
+              dogs: booking.dogs,
+              totalAmount: booking.totalAmount,
+              flag1: booking.flag1,
+              flag2: booking.flag2,
+            });
+          }
         }
       });
     });
+
     let result = Object.values(roomMap);
     if (filter === "full") {
       result = result.filter((room: any) => room.currentBookings.length > 0);
     } else if (filter === "empty") {
       result = result.filter((room: any) => room.currentBookings.length === 0);
     }
+    const totalCapacity: any = rooms.length;
+    const roomsArray = Object.values(roomMap);
+
+    const roomsWithoutBookings = roomsArray.filter(
+      (room: any) => room.currentBookings.length === 0
+    );
+
+    const freeCapacityPercentage =
+      (roomsWithoutBookings.length / totalCapacity) * 100;
+    // Calculate free capacity percentage
 
     // Step 6: Implement pagination
     const paginatedResult = result.slice(skipItems, skipItems + itemsPerPage);
@@ -505,6 +544,7 @@ export async function getAllRoomsAndBookings({
     return {
       allRooms: paginatedResult,
       isNext: hasNextPage,
+      freeCapacityPercentage: freeCapacityPercentage.toFixed(2),
     };
   } catch (error) {
     console.error("Error finding bookings within date range:", error);
@@ -744,5 +784,105 @@ export async function updateTnt({
     throw error;
   } finally {
     session.endSession();
+  }
+}
+export async function getAllAvailableRooms({
+  rangeDate,
+}: {
+  rangeDate: DateRange;
+}) {
+  try {
+    connectToDatabase();
+
+    const matchBookings = {
+      $or: [
+        {
+          $and: [
+            { fromDate: { $lte: rangeDate.to } },
+            { toDate: { $gte: rangeDate.to } },
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $lte: rangeDate.from } },
+            { toDate: { $gte: rangeDate.from } },
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $gte: rangeDate.from } },
+            { toDate: { $lte: rangeDate.to } },
+          ],
+        },
+      ],
+    };
+
+    const rooms = await Room.find({}, {}, { sort: { name: -1 } });
+    const bookings = await Booking.find(
+      matchBookings,
+      {},
+      { sort: { fromDate: 1 } }
+    );
+
+    const roomMap = rooms.reduce((map, room) => {
+      map[room._id.toString()] = {
+        name: room.name,
+        _id: room._id,
+        currentBookings: [],
+      };
+      return map;
+    }, {});
+    bookings.forEach((booking) => {
+      booking.dogs.forEach((dog: any) => {
+        const roomId = dog.roomId.toString();
+        if (roomMap[roomId]) {
+          // Check if the booking is already added to the room's currentBookings
+          const isBookingAlreadyAdded = roomMap[roomId].currentBookings.some(
+            (b: any) => b.bookingId.toString() === booking._id.toString()
+          );
+
+          // If not added, push the booking to the currentBookings array
+          if (!isBookingAlreadyAdded) {
+            roomMap[roomId].currentBookings.push({
+              bookingId: booking._id,
+              clientId: booking.client.clientId,
+              clientName: booking.client.clientName,
+              fromDate: booking.fromDate,
+              toDate: booking.toDate,
+              dogs: booking.dogs,
+              totalAmount: booking.totalAmount,
+              flag1: booking.flag1,
+              flag2: booking.flag2,
+            });
+          }
+        }
+      });
+    });
+
+    const emptyRooms = Object.values(roomMap).filter(
+      (room: any) => room.currentBookings.length === 0
+    );
+
+    const totalCapacity: any = rooms.length;
+    const roomsArray = Object.values(roomMap);
+
+    const roomsWithoutBookings = roomsArray.filter(
+      (room: any) => room.currentBookings.length === 0
+    );
+
+    const freeCapacityPercentage =
+      (roomsWithoutBookings.length / totalCapacity) * 100;
+    // Calculate free capacity percentage
+
+    // Step 6: Implement pagination
+
+    return {
+      emptyRooms: JSON.parse(JSON.stringify(emptyRooms)),
+
+      freeCapacityPercentage: freeCapacityPercentage.toFixed(2),
+    };
+  } catch (error) {
+    console.error("Error finding bookings within date range:", error);
+    throw error;
   }
 }

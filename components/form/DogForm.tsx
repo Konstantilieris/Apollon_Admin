@@ -34,10 +34,11 @@ const DogForm = ({
         breed: "",
         behavior: "",
         microchip: "",
+        sterilized: false,
       })),
     },
   });
-  console.log(behaviors);
+
   const renderDogFields = () => {
     const dogFields = [];
     for (let i = 0; i < number; i++) {

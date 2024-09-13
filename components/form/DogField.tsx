@@ -1,7 +1,7 @@
 import React from "react";
 import { FormControl } from "../ui/form";
 
-import { TypesOfGender } from "@/constants";
+import { TypesOfGender, TypesOfSterilized } from "@/constants";
 
 import CustomFormField, { FormFieldType } from "./CustomFormField";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
@@ -116,6 +116,33 @@ const DogField = ({ form, index, breeds, behaviors, foods }: any) => {
         control={form.control}
         name={`${namePrefix}.birthdate`}
         label="Ημ.Γέννησης"
+      />
+      <CustomFormField
+        fieldType={FormFieldType.SKELETON}
+        control={form.control}
+        name={`${namePrefix}.sterilized`}
+        label="Στειρωμένο"
+        renderSkeleton={(field) => (
+          <FormControl>
+            <RadioGroup
+              className="flex h-11 gap-6 xl:justify-between"
+              defaultValue={"Όχι"}
+              onValueChange={(value) => field.onChange(value === "Ναί")}
+            >
+              {TypesOfSterilized.map((option: any, i: number) => (
+                <div key={option + i} className="radio-group">
+                  <RadioGroupItem value={option} id={option} />
+                  <Label
+                    htmlFor={option}
+                    className="cursor-pointer text-dark-300 dark:text-light-700"
+                  >
+                    {option}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </FormControl>
+        )}
       />
       <CustomFormField
         fieldType={FormFieldType.INPUT}
