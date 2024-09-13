@@ -90,6 +90,7 @@ const BookingBox = ({ client }: any) => {
           )}
         </Button>
       </div>
+
       {open && (
         <BookingSuggestion
           rangeDate={rangeDate}

@@ -1,17 +1,10 @@
 "use client";
-import { cn, intToDate2, removeKeysFromQuery } from "@/lib/utils";
+import { cn, removeKeysFromQuery } from "@/lib/utils";
 import React, { Suspense, useEffect, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import DogButton from "./DogButton";
 
-import { ExpandableCard } from "../shared/cards/OccupiedBed";
-import PendingBed from "../shared/cards/PendingBed";
-import dynamic from "next/dynamic";
 import CardSkeleton from "../shared/skeletons/CardSkeleton";
-const DynamicModal = dynamic(() => import("./CreateBookingModal"), {
-  ssr: false,
-});
 
 interface BedProps {
   isDog: any;
@@ -49,7 +42,7 @@ const Bed = ({
 }: BedProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+
   const [bed, setBed] = useState<BedType>({
     name,
     occupied: false,
@@ -68,29 +61,9 @@ const Bed = ({
       occupied: isDog,
     }));
   }, [searchParams.get("fr"), searchParams.get("to")]);
-  const handleDeleteDogFromBed = () => {
-    if (!bed.pending) return;
-    const newUrl = removeKeysFromQuery({
-      params: searchParams.toString(),
-      keysToRemove: [bed.pending.dogId],
-    });
-    router.push(newUrl, { scroll: false });
-    setBed({
-      ...bed,
-      pending: null,
-    });
-  };
 
   return (
     <Suspense fallback={<CardSkeleton />}>
-      {open && bed.pending && (
-        <DynamicModal
-          client={client}
-          setOpen={setOpen}
-          isOpen={open}
-          dogs={clientDogs}
-        />
-      )}
       <div
         className={cn(
           "flex h-32 w-full max-w-[230px] relative flex-col items-center justify-center text-start font-sans text-white bg-slate-500",
@@ -98,37 +71,7 @@ const Bed = ({
           { "bg-indigo-400 dark:bg-indigo-700": bed?.pending }
         )}
       >
-        {bed.occupied ? (
-          <ExpandableCard data={JSON.parse(JSON.stringify(bed.occupied))} />
-        ) : bed.pending ? (
-          <PendingBed
-            pending={bed.pending}
-            onDelete={handleDeleteDogFromBed}
-            clientName={client.clientName}
-            fromDate={intToDate2(+searchParams.get("fr")!)}
-            toDate={intToDate2(+searchParams.get("to")!)}
-            setOpen={setOpen}
-            clientId={client.clientId}
-          />
-        ) : (
-          <div>
-            {clientDogs.map((dog: any) =>
-              searchParams.has(dog._id) ? (
-                <></>
-              ) : (
-                <DogButton
-                  key={dog._id}
-                  dog={dog}
-                  bedName={name}
-                  roomName={roomName}
-                  setBed={setBed}
-                  bed={bed}
-                  roomId={roomId}
-                />
-              )
-            )}
-          </div>
-        )}
+        hey
       </div>
     </Suspense>
   );
