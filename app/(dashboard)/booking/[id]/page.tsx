@@ -1,6 +1,5 @@
 import AppointmentDailyPlan from "@/components/booking/AppointmentDailyPlan";
 import BookingBox from "@/components/booking/BookingBox";
-import BookingSearchFilter from "@/components/clientProfile/Book/RoomResults/BookingSearchFilter";
 
 import Room from "@/components/shared/cards/Room";
 import Pagination from "@/components/shared/Pagination";
@@ -50,7 +49,6 @@ const EditChange = async ({ searchParams, params }: SearchParamsProps) => {
           <BookingBox client={client} searchParams={searchParams} />
         </header>
         <section className="recent-expenses text-dark400_light500 bg-light-700 font-sans dark:bg-dark-200">
-          <BookingSearchFilter />
           <div className="mb-20 flex w-full flex-col items-center justify-center gap-2 px-8 py-4">
             {rooms.map((room: any) => (
               <Room

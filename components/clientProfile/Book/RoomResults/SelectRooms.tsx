@@ -1,20 +1,8 @@
 "use client";
 import { getLastBookingOfClient } from "@/lib/actions/client.action";
 import { cn } from "@/lib/utils";
-import {
-  IconArrowRight,
-  IconCheck,
-  IconDog,
-  IconHomeFilled,
-} from "@tabler/icons-react";
+import { IconArrowRight, IconCheck, IconHomeFilled } from "@tabler/icons-react";
 import React, { useEffect } from "react";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { ClientProfileProps } from "@/types";
 import JoinView from "./TabRoomViews/JoinView";
@@ -42,7 +30,7 @@ const SelectRooms = ({
   setData,
   setRoomPreference,
 }: SelectRoomProps) => {
-  const [loading, setLoading] = React.useState(false);
+  const [, setLoading] = React.useState(false);
   const [quickSuggestion, setQuickSuggestion] = React.useState<any>();
 
   const [dogsInRooms, setDogsInRooms] = React.useState(

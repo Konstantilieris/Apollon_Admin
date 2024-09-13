@@ -1,25 +1,16 @@
+/* eslint-disable no-unused-vars */
 "use client";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  IconArrowRight,
-  IconDog,
-  IconDogBowl,
-  IconLoader,
-  IconQuestionMark,
-} from "@tabler/icons-react";
+
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { getAllAvailableRooms } from "@/lib/actions/booking.action";
-import { cn, getDayAndMonth } from "@/lib/utils";
+import { getDayAndMonth } from "@/lib/utils";
 import BookingSuggestionResult from "./BookingSuggestionResult";
 import SelectRooms from "./SelectRooms";
 import CreateBooking from "../CreateBooking/CreateBooking";
-interface dogInRoom {
-  dogId: string;
-  dogName: string;
-  roomId: string | null;
-  roomName: string | null;
-}
+import { IconLoader } from "@tabler/icons-react";
+
 const BookingSuggestion = ({
   client,
   rooms,
@@ -35,7 +26,7 @@ const BookingSuggestion = ({
   const [stages, setStages] = React.useState(0);
   const [availableRooms, setAvailableRooms] = React.useState<any>([]);
   const [isNext, setIsNext] = React.useState(false);
-  const [pageNumber, setPageNumber] = React.useState(1);
+
   const fromDate = getDayAndMonth(rangeDate.from);
   const toDate = getDayAndMonth(rangeDate.to);
   const [data, setData] = React.useState<any>();
