@@ -29,6 +29,7 @@ export interface IDog {
       };
     },
   ];
+  suspended?: boolean;
   likes?: [
     {
       clientId: Schema.Types.ObjectId;
@@ -36,6 +37,7 @@ export interface IDog {
     },
   ];
 }
+
 export interface IReference {
   client?: {
     clientId: Schema.Types.ObjectId;
@@ -79,6 +81,13 @@ export interface IClient {
   notes?: string;
   name: string;
   points?: number;
+  lastActivity?: Date;
+  tags?: string[];
+  status?: string;
+
+  totalSpent?: number;
+  servicePreferences?: string[];
+  loyaltyLevel?: string;
 }
 
 export const DogSchema = new Schema<IDog>({
@@ -121,6 +130,10 @@ export const DogSchema = new Schema<IDog>({
   },
 
   sterilized: {
+    type: Boolean,
+    default: false,
+  },
+  suspended: {
     type: Boolean,
     default: false,
   },
@@ -241,6 +254,45 @@ const ClientSchema = new Schema<IClient>({
     type: String,
     required: true,
   },
+  lastActivity: {
+    type: Date,
+  },
+  tags: {
+    type: [String], // e.g., ["vip", "high spender", "regular"]
+  },
+  status: {
+    type: String,
+    enum: ["active", "inactive", "suspended"],
+    default: "active",
+  },
+
+  totalSpent: { type: Number, default: 0 },
+  servicePreferences: {
+    type: [String], // e.g., ["grooming", "training"]
+  },
+  loyaltyLevel: {
+    type: String,
+    enum: ["bronze", "silver", "gold", "platinum"],
+    default: "bronze",
+  },
+});
+ClientSchema.pre("save", function (next) {
+  const client = this; // Accessing the client document
+
+  // Update loyalty level based on points
+  if (client.isModified("points")) {
+    if (client.points! >= 10000) {
+      client.loyaltyLevel = "platinum"; // Platinum level for 10000+ points
+    } else if (client.points! >= 5000) {
+      client.loyaltyLevel = "gold"; // Gold level for 5000+ points
+    } else if (client.points! >= 1000) {
+      client.loyaltyLevel = "silver"; // Silver level for 1000+ points
+    } else {
+      client.loyaltyLevel = "bronze"; // Bronze level for less than 1000 points
+    }
+  }
+
+  next(); // Move to the next middleware or save operation
 });
 const Client = models.Client || model<IClient>("Client", ClientSchema);
 

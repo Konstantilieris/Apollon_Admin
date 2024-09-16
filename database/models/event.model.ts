@@ -9,6 +9,7 @@ interface IEvent {
   EndTime: Date;
   isReadonly?: boolean;
   RecurrenceRule?: string;
+  booking?: boolean;
   Color?: string;
   Location?: string;
 }
@@ -38,6 +39,9 @@ const EventSchema = new mongoose.Schema<IEvent>({
   },
   Color: {
     type: String,
+  },
+  booking: {
+    type: Boolean,
   },
 
   RecurrenceRule: {

@@ -9,7 +9,7 @@ import { UpdateClientValidation } from "@/lib/validation";
 import * as z from "zod";
 
 import { SelectItem } from "@/components/ui/select";
-import { TypesOfProfessions, TypesOfResidence } from "@/constants";
+import { TypesOfResidence } from "@/constants";
 import CustomFormField, { FormFieldType } from "./CustomFormField";
 import { Button } from "../ui/moving-border";
 import { updateClient } from "@/lib/actions/client.action";
@@ -66,13 +66,14 @@ const UpdateClientForm = ({ client, professions }: any) => {
       });
     } finally {
       form.reset();
+      window.location.reload();
     }
   }
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="my-8 flex flex-col "
+        className="my-8 flex  flex-col"
       >
         <section className="space-y-6">
           <div className="mb-9 space-y-1">
@@ -179,7 +180,6 @@ const UpdateClientForm = ({ client, professions }: any) => {
             control={form.control}
             name="city"
             label="Πόλη"
-            placeholder="Αθήνα"
             iconSrc="/assets/icons/location.svg"
             iconAlt="location"
           />
@@ -188,7 +188,6 @@ const UpdateClientForm = ({ client, professions }: any) => {
             control={form.control}
             name="address"
             label="Διεύθυνση"
-            placeholder="Λεωφόρος Κηφισίας 123"
             iconSrc="/assets/icons/location.svg"
             iconAlt="location"
           />
@@ -197,7 +196,6 @@ const UpdateClientForm = ({ client, professions }: any) => {
             control={form.control}
             name="postalCode"
             label="Ταχυδρομικός Κώδικας"
-            placeholder="12345"
             iconSrc="/assets/icons/location.svg"
             iconAlt="location"
           />
@@ -222,7 +220,6 @@ const UpdateClientForm = ({ client, professions }: any) => {
             control={form.control}
             name="vetNumber"
             label="Τηλέφωνο Κτηνίατρου"
-            placeholder="2101234567"
           />
         </section>
 
@@ -231,6 +228,7 @@ const UpdateClientForm = ({ client, professions }: any) => {
             borderRadius="1.75rem"
             className="border-neutral-200 bg-white text-black hover:scale-105 dark:border-slate-800 dark:bg-slate-900 dark:text-white"
             onClick={() => form.handleSubmit(onSubmit)}
+            onKeyPressEnter={() => form.handleSubmit(onSubmit)}
           >
             ΑΠΟΘΗΚΕΥΣΗ
           </Button>

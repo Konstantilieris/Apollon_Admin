@@ -81,7 +81,7 @@ const DogEditView = ({
     <motion.div
       layoutId={`card-${active.name}-${id}`}
       ref={theRef}
-      className="no-scrollbar relative  flex h-full min-h-[80vh] w-full min-w-[50vw]  max-w-[500px] flex-col  overflow-auto border border-green-400 bg-white py-4 dark:bg-neutral-900 sm:rounded-3xl md:h-fit md:max-h-[90%]"
+      className="no-scrollbar relative  z-40 flex h-full min-h-[80vh] w-full  min-w-[50vw] max-w-[500px]  flex-col overflow-auto border border-green-400 bg-white py-4 dark:bg-neutral-900 sm:rounded-3xl md:h-fit md:max-h-[90%]"
     >
       <motion.div
         layoutId={`image-${active._id}-${id}`}

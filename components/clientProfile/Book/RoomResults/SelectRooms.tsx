@@ -2,10 +2,11 @@
 import { getLastBookingOfClient } from "@/lib/actions/client.action";
 import { cn } from "@/lib/utils";
 import { IconArrowRight, IconCheck, IconHomeFilled } from "@tabler/icons-react";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import { ClientProfileProps } from "@/types";
 import JoinView from "./TabRoomViews/JoinView";
+import { DateRange } from "react-day-picker";
 
 interface SelectRoomProps {
   client: ClientProfileProps;
@@ -15,10 +16,8 @@ interface SelectRoomProps {
     _id: string;
     currentBookings: any[];
   }[];
-  rangeDate: {
-    from: Date;
-    to: Date;
-  };
+  rangeDate: DateRange;
+
   setStages: (stages: number) => void;
   setData: (data: any) => void;
 }
@@ -112,15 +111,18 @@ const SelectRooms = ({
       setDogsInRooms(updatedDogsInRooms);
     }
   };
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
+    // Check if all dogs in dogsInRooms array have the same roomId
     setRoomPreference(
       dogsInRooms.every((dog) => dogsInRooms[0].roomId === dog.roomId)
         ? "Join"
         : "Separate"
     );
+
+    // Set the data to dogsInRooms and set the current stage to 1
     setData(dogsInRooms);
     setStages(1);
-  };
+  }, [dogsInRooms]);
   const renderQuickSuggestion = () => {
     if (!quickSuggestion) return null;
 
@@ -200,17 +202,8 @@ const SelectRooms = ({
           availableRooms={availableRooms}
           handleSelectRoom={handleSelectRoom}
           dogsInRooms={dogsInRooms}
+          handleSubmit={handleSubmit}
         />
-
-        <div className="mt-4 flex w-full flex-row justify-end">
-          <button
-            className="duration-400 rounded-lg border border-black bg-transparent px-6 py-2 font-bold text-black shadow-[0_0_0_3px_#000000_inset] transition hover:-translate-y-1 dark:border-white dark:text-white"
-            disabled={dogsInRooms.every((dog) => !dog.roomId)}
-            onClick={handleSubmit}
-          >
-            ΚΑΤΑΧΩΡΗΣΗ
-          </button>
-        </div>
       </section>
     </section>
   );

@@ -130,19 +130,18 @@ const Scheduler: React.FC<{ appointments: any }> = memo(({ appointments }) => {
   const onActionComplete = async (args: any) => {
     if (args.requestType === "eventCreated") {
       await createEvent({ event: args.addedRecords[0] });
-      window.location.reload();
     } else if (args.requestType === "eventChanged") {
       await updateEvent({ event: args.changedRecords[0] });
-      window.location.reload();
     } else if (args.requestType === "eventRemoved") {
       await deleteEvent({ event: args.deletedRecords[0] });
-      window.location.reload();
     }
   };
+  const today = new Date();
+  const todayDayOfWeek = today.getDay();
 
   return (
     <ScheduleComponent
-      className=" w-full rounded-lg"
+      className=" z-40 w-full rounded-lg"
       height={"10%"}
       width={"100%"}
       startHour="07:00"
@@ -160,7 +159,7 @@ const Scheduler: React.FC<{ appointments: any }> = memo(({ appointments }) => {
     >
       <ViewsDirective>
         <ViewDirective option="Day" />
-        <ViewDirective option="Week" />
+        <ViewDirective option="Week" firstDayOfWeek={todayDayOfWeek} />
         <ViewDirective option="Month" />
         <ViewDirective option="TimelineMonth" />
       </ViewsDirective>

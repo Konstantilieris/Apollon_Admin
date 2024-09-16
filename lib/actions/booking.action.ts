@@ -27,191 +27,308 @@ interface ICreateBooking {
   client: {
     clientId: string;
     clientName: string;
-    transportFee?: number;
-    bookingFee?: number;
+    transportFee: number;
+    bookingFee: number;
     phone: string;
     location: string;
   };
 
-  fromDate: Date;
-  toDate: Date;
-  totalprice: Number | undefined;
+  rangeDate: DateRange;
+  boardingPrice: number;
+  transportationPrice: number;
   path: string;
-  bookingData: any;
-  flag1: boolean;
-  flag2: boolean;
+  dogsData: any;
+  flag1: Boolean;
+  flag2: Boolean;
   roomPreference: string;
 }
 
 export async function createBooking({
-  fromDate,
-  toDate,
+  rangeDate,
   client,
-  totalprice,
+  boardingPrice,
+  transportationPrice,
   path,
   flag1,
   flag2,
-  bookingData,
+  dogsData,
   roomPreference,
 }: ICreateBooking) {
-  const session = await mongoose.startSession();
+  if (!rangeDate.from || !rangeDate.to) {
+    throw new Error("Invalid date range");
+  }
 
-  try {
-    connectToDatabase();
-    session.startTransaction();
-    await Client.findByIdAndUpdate(
-      client.clientId,
-      { $set: { roomPreference } },
-      { session }
-    );
-    const booking = await Booking.create(
-      [
+  const maxRetries = 5; // Increase retries to give more chances for success
+  let attempt = 0;
+
+  while (attempt < maxRetries) {
+    const session = await mongoose.startSession(); // Create a new session for each attempt
+
+    try {
+      await connectToDatabase();
+      session.startTransaction();
+
+      console.log("Attempt:", attempt + 1);
+      console.log("Updating client room preference...");
+
+      // Update client's room preference
+      await Client.findByIdAndUpdate(
+        client.clientId,
+        { $set: { roomPreference } },
+        { session }
+      );
+
+      console.log("Client room preference updated.");
+
+      // Create the booking
+      console.log("Creating booking...");
+      const booking = await Booking.create(
+        [
+          {
+            client,
+            fromDate: rangeDate.from,
+            toDate: rangeDate.to,
+            totalAmount: 0, // Will be updated based on services
+            flag1,
+            flag2,
+            dogs: dogsData, // Dogs data
+          },
+        ],
+        { session }
+      );
+
+      console.log("Booking created:", booking);
+
+      const bookingId = booking[0]._id;
+
+      // Create boarding service
+      console.log("Creating boarding service...");
+      const boardingService: any = await Service.create(
+        [
+          {
+            serviceType: "ΔΙΑΜΟΝΗ", // Boarding service
+            amount: boardingPrice, // Boarding price
+            clientId: client.clientId,
+            bookingId,
+            date: rangeDate.from,
+          },
+        ],
+
+        { session }
+      );
+      await Client.findByIdAndUpdate(
+        client.clientId,
         {
-          client,
-          fromDate,
-          toDate,
-          totalAmount: totalprice,
-          flag1,
-          flag2,
-          dogs: bookingData,
+          $push: { owes: boardingService._id },
         },
-      ],
-      { session }
-    );
+        { session }
+      );
 
-    const service = await Service.create(
-      [
+      console.log("Boarding service created:", boardingService);
+
+      // Create transportation services if flag1 or flag2 are true
+      const transportationServices = [];
+      if (flag1) {
+        console.log("Creating pick-up transportation service...");
+        const pickUpService: any = await Service.create(
+          [
+            {
+              serviceType: "Pet Taxi (Pick-Up)",
+              amount: transportationPrice, // Transportation price for pick-up
+              clientId: client.clientId,
+              bookingId,
+              date: rangeDate.from,
+            },
+          ],
+
+          { session }
+        );
+        await Client.findByIdAndUpdate(
+          client.clientId,
+          {
+            $push: { owes: pickUpService._id },
+          },
+          { session }
+        );
+        transportationServices.push(pickUpService._id);
+      }
+
+      if (flag2) {
+        console.log("Creating drop-off transportation service...");
+        const dropOffService: any = await Service.create(
+          [
+            {
+              serviceType: "Pet Taxi (Drop-Off)",
+              amount: transportationPrice, // Transportation price for drop-off
+              clientId: client.clientId,
+              bookingId,
+              date: rangeDate.to,
+            },
+          ],
+
+          { session }
+        );
+        await Client.findByIdAndUpdate(
+          client.clientId,
+          {
+            $push: { owes: dropOffService._id },
+          },
+          { session }
+        );
+        transportationServices.push(dropOffService._id);
+
+        console.log("Drop-off service created:", dropOffService);
+      }
+
+      // Push services to the booking's services array
+      console.log("Updating booking with services...");
+      await Booking.findByIdAndUpdate(
+        bookingId,
         {
-          serviceType: "ΔΙΑΜΟΝΗ",
-          amount: totalprice,
-          clientId: client.clientId,
-          bookingId: booking[0]._id, // Note that `booking` is an array
-          date: fromDate,
+          $push: {
+            services: [
+              boardingService[0]._id,
+              ...transportationServices.map((svc) => svc),
+            ],
+          },
         },
-      ],
-      { session }
-    );
+        { session }
+      );
 
-    const updatedClient = await Client.findOneAndUpdate(
-      { _id: booking[0].client.clientId },
-      { $push: { owes: service[0]._id } },
-      { new: true, session }
-    );
+      console.log("Booking updated with services.");
 
-    if (!updatedClient) {
-      throw new Error("Client not found");
+      // Update the client's owes field with these services
+
+      console.log("Boarding service added to client's owes.");
+
+      // Add transportation services one by one
+
+      // Prepare the location and description for the appointments
+      console.log("Fetching updated client information...");
+      const updatedClient = await Client.findById(client.clientId);
+      if (!updatedClient) throw new Error("Client not found");
+
+      console.log("Updated client:", updatedClient);
+
+      const location = `${updatedClient.location.city ?? ""}-${
+        updatedClient.location.residence ?? ""
+      }-${updatedClient.location.address ?? ""}-${
+        updatedClient.location.postalCode ?? ""
+      }`;
+
+      const description = `${updatedClient.name}-${
+        updatedClient.phone.mobile ?? ""
+      } ${dogsData.map(({ dogName }: any) => dogName).join(", ")}`;
+
+      // Create appointments based on flags
+      if (flag1) {
+        console.log("Creating pick-up appointment...");
+        await Appointment.create(
+          [
+            {
+              Id: bookingId,
+              Subject: `${updatedClient.name} - ΠΑΡΑΛΑΒΗ`, // Pick-up appointment
+              Type: "Taxi_PickUp",
+              Description: description,
+              isReadonly: true,
+              Location: location,
+              Color: "#7f1d1d",
+              StartTime: rangeDate.from,
+              EndTime: rangeDate.from,
+            },
+          ],
+          { session }
+        );
+        console.log("Pick-up appointment created.");
+      } else {
+        console.log("Creating arrival appointment...");
+        await Appointment.create(
+          [
+            {
+              Id: bookingId,
+              Subject: `${updatedClient.name} - ΑΦΙΞΗ`, // Arrival appointment
+              Type: "Arrival",
+              isReadonly: true,
+              Location: location,
+              Color: "#1e3a8a",
+              Description: description,
+              StartTime: rangeDate.from,
+              EndTime: rangeDate.from,
+            },
+          ],
+          { session }
+        );
+        console.log("Arrival appointment created.");
+      }
+
+      if (flag2) {
+        console.log("Creating drop-off appointment...");
+        await Appointment.create(
+          [
+            {
+              Id: bookingId,
+              Subject: `${updatedClient.name} - ΠΑΡΑΔΟΣΗ`, // Drop-off appointment
+              Type: "Taxi_Delivery",
+              Description: description,
+              Location: location,
+              isReadonly: true,
+              Color: "#7f1d1d",
+              StartTime: rangeDate.to,
+              EndTime: rangeDate.to,
+            },
+          ],
+          { session }
+        );
+        console.log("Drop-off appointment created.");
+      } else {
+        console.log("Creating departure appointment...");
+        await Appointment.create(
+          [
+            {
+              Id: bookingId,
+              Subject: `${updatedClient.name} - ΑΝΑΧΩΡΗΣΗ`, // Departure appointment
+              Type: "Departure",
+              Location: location,
+              isReadonly: true,
+              Color: "#1e3a8a",
+              Description: description,
+              StartTime: rangeDate.to,
+              EndTime: rangeDate.to,
+            },
+          ],
+          { session }
+        );
+        console.log("Departure appointment created.");
+      }
+
+      await session.commitTransaction();
+      console.log("Transaction committed successfully.");
+      session.endSession();
+
+      // Revalidate paths
+      console.log("Revalidating paths...");
+      revalidatePath("/calendar");
+      revalidatePath(path);
+
+      return JSON.stringify(booking[0]);
+    } catch (error: any) {
+      await session.abortTransaction();
+      session.endSession();
+      attempt++;
+
+      // Add a delay between retries to avoid immediate conflict
+      await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
+
+      console.log(`Attempt ${attempt} failed:`, error);
+
+      if (attempt >= maxRetries) {
+        throw new Error(
+          `Failed to create booking after ${maxRetries} attempts: ${error.message}`
+        );
+      }
+    } finally {
+      session.endSession(); // Make sure the session is always ended
     }
-    const location = `${
-      updatedClient.location.city ? updatedClient.location.city : ""
-    }-${
-      updatedClient.location.residence ? updatedClient.location.residence : ""
-    }-${updatedClient.location.address ? updatedClient.location.address : ""}-${
-      updatedClient.location.postalCode ? updatedClient.location.postalCode : ""
-    }`;
-    const description = `${updatedClient.name}-${
-      updatedClient.phone.mobile ? updatedClient.phone.mobile : ""
-    } 
-    ${bookingData.map(({ dogName }: any) => `${dogName}`).join(", ")}`;
-
-    if (flag1) {
-      const pickUpAppointment = await Appointment.create(
-        [
-          {
-            Id: booking[0]._id,
-            Subject: `${updatedClient.name} - ΠΑΡΑΛΑΒΗ`,
-            Type: "Taxi_PickUp",
-            Description: description,
-            isReadonly: true,
-            Location: location,
-            Color: "#7f1d1d",
-            StartTime: fromDate,
-            EndTime: fromDate,
-          },
-        ],
-        { session }
-      );
-
-      if (!pickUpAppointment) {
-        throw new Error("Failed to create pick up appointment");
-      }
-    } else {
-      const arrivalAppointment = await Appointment.create(
-        [
-          {
-            Id: booking[0]._id,
-            Subject: `${updatedClient.name} - ΑΦΙΞΗ`,
-            Type: "Arrival",
-            isReadonly: true,
-            Location: location,
-            Color: "#1e3a8a",
-            Description: description,
-            StartTime: fromDate,
-            EndTime: fromDate,
-          },
-        ],
-        { session }
-      );
-
-      if (!arrivalAppointment) {
-        throw new Error("Failed to create arrival appointment");
-      }
-    }
-
-    if (flag2) {
-      const deliveryAppointment = await Appointment.create(
-        [
-          {
-            Id: booking[0]._id,
-            Subject: `${updatedClient.name} - ΠΑΡΑΔΟΣΗ`,
-            Type: "Τaxi_Delivery",
-            Description: description,
-            Location: location,
-            isReadonly: true,
-            Color: "#7f1d1d",
-            StartTime: toDate,
-            EndTime: toDate,
-          },
-        ],
-        { session }
-      );
-
-      if (!deliveryAppointment) {
-        throw new Error("Failed to create delivery appointment");
-      }
-    } else {
-      const departureAppointment = await Appointment.create(
-        [
-          {
-            Id: booking[0]._id,
-            Subject: `${updatedClient.name} - ΑΝΑΧΩΡΗΣΗ`,
-            Description: description,
-            Type: "Departure",
-            Location: location,
-            isReadonly: true,
-            Color: "#1e3a8a",
-            StartTime: toDate,
-            EndTime: toDate,
-          },
-        ],
-        { session }
-      );
-
-      if (!departureAppointment) {
-        throw new Error("Failed to create departure appointment");
-      }
-    }
-
-    await session.commitTransaction();
-    session.endSession();
-    revalidatePath("/calendar");
-
-    revalidatePath(path);
-    return JSON.stringify(booking[0]);
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    console.log("Failed to create booking", error);
-    throw error;
   }
 }
 
@@ -632,18 +749,29 @@ export async function deleteBooking({
     connectToDatabase();
     session.startTransaction();
     const deletedBooking = await Booking.findByIdAndDelete(id, { session });
-    const deletedService = await Service.findOneAndDelete(
-      { bookingId: id },
+    const servicesToDelete = await Service.find(
+      {
+        bookingId: id,
+        paid: false, // Only select unpaid services
+      },
+      { _id: 1 } // Only retrieve the `_id` field
+    ).session(session);
+    const deletedServices = await Service.deleteMany(
+      {
+        bookingId: id,
+        paid: false, // Only delete unpaid services
+      },
       { session }
     );
+    const serviceIds = servicesToDelete.map((service: any) => service._id);
     const updatedClient = await Client.findOneAndUpdate(
       { _id: clientId },
       {
-        $pull: { owes: deletedService._id },
+        $pull: { owes: { $in: serviceIds } }, // Remove service IDs from 'owes' array
       },
       { new: true, session }
     );
-    if (!deletedBooking || !deletedService || !updatedClient) {
+    if (!deletedBooking || !deletedServices || !updatedClient) {
       throw new Error("Failed to delete booking");
     }
 
@@ -874,7 +1002,7 @@ export async function getAllAvailableRooms({
       (roomsWithoutBookings.length / totalCapacity) * 100;
     // Calculate free capacity percentage
 
-    // Step 6: Implement pagination
+    // Step 6: Implement de
 
     return {
       emptyRooms: JSON.parse(JSON.stringify(emptyRooms)),

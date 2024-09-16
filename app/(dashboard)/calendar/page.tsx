@@ -9,7 +9,7 @@ const Page = async () => {
   const events = await getAllEvents();
 
   return (
-    <section className="  h-full  w-full p-1">
+    <section className="   h-full w-full p-1">
       <Suspense
         fallback={<LoadingSkeleton size={24} animation="animate-pulse" />}
       >

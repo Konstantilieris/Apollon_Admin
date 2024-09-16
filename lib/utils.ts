@@ -7,7 +7,7 @@ import moment from "moment-timezone";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-export function sanitizeQuery(query: string | undefined): string {
+export function sanitizeQuery(query: string | undefined | null): string {
   if (query === "" || !query) return "";
   if (typeof query !== "string") {
     throw new Error("Invalid query type");

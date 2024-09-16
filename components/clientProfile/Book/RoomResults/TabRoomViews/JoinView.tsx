@@ -1,13 +1,7 @@
 import React from "react";
 
-import { TabsContent } from "@/components/ui/tabs";
 import PaginatingRooms from "../PaginatingRooms";
-import {
-  IconArrowRight,
-  IconCheck,
-  IconDog,
-  IconUsersGroup,
-} from "@tabler/icons-react";
+import { IconArrowRight, IconUsersGroup } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { ClientProfileProps } from "@/types";
 import { SeparateDogTooltip } from "./SeparateDogTooltip";
@@ -16,7 +10,7 @@ interface JoinViewProps {
   client: ClientProfileProps;
 
   handleSelectRoom: Function;
-
+  handleSubmit: Function;
   dogsInRooms: {
     dogId: string;
     dogName: string;
@@ -32,7 +26,7 @@ interface JoinViewProps {
 
 const JoinView = ({
   client,
-
+  handleSubmit,
   handleSelectRoom,
 
   dogsInRooms,
@@ -56,6 +50,7 @@ const JoinView = ({
       setCurrentPage(currentPage - 1);
     }
   };
+  console.log("dogsInRooms", dogsInRooms);
 
   return (
     <div className="min-h-[50vh] px-4 py-2 font-sans">
@@ -86,7 +81,7 @@ const JoinView = ({
           {roomsToDisplay.map((room: any) => (
             <div
               key={room._id}
-              className="flex min-h-[5vh] max-h-[6vh] min-w-[30vw] cursor-pointer flex-row items-center justify-between gap-2 self-center rounded-lg bg-neutral-900 p-4 px-12 text-sm text-gray-700 hover:scale-110 dark:text-gray-300"
+              className="flex max-h-[6vh] min-h-[5vh] min-w-[30vw] cursor-pointer flex-row items-center justify-between gap-2 self-center rounded-lg bg-neutral-900 p-4 px-12 text-sm text-gray-700 hover:scale-110 dark:text-gray-300"
             >
               <span className=" min-w-[3.2vw]  text-lg">{room.name}</span>
               <span className=" flex  min-w-[4vw] flex-row items-center gap-2">
@@ -111,12 +106,21 @@ const JoinView = ({
               />
             </div>
           ))}
-          <PaginatingRooms
-            handleNextPage={handleNextPage}
-            handlePreviousPage={handlePreviousPage}
-            currentPage={currentPage + 1}
-            totalPages={totalPages}
-          />
+          <div className="ml-4 flex flex-col items-center gap-4">
+            <PaginatingRooms
+              handleNextPage={handleNextPage}
+              handlePreviousPage={handlePreviousPage}
+              currentPage={currentPage + 1}
+              totalPages={totalPages}
+            />
+            <button
+              className=" rounded-lg border border-black bg-transparent px-6 py-2 font-bold text-black shadow-[0_0_0_3px_#000000_inset] transition duration-200 hover:-translate-y-1 dark:border-white dark:text-yellow-500"
+              disabled={dogsInRooms.every((dog) => !dog.roomId)}
+              onClick={() => handleSubmit()}
+            >
+              ΚΑΤΑΧΩΡΗΣΗ
+            </button>
+          </div>
         </div>
       </div>
     </div>

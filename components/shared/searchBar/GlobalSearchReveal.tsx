@@ -1,78 +1,146 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import GlobalSearch from "./GlobalSearch";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
+import { cn, formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { IconSearch } from "@tabler/icons-react";
 
-import { IconEyeSearch } from "@tabler/icons-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import GlobalResult from "./GlobalResult";
+import { useOutsideClick } from "@/hooks/use-outside-click";
 
 export const FloatingSearch = ({ className }: { className?: string }) => {
-  const [visible, setVisible] = useState(false);
-  const [iconReveal, setIconReveal] = useState(false);
+  const controlSearch = useAnimation();
+  const ref = React.useRef(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState("");
+  const controlResult = useAnimation();
+  const [stage, setStage] = useState(false);
   useEffect(() => {
-    const handlePointerMove = (event: PointerEvent) => {
-      if (event.clientY < 50) {
-        // Check if pointer is within 50px from the top
-        setIconReveal(true);
-      } else {
-        setIconReveal(false);
+    const handleMouseMove = (event: MouseEvent) => {
+      const topThreshold = 25; // Top area in px
+      const centerThreshold = window.innerWidth / 10; // Define "center"
+
+      // Check if cursor is within top 100px and horizontally centered
+      const isInTopCenter =
+        event.clientY <= topThreshold &&
+        event.clientX >= window.innerWidth / 2 - centerThreshold &&
+        event.clientX <= window.innerWidth / 2 + centerThreshold;
+
+      if (isInTopCenter) {
+        controlSearch.start("visible");
       }
     };
 
-    window.addEventListener("pointermove", handlePointerMove);
+    // Add event listener
+    window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
+      // Clean up event listener
+      window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, []);
+  }, [controlSearch]);
 
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchTerm) {
+        const newUrl = formUrlQuery({
+          params: searchParams.toString(),
+          key: "global",
+          value: searchTerm,
+        });
+        router.push(newUrl, { scroll: false });
+      }
+    }, 300);
+    if (searchTerm === "") {
+      const newUrl = removeKeysFromQuery({
+        params: searchParams.toString(),
+        keysToRemove: ["global"],
+      });
+      router.push(newUrl, { scroll: false });
+    }
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, searchParams, pathname, router]);
+  useOutsideClick(ref, () => {
+    if (!stage) {
+      controlSearch.start("hidden");
+    }
+  });
   return (
     <>
       <AnimatePresence mode="wait">
-        {visible && (
-          <motion.div
-            onDoubleClick={() => setVisible(false)}
-            initial={{
+        <motion.div
+          variants={{
+            visible: {
               opacity: 1,
-              y: 40,
-            }}
-            animate={{
-              y: visible ? -30 : 40,
-              opacity: visible ? 1 : 0,
-            }}
-            transition={{
-              duration: 0.8,
-              ease: "easeInOut",
-            }}
-            className={cn(
-              "flex max-w-fit  fixed top-10 inset-x-0 mx-auto  z-50",
-              className
-            )}
+              position: "fixed",
+              top: 2,
+              left: "40%",
+            },
+            hidden: {
+              opacity: 0,
+              position: "absolute",
+              top: 1,
+              left: -400,
+            },
+          }}
+          initial="hidden"
+          animate={controlSearch}
+          transition={{ duration: 0.5, ease: "easeInOut", type: "spring" }}
+          className={cn(" z-50  py-2   px-4 ", className)}
+        >
+          <motion.div
+            ref={ref}
+            className=" flex min-w-[16vw] max-w-[35vw] items-center gap-1 rounded-xl border border-white bg-light-700 px-8 py-2 dark:bg-neutral-950"
           >
-            <GlobalSearch />
+            <IconSearch className="h-5 w-5 text-dark-100 dark:text-light-800" />
+            <Input
+              type="text"
+              placeholder="Αναζήτηση"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                !stage && setStage(true);
+                controlResult.start("visible");
+              }}
+              className="paragraph-regular no-focus border-none bg-transparent shadow-none outline-none placeholder:text-light-800 dark:text-light-900"
+            />
+          </motion.div>
+        </motion.div>
+        {stage && (
+          <motion.div
+            variants={{
+              visible: {
+                opacity: 1,
+                position: "fixed",
+                top: "6%",
+                left: "20%",
+              },
+              hidden: {
+                opacity: 0,
+                position: "absolute",
+                top: 1,
+                left: -400,
+              },
+            }}
+            initial="hidden"
+            animate={controlResult}
+            transition={{ duration: 0.5, ease: "easeInOut", type: "spring" }}
+            className={cn(" z-50  py-2   px-4 ", className)}
+          >
+            <GlobalResult
+              control={controlResult}
+              setStage={setStage}
+              controlSearch={controlSearch}
+              searchRef={ref}
+            />
           </motion.div>
         )}
       </AnimatePresence>
-      {!visible && iconReveal && (
-        <motion.div
-          initial={{ opacity: 0, y: -100 }}
-          animate={{ opacity: 1, y: -30 }}
-          transition={{ duration: 0.2 }}
-          className={cn(
-            "flex max-w-fit fixed top-10 inset-x-0 mx-auto z-[5000] items-center justify-center",
-            className
-          )}
-        >
-          <IconEyeSearch
-            size={35}
-            stroke={1.5}
-            className="cursor-pointer text-neutral-800  dark:text-yellow-500"
-            onClick={() => {
-              setVisible(true);
-            }}
-          />
-        </motion.div>
-      )}
     </>
   );
 };

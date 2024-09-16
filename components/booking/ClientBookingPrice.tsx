@@ -18,6 +18,7 @@ import { Input } from "../ui/input";
 import { useToast } from "../ui/use-toast";
 import { updateClientBookingFee } from "@/lib/actions/client.action";
 import { usePathname, useRouter } from "next/navigation";
+import { IconCalendar } from "@tabler/icons-react";
 interface Props {
   id: string;
   price: number | null;
@@ -70,13 +71,7 @@ const ClientBookingPrice = ({ id, price, name }: Props) => {
       >
         {price !== null ? (
           <span className="flex items-center gap-2 p-1 font-semibold text-dark-100 dark:text-green-300">
-            <Image
-              src={"/assets/icons/tag.svg"}
-              alt="client"
-              width={20}
-              height={20}
-              className="invert dark:invert-0"
-            />
+            <IconCalendar size={24} />
             <span className="font-normal text-light-700">Ημερήσιο </span>{" "}
             {price} €
           </span>
@@ -88,12 +83,7 @@ const ClientBookingPrice = ({ id, price, name }: Props) => {
         <AlertDialogHeader>
           <AlertDialogTitle className="flex w-full flex-row ">
             <span className="flex flex-1 items-center gap-2">
-              <Image
-                src={"/assets/icons/client.svg"}
-                alt="client"
-                width={20}
-                height={20}
-              />
+              <IconCalendar size={24} />
               {name}
             </span>
             {price !== null && (

@@ -5,21 +5,30 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { getAllAvailableRooms } from "@/lib/actions/booking.action";
-import { getDayAndMonth } from "@/lib/utils";
+
 import BookingSuggestionResult from "./BookingSuggestionResult";
 import SelectRooms from "./SelectRooms";
 import CreateBooking from "../CreateBooking/CreateBooking";
 import { IconLoader } from "@tabler/icons-react";
 
+import { DateRange } from "react-day-picker";
+interface BookingProps {
+  client: any;
+
+  rangeDate: DateRange;
+
+  taxiArrival: Boolean;
+  taxiDeparture: Boolean;
+  setOpen: (open: boolean) => void;
+}
 const BookingSuggestion = ({
   client,
-  rooms,
+
   rangeDate,
   taxiArrival,
   taxiDeparture,
   setOpen,
-  open,
-}: any) => {
+}: BookingProps) => {
   const [loading, setLoading] = React.useState(false);
   const [openSuggestion, setOpenSuggestion] = React.useState(false);
   const ref = useRef(null);
@@ -27,8 +36,6 @@ const BookingSuggestion = ({
   const [availableRooms, setAvailableRooms] = React.useState<any>([]);
   const [isNext, setIsNext] = React.useState(false);
 
-  const fromDate = getDayAndMonth(rangeDate.from);
-  const toDate = getDayAndMonth(rangeDate.to);
   const [data, setData] = React.useState<any>();
   const [roomPreference, setRoomPreference] = React.useState(
     client.roomPreference
@@ -70,11 +77,14 @@ const BookingSuggestion = ({
       document.body.style.overflow = "auto";
     }
   }, [openSuggestion]);
+  console.log(client);
   const clientData = {
     clientId: client._id,
     clientName: client.name,
-    phone: client.phone.mobile,
-    location: client.location.address + ", " + client.location.city,
+    phone: client.phone.mobile
+      ? client.phone.mobile
+      : client.phone.telephone || "",
+    location: client?.location?.address + ", " + client?.location?.city,
     transportFee: client.transportFee,
     bookingFee: client.bookingFee,
   };
@@ -123,6 +133,9 @@ const BookingSuggestion = ({
         ) : (
           <CreateBooking
             dogs={data}
+            rangeDate={rangeDate}
+            taxiArrival={taxiArrival}
+            taxiDeparture={taxiDeparture}
             client={clientData}
             roomPreference={roomPreference}
             setStage={setStages}

@@ -8,6 +8,7 @@ import Service from "@/database/models/service.model";
 import { sanitizeQuery } from "../utils";
 import mongoose from "mongoose";
 import Booking, { IBooking } from "@/database/models/booking.model";
+import { DateRange } from "react-day-picker";
 
 interface CreateClientProps {
   clientData: {
@@ -122,10 +123,7 @@ export async function getAllClientsByQuery(
 export async function getClientById(id: string | undefined) {
   try {
     connectToDatabase();
-    const client = await Client.findById(id).populate({
-      path: "owes",
-      model: "Service",
-    });
+    const client = await Client.findById(id);
     return client;
   } catch (error) {
     console.log(error);
@@ -384,24 +382,13 @@ export async function globalSearch({ query }: any) {
     const clients = await Client.find(
       {
         $or: [
-          {
-            name: {
-              $regex: new RegExp(`^${cleanQuery}`, "i"), // Prefix-based regex
-            },
-          },
-          {
-            profession: {
-              $regex: new RegExp(`^${cleanQuery}`, "i"), // Prefix-based regex
-            },
-          },
-          {
-            "dog.name": {
-              $regex: new RegExp(`^${cleanQuery}`, "i"), // Prefix-based regex
-            },
-          },
+          { name: { $regex: cleanQuery, $options: "i" } },
+          { profession: { $regex: cleanQuery, $options: "i" } },
+          { "dog.name": { $regex: cleanQuery, $options: "i" } },
         ],
       },
-      { name: 1, profession: 1, dog: 1 }
+      { name: 1, profession: 1, dog: 1 },
+      { sort: { name: 1, dog: 1, profession: 1 } }
     ).limit(5);
 
     return JSON.stringify(clients);
@@ -557,6 +544,7 @@ export async function getAllClients({
           },
         },
       },
+      { $sort: { name: 1, profession: 1, "dog.name": 1 } },
       { $skip: skip },
       { $limit: limit },
     ]);
@@ -781,7 +769,7 @@ export async function getLastBookingOfClient({
 }: {
   clientId: string;
 
-  rangeDate: { from: Date; to: Date };
+  rangeDate: DateRange;
 }) {
   try {
     connectToDatabase();
@@ -805,8 +793,8 @@ export async function getLastBookingOfClient({
     if (client.roomPreference === "Join") {
       const availability = await checkBookingInRangeWithRoomId(
         (lastBooking[0].dogs[0] as any).roomId,
-        rangeDate.from,
-        rangeDate.to
+        rangeDate.from!,
+        rangeDate.to!
       );
       rooms = {
         roomId: JSON.parse(
@@ -825,8 +813,8 @@ export async function getLastBookingOfClient({
           dogId: JSON.parse(JSON.stringify((dog as any).dogId)),
           availability: await checkBookingInRangeWithRoomId(
             (dog as any).roomId,
-            rangeDate.from,
-            rangeDate.to
+            rangeDate.from!,
+            rangeDate.to!
           ),
         };
 
@@ -837,6 +825,103 @@ export async function getLastBookingOfClient({
     return { type: client.roomPreference, rooms };
   } catch (error) {
     console.error("Error retrieving last booking of client:", error);
+    throw error;
+  }
+}
+export async function pushTagOnClient({
+  clientId,
+  tag,
+}: {
+  clientId: string;
+  tag: string;
+}) {
+  try {
+    connectToDatabase();
+    const client = await Client.findByIdAndUpdate(
+      clientId,
+      { $push: { tags: tag } },
+      { new: true }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+  } catch (error) {
+    console.error("Error pushing tag on client:", error);
+    throw error;
+  }
+}
+export async function getClientByIdForProfile(id: string | undefined) {
+  try {
+    await connectToDatabase();
+
+    const client = await Client.aggregate([
+      { $match: { _id: id ? new mongoose.Types.ObjectId(id) : null } },
+      {
+        $project: {
+          name: 1,
+
+          "phone.mobile": 1,
+          location: 1,
+          tags: 1,
+          lastActivity: 1,
+          points: 1,
+          loyalty: 1,
+          serviceFees: 1,
+          createdAt: 1,
+          status: 1,
+          loyaltyLevel: 1,
+          bookingFee: {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: "$serviceFees",
+                  as: "fee",
+                  cond: { $eq: ["$$fee.type", "bookingFee"] },
+                },
+              },
+              0,
+            ],
+          },
+          transportFee: {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: "$serviceFees",
+                  as: "fee",
+                  cond: { $eq: ["$$fee.type", "transportFee"] },
+                },
+              },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $addFields: {
+          dog: {
+            $filter: {
+              input: "$dog",
+              as: "dog",
+              cond: { $eq: ["$$dog.dead", false] },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          bookingFee: {
+            $ifNull: ["$bookingFee.value", null],
+          },
+          transportFee: {
+            $ifNull: ["$transportFee.value", null],
+          },
+        },
+      },
+    ]);
+
+    return client.length ? client[0] : null;
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 }

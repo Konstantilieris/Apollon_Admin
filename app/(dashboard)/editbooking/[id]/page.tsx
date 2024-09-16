@@ -1,7 +1,6 @@
 import DeleteBooking from "@/components/booking/DeleteBooking";
 import ChangeDates from "@/components/editbooking/ChangeDates";
 import UpdateTNT from "@/components/editbooking/ChangeTime";
-import { Cover } from "@/components/ui/cover";
 
 import { getBookingById } from "@/lib/actions/booking.action";
 import { formatDate, formatTime } from "@/lib/utils";
@@ -14,7 +13,7 @@ const EditChange = async ({ params }: any) => {
 
   return (
     <section className=" flex h-full w-full flex-col overflow-y-auto px-4 py-8 font-sans dark:bg-neutral-800 ">
-      <Cover className="flex flex-row items-center justify-between px-2">
+      <div className="flex flex-row items-center justify-between px-2">
         <span className="flex flex-row items-center gap-2 ">
           <Image
             src={"/assets/icons/client.svg"}
@@ -35,7 +34,7 @@ const EditChange = async ({ params }: any) => {
           />{" "}
           {booking?.dogs.map((dog: any) => dog.dogName).join(", ")}
         </span>
-      </Cover>
+      </div>
 
       <div className="my-8 flex flex-col">
         <div className="  mt-2 flex w-full flex-row flex-wrap justify-between gap-4 rounded-lg bg-neutral-200 px-4 py-5 font-semibold dark:bg-dark-100">

@@ -51,7 +51,7 @@ const LocalSearch = ({
         placeholder={placeholder}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="paragraph-regular no-focus text-dark400_light800 border-none bg-transparent font-sans shadow-none outline-none placeholder:text-yellow-500"
+        className="paragraph-regular no-focus text-dark400_light800  border-none bg-transparent font-sans shadow-none outline-none  placeholder:text-yellow-500"
       />
     </div>
   );

@@ -91,14 +91,13 @@ const BookingBox = ({ client }: any) => {
         </Button>
       </div>
 
-      {open && (
+      {open && rangeDate && (
         <BookingSuggestion
           rangeDate={rangeDate}
           taxiArrival={taxiArrival}
           client={client}
           taxiDeparture={taxiDeparture}
           setOpen={setOpen}
-          open={open}
         />
       )}
     </div>

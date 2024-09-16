@@ -1,17 +1,31 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import GlobalFilters from "./GlobalFilters";
 import { globalSearch } from "@/lib/actions/client.action";
+import { AnimationControls, motion } from "framer-motion";
 
-const GlobalResult = () => {
+import { useOutsideClick2 } from "@/hooks/use-outside-click2";
+
+interface Props {
+  control: AnimationControls;
+  setStage: (stage: boolean) => void;
+  controlSearch: AnimationControls;
+  searchRef: any;
+}
+const GlobalResult = ({
+  control,
+  setStage,
+  controlSearch,
+  searchRef,
+}: Props) => {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [client, setClient] = useState<any>([]);
-
+  const resultRef = useRef(null);
   const global = searchParams.get("global");
   const type = searchParams.get("type");
 
@@ -33,22 +47,30 @@ const GlobalResult = () => {
     }
   }, [global, type]);
 
-  const renderLink = (type: string, id: string) => {
+  const renderLink = (type: string | null, id: string) => {
     switch (type) {
       case "client":
         return `/clients/${id}`;
       case "booking":
-        return `/booking/${id}`;
+        return `/clients/${id}/book`;
       case "training":
         return `/training/${id}`;
 
       default:
-        return "/";
+        return `/clients/${id}`;
     }
   };
+  useOutsideClick2([resultRef, searchRef], () => {
+    control.start("hidden");
+    controlSearch.start("hidden");
+    setStage(false);
+  });
 
   return (
-    <div className="  fixed inset-x-[-20vw] top-12 z-50 mx-auto  mt-3 w-full min-w-[40vw] rounded-xl border border-light-700 bg-light-800 px-4 py-5 shadow-sm dark:bg-neutral-950">
+    <motion.div
+      className="z-50  mt-3 w-full min-w-[60vw] rounded-xl border border-light-700 bg-light-800 px-4 py-5 shadow-sm dark:bg-neutral-950"
+      ref={resultRef}
+    >
       <GlobalFilters />
       <div className="my-5 h-[1px] bg-light-700/50 dark:bg-dark-500/50" />
 
@@ -65,36 +87,52 @@ const GlobalResult = () => {
             </p>
           </div>
         ) : (
-          <div className="flex w-full flex-col gap-2">
+          <div className="flex w-full flex-col gap-6">
             {client.length > 0 ? (
               client.map((client: any, index: number) => (
-                <Link
+                <motion.div
                   key={index}
-                  className="flex flex-row items-center gap-2 px-2 hover:scale-105"
-                  href={renderLink(type || "client", client._id)}
+                  className=" px-6"
+                  whileHover={{ scale: 1.02 }}
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: { opacity: 1 },
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    delay: index * 0.1,
+                    ease: "easeInOut",
+                  }}
+                  initial="hidden"
+                  animate="visible"
                 >
-                  <Image
-                    src="/assets/icons/client.svg"
-                    alt="tags"
-                    width={28}
-                    height={24}
-                    className="mb-1 object-contain invert dark:invert-0"
-                  />
+                  <Link
+                    href={renderLink(type, client?._id)}
+                    className="flex w-full flex-row items-center gap-2"
+                  >
+                    <Image
+                      src="/assets/icons/client.svg"
+                      alt="tags"
+                      width={28}
+                      height={24}
+                      className="mb-1 object-contain invert dark:invert-0"
+                    />
 
-                  <div className="flex w-full flex-col">
-                    <p className="body-medium text-dark200_light800 line-clamp-1">
-                      {client?.name}
-                    </p>
-                    <div className="flex w-full flex-row items-center justify-between">
-                      <p className="text-light400_light500 small-medium mt-1 font-bold capitalize">
-                        {client?.dog.map((dog: any) => dog?.name).join(", ")}
+                    <div className="flex w-full flex-col">
+                      <p className="body-medium text-dark200_light800 line-clamp-1">
+                        {client?.name}
                       </p>
-                      <p className="small-medium mt-1 font-bold capitalize text-yellow-500">
-                        {client?.profession}
-                      </p>
+                      <div className="flex w-full flex-row items-center justify-between">
+                        <p className="text-light400_light500 small-medium mt-1 font-bold capitalize">
+                          {client?.dog.map((dog: any) => dog?.name).join(", ")}
+                        </p>
+                        <p className="small-medium mt-1 font-bold capitalize text-yellow-500">
+                          {client?.profession}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                </motion.div>
               ))
             ) : (
               <div className="flex-center flex-col px-5">
@@ -106,7 +144,7 @@ const GlobalResult = () => {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -136,17 +136,41 @@ export function BookingDatePicker({
             <span className="w-[62%] ">Επιλέξτε ημερομηνίες</span>
 
             <span
-              className={cn("absolute right-56", {
-                "text-green-500": taxiArrival,
-              })}
+              className={cn(
+                "absolute right-56 flex flex-row items-center gap-12 rounded-lg bg-dark-200/80 px-2 py-1 border border-yellow-500 ",
+                {
+                  "text-green-500 gap-3": taxiArrival,
+                }
+              )}
             >
+              <IconCar
+                size={30}
+                className={cn("w-full", {
+                  "text-green-500 ": taxiArrival,
+                  "hover:text-yellow-400 hover:scale-105 animate-pulse":
+                    !taxiArrival,
+                })}
+                onClick={() => setTaxiArrival(!taxiArrival)}
+              />{" "}
               {taxiArrival ? "ΠΑΡΑΛΑΒΗ" : "ΑΦΙΞΗ"}
             </span>
             <span
-              className={cn("absolute right-8", {
-                "text-green-500": taxiDeparture,
-              })}
+              className={cn(
+                "absolute right-3   flex flex-row items-center gap-7 rounded-lg bg-dark-200/80 px-2 py-1 border border-yellow-500",
+                {
+                  "text-green-500 gap-10": taxiDeparture,
+                }
+              )}
             >
+              <IconCar
+                size={30}
+                className={cn("w-full", {
+                  "text-green-500 ": taxiDeparture,
+                  "hover:text-yellow-400 hover:scale-105 animate-pulse":
+                    !taxiDeparture,
+                })}
+                onClick={() => setTaxiDeparture(!taxiDeparture)}
+              />
               {taxiDeparture ? "ΠΑΡΑΔΟΣΗ" : "ΑΝΑΧΩΡΗΣΗ"}
             </span>
           </div>
@@ -224,14 +248,6 @@ export function BookingDatePicker({
                     </Button>
                   ))}
                 </div>
-                <IconCar
-                  size={30}
-                  className={cn("w-full", {
-                    "text-green-500 animate-pulse": taxiArrival,
-                    "hover:text-yellow-400 hover:scale-105": !taxiArrival,
-                  })}
-                  onClick={() => setTaxiArrival(!taxiArrival)}
-                />
               </div>
             </div>
             <div className="flex  h-full  max-h-[40vh]  divide-x border-l">
@@ -297,15 +313,6 @@ export function BookingDatePicker({
                     </Button>
                   ))}
                 </div>
-
-                <IconCar
-                  size={30}
-                  className={cn("w-full", {
-                    "text-green-500 animate-pulse": taxiDeparture,
-                    "hover:text-yellow-400 hover:scale-105": !taxiDeparture,
-                  })}
-                  onClick={() => setTaxiDeparture(!taxiDeparture)}
-                />
               </div>
             </div>
           </div>

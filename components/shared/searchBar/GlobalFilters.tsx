@@ -33,7 +33,7 @@ const GlobalFilters = () => {
   };
 
   return (
-    <div className="flex flex-row items-center gap-4 ">
+    <div className="flex flex-row items-center gap-4  ">
       <p className="text-dark400_light900 body-medium flex flex-row items-center gap-2 text-lg">
         ΠΗΓΑΙΝΕ <IconArrowRight size={20} className="text-yellow-400" />{" "}
       </p>

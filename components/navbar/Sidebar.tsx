@@ -27,6 +27,7 @@ import Toggle from "./Toggle";
 export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const path = usePathname();
+
   const links = [
     {
       label: "Επισκόπηση",
@@ -170,16 +171,15 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
           </div>
         </SidebarBody>
       </Sidebar>
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" key={path}>
         <motion.div
           className={cn(
             "flex-1 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 h-full ml-12 w-full "
           )}
-          key={path}
           initial="initialState"
           animate="animateState"
           exit="exitState"
-          transition={{ duration: 0.4, ease: "easeIn" }}
+          transition={{ duration: 0.3, ease: "easeIn" }}
           variants={{
             initialState: {
               opacity: 0,

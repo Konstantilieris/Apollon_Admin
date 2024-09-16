@@ -17,7 +17,7 @@ const PaginatingRooms = ({
   totalPages,
 }: Props) => {
   return (
-    <div className=" ml-8 flex w-full items-center  justify-center gap-2 p-2 text-yellow-500">
+    <div className=" flex w-full items-center  justify-center gap-2 p-2 text-yellow-500">
       <Button
         disabled={currentPage === 1}
         className="light-border-2 btn flex min-h-[36px] items-center justify-center gap-2 border "
