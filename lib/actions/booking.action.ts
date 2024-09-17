@@ -11,7 +11,7 @@ import { DateRange } from "react-day-picker";
 import Appointment from "@/database/models/event.model";
 import Service from "@/database/models/service.model";
 
-import { formatDateToUTC3, setTimeOnDate } from "../utils";
+import { setTimeOnDate } from "../utils";
 
 interface TNTPROPS {
   id: string;
@@ -57,8 +57,6 @@ export async function createBooking({
   if (!rangeDate.from || !rangeDate.to) {
     throw new Error("Invalid date range");
   }
-  const fromDateFormatted = formatDateToUTC3(rangeDate.from);
-  const toDateFormatted = formatDateToUTC3(rangeDate.to);
 
   const maxRetries = 3; // Reduced retries for efficiency
   let attempt = 0;
@@ -90,7 +88,7 @@ export async function createBooking({
             amount: boardingPrice,
             clientId: client.clientId,
             bookingId,
-            date: fromDateFormatted,
+            date: rangeDate.from,
           },
         ],
         { session }
@@ -110,7 +108,7 @@ export async function createBooking({
               amount: transportationPrice,
               clientId: client.clientId,
               bookingId,
-              date: fromDateFormatted,
+              date: rangeDate.from,
             },
           ],
           { session }
@@ -130,7 +128,7 @@ export async function createBooking({
               amount: transportationPrice,
               clientId: client.clientId,
               bookingId,
-              date: toDateFormatted,
+              date: rangeDate.to,
             },
           ],
           { session }
@@ -148,8 +146,8 @@ export async function createBooking({
           {
             _id: bookingId,
             client,
-            fromDate: fromDateFormatted,
-            toDate: toDateFormatted,
+            fromDate: rangeDate.from,
+            toDate: rangeDate.to,
             totalAmount,
             flag1,
             flag2,
@@ -195,8 +193,8 @@ export async function createBooking({
               isReadonly: true,
               Location: location,
               Color: "#7f1d1d",
-              StartTime: fromDateFormatted,
-              EndTime: fromDateFormatted,
+              StartTime: rangeDate.from,
+              EndTime: rangeDate.from,
             },
           ],
           { session }
@@ -215,8 +213,8 @@ export async function createBooking({
               Location: location,
               isReadonly: true,
               Color: "#7f1d1d",
-              StartTime: toDateFormatted,
-              EndTime: toDateFormatted,
+              StartTime: rangeDate.to,
+              EndTime: rangeDate.to,
             },
           ],
           { session }

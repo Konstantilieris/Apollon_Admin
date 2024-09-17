@@ -72,16 +72,6 @@ export function formatDateToTime(inputDateString: Date | undefined) {
 
   return formattedTime;
 }
-export function formatDateToUTC3(date: Date | string): string {
-  if (!date) return "";
-
-  // Use moment-timezone to convert the date to UTC+3 (e.g., "Europe/Moscow" timezone)
-  const formattedDate = moment(date)
-    .tz("Europe/Moscow")
-    .format("YYYY-MM-DD HH:mm");
-
-  return formattedDate;
-}
 
 interface URLQueryParams {
   params: string;
