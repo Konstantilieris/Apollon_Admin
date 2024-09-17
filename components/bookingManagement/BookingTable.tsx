@@ -70,24 +70,21 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
             <TableCell className="mr-4 text-center text-base font-normal">
               {booking?.client?.phone}
             </TableCell>
-            <TableCell className="flex w-full max-w-[250px] flex-col items-center justify-center uppercase max-md:hidden">
+            <TableCell className=" w-full   justify-center uppercase max-md:hidden">
               {booking?.dogs?.map((dog: any) => (
-                <span
-                  key={dog._id}
-                  className="flex-center h-fit rounded-full p-4 text-base"
-                >
+                <div key={dog._id} className="text-base">
                   {dog?.dogName}
-                </span>
+                </div>
               ))}
             </TableCell>
-            <TableCell className="text-center text-base font-normal">
+            <TableCell className=" my-auto text-center text-lg font-normal">
               {booking?.dogs?.map((dog: any) => (
-                <span key={dog._id} className="flex-center h-fit p-4 text-base">
+                <div key={dog._id} className=" ">
                   {dog?.roomName}
-                </span>
+                </div>
               ))}
             </TableCell>
-            <TableCell className="  h-full  items-center pl-4 text-center text-base font-normal">
+            <TableCell className=" flex h-full flex-col items-center pl-4 text-center text-base font-normal">
               {booking?.flag1 && (
                 <div className="font-semibold uppercase dark:text-green-400">
                   Παραλαβη {booking?.client?.transportFee}€
