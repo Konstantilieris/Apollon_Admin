@@ -54,20 +54,21 @@ export async function getDayAndMonth(date: Date) {
   return `${day}/${month}`;
 }
 export function formatDateToTime(inputDateString: Date | undefined) {
-  // Parse the input date string
+  // Check if the input date is valid
   if (!inputDateString) return "";
+
+  // Create a new Date object from the input
   const inputDate = new Date(inputDateString);
 
-  // Get the hours and minutes components
-  const hours = inputDate.getHours();
-  const minutes = inputDate.getMinutes();
+  // Format the date using Intl.DateTimeFormat to UTC+3
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Europe/Moscow", // UTC+3 time zone (e.g., Europe/Moscow)
+  });
 
-  // Ensure hours and minutes are in two-digit format
-  const formattedHours = hours.toString().padStart(2, "0");
-  const formattedMinutes = minutes.toString().padStart(2, "0");
-
-  // Format the time components
-  const formattedTime = `${formattedHours}:${formattedMinutes}`;
+  const formattedTime = formatter.format(inputDate);
 
   return formattedTime;
 }
