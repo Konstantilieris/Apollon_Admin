@@ -12,34 +12,37 @@ import { formatDateString, formatDateToTime } from "@/lib/utils";
 import Link from "next/link";
 const BookingTable = ({ bookings }: { bookings: any }) => {
   return (
-    <Table className="text-dark400_light700 mt-12 ">
-      <TableHeader className="border-b-8 border-light-700 bg-white text-base font-semibold text-black dark:border-dark-400 dark:bg-slate-700 dark:text-light-700 xl:text-lg">
-        <TableRow>
-          <TableHead className="ml-2 text-center max-md:hidden">
+    <Table className="text-dark400_light700 mt-12 w-full">
+      <TableHeader className="border-b-4 border-light-700 bg-white text-base font-semibold text-black dark:border-dark-400 dark:bg-slate-700 dark:text-light-700 xl:text-lg">
+        <TableRow className="h-14">
+          <TableHead className="px-4 text-center max-md:hidden">
             Επεξεργασία
           </TableHead>
-          <TableHead className="ml-2 text-center max-md:hidden">
+          <TableHead className="px-4 text-center max-md:hidden">
             Ημερομηνία
           </TableHead>
-          <TableHead className="text-center">Ονοματεπώνυμο</TableHead>
-          <TableHead className="text-center">Τηλέφωνο</TableHead>
-          <TableHead className="flex items-center justify-center gap-1 px-2 text-center">
+          <TableHead className="px-4 text-center">Ονοματεπώνυμο</TableHead>
+          <TableHead className="px-4 text-center">Τηλέφωνο</TableHead>
+          <TableHead className="flex items-center justify-center gap-1 px-4 text-center">
             Σκύλοι <IconArrowBigRightLineFilled size={20} />
           </TableHead>
-          <TableHead className="px-2 text-center">Δωμάτιο</TableHead>
-          <TableHead className="px-2 text-center">Μεταφορά</TableHead>
-          <TableHead className="px-2 text-center max-md:hidden">
+          <TableHead className="px-4 text-center">Δωμάτιο</TableHead>
+          <TableHead className="px-4 text-center max-md:hidden">
+            Μεταφορά
+          </TableHead>
+          <TableHead className="px-4 text-center max-md:hidden">
             Συνολικό Κόστος
           </TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody className="mt-2">
+
+      <TableBody>
         {bookings?.map((booking: any) => (
           <TableRow
             key={booking?._id}
-            className="background-light800_dark300 text-dark100_light900  w-full"
+            className="bg-light-500 text-dark-700 transition-all duration-200 hover:bg-light-700 dark:bg-dark-500 dark:text-light-700 dark:hover:bg-dark-200"
           >
-            <TableCell className="m-auto   max-h-[80px] max-w-[250px]  pl-12 text-base ">
+            <TableCell className="p-4 text-center">
               <Link href={`/editbooking/${booking?._id}`}>
                 <IconEdit
                   size={23}
@@ -47,59 +50,60 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
                 />
               </Link>
             </TableCell>
-            <TableCell className="my-auto flex h-full  flex-col items-center  gap-8 pl-4 text-center text-base font-normal">
-              <span>
-                {" "}
+
+            <TableCell className="p-4 text-center max-md:hidden">
+              <div>
                 {formatDateToTime(new Date(booking.fromDate))}{" "}
-                {formatDateString(booking.fromDate)}{" "}
-              </span>
-              <span>
-                {" "}
-                {formatDateToTime(new Date(booking.fromDate))}{" "}
+                {formatDateString(booking.fromDate)}
+              </div>
+              <div>
+                {formatDateToTime(new Date(booking.toDate))}{" "}
                 {formatDateString(booking.toDate)}
-              </span>
+              </div>
             </TableCell>
-            <TableCell className=" max-w-[500px] truncate pl-4  text-center text-base font-normal uppercase 2xl:max-w-[600px]">
+
+            <TableCell className="truncate p-4 text-center text-base font-normal uppercase">
               <Link
                 href={`/clients/${booking?.client?.clientId}`}
-                className="cursor-pointer hover:scale-105"
+                className="hover:underline"
               >
                 {booking?.client?.clientName}
               </Link>
             </TableCell>
-            <TableCell className="mr-4 text-center text-base font-normal">
+
+            <TableCell className="p-4 text-center text-base font-normal">
               {booking?.client?.phone}
             </TableCell>
-            <TableCell className=" w-full   justify-center uppercase max-md:hidden">
+
+            <TableCell className="p-4 text-center text-base font-normal max-md:hidden">
               {booking?.dogs?.map((dog: any) => (
-                <div key={dog._id} className="text-base">
+                <div key={dog._id} className="">
                   {dog?.dogName}
                 </div>
               ))}
             </TableCell>
-            <TableCell className=" my-auto text-center text-lg font-normal">
+
+            <TableCell className="p-4 text-center text-base font-normal">
               {booking?.dogs?.map((dog: any) => (
-                <div key={dog._id} className=" ">
-                  {dog?.roomName}
-                </div>
+                <div key={dog._id}>{dog?.roomName || "N/A"}</div>
               ))}
             </TableCell>
-            <TableCell className=" flex h-full flex-col items-center pl-4 text-center text-base font-normal">
+
+            <TableCell className="p-4 text-center text-base font-normal">
               {booking?.flag1 && (
-                <div className="font-semibold uppercase dark:text-green-400">
-                  Παραλαβη {booking?.client?.transportFee}€
+                <div className="font-semibold uppercase text-green-500 dark:text-green-400">
+                  Παραλαβή {booking?.client?.transportFee}€
                 </div>
               )}
               {booking?.flag2 && (
-                <div className="font-semibold uppercase dark:text-green-400">
-                  Παραδοση {booking?.client?.transportFee}€
+                <div className="font-semibold uppercase text-green-500 dark:text-green-400">
+                  Παράδοση {booking?.client?.transportFee}€
                 </div>
               )}
-              {!booking?.flag1 && !booking?.flag2 && (
-                <span className="my-auto">ΟΧΙ</span>
-              )}
+              {!booking?.flag1 && !booking?.flag2 && <span>ΟΧΙ</span>}
             </TableCell>
-            <TableCell className="pl-4 pr-10 text-center text-base font-normal">
+
+            <TableCell className="p-4 text-center text-base font-normal">
               {booking?.totalAmount} €
             </TableCell>
           </TableRow>
