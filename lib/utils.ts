@@ -62,8 +62,12 @@ export function formatDateToTime(inputDateString: Date | undefined) {
   const hours = inputDate.getHours();
   const minutes = inputDate.getMinutes();
 
+  // Ensure hours and minutes are in two-digit format
+  const formattedHours = hours.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+
   // Format the time components
-  const formattedTime = `${hours}:${minutes}`;
+  const formattedTime = `${formattedHours}:${formattedMinutes}`;
 
   return formattedTime;
 }

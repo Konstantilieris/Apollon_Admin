@@ -75,7 +75,7 @@ const CreateBooking = ({
         flag1: taxiArrival,
         flag2: taxiDeparture,
         path: pathname,
-        roomPreference,
+        roomPrefer: roomPreference,
       });
 
       if (res) {

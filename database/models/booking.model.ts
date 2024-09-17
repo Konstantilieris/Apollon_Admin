@@ -1,5 +1,4 @@
 import { Schema, models, model } from "mongoose";
-import Service from "./service.model";
 
 export interface IBooking {
   client: {
@@ -67,23 +66,8 @@ BookingSchema.pre("save", async function (next) {
   if (overlappingBookings.length > 0) {
     return next(new Error("Overlapping bookings for one or more dogs"));
   }
-
-  // Only proceed to calculate the total if there are no errors
-  try {
-    // Find all services related to this booking
-    const services = await Service.find({ bookingId: booking._id });
-
-    // Calculate the total amount for the booking
-    booking.totalAmount = services.reduce(
-      (sum, service) => sum + service.amount,
-      0
-    );
-
-    next();
-  } catch (error: any) {
-    return next(error);
-  }
 });
+
 const Booking = models.Booking || model<IBooking>("Booking", BookingSchema);
 
 export default Booking;

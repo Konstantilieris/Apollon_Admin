@@ -1,8 +1,8 @@
-import ClientBookingPrice from "@/components/booking/ClientBookingPrice";
-import ClientTransferFee from "@/components/booking/ClientTransferFee";
 import { cn } from "@/lib/utils";
 import { IconCoins } from "@tabler/icons-react";
 import React from "react";
+import ClientTransferFee from "../Fees/ClientTransferFee";
+import ClientBookingPrice from "../Fees/ClientBookingPrice";
 
 const ClientFeesCard = ({ client }: any) => {
   return (
@@ -20,7 +20,7 @@ const ClientFeesCard = ({ client }: any) => {
             ΣΤΑΘΕΡΕΣ ΤΙΜΕΣ
           </p>
         </div>
-        <div className=" flex w-full items-center gap-3 justify-between z-40">
+        <div className=" z-40 flex w-full items-center justify-between gap-3">
           <ClientTransferFee
             transportationFee={client.transportFee}
             id={JSON.parse(JSON.stringify(client?._id))}

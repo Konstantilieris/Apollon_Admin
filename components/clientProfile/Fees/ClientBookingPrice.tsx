@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Image from "next/image";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,27 +13,28 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
-import { Input } from "../ui/input";
+import { Input } from "../../ui/input";
 
-import { useToast } from "../ui/use-toast";
-import { updateClientTransportationFee } from "@/lib/actions/client.action";
+import { useToast } from "../../ui/use-toast";
+import { updateClientBookingFee } from "@/lib/actions/client.action";
 import { usePathname, useRouter } from "next/navigation";
+import { IconCalendar } from "@tabler/icons-react";
 interface Props {
   id: string;
-  transportationFee: number | null;
+  price: number | null;
   name: string;
 }
 
-const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
-  const [fee, setFee] = useState<number>(transportationFee || 0);
+const ClientBookingPrice = ({ id, price, name }: Props) => {
+  const [daily, setDaily] = useState<number>(price || 0);
   const { toast } = useToast();
   const path = usePathname();
   const router = useRouter();
-  const handleFeePrice = async () => {
+  const handleDailyPrice = async () => {
     try {
-      const res = await updateClientTransportationFee({
+      const res = await updateClientBookingFee({
         clientId: id,
-        price: fee,
+        price: daily,
         path,
       });
       if (res) {
@@ -62,58 +63,47 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
         className={cn(
           "border-2 min-h-[46px] rounded-lg py-1 px-2 cursor-pointer hover:scale-105",
           {
-            "border-green-500": transportationFee !== null,
+            "border-green-500": price !== null,
             "border-red-500 text-red-700 font-bold animate-pulse":
-              transportationFee === null,
+              price === null,
           }
         )}
       >
-        {transportationFee !== null ? (
+        {price !== null ? (
           <span className="flex items-center gap-2 p-1 font-semibold text-dark-100 dark:text-green-300">
-            <Image
-              src={"/assets/icons/car.svg"}
-              alt="client"
-              width={20}
-              height={20}
-              className="invert dark:invert-0"
-            />
-            <span className="font-normal text-light-700">Μεταφορά</span>{" "}
-            {transportationFee} €
+            <IconCalendar size={24} />
+            <span className="font-normal text-light-700">Ημερήσιο </span>{" "}
+            {price} €
           </span>
         ) : (
-          "Τιμή Μεταφοράς"
+          "Καθορίστε την τιμή"
         )}
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-light-500 text-dark-100 dark:bg-dark-100 dark:text-light-700">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex w-full flex-row ">
             <span className="flex flex-1 items-center gap-2">
-              <Image
-                src={"/assets/icons/client.svg"}
-                alt="client"
-                width={20}
-                height={20}
-              />
+              <IconCalendar size={24} />
               {name}
             </span>
-            {transportationFee !== null && (
+            {price !== null && (
               <span className="flex  items-center gap-2 text-green-700 dark:text-green-300">
-                {transportationFee} €
+                {price} €
               </span>
             )}
           </AlertDialogTitle>
           <AlertDialogDescription className="flex flex-col items-start gap-2 ">
             <span className="text-lg text-sky-600 dark:text-sky-300">
-              Καθορίστε την χρεωση στην μεταφορα του σκυλου του πελάτη
+              Καθορίστε την ημερήσια χρέωση του πελάτη
             </span>
             <Input
-              value={fee}
+              value={daily}
               type="number"
-              onChange={(e) => setFee(~~e.target.value)}
+              onChange={(e) => setDaily(~~e.target.value)}
               className="bg-light-700 text-dark-100 dark:bg-dark-200 dark:text-light-700"
             />
             <span className="ml-2  mt-1 text-[15px] dark:text-green-300 ">
-              {fee} € / ημέρα
+              {daily} € / ημέρα
             </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -123,8 +113,8 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
           </AlertDialogCancel>
           <AlertDialogAction
             className=" text-green-300 hover:scale-110"
-            onClick={handleFeePrice}
-            disabled={fee === transportationFee || fee === 0}
+            onClick={handleDailyPrice}
+            disabled={daily === price || daily === 0}
           >
             Αποθήκευση
           </AlertDialogAction>
@@ -134,4 +124,4 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
   );
 };
 
-export default ClientTransferFee;
+export default ClientBookingPrice;

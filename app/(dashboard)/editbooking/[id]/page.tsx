@@ -1,4 +1,4 @@
-import DeleteBooking from "@/components/booking/DeleteBooking";
+import DeleteBooking from "@/components/bookingManagement/DeleteBooking";
 import ChangeDates from "@/components/editbooking/ChangeDates";
 import UpdateTNT from "@/components/editbooking/ChangeTime";
 

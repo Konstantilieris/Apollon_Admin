@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { IconArrowBigRightLineFilled, IconEdit } from "@tabler/icons-react";
-import { formatDateString } from "@/lib/utils";
+import { formatDateString, formatDateToTime } from "@/lib/utils";
 import Link from "next/link";
 const BookingTable = ({ bookings }: { bookings: any }) => {
   return (
@@ -37,9 +37,9 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
         {bookings?.map((booking: any) => (
           <TableRow
             key={booking?._id}
-            className="background-light800_dark300 text-dark100_light900 items-center "
+            className="background-light800_dark300 text-dark100_light900  w-full"
           >
-            <TableCell className="m-auto   max-w-[250px]  pl-12 text-base ">
+            <TableCell className="m-auto   max-h-[80px] max-w-[250px]  pl-12 text-base ">
               <Link href={`/editbooking/${booking?._id}`}>
                 <IconEdit
                   size={23}
@@ -47,11 +47,19 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
                 />
               </Link>
             </TableCell>
-            <TableCell className="max-w-[250px] pl-4 pr-10 text-center text-base font-normal">
-              {formatDateString(booking.fromDate)}-{" "}
-              {formatDateString(booking.toDate)}
+            <TableCell className="my-auto flex h-full  flex-col items-center  gap-8 pl-4 text-center text-base font-normal">
+              <span>
+                {" "}
+                {formatDateToTime(new Date(booking.fromDate))}{" "}
+                {formatDateString(booking.fromDate)}{" "}
+              </span>
+              <span>
+                {" "}
+                {formatDateToTime(new Date(booking.fromDate))}{" "}
+                {formatDateString(booking.toDate)}
+              </span>
             </TableCell>
-            <TableCell className="my-auto ml-4  max-w-[500px] truncate pr-10 text-center text-base font-normal uppercase 2xl:max-w-[600px]">
+            <TableCell className=" max-w-[500px] truncate pl-4  text-center text-base font-normal uppercase 2xl:max-w-[600px]">
               <Link
                 href={`/clients/${booking?.client?.clientId}`}
                 className="cursor-pointer hover:scale-105"

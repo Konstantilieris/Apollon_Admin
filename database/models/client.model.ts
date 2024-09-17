@@ -60,6 +60,7 @@ export interface IClient {
   serviceFees?: { type: String; value: Number }[];
   createdAt?: Date;
   owes?: Schema.Types.ObjectId[];
+
   references?: {
     isReferenced?: IReference;
     hasReferenced?: [
@@ -84,7 +85,7 @@ export interface IClient {
   lastActivity?: Date;
   tags?: string[];
   status?: string;
-
+  owesTotal?: number;
   totalSpent?: number;
   servicePreferences?: string[];
   loyaltyLevel?: string;
@@ -265,7 +266,7 @@ const ClientSchema = new Schema<IClient>({
     enum: ["active", "inactive", "suspended"],
     default: "active",
   },
-
+  owesTotal: { type: Number, default: 0 },
   totalSpent: { type: Number, default: 0 },
   servicePreferences: {
     type: [String], // e.g., ["grooming", "training"]

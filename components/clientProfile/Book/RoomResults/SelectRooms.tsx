@@ -65,23 +65,27 @@ const SelectRooms = ({
   const handleSelectRoom = (room: any, type: string, dogId?: string) => () => {
     if (type === "Join") {
       // Create a new array where we immutably update dogsInRooms
-      const updatedDogsInRooms = dogsInRooms.map((dogInRoom: any) => {
-        if (dogInRoom.roomId === room._id) {
-          // If the dog is already in the selected room, remove it
+      const isDogsInRoom = dogsInRooms.every(
+        (dogInRoom: any) => dogInRoom.roomId === room._id
+      );
+      let updatedDogsInRooms: any = [];
+      if (isDogsInRoom) {
+        updatedDogsInRooms = dogsInRooms.map((dogInRoom: any) => {
           return {
             ...dogInRoom,
             roomId: null,
             roomName: null,
           };
-        } else {
-          // Otherwise, place the dog in the selected room
+        });
+      } else {
+        updatedDogsInRooms = dogsInRooms.map((dogInRoom: any) => {
           return {
             ...dogInRoom,
             roomId: room._id,
             roomName: room.name,
           };
-        }
-      });
+        });
+      }
 
       // Update state with the new array
       setDogsInRooms(updatedDogsInRooms);

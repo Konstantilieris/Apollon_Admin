@@ -3,14 +3,14 @@
 
 import { connectToDatabase } from "../mongoose";
 import Booking from "@/database/models/booking.model";
-
+import mongoose from "mongoose";
 import Room from "@/database/models/room.model";
 import { revalidatePath } from "next/cache";
 import Client from "@/database/models/client.model";
 import { DateRange } from "react-day-picker";
 import Appointment from "@/database/models/event.model";
 import Service from "@/database/models/service.model";
-import mongoose from "mongoose";
+
 import { setTimeOnDate } from "../utils";
 
 interface TNTPROPS {
@@ -40,7 +40,7 @@ interface ICreateBooking {
   dogsData: any;
   flag1: Boolean;
   flag2: Boolean;
-  roomPreference: string;
+  roomPrefer: string;
 }
 
 export async function createBooking({
@@ -52,105 +52,71 @@ export async function createBooking({
   flag1,
   flag2,
   dogsData,
-  roomPreference,
+  roomPrefer,
 }: ICreateBooking) {
   if (!rangeDate.from || !rangeDate.to) {
     throw new Error("Invalid date range");
   }
 
-  const maxRetries = 5; // Increase retries to give more chances for success
+  const maxRetries = 3; // Reduced retries for efficiency
   let attempt = 0;
+  let success = false;
 
-  while (attempt < maxRetries) {
-    const session = await mongoose.startSession(); // Create a new session for each attempt
+  // Begin retry loop
+  while (attempt < maxRetries && !success) {
+    const session = await mongoose.startSession();
 
     try {
-      await connectToDatabase();
-      session.startTransaction();
+      await connectToDatabase(); // Ensure the DB is connected
+      session.startTransaction(); // Start the session transaction
 
-      console.log("Attempt:", attempt + 1);
-      console.log("Updating client room preference...");
-
-      // Update client's room preference
-      await Client.findByIdAndUpdate(
-        client.clientId,
-        { $set: { roomPreference } },
-        { session }
+      console.log(
+        `Attempt ${attempt + 1}: Starting booking creation process...`
       );
 
-      console.log("Client room preference updated.");
-
-      // Create the booking
-      console.log("Creating booking...");
-      const booking = await Booking.create(
-        [
-          {
-            client,
-            fromDate: rangeDate.from,
-            toDate: rangeDate.to,
-            totalAmount: 0, // Will be updated based on services
-            flag1,
-            flag2,
-            dogs: dogsData, // Dogs data
-          },
-        ],
-        { session }
-      );
-
-      console.log("Booking created:", booking);
-
-      const bookingId = booking[0]._id;
+      // Step 1: Generate bookingId and create services
+      const bookingId = new mongoose.Types.ObjectId();
+      const servicesToAdd = [];
+      let totalAmount = 0;
 
       // Create boarding service
       console.log("Creating boarding service...");
       const boardingService: any = await Service.create(
         [
           {
-            serviceType: "ΔΙΑΜΟΝΗ", // Boarding service
-            amount: boardingPrice, // Boarding price
+            serviceType: "ΔΙΑΜΟΝΗ",
+            amount: boardingPrice,
             clientId: client.clientId,
             bookingId,
             date: rangeDate.from,
           },
         ],
-
         { session }
       );
-      await Client.findByIdAndUpdate(
-        client.clientId,
-        {
-          $push: { owes: boardingService._id },
-        },
-        { session }
-      );
+      if (!boardingService[0])
+        throw new Error("Boarding service creation failed");
+      servicesToAdd.push(boardingService[0]._id);
+      totalAmount += boardingPrice;
 
-      console.log("Boarding service created:", boardingService);
-
-      // Create transportation services if flag1 or flag2 are true
-      const transportationServices = [];
+      // Create transportation services based on flags
       if (flag1) {
         console.log("Creating pick-up transportation service...");
         const pickUpService: any = await Service.create(
           [
             {
               serviceType: "Pet Taxi (Pick-Up)",
-              amount: transportationPrice, // Transportation price for pick-up
+              amount: transportationPrice,
               clientId: client.clientId,
               bookingId,
               date: rangeDate.from,
             },
           ],
-
           { session }
         );
-        await Client.findByIdAndUpdate(
-          client.clientId,
-          {
-            $push: { owes: pickUpService._id },
-          },
-          { session }
-        );
-        transportationServices.push(pickUpService._id);
+        if (!pickUpService[0])
+          throw new Error("Pick-up service creation failed");
+        servicesToAdd.push(pickUpService[0]._id);
+        totalAmount += transportationPrice;
       }
 
       if (flag2) {
@@ -159,75 +125,69 @@ export async function createBooking({
           [
             {
               serviceType: "Pet Taxi (Drop-Off)",
-              amount: transportationPrice, // Transportation price for drop-off
+              amount: transportationPrice,
               clientId: client.clientId,
               bookingId,
               date: rangeDate.to,
             },
           ],
-
           { session }
         );
-        await Client.findByIdAndUpdate(
-          client.clientId,
-          {
-            $push: { owes: dropOffService._id },
-          },
-          { session }
-        );
-        transportationServices.push(dropOffService._id);
-
-        console.log("Drop-off service created:", dropOffService);
+        if (!dropOffService[0])
+          throw new Error("Drop-off service creation failed");
+        servicesToAdd.push(dropOffService[0]._id);
+        totalAmount += transportationPrice;
       }
 
-      // Push services to the booking's services array
-      console.log("Updating booking with services...");
-      await Booking.findByIdAndUpdate(
-        bookingId,
-        {
-          $push: {
-            services: [
-              boardingService[0]._id,
-              ...transportationServices.map((svc) => svc),
-            ],
+      // Step 2: Create the booking
+      console.log("Creating booking...");
+      const booking = await Booking.create(
+        [
+          {
+            _id: bookingId,
+            client,
+            fromDate: rangeDate.from,
+            toDate: rangeDate.to,
+            totalAmount,
+            flag1,
+            flag2,
+            dogs: dogsData,
+            services: servicesToAdd,
           },
-        },
+        ],
         { session }
       );
+      if (!booking[0]) throw new Error("Booking creation failed");
 
-      console.log("Booking updated with services.");
+      // Step 3: Update the client with owes and room preference
+      const updatedClient = await Client.findByIdAndUpdate(
+        client.clientId,
+        {
+          $push: { owes: { $each: servicesToAdd } },
+          $set: { roomPreference: roomPrefer, lastActivity: new Date() },
+          $inc: { owesTotal: totalAmount },
+        },
+        { new: true, session }
+      );
+      if (!updatedClient) throw new Error("Client update failed");
 
-      // Update the client's owes field with these services
-
-      console.log("Boarding service added to client's owes.");
-
-      // Add transportation services one by one
-
-      // Prepare the location and description for the appointments
-      console.log("Fetching updated client information...");
-      const updatedClient = await Client.findById(client.clientId);
-      if (!updatedClient) throw new Error("Client not found");
-
-      console.log("Updated client:", updatedClient);
-
+      // Step 4: Create appointments
       const location = `${updatedClient.location.city ?? ""}-${
         updatedClient.location.residence ?? ""
       }-${updatedClient.location.address ?? ""}-${
         updatedClient.location.postalCode ?? ""
       }`;
-
       const description = `${updatedClient.name}-${
         updatedClient.phone.mobile ?? ""
       } ${dogsData.map(({ dogName }: any) => dogName).join(", ")}`;
 
-      // Create appointments based on flags
       if (flag1) {
         console.log("Creating pick-up appointment...");
         await Appointment.create(
           [
             {
               Id: bookingId,
-              Subject: `${updatedClient.name} - ΠΑΡΑΛΑΒΗ`, // Pick-up appointment
+              Subject: `${updatedClient.name} - ΠΑΡΑΛΑΒΗ`,
               Type: "Taxi_PickUp",
               Description: description,
               isReadonly: true,
@@ -239,26 +199,6 @@ export async function createBooking({
           ],
           { session }
         );
-        console.log("Pick-up appointment created.");
-      } else {
-        console.log("Creating arrival appointment...");
-        await Appointment.create(
-          [
-            {
-              Id: bookingId,
-              Subject: `${updatedClient.name} - ΑΦΙΞΗ`, // Arrival appointment
-              Type: "Arrival",
-              isReadonly: true,
-              Location: location,
-              Color: "#1e3a8a",
-              Description: description,
-              StartTime: rangeDate.from,
-              EndTime: rangeDate.from,
-            },
-          ],
-          { session }
-        );
-        console.log("Arrival appointment created.");
       }
 
       if (flag2) {
@@ -267,7 +207,7 @@ export async function createBooking({
           [
             {
               Id: bookingId,
-              Subject: `${updatedClient.name} - ΠΑΡΑΔΟΣΗ`, // Drop-off appointment
+              Subject: `${updatedClient.name} - ΠΑΡΑΔΟΣΗ`,
               Type: "Taxi_Delivery",
               Description: description,
               Location: location,
@@ -279,56 +219,32 @@ export async function createBooking({
           ],
           { session }
         );
-        console.log("Drop-off appointment created.");
-      } else {
-        console.log("Creating departure appointment...");
-        await Appointment.create(
-          [
-            {
-              Id: bookingId,
-              Subject: `${updatedClient.name} - ΑΝΑΧΩΡΗΣΗ`, // Departure appointment
-              Type: "Departure",
-              Location: location,
-              isReadonly: true,
-              Color: "#1e3a8a",
-              Description: description,
-              StartTime: rangeDate.to,
-              EndTime: rangeDate.to,
-            },
-          ],
-          { session }
-        );
-        console.log("Departure appointment created.");
       }
 
+      // Step 5: Commit the transaction
       await session.commitTransaction();
       console.log("Transaction committed successfully.");
-      session.endSession();
+      success = true; // Set success to true when transaction is successful
 
       // Revalidate paths
-      console.log("Revalidating paths...");
       revalidatePath("/calendar");
       revalidatePath(path);
 
       return JSON.stringify(booking[0]);
     } catch (error: any) {
       await session.abortTransaction();
-      session.endSession();
-      attempt++;
+      console.log(`Attempt ${attempt + 1} failed:`, error.message);
 
-      // Add a delay between retries to avoid immediate conflict
-      await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
-
-      console.log(`Attempt ${attempt} failed:`, error);
-
-      if (attempt >= maxRetries) {
+      if (attempt + 1 >= maxRetries) {
         throw new Error(
           `Failed to create booking after ${maxRetries} attempts: ${error.message}`
         );
       }
     } finally {
-      session.endSession(); // Make sure the session is always ended
+      session.endSession();
     }
+
+    attempt++; // Increment the attempt count after every failed attempt
   }
 }
 
@@ -474,7 +390,7 @@ export async function countBookingsByMonth() {
 export async function getAllBookings({
   fromDate,
   toDate,
-  clientId,
+
   page = 1,
   query,
 }: any) {
@@ -767,7 +683,8 @@ export async function deleteBooking({
     const updatedClient = await Client.findOneAndUpdate(
       { _id: clientId },
       {
-        $pull: { owes: { $in: serviceIds } }, // Remove service IDs from 'owes' array
+        $pull: { owes: { $in: serviceIds } },
+        $inc: { owesTotal: -deletedBooking.totalAmount },
       },
       { new: true, session }
     );
