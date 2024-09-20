@@ -16,15 +16,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { useToast } from "../ui/use-toast";
-import { cn } from "@/lib/utils";
 import { DateInput } from "../datepicker/DateInput";
-import { chargeClient } from "@/lib/actions/client.action";
-import { usePathname } from "next/navigation";
 
 const ChargeForm = ({ id }: any) => {
-  const path = usePathname();
-  const { toast } = useToast();
   const form = useForm<z.infer<typeof ChargeValidation>>({
     resolver: zodResolver(ChargeValidation),
     defaultValues: {
@@ -34,31 +28,7 @@ const ChargeForm = ({ id }: any) => {
     },
   });
   const onSubmit = async (values: z.infer<typeof ChargeValidation>) => {
-    try {
-      const client = await chargeClient({ clientId: id, path, ...values });
-      if (client) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Success",
-          description: "Η χρέωση πραγματοποιήθηκε με επιτυχία",
-        });
-      }
-    } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Failed to charge try again!",
-        description: `${error}`,
-      });
-
-      throw error;
-    } finally {
-      form.reset();
-      window.location.reload();
-    }
+    console.log("submit");
   };
   return (
     <Form {...form}>
