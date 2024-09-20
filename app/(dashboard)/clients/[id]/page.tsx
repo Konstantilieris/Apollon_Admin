@@ -80,6 +80,18 @@ const page = async ({ params }: { params: any }) => {
         key: "ΤΗΛ.ΕΡΓΑΣΙΑΣ: ",
         value: client?.vet.work_phone ? client?.vet.work_phone : "N/A",
       },
+      {
+        key: "ΔΙΕΥΘΥΝΣΗ: ",
+        value: `${
+          client?.vet?.location?.city ? client.vet.location.city : "N/A"
+        }, ${
+          client?.vet?.location?.address ? client.vet.location.address : "N/A"
+        }, ${
+          client?.vet?.location?.postalCode
+            ? client.vet.location.postalCode
+            : "N/A"
+        }`,
+      },
     ],
   ];
 
@@ -96,6 +108,12 @@ const page = async ({ params }: { params: any }) => {
                 {
                   key: "EMAIL: ",
                   value: client?.email ? client?.email : "N/A",
+                },
+              ],
+              [
+                {
+                  key: "ΕΠΑΓΓΕΛΜΑ: ",
+                  value: client?.profession ? client?.profession : "N/A",
                 },
               ],
             ]}

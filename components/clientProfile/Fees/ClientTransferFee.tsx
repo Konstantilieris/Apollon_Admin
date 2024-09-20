@@ -60,7 +60,7 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
     <AlertDialog>
       <AlertDialogTrigger
         className={cn(
-          "border-2 min-h-[46px] rounded-lg py-1 px-2 cursor-pointer hover:scale-105",
+          "px-8 py-2  bg-black text-white text-sm rounded-md font-semibold hover:bg-dark-200 hover:shadow-sm hover:shadow-pink-500 hover:scale-110 w-full flex justify-center items-center ",
           {
             "border-green-500": transportationFee !== null,
             "border-red-500 text-red-700 font-bold animate-pulse":
@@ -69,17 +69,13 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
         )}
       >
         {transportationFee !== null ? (
-          <span className="flex items-center gap-2 p-1 font-semibold text-dark-100 dark:text-green-300">
-            <Image
-              src={"/assets/icons/car.svg"}
-              alt="client"
-              width={20}
-              height={20}
-              className="invert dark:invert-0"
-            />
-            <span className="font-normal text-light-700">Μεταφορά</span>{" "}
-            {transportationFee} €
-          </span>
+          <Image
+            src={"/assets/icons/car.svg"}
+            alt="client"
+            width={26}
+            height={23}
+            className="object-contain invert dark:invert-0"
+          />
         ) : (
           "Τιμή Μεταφοράς"
         )}

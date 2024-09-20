@@ -62,9 +62,17 @@ export function FloatingDockClient({ id }: { id: string }) {
     {
       title: "ΥΠΗΡΕΣΙΕΣ",
       icon: (
-        <IconExchange className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+        <IconExchange
+          className={cn(
+            "h-full w-full text-neutral-500 dark:text-neutral-300",
+            {
+              "text-dark-100 dark:text-dark-100 ":
+                path === `/clients/${id}/service`,
+            }
+          )}
+        />
       ),
-      href: "#",
+      href: `/clients/${id}/service`,
     },
 
     {

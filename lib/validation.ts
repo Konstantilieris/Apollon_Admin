@@ -51,6 +51,11 @@ export const ClientValidation = z.object({
   workMobile: z.string().optional(),
   vetName: z.string().optional(),
   vetNumber: z.string().optional(),
+  vetLocation: z.object({
+    address: z.string().optional(),
+    city: z.string().optional(),
+    postalCode: z.string().optional(),
+  }),
   vetWorkPhone: z.string().optional(),
 });
 export const UpdateClientValidation = z.object({
@@ -70,6 +75,12 @@ export const UpdateClientValidation = z.object({
   workMobile: z.string().optional(),
   vetName: z.string().optional(),
   vetNumber: z.string().optional(),
+  vetWorkPhone: z.string().optional(),
+  vetLocation: z.object({
+    address: z.string().optional(),
+    city: z.string().optional(),
+    postalCode: z.string().optional(),
+  }),
 });
 
 export const DogValidation = z.object({

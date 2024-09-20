@@ -571,3 +571,42 @@ export const addMinutes = (
 export const getTime = (date: Date): string => {
   return moment(date).format("HH:mm");
 };
+export function stringToHexColor(input: string): string {
+  // Hash the input string to ensure we get the same value for the same string
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = input.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  // Convert the hash to a valid 6-character hex color
+  let color = "#";
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += ("00" + value.toString(16)).slice(-2);
+  }
+
+  return color;
+}
+export function calculateAge(birthDate: Date): string {
+  const today = new Date();
+  let years = today.getFullYear() - birthDate.getFullYear();
+  let months = today.getMonth() - birthDate.getMonth();
+
+  // Adjust years and months if the current month/day is before the birth month/day
+  if (months < 0 || (months === 0 && today.getDate() < birthDate.getDate())) {
+    years--;
+    months += 12;
+  }
+
+  // Adjust months if the birthday hasn't occurred this month yet
+  if (today.getDate() < birthDate.getDate()) {
+    months--;
+  }
+
+  // Ensure months are not negative
+  if (months < 0) {
+    months += 12;
+  }
+
+  return `${years}.${months}`;
+}

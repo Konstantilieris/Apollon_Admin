@@ -39,6 +39,12 @@ const UpdateClientForm = ({ client, professions }: any) => {
       workMobile: client?.phone?.work_phone,
       vetName: client?.vet?.name,
       vetNumber: client?.vet?.phone,
+      vetWorkPhone: client?.vet?.work_phone,
+      vetLocation: {
+        city: client?.vet?.location?.city,
+        address: client?.vet?.location?.address,
+        postalCode: client?.vet?.location?.postalCode,
+      },
     },
   });
 
@@ -219,8 +225,43 @@ const UpdateClientForm = ({ client, professions }: any) => {
             fieldType={FormFieldType.PHONE_INPUT}
             control={form.control}
             name="vetNumber"
-            label="Τηλέφωνο Κτηνίατρου"
+            label="Κινητό Κτηνίατρου"
           />
+          <CustomFormField
+            fieldType={FormFieldType.PHONE_INPUT}
+            control={form.control}
+            name="vetWorkPhone"
+            label="Τηλέφωνο Εργασίας"
+          />
+          <div className="flex w-full flex-row gap-2">
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="vetLocation.city"
+              label="Πόλη Κτηνίατρου"
+              placeholder="Πόλη"
+              iconSrc="/assets/icons/location.svg"
+              iconAlt="location"
+            />
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="vetLocation.address"
+              label="Διεύθυνση Κτηνίατρου"
+              placeholder="Διεύθυνση"
+              iconSrc="/assets/icons/location.svg"
+              iconAlt="location"
+            />
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="vetLocation.postalCode"
+              label="Ταχυδρομικός Κώδικας"
+              placeholder="Ταχυδρομικός Κώδικας"
+              iconSrc="/assets/icons/location.svg"
+              iconAlt="location"
+            />
+          </div>
         </section>
 
         <div className="my-8 flex w-full justify-end">

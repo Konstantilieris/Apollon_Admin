@@ -13,6 +13,7 @@ import {
 import AlertDeadDog from "./AlertDeadDog";
 import DogNormalView from "./DogNormalView";
 import DogEditView from "./DogEditView";
+import { calculateAge, formatDate } from "@/lib/utils";
 
 interface dogListProps {
   name: string;
@@ -190,6 +191,23 @@ export function DogCards({
                   className="text-center uppercase text-neutral-600 dark:text-light-700 md:text-left"
                 >
                   ΣΥΜΠΕΡΙΦΟΡΑ: {dog?.behavior ? dog?.behavior : "N/A"}
+                </motion.p>
+              </div>
+              <div className="flex w-full flex-row justify-between">
+                <motion.p>
+                  ΗΛΙΚΙΑ:{" "}
+                  {dog.birthdate
+                    ? calculateAge(new Date(dog.birthdate))
+                    : "N/A"}{" "}
+                </motion.p>
+                <motion.p
+                  layoutId={`birthdate-${dog?.birthdate}-${id}`}
+                  className="text-center  text-neutral-800 dark:text-light-800 md:text-left"
+                >
+                  ΓΕΝΝΗΣΗ:{" "}
+                  {dog.birthdate
+                    ? formatDate(new Date(dog.birthdate), "el")
+                    : "N/A"}
                 </motion.p>
               </div>
               <div className="flex w-full flex-row justify-between">

@@ -42,23 +42,23 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
             key={booking?._id}
             className="bg-light-500 text-dark-700 transition-all duration-200 hover:bg-light-700 dark:bg-dark-500 dark:text-light-700 dark:hover:bg-dark-200"
           >
-            <TableCell className="p-4 text-center">
+            <TableCell className="p-4 text-start">
               <Link href={`/editbooking/${booking?._id}`}>
                 <IconEdit
                   size={23}
-                  className="cursor-pointer hover:scale-105 dark:text-yellow-500"
+                  className="mx-auto cursor-pointer hover:scale-105 dark:text-yellow-500"
                 />
               </Link>
             </TableCell>
 
             <TableCell className="p-4 text-center max-md:hidden">
               <div>
-                {formatDateToTime(new Date(booking.fromDate))}{" "}
-                {formatDateString(booking.fromDate)}
-              </div>
-              <div>
                 {formatDateToTime(new Date(booking.toDate))}{" "}
                 {formatDateString(booking.toDate)}
+              </div>
+              <div>
+                {formatDateToTime(new Date(booking.fromDate))}{" "}
+                {formatDateString(booking.fromDate)}
               </div>
             </TableCell>
 

@@ -4,7 +4,7 @@
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../mongoose";
 import Client, { IClient, IDog } from "@/database/models/client.model";
-import Service from "@/database/models/service.model";
+
 import { sanitizeQuery } from "../utils";
 import mongoose from "mongoose";
 import Booking, { IBooking } from "@/database/models/booking.model";
@@ -26,6 +26,11 @@ interface CreateClientProps {
     vetName: string;
     vetNumber: string;
     vetWorkPhone: string;
+    vetLocation: {
+      address: string;
+      city: string;
+      postalCode: string;
+    };
     isTraining: boolean;
     reference: any;
   };
@@ -72,6 +77,11 @@ export async function CreateClient({
       name: clientData.vetName,
       phone: clientData.vetNumber,
       work_phone: clientData.vetWorkPhone,
+      location: {
+        address: clientData.vetLocation.address,
+        city: clientData.vetLocation.city,
+        postalCode: clientData.vetLocation.postalCode,
+      },
     },
     isTraining: clientData.isTraining,
     references: {
@@ -209,78 +219,7 @@ export async function getClientByIdForBooking(id: string | undefined) {
     throw error;
   }
 }
-export async function chargeClient({
-  clientId,
-  path,
-  serviceType,
-  amount,
-  date,
-}: any) {
-  try {
-    connectToDatabase();
 
-    const service = await Service.create({
-      serviceType,
-      clientId,
-      amount: +amount,
-    });
-    if (service) {
-      const client = await Client.findByIdAndUpdate(
-        clientId,
-        { $push: { owes: service._id } },
-        { new: true }
-      );
-      if (client) {
-        revalidatePath(path);
-        return JSON.parse(JSON.stringify(client));
-      } else {
-        throw new Error("Client not found");
-      }
-    }
-  } catch (error) {
-    console.error("Error charging client:", error);
-    throw error;
-  }
-}
-
-export async function payOffClient({ path, serviceId }: any) {
-  try {
-    connectToDatabase();
-    const service = await Service.findByIdAndUpdate(
-      { _id: serviceId },
-      { paid: true, paymentDate: new Date() },
-      { new: true }
-    );
-    if (!service) {
-      throw new Error("Service not found");
-    } else {
-      revalidatePath(path);
-      return JSON.parse(JSON.stringify(service));
-    }
-  } catch (error) {
-    console.error("Error paying off client:", error);
-    throw error;
-  }
-}
-export async function uncheckedPayment({ serviceId, path }: any) {
-  try {
-    connectToDatabase();
-    const service = await Service.findByIdAndUpdate(
-      { _id: serviceId },
-      { paid: false, paymentDate: null },
-      { new: true }
-    );
-    if (!service) {
-      throw new Error("Service not found");
-    } else {
-      revalidatePath(path);
-      return JSON.parse(JSON.stringify(service));
-    }
-  } catch (error) {
-    console.error("Error unchecking payment:", error);
-    throw error;
-  }
-}
 export async function calculateAverageNewClients(startDate: Date) {
   // Calculate the start date of the previous month
   const previousMonthStartDate = new Date(startDate);
@@ -622,6 +561,12 @@ export async function updateClient({
     vet: {
       name: data.vetName,
       phone: data.vetNumber,
+      work_phone: data.vetWorkPhone,
+      location: {
+        address: data.vetLocation.address,
+        city: data.vetLocation.city,
+        postalCode: data.vetLocation.postalCode,
+      },
     },
   };
   try {
@@ -870,6 +815,8 @@ export async function getClientByIdForProfile(id: string | undefined) {
           createdAt: 1,
           status: 1,
           loyaltyLevel: 1,
+          owesTotal: 1,
+          totalSpent: 1,
           bookingFee: {
             $arrayElemAt: [
               {

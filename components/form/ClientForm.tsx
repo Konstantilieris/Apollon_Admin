@@ -23,7 +23,7 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
       name: "",
       email: "",
       profession: "",
-      residence: "",
+      residence: "Διαμέρισμα",
       city: "",
       address: "",
       postalCode: "",
@@ -34,6 +34,11 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
       vetName: "",
       vetNumber: "",
       vetWorkPhone: "",
+      vetLocation: {
+        city: "",
+        address: "",
+        postalCode: "",
+      },
       numberOfDogs: "1",
     },
   });
@@ -193,14 +198,40 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
             fieldType={FormFieldType.PHONE_INPUT}
             control={form.control}
             name="vetNumber"
-            label="Τηλ. Κτηνίατρου"
+            label="Κινητό"
           />
           <CustomFormField
             fieldType={FormFieldType.PHONE_INPUT}
             control={form.control}
             name="vetWorkPhone"
-            label="Τηλ. Εργ. Κτηνίατρου"
+            label="Τηλ. Εργασίας"
           />
+          <div className="flex w-full flex-row flex-wrap gap-2">
+            <CustomFormField
+              control={form.control}
+              name="vetLocation.city"
+              fieldType={FormFieldType.INPUT}
+              label="Πόλη"
+              iconSrc="/assets/icons/location.svg"
+              iconAlt="location"
+            />
+            <CustomFormField
+              control={form.control}
+              name="vetLocation.address"
+              fieldType={FormFieldType.INPUT}
+              label="Διεύθυνση"
+              iconSrc="/assets/icons/location.svg"
+              iconAlt="location"
+            />
+            <CustomFormField
+              control={form.control}
+              name="vetLocation.postalCode"
+              fieldType={FormFieldType.INPUT}
+              label="Ταχυδρομικός Κώδικας"
+              iconSrc="/assets/icons/location.svg"
+              iconAlt="location"
+            />
+          </div>
           <CustomFormField
             fieldType={FormFieldType.SKELETON}
             control={form.control}

@@ -97,6 +97,7 @@ export async function createBooking({
         throw new Error("Boarding service creation failed");
       servicesToAdd.push(boardingService[0]._id);
       totalAmount += boardingPrice;
+      console.log("firstTotalAmount", totalAmount);
 
       // Create transportation services based on flags
       if (flag1) {
@@ -158,7 +159,7 @@ export async function createBooking({
         { session }
       );
       if (!booking[0]) throw new Error("Booking creation failed");
-
+      console.log(totalAmount, "2");
       // Step 3: Update the client with owes and room preference
       const updatedClient = await Client.findByIdAndUpdate(
         client.clientId,
@@ -199,6 +200,23 @@ export async function createBooking({
           ],
           { session }
         );
+      } else {
+        await Appointment.create(
+          [
+            {
+              Id: bookingId,
+              Subject: `${updatedClient.name} - ΑΦΙΞΗ`,
+              Type: "Arrival",
+              Description: description,
+              isReadonly: true,
+              Location: location,
+              Color: "#7f1d1d",
+              StartTime: rangeDate.from,
+              EndTime: rangeDate.from,
+            },
+          ],
+          { session }
+        );
       }
 
       if (flag2) {
@@ -209,6 +227,23 @@ export async function createBooking({
               Id: bookingId,
               Subject: `${updatedClient.name} - ΠΑΡΑΔΟΣΗ`,
               Type: "Taxi_Delivery",
+              Description: description,
+              Location: location,
+              isReadonly: true,
+              Color: "#7f1d1d",
+              StartTime: rangeDate.to,
+              EndTime: rangeDate.to,
+            },
+          ],
+          { session }
+        );
+      } else {
+        await Appointment.create(
+          [
+            {
+              Id: bookingId,
+              Subject: `${updatedClient.name} - ΑΝΑΧΩΡΗΣΗ`,
+              Type: "Departure",
               Description: description,
               Location: location,
               isReadonly: true,

@@ -75,6 +75,11 @@ export interface IClient {
     name: string;
     phone: string;
     work_phone?: string;
+    location?: {
+      address?: string;
+      city?: string;
+      postalCode?: string;
+    };
   };
   roomPreference?: string;
 
@@ -222,6 +227,17 @@ const ClientSchema = new Schema<IClient>({
     name: { type: String },
     phone: { type: String },
     work_phone: { type: String },
+    location: {
+      address: {
+        type: String,
+      },
+      city: {
+        type: String,
+      },
+      postalCode: {
+        type: String,
+      },
+    },
   },
   references: {
     isReferenced: ReferenceSchema,
