@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,44 +12,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { payOffClient } from "@/lib/actions/client.action";
-import { usePathname } from "next/navigation";
+
 const PendingPaid = ({ clientId, item, firstName, lastName }: any) => {
   const [open, setOpen] = React.useState(false);
-  const { toast } = useToast();
-  const path = usePathname();
-  const handlePayment = async () => {
-    try {
-      const res = await payOffClient({
-        clientId,
-        serviceId: item._id,
-        serviceType: item.serviceType,
-        path,
-      });
-      if (res) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία πληρωμής",
-          description: "Η πληρωμή πραγματοποιήθηκε με επιτυχία",
-        });
-        setOpen(false);
-      }
-    } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία πληρωμής",
-        description: `${error}`,
-      });
-      throw error;
-    } finally {
-      window.location.reload();
-    }
-  };
+
   return (
     <>
       <Button
@@ -75,7 +41,7 @@ const PendingPaid = ({ clientId, item, firstName, lastName }: any) => {
               </AlertDialogCancel>
               <AlertDialogAction
                 className="border-2 border-green-500"
-                onClick={() => handlePayment()}
+                onClick={() => {}}
               >
                 Συνέχεια
               </AlertDialogAction>

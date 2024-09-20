@@ -11,7 +11,8 @@ const page = async ({ params }: { params: { id: string } }) => {
     getAllPaidClientServices({ clientId: params.id }),
   ]);
   return (
-    <div className="no-scrollbar mb-40 flex min-h-[120vh] w-full overflow-auto p-2">
+    <div className="no-scrollbar relative flex min-h-[120vh] w-full overflow-auto p-2">
+      <button className="absolute right-10 top-8">ΧΡΕΩΣΗ</button>
       <ServiceTabs
         debts={JSON.parse(JSON.stringify(unpaidServices))}
         paid={allServices}

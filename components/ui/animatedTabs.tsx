@@ -110,7 +110,7 @@ export const FadeInDiv = ({
           layoutId={tab.value}
           style={{
             scale: 1 - idx * 0.1,
-            top: 120,
+            top: -33,
             zIndex: -idx,
             opacity: idx < 3 ? 1 - idx * 0.1 : 0,
           }}
@@ -118,11 +118,11 @@ export const FadeInDiv = ({
             y: isActive(tab) ? [10, 100, 10] : 0,
           }}
           className={cn(
-            " h-full overflow-y-scroll no-scrollbar w-full absolute top-0 left-0 ",
+            " h-full overflow-y-scroll no-scrollbar w-full absolute top-10 left-0 ",
             className
           )}
         >
-          <ScrollArea className="max-h-[70vh] overflow-y-scroll no-scrollbar">
+          <ScrollArea className="no-scrollbar max-h-[70vh] overflow-y-scroll">
             {tab.content}
           </ScrollArea>
         </motion.div>
