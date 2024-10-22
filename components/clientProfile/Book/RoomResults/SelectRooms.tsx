@@ -41,6 +41,7 @@ const SelectRooms = ({
     }))
   );
 
+  // Fetch Quick Suggestions based on last booking
   useEffect(() => {
     const fetchSuggestions = async () => {
       setLoading(true);
@@ -62,71 +63,62 @@ const SelectRooms = ({
     fetchSuggestions();
   }, []);
 
+  // Handle room selection logic
   const handleSelectRoom = (room: any, type: string, dogId?: string) => () => {
     if (type === "Join") {
-      // Create a new array where we immutably update dogsInRooms
-      const isDogsInRoom = dogsInRooms.every(
+      // Handle 'Join' functionality (all dogs in the same room)
+      const isAllDogsInRoom = dogsInRooms.every(
         (dogInRoom: any) => dogInRoom.roomId === room._id
       );
-      let updatedDogsInRooms: any = [];
-      if (isDogsInRoom) {
-        updatedDogsInRooms = dogsInRooms.map((dogInRoom: any) => {
-          return {
-            ...dogInRoom,
-            roomId: null,
-            roomName: null,
-          };
-        });
-      } else {
-        updatedDogsInRooms = dogsInRooms.map((dogInRoom: any) => {
-          return {
-            ...dogInRoom,
-            roomId: room._id,
-            roomName: room.name,
-          };
-        });
-      }
+      const updatedDogsInRooms = dogsInRooms.map((dogInRoom: any) => {
+        if (isAllDogsInRoom) {
+          // If all dogs are already in the selected room, remove them from the room
+          return { ...dogInRoom, roomId: null, roomName: null };
+        } else {
+          // Otherwise, put all dogs in the selected room
+          return { ...dogInRoom, roomId: room._id, roomName: room.name };
+        }
+      });
 
-      // Update state with the new array
       setDogsInRooms(updatedDogsInRooms);
-
-      // Set the selected room or clear it if already selected
     } else {
       const updatedDogsInRooms = dogsInRooms.map((dogInRoom: any) => {
         if (dogInRoom.dogId === dogId) {
+          // Check if the dog is already in the selected room and toggle it
           if (dogInRoom.roomId === room._id) {
-            // If the dog is already in the selected room, remove it
-            return {
-              ...dogInRoom,
-              roomId: null,
-              roomName: null,
-            };
+            return { ...dogInRoom, roomId: null, roomName: null }; // Remove from room
           } else {
-            // Otherwise, place the dog in the selected room
-            return {
-              ...dogInRoom,
-              roomId: room._id,
-              roomName: room.name,
-            };
+            return { ...dogInRoom, roomId: room._id, roomName: room.name }; // Assign to room
           }
         }
         return dogInRoom;
       });
+
       setDogsInRooms(updatedDogsInRooms);
     }
   };
+
+  // Submit Room Selections
   const handleSubmit = useCallback(() => {
-    // Check if all dogs in dogsInRooms array have the same roomId
-    setRoomPreference(
-      dogsInRooms.every((dog) => dogsInRooms[0].roomId === dog.roomId)
-        ? "Join"
-        : "Separate"
+    // Filter out any dogs that don't have a room assigned (i.e., roomId === null)
+    const filteredDogsInRooms = dogsInRooms.filter(
+      (dog) => dog.roomId !== null
     );
 
-    // Set the data to dogsInRooms and set the current stage to 1
-    setData(dogsInRooms);
-    setStages(1);
-  }, [dogsInRooms]);
+    // Check if all the remaining dogs are in the same room (Join)
+    const roomPreference = filteredDogsInRooms.every(
+      (dog) => filteredDogsInRooms[0]?.roomId === dog.roomId
+    )
+      ? "Join"
+      : "Separate";
+
+    // Update room preference and set data only with dogs that have assigned rooms
+    setRoomPreference(roomPreference);
+    setData(filteredDogsInRooms); // Save only the dogs with assigned rooms
+    setStages(1); // Move to the next stage
+  }, [dogsInRooms, setRoomPreference, setData, setStages]);
+
+  // Render Quick Suggestion based on last booking
   const renderQuickSuggestion = () => {
     if (!quickSuggestion) return null;
 
@@ -144,9 +136,9 @@ const SelectRooms = ({
           <button
             className={cn(
               "min-w-[140px] min-h-[40px] flex items-center justify-center gap-2 rounded-md bg-black px-8 py-2 text-sm font-semibold text-white hover:bg-black/[0.8] hover:shadow-lg",
-              { "bg-red-600": quickSuggestion.rooms.availability }
+              { "bg-red-600": quickSuggestion.rooms?.availability }
             )}
-            disabled={quickSuggestion.rooms.availability}
+            disabled={!quickSuggestion.rooms?.availability}
             onClick={() => {
               const room = {
                 _id: quickSuggestion?.rooms.roomId,
@@ -157,12 +149,12 @@ const SelectRooms = ({
           >
             {quickSuggestion?.rooms.roomName}
             {dogsInRooms.find(
-              (room) => room.roomId === quickSuggestion.rooms.roomId
+              (room) => room.roomId === quickSuggestion.rooms?.roomId
             ) && <IconCheck size={22} className="text-yellow-500" />}
           </button>
         ) : (
           <div className="ml-4 flex flex-col items-center gap-2">
-            {quickSuggestion?.rooms.map((room: any) => (
+            {quickSuggestion?.rooms?.map((room: any) => (
               <div
                 key={room.roomId}
                 className="flex flex-row items-center gap-4"
@@ -177,8 +169,10 @@ const SelectRooms = ({
                       _id: room.roomId,
                       name: room.roomName,
                     };
+
                     handleSelectRoom(newRoom, "Separate", room.dogId)();
                   }}
+                  disabled={!room.availability}
                 >
                   {room?.roomName}
                   {dogsInRooms.find((dog) => dog.roomId === room.roomId) && (

@@ -31,7 +31,7 @@ const page = async ({ params, searchParams }: PageProps) => {
 
   return (
     <section className="flex h-full w-full flex-col ">
-      <BookingBox client={JSON.parse(JSON.stringify(client))} />
+      <BookingBox client={JSON.parse(client || "")} />
       <Suspense
         fallback={<LoadingSkeleton size={100} animation="animate-spin" />}
       >

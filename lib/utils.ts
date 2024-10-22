@@ -610,3 +610,30 @@ export function calculateAge(birthDate: Date): string {
 
   return `${years}.${months}`;
 }
+export function calculateDaysDifference(
+  newDate: Date,
+  oldDate: Date,
+  isArrival: boolean
+): number {
+  // Convert both dates to milliseconds
+  const newDateMillis = new Date(newDate).getTime();
+  const oldDateMillis = new Date(oldDate).getTime();
+
+  // Calculate the difference in milliseconds
+  const diffInMillis = newDateMillis - oldDateMillis;
+
+  // Convert the difference from milliseconds to days
+  const diffInDays = Math.round(diffInMillis / (1000 * 60 * 60 * 24));
+
+  // Logic for Arrival:
+  // If newDate is later than oldDate (range is expanding), return negative
+  // If newDate is earlier than oldDate (range is reducing), return positive
+  if (isArrival) {
+    return -diffInDays; // Reverse the logic for arrival
+  }
+
+  // Logic for Non-Arrival:
+  // If newDate is earlier than oldDate (range is expanding), return negative
+  // If newDate is later than oldDate (range is reducing), return positive
+  return diffInDays;
+}

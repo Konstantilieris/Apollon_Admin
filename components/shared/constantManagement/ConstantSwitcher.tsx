@@ -122,9 +122,9 @@ const ConstantSwitcher = ({
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[270px] p-0 font-sans dark:bg-dark-200">
+      <PopoverContent className="w-[270px] p-0  dark:bg-dark-200">
         <Command>
-          <CommandList className="custom-scrollbar">
+          <CommandList className="custom-scrollbar font-sans">
             <CommandInput placeholder={placeholder} />
             <CommandEmpty>Δεν βρέθηκε.</CommandEmpty>
             <CommandGroup heading={heading} className="text-indigo-400">
@@ -153,7 +153,7 @@ const ConstantSwitcher = ({
             <CommandGroup heading="ΕΝΕΡΓΕΙΕΣ" className="text-green-500">
               <CommandItem
                 value="Δημιουργια"
-                className="flex flex-row items-center font-sans font-semibold text-green-400 hover:scale-105 hover:animate-pulse"
+                className="flex flex-row items-center  font-semibold text-green-400 hover:scale-105 hover:animate-pulse"
                 disabled={false}
                 onSelect={() => {
                   // Debug log

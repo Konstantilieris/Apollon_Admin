@@ -1,5 +1,5 @@
 "use server";
-import { revalidatePath } from "next/cache";
+
 import { connectToDatabase } from "../mongoose";
 import Constant from "@/database/models/constants.model";
 

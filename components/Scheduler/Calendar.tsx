@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo } from "react";
+import React, { memo, useCallback, useRef, useState } from "react";
 
 import {
   Week,
@@ -9,37 +9,53 @@ import {
   ScheduleComponent,
   ViewsDirective,
   ViewDirective,
-  Inject,
   TimelineMonth,
+  DragAndDrop,
+  ResourcesDirective,
+  ResourceDirective,
+  TimelineViews,
+  Inject,
 } from "@syncfusion/ej2-react-schedule";
-import { registerLicense, L10n, loadCldr } from "@syncfusion/ej2-base";
+import {
+  registerLicense,
+  L10n,
+  loadCldr,
+  removeClass,
+} from "@syncfusion/ej2-base";
 
 import * as greekLocale from "cldr-data/main/el/ca-gregorian.json"; // Greek CLDR data
 import * as greekNumbers from "cldr-data/main/el/numbers.json";
 import * as greekTime from "cldr-data/main/el/timeZoneNames.json";
-import { cn } from "@/lib/utils";
-import "./calendar.css";
-
+import { IconCar, IconUser, IconLetterK, IconPhone } from "@tabler/icons-react";
 import {
   createEvent,
   deleteEvent,
+  updateBookingDateChange,
   updateEvent,
+  updateEventBookingOnlyTimeChange,
 } from "@/lib/actions/event.action";
+
+import { checkBookingRoomAvailability } from "@/lib/actions/booking.action";
+import "./calendar.css";
+
+import moment from "moment";
+import useCalendarModal from "@/hooks/use-calendar-modal";
+
 const registerKey = process.env.NEXT_PUBLIC_REGISTER_KEY; // Set a default value if the key is undefined
 registerLicense(registerKey!);
 loadCldr(greekLocale, greekNumbers, greekTime);
 L10n.load({
   el: {
     schedule: {
-      day: "Ημέρα",
-      week: "Εβδομάδα",
-      workWeek: "Εργάσιμη εβδομάδα",
-      month: "Μήνας",
+      day: "ΗΜΕΡΑ",
+      week: "ΕΒΔΟΜΑΔΑ ",
+      workWeek: "ΕΡΓΑΣΙΜΗ ΕΒΔΟΜΑΔΑ",
+      month: "ΜΗΝΑΣ",
       agenda: "Ατζέντα",
       weekAgenda: "Εβδομαδιαία ατζέντα",
       workWeekAgenda: "Ατζέντα εργασίας εβδομάδας",
       monthAgenda: "Μηνιαία ατζέντα",
-      today: "Σήμερα",
+      today: "ΣΗΜΕΡΑ",
       noEvents: "Δεν υπάρχουν γεγονότα",
       emptyContainer:
         "Δεν υπάρχουν προγραμματισμένα γεγονότα για αυτήν την ημέρα.",
@@ -49,7 +65,7 @@ L10n.load({
       more: "περισσότερα",
       close: "Κλείσιμο",
       cancel: "Ακύρωση",
-      noTitle: "(Χωρίς τίτλο)",
+      noTitle: "Χωρίς τίτλο",
       delete: "Διαγραφή",
       deleteEvent: "Διαγραφή γεγονότος",
       deleteMultipleEvent: "Διαγραφή πολλαπλών γεγονότων",
@@ -103,31 +119,151 @@ L10n.load({
       previous: "Προηγούμενο",
       next: "Επόμενο",
       timelineDay: "Χρονική Ημέρα",
-      timelineWeek: "Χρονική Εβδομάδα",
+      timelineWeek: "ΧΡΟΝΙΚΗ ΕΒΔΟΜΑΔΑ",
       timelineWorkWeek: "Χρονική Εργάσιμη Εβδομάδα",
-      timelineMonth: "Χρονικός Μήνας",
+      timelineMonth: "ΧΡΟΝΙΚΟΣ ΜΗΝΑΣ",
       expandAllDaySection: "Επέκταση",
       collapseAllDaySection: "Σύμπτυξη",
     },
+
+    recurrenceeditor: {
+      repeat: "Επανάληψη",
+      days: "Ημέρες",
+      weeks: "Εβδομάδες",
+      months: "Μήνες",
+      years: "Χρόνια",
+      never: "Ποτέ",
+      daily: "Καθημερινά",
+      weekly: "Εβδομαδιαία",
+      monthly: "Μηνιαία",
+      yearly: "Ετήσια",
+      until: "Μέχρι",
+      count: "Πλήθος",
+      first: "Πρώτο",
+      second: "Δεύτερο",
+      third: "Τρίτο",
+      fourth: "Τέταρτο",
+      last: "Τελευταίο",
+      repeatEvery: "Επανάληψη κάθε",
+      repeatOn: "Επανάληψη στις",
+      end: "Τέλος",
+      after: "Μετά",
+      occurrences: "Εμφανίσεις",
+      summaryTimes: "φορές",
+      summaryOn: "στις",
+      summaryUntil: "μέχρι",
+      summaryRepeat: "Επαναλαμβάνεται",
+      summaryDay: "ημέρα",
+      summaryWeek: "εβδομάδα",
+      summaryMonth: "μήνας",
+      summaryYear: "έτος",
+    },
   },
 });
+// No dependencies, this will remain the same unless the logic inside changes.
 
-const Scheduler: React.FC<{ appointments: any }> = memo(({ appointments }) => {
+const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
+  appointments,
+  revenueData,
+}) => {
+  const { setPairDate, setStage, setSelectedEvent, toggleOpen, open } =
+    useCalendarModal();
+  const scheduleObj = useRef(null);
+
+  const dateRef = useRef(new Date());
+  const [isDragging, setIsDragging] = useState(false);
+  // eslint-disable-next-line no-undef
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const renderIcon = useCallback((categoryId: number) => {
+    switch (categoryId) {
+      case 1:
+        return (
+          <span className="absolute right-0 top-0 rounded-full border border-white p-1 text-xl">
+            🤠
+          </span>
+        );
+      case 2:
+        return (
+          <IconLetterK
+            size={30}
+            className="absolute right-0 top-0 rounded-full border border-white p-1 text-purple-400"
+          />
+        );
+      case 3:
+        return (
+          <IconCar
+            size={30}
+            className="absolute right-0 top-0 rounded-full border border-white p-1 text-green-500"
+          />
+        );
+      default:
+        return null;
+    }
+  }, []);
+  const mockCategoryData = [
+    { text: "Personal", id: 1, color: "#00008B" },
+    { text: "Booking", id: 2, color: "#4B0082" },
+    { text: "Transport", id: 3, color: "#32CD32" },
+  ];
+
+  const renderType = useCallback((type: string) => {
+    switch (type) {
+      case "Arrival":
+        return "ΑΦΙΞΗ";
+      case "Departure":
+        return "ΑΝΑΧΩΡΗΣΗ";
+      case "Taxi_PickUp":
+        return "ΠΑΡΑΛΑΒΗ";
+      case "Taxi_Delivery":
+        return "ΠΑΡΑΔΟΣΗ";
+      default:
+        return type;
+    }
+  }, []);
+
   const eventTemplate = (props: any) => {
     return (
       <div
-        className={cn(
-          "font-sans pb-4  w-full text-white  font-semibold   items-center flex justify-center min-h-[50px] gap-2 "
-        )}
-        style={{ backgroundColor: props.Color ? props.Color : "yellowgreen" }}
+        style={{
+          // Apply the event color or default
+          color: "white", // You can also change the text color here
+        }}
+        className="text-center"
       >
-        {" "}
-        {props.Subject}
+        {props.categoryId > 1 ? renderType(props.Type) : props.Subject}
       </div>
     );
   };
 
+  const tooltip = (props: any) => {
+    if (open || isDragging) return null;
+    return (
+      <div className="h-full w-full border-none  text-light-900 outline-none">
+        {renderIcon(props.categoryId)}
+        <div className="mt-4 flex w-full flex-col gap-4 px-4">
+          <div className="text-xl uppercase">{props.Subject}</div>
+          {props.clientName ? (
+            <div className="flex flex-row items-center gap-2 text-lg">
+              <IconUser size={24} className="text-light-900" />
+              {props.clientName}
+            </div>
+          ) : (
+            <></>
+          )}
+          {props.mobile ? (
+            <div className="flex flex-row items-center gap-2 text-lg">
+              <IconPhone size={24} className="text-light-900" />
+              {props.mobile}
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+      </div>
+    );
+  };
   const onActionComplete = async (args: any) => {
+    if (open) return;
     if (args.requestType === "eventCreated") {
       await createEvent({ event: args.addedRecords[0] });
     } else if (args.requestType === "eventChanged") {
@@ -136,39 +272,254 @@ const Scheduler: React.FC<{ appointments: any }> = memo(({ appointments }) => {
       await deleteEvent({ event: args.deletedRecords[0] });
     }
   };
+
   const today = new Date();
   const todayDayOfWeek = today.getDay();
+  const onDragStart = (args: any) => {
+    setIsDragging(true);
+  };
+  const onDragStop = async (args: any) => {
+    setIsDragging(false);
+    if (open) return;
+    const draggedEvent = args.data;
+
+    // Check if it's a booking event and has a paired event (e.g., arrival/departure or pick-up/delivery)
+    if (draggedEvent?.categoryId === 2 || draggedEvent?.categoryId === 3) {
+      const { Id, StartTime, EndTime, Type, isArrival } = draggedEvent;
+
+      // Find the paired event (e.g., the other event with the same bookingId)
+      const pairedEvent = appointments.find(
+        (event: any) => event.Id === Id && event.isArrival !== isArrival
+      );
+
+      let isTimeChangeValid = true; // Track if the time change is valid
+
+      if (pairedEvent) {
+        const pairedStartTime = pairedEvent.StartTime;
+        const pairedEndTime = pairedEvent.EndTime;
+
+        // Check constraints based on the event type (arrival/departure or pick-up/delivery)
+        if (isArrival) {
+          if (moment(EndTime).isAfter(pairedStartTime)) {
+            alert(
+              "The arrival or pick-up cannot be later than the departure or delivery."
+            );
+            isTimeChangeValid = false;
+
+            args.cancel = true;
+          }
+          setPairDate(pairedStartTime);
+        } else if (!isArrival) {
+          // For departure or delivery, make sure the dragged event starts after the paired arrival or pick-up
+          if (moment(StartTime).isBefore(pairedEndTime)) {
+            alert(
+              "The departure or delivery cannot be earlier than the arrival or pick-up."
+            );
+            isTimeChangeValid = false;
+            args.cancel = true;
+          }
+        }
+        setPairDate(pairedEndTime);
+      }
+
+      // If time constraints are valid and there's a time change, check room availability
+      if (isTimeChangeValid) {
+        // Check if only the time has changed (compare the mm/dd/yyyy of both dates)
+        const originalEvent = appointments.find(
+          (event: any) => event.Id === Id && event.Type === Type
+        );
+
+        const originalStartDate = new Date(
+          originalEvent.StartTime
+        ).toLocaleDateString();
+        const draggedStartDate = new Date(StartTime).toLocaleDateString();
+
+        // If only the time has changed (same mm/dd/yyyy), skip room availability check
+        if (originalStartDate === draggedStartDate) {
+          try {
+            await updateEventBookingOnlyTimeChange({ event: draggedEvent });
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          // If the date has changed, check for room availability
+          const roomAvailability = await checkBookingRoomAvailability({
+            date: StartTime,
+            bookingId: Id,
+            type: Type,
+          });
+
+          if (roomAvailability) {
+            alert("The room is not available for the selected time range.");
+            setStage(2);
+            setSelectedEvent(draggedEvent);
+            args.cancel = true;
+            removeClass([document.body], ["e-popup-open", "e-navigate"]);
+            toggleOpen();
+          } else {
+            try {
+              const pairDate = pairedEvent?.StartTime;
+              await updateBookingDateChange({
+                event: draggedEvent,
+                pairDate,
+              });
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toISOString().split("T")[0];
+  };
+
+  const renderCell = (args: any) => {
+    if (args.element.classList.contains("e-header-cells")) {
+      const dateHeader = args.element.querySelector(".e-header-day");
+      if (dateHeader) {
+        // Get the current date from the cell's attributes
+        const cellDate = new Date(args.date); // args.date holds the date for that cell
+        const formattedDate = formatDate(cellDate);
+
+        // Check if revenue data exists for this date
+        if (revenueData[formattedDate]) {
+          const revenue = revenueData[formattedDate];
+          // Append the revenue next to the date header
+          dateHeader.innerHTML += ` <span class='headerDetail'>${revenue}€</span>`;
+        }
+      }
+    }
+  };
+
+  const handleDoubleClick = (args: any) => {
+    const eventData = args.event;
+    if (eventData?.categoryId === 2 || eventData?.categoryId === 3) {
+      args.cancel = true;
+      // Prevent the default popup
+      const pairEvent = appointments.find(
+        (event: any) =>
+          event.Id === args.event.Id && event.isArrival !== args.event.isArrival
+      );
+      dateRef.current = eventData.StartTime;
+      setPairDate(pairEvent?.StartTime);
+      setSelectedEvent(eventData);
+      setStage(1);
+      toggleOpen();
+    }
+
+    // Handle double click event
+  };
+
+  const handleSingleClick = (args: any) => {
+    if (args.event.categoryId === 2 || args.event.categoryId === 3) {
+      args.cancel = true;
+      setSelectedEvent(args.event);
+
+      const pairEvent = appointments.find(
+        (event: any) =>
+          event.Id === args.event.Id && event.isArrival !== args.event.isArrival
+      );
+      setPairDate(pairEvent?.StartTime);
+      setStage(0);
+      dateRef.current = args.event.StartTime;
+      removeClass([document.body], "e-popup-open");
+      toggleOpen();
+    }
+  };
+  const onEventClick = (args: any) => {
+    if (args.event.categoryId === 2 || args.event.categoryId === 3) {
+      args.cancel = true;
+    }
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+    }
+
+    // Set a timeout for single-click handling
+    clickTimeoutRef.current = setTimeout(() => {
+      handleSingleClick(args); // Handle single-click after delay
+    }, 250); // 250ms delay for detecting double-clicks
+  };
+
+  const onEventDoubleClick = (args: any) => {
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
+    }
+    handleDoubleClick(args); // Handle the double-click immediately
+  };
+  const timeScale = { enable: true, interval: 60, slotCount: 4 };
+  const onPopupOpen = (args: any) => {
+    if (args.type === "Editor") {
+      const categoryElement = args.element.querySelector("#categoryId");
+
+      // If the category dropdown exists, remove it from the DOM
+      if (categoryElement) {
+        const categoryContainer = categoryElement.closest(".e-control-wrapper"); // Find the wrapper to remove
+        if (categoryContainer) {
+          categoryContainer.remove(); // Remove the entire category dropdown container
+        }
+      }
+    }
+  };
 
   return (
     <ScheduleComponent
-      className=" z-40 w-full rounded-lg"
-      height={"10%"}
+      ref={scheduleObj}
+      popupOpen={onPopupOpen}
+      rowAutoHeight={true}
+      className="   w-full rounded-lg"
+      height={"100%"}
       width={"100%"}
       startHour="07:00"
       endHour="23:30"
+      timeScale={timeScale}
+      renderCell={renderCell}
       eventSettings={{
         dataSource: appointments,
-        fields: {
-          isReadonly: "isReadonly",
-        },
+        tooltipTemplate: tooltip,
+        enableTooltip: !isDragging,
+        allowEditing: true,
+        resources: ["Categories"],
+
         template: eventTemplate,
       }}
+      dragStart={onDragStart}
       actionComplete={onActionComplete}
-      selectedDate={new Date()}
+      eventDoubleClick={onEventDoubleClick}
+      eventClick={onEventClick}
+      selectedDate={dateRef.current}
+      dragStop={onDragStop}
       locale="el"
+      enablePersistence={true}
     >
+      <ResourcesDirective>
+        <ResourceDirective
+          field="categoryId" // Map CategoryId from the event data
+          title="Category"
+          name="Categories"
+          // Allow single category per event
+          dataSource={mockCategoryData} // Categories for Personal, Booking, Transport
+          textField="text"
+          idField="id"
+          colorField="color"
+        />
+      </ResourcesDirective>
       <ViewsDirective>
         <ViewDirective option="Day" />
         <ViewDirective option="Week" firstDayOfWeek={todayDayOfWeek} />
         <ViewDirective option="Month" />
         <ViewDirective option="TimelineMonth" />
+        <ViewDirective option="TimelineWeek" firstDayOfWeek={todayDayOfWeek} />
       </ViewsDirective>
 
-      <Inject services={[Day, Week, Month, TimelineMonth]} />
+      <Inject
+        services={[Day, Week, Month, TimelineMonth, DragAndDrop, TimelineViews]}
+      />
     </ScheduleComponent>
   );
-});
+};
 
-Scheduler.displayName = "Scheduler";
-
-export default Scheduler;
+export default memo(Scheduler);

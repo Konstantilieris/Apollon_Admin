@@ -4,7 +4,7 @@ import Image from "next/image";
 import "@/styles/theme.css";
 const page = () => {
   return (
-    <main className=" text-dark300_light700    flex h-full w-full overflow-x-hidden bg-light-850 font-sans dark:bg-black">
+    <main className=" text-dark300_light700    flex h-full w-full overflow-x-hidden bg-light-850  font-sans dark:bg-black">
       <LogInForm />
       <div className="  sticky top-0 flex  min-h-full w-full items-center justify-end max-lg:hidden">
         <div className="relative min-h-full w-full">

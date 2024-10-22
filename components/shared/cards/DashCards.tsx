@@ -11,7 +11,7 @@ interface CardProps {
 const DashCards = (props: CardProps) => {
   const { show, title, navigation } = props;
   return (
-    <div className="card-wrapper text-dark200_light800  flex  w-full flex-col gap-4 rounded-lg p-4 font-sans max-xs:min-w-full xs:w-[260px]">
+    <div className="card-wrapper text-dark200_light800  flex  w-full flex-col gap-4 rounded-lg p-4  max-xs:min-w-full xs:w-[260px]">
       <div className="flex flex-row justify-between">
         <h2 className=" font-bold">{show}</h2>
         <Image

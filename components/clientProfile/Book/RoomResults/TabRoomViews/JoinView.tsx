@@ -50,10 +50,9 @@ const JoinView = ({
       setCurrentPage(currentPage - 1);
     }
   };
-  console.log("dogsInRooms", dogsInRooms);
 
   return (
-    <div className="min-h-[50vh] px-4 py-2 font-sans">
+    <div className="min-h-[50vh] px-4 py-2 ">
       <div className="flex h-full w-full flex-col gap-4">
         <div className="flex w-full flex-row  items-center  ">
           <div className="flex min-w-[180px] flex-col gap-2 rounded-lg bg-gray-100 p-3 text-lg dark:bg-neutral-900">

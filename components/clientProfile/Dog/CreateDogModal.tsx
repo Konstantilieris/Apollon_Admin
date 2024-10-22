@@ -70,7 +70,7 @@ const CreateDogModal = ({
       if (newClient) {
         toast({
           className:
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
           title: "Επιτυχία",
           description: "Ο σκύλος καταχωρήθηκε",
         });
@@ -79,7 +79,7 @@ const CreateDogModal = ({
     } catch (error) {
       toast({
         className:
-          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
+          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
         title: "Αποτυχία δημιουργίας",
         description: `${error}`,
       });
@@ -95,12 +95,12 @@ const CreateDogModal = ({
         setOpen={setOpen}
         className="custom-scrollbar overflow-y-scroll"
       >
-        <ModalContent className="flex flex-col justify-around font-sans">
+        <ModalContent className="flex flex-col justify-around">
           <h1 className="text-start text-2xl ">Προσθήκη Σκύλου</h1>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="mt-10 flex w-full flex-col items-start justify-start font-sans"
+              className="mt-10 flex w-full flex-col items-start justify-start "
               autoComplete="off"
             >
               <SingleDogForm form={form} />
@@ -110,7 +110,7 @@ const CreateDogModal = ({
         <ModalFooter className="gap-2 bg-purple-400">
           <Button
             onClick={() => form.handleSubmit(onSubmit)()}
-            className="border border-dark-100 bg-purple-800 font-sans font-semibold transition-colors hover:scale-105 hover:bg-purple-900 "
+            className="border border-dark-100 bg-purple-800  font-semibold transition-colors hover:scale-105 hover:bg-purple-900 "
             variant={null}
           >
             {loading ? (

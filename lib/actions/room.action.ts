@@ -183,3 +183,13 @@ export async function deleteRoomById(roomId: any, path: string) {
     throw error;
   }
 }
+export async function getRoomsForCalendar() {
+  try {
+    connectToDatabase();
+    const rooms = await Room.find().sort({ name: 1 });
+    return JSON.parse(JSON.stringify(rooms));
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}

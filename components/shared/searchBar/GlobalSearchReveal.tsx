@@ -8,7 +8,6 @@ import { IconSearch } from "@tabler/icons-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import GlobalResult from "./GlobalResult";
-import { useOutsideClick } from "@/hooks/use-outside-click";
 
 export const FloatingSearch = ({ className }: { className?: string }) => {
   const controlSearch = useAnimation();
@@ -65,11 +64,7 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, searchParams, pathname, router]);
-  useOutsideClick(ref, () => {
-    if (!stage) {
-      controlSearch.start("hidden");
-    }
-  });
+
   return (
     <>
       <AnimatePresence mode="wait">

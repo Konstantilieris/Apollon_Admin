@@ -13,7 +13,6 @@ const Toggle = () => {
   }, []);
   if (!mounted) return null;
   const toggleDarkMode = async () => {
-    console.log(ref.current);
     if (ref.current === null) return;
     await document.startViewTransition(() => {
       setTheme(theme === "dark" ? "light" : "dark");

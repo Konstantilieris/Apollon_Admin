@@ -104,13 +104,13 @@ export function BookingDatePicker({
   };
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("grid gap-2 ", className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
             className={cn(
-              "w-full justify-start text-left  border border-yellow-500 rounded-lg min-h-[60px] font-semibold dark:bg-neutral-900 min-w-[322px] text-[1rem]",
-              !date && "text-muted-foreground hover:scale-105"
+              "w-full justify-start text-left  border border-yellow-500 rounded-lg min-h-[60px] font-semibold dark:bg-neutral-900 min-w-[322px] text-[1rem] max-w-[380px]",
+              !date && "text-muted-foreground hover:scale-105 "
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -132,7 +132,7 @@ export function BookingDatePicker({
           align="center"
           className="flex max-h-[44vh] min-h-[46vh] w-auto flex-col overflow-hidden p-0 pb-1 dark:bg-neutral-950"
         >
-          <div className="relative flex min-h-[6vh] w-full flex-row items-center gap-12 border-b px-4 py-2">
+          <div className="relative flex min-h-[6vh] w-full flex-row items-center gap-12 border-b px-4 py-2 font-sans">
             <span className="w-[62%] ">Επιλέξτε ημερομηνίες</span>
 
             <span
@@ -185,9 +185,9 @@ export function BookingDatePicker({
               locale={el}
               disabled={isDisabled}
             />
-            <div className="flex  h-full  max-h-[40vh]  divide-x border-l">
+            <div className="flex  h-full  max-h-[40vh]  divide-x border-l font-sans">
               <ScrollArea>
-                <div className="flex flex-col p-2">
+                <div className="flex flex-col p-2 ">
                   {hours.toReversed().map((hour) => (
                     <Button
                       key={hour}
@@ -250,7 +250,7 @@ export function BookingDatePicker({
                 </div>
               </div>
             </div>
-            <div className="flex  h-full  max-h-[40vh]  divide-x border-l">
+            <div className="flex  h-full  max-h-[40vh]  divide-x border-l font-sans">
               <ScrollArea>
                 <div className="flex flex-col p-2">
                   {hours.toReversed().map((hour) => (

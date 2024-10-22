@@ -56,7 +56,7 @@ const UpdateClientForm = ({ client, professions }: any) => {
         const newClient = JSON.parse(res);
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: `Ο πελάτης ${newClient.name} ενημερώθηκε`,
@@ -65,7 +65,7 @@ const UpdateClientForm = ({ client, professions }: any) => {
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία δημιουργίας",
         description: `${error}`,

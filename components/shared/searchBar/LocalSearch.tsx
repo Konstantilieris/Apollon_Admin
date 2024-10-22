@@ -44,14 +44,14 @@ const LocalSearch = ({
 
   return (
     <div
-      className={`background-light700_dark400 flex max-h-[56px] grow items-center gap-4 rounded-[10px] px-4 ${otherClasses} font-sans font-bold`}
+      className={`background-light700_dark400 flex max-h-[56px] grow items-center gap-4 rounded-[10px] px-4 ${otherClasses}  font-bold`}
     >
       <Input
         type="text"
         placeholder={placeholder}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="paragraph-regular no-focus text-dark400_light800  border-none bg-transparent font-sans shadow-none outline-none  placeholder:text-yellow-500"
+        className="paragraph-regular no-focus text-dark400_light800  border-none bg-transparent  shadow-none outline-none  placeholder:text-yellow-500"
       />
     </div>
   );

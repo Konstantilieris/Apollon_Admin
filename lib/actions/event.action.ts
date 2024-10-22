@@ -3,6 +3,11 @@ import Event from "@/database/models/event.model";
 
 import { connectToDatabase } from "../mongoose";
 import { revalidatePath } from "next/cache";
+import mongoose from "mongoose";
+import Service from "@/database/models/service.model";
+import Booking from "@/database/models/booking.model";
+import Client from "@/database/models/client.model";
+import { calculateDaysDifference } from "../utils";
 
 type eventProps = {
   event: {
@@ -56,8 +61,6 @@ export async function createEvent({ event }: eventProps) {
     connectToDatabase();
 
     await Event.create(event);
-
-    revalidatePath("/calendar");
   } catch (error) {
     console.log(error);
   }
@@ -66,7 +69,6 @@ export async function updateEvent({ event }: any) {
   try {
     connectToDatabase();
     await Event.findByIdAndUpdate(event._id, event);
-    revalidatePath("/calendar");
   } catch (error) {
     console.log(error);
   }
@@ -75,8 +77,125 @@ export async function deleteEvent({ event }: any) {
   try {
     connectToDatabase();
     await Event.findByIdAndDelete(event._id);
-    revalidatePath("/calendar");
   } catch (error) {
     console.log(error);
+  }
+}
+export async function updateEventBookingOnlyTimeChange({ event }: any) {
+  try {
+    connectToDatabase();
+    await Event.findByIdAndUpdate(event._id, event);
+    if (event.isArrival) {
+      await Booking.findByIdAndUpdate(event.Id, { fromDate: event.StartTime });
+    } else {
+      await Booking.findByIdAndUpdate(event.Id, { toDate: event.StartTime });
+    }
+    revalidatePath("/calendar");
+    revalidatePath("/booking");
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function updateBookingDateChange({ event, pairDate }: any) {
+  let dayDif;
+  let total;
+  let bookingFee;
+  const session = await mongoose.startSession();
+
+  try {
+    await connectToDatabase();
+
+    session.startTransaction();
+
+    const booking = await Booking.findById(event.Id).session(session);
+    if (!booking) {
+      throw new Error(`Booking not found for ID ${event.Id}`);
+    }
+
+    bookingFee = booking.client.bookingFee || 0;
+
+    if (event.isArrival) {
+      dayDif = calculateDaysDifference(event.StartTime, booking.fromDate, true);
+    } else {
+      dayDif = calculateDaysDifference(event.StartTime, booking.toDate, false);
+    }
+
+    total = Math.round(dayDif * bookingFee);
+
+    if (event.isTransport) {
+      const updateService = await Service.findOneAndUpdate(
+        { bookingId: event.Id, serviceType: event.isTransport },
+        { date: event.StartTime },
+        { session }
+      );
+      if (!updateService) {
+        throw new Error(
+          `Service update failed for booking ${event.Id} and service type ${event.isTransport}`
+        );
+      }
+    }
+
+    await Client.findByIdAndUpdate(
+      booking.client.clientId,
+      { $inc: { owesTotal: total } },
+      { session }
+    );
+    await Service.findOneAndUpdate(
+      { bookingId: event.Id, serviceType: "ΔΙΑΜΟΝΗ" },
+      { $inc: { amount: total } },
+      { session }
+    );
+
+    const updateData = event.isArrival
+      ? { fromDate: event.StartTime, $inc: { totalAmount: total } }
+      : { toDate: event.StartTime, $inc: { totalAmount: total } };
+
+    await Booking.findByIdAndUpdate(event.Id, updateData, { session });
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      event._id,
+      { StartTime: event.StartTime, EndTime: event.EndTime },
+      { session }
+    );
+
+    if (!updatedEvent) {
+      throw new Error(`Event update failed for ID ${event._id}`);
+    }
+
+    await session.commitTransaction();
+    revalidatePath("/calendar");
+    revalidatePath("/booking");
+    revalidatePath(`/clients/${booking.client.clientId}`);
+    return true;
+  } catch (error) {
+    console.error("Error in updateBookingDateChange:", error);
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
+    throw error;
+  } finally {
+    session.endSession();
+  }
+}
+export async function updateAppointmentRoom({
+  appointmentId,
+  updatedDogsData,
+}: {
+  appointmentId: string;
+  updatedDogsData: { dogId: string; roomId: string }[];
+}) {
+  try {
+    // Find the appointment by ID and update the dogsData field
+    await Event.findByIdAndUpdate(
+      appointmentId,
+      {
+        $set: { dogsData: updatedDogsData }, // Update the dogsData with the new room for each dog
+      },
+      { new: true } // Return the updated document
+    );
+    return true;
+  } catch (error) {
+    console.error("Error updating room in appointment for dogs:", error);
+    throw new Error("Failed to update room for the appointment.");
   }
 }

@@ -81,7 +81,7 @@ const CreateBooking = ({
       if (res) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: "Η κράτηση δημιουργήθηκε",
@@ -91,17 +91,25 @@ const CreateBooking = ({
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Failed to create Booking",
         description: `${error}`,
       });
     }
   };
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader size={40} className="animate-spin text-yellow-500" />
+        <p className="ml-4 text-lg">Δημιουργία κράτησης...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex min-h-[70vh] w-full max-w-[75vw] flex-col justify-between px-6 pr-12 text-xl">
-      <h1 className=" mt-4 self-start font-sans text-2xl  text-yellow-400">
+      <h1 className=" mt-4 self-start  text-2xl  text-yellow-400">
         Δημιουργία Κράτησης
       </h1>
       <IconLetterKSmall
@@ -109,7 +117,7 @@ const CreateBooking = ({
         className="absolute right-2 top-2 text-yellow-500"
       />
       <h2 className="mt-8   uppercase">ΠΕΛΑΤΗΣ : {client.clientName}</h2>
-      <div className="flex min-w-[180px] flex-col gap-2 rounded-lg bg-gray-100 p-3 font-sans text-xl dark:bg-neutral-900 ">
+      <div className="flex min-w-[180px] flex-col gap-2 rounded-lg bg-gray-100 p-3  text-xl dark:bg-neutral-900 ">
         {dogs.map((dog: any) => (
           <div
             key={dog.dogId}

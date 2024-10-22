@@ -1,21 +1,546 @@
-.e-schedule .e-appointment-details {
-  padding: 4 !important;
+.e-appointment-details {
+  padding: 0 !important;
   margin: 0 !important;
-  max-width: 100% !important;
-  min-width: 100% !important;
-  min-height: 100% !important;
+  text-decoration: none !important;
+  background-color: transparent !important;
 }
+
+.e-appointment {
+  border: 0 !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  text-align: center !important;
+  font-size: 20px !important;
+  transition: transform 0.3s ease-in-out !important;
+  margin-left: 7px !important;
+}
+
 .e-schedule {
   min-width: 100%;
   max-width: 100%;
   max-height: 100%;
   min-height: 100%;
 }
-.e-schedule .e-appointment {
-  padding: 2 !important;
-  margin: 0 !important;
-  text-align: center !important;
-  border: none !important;
 
-  background-color: transparent !important;
+.e-time-slots {
+  font-size: 16px !important;
+}
+.template-wrap {
+  border-radius: 4%;
+  padding-left: 10px;
+  text-transform: uppercase;
+  padding-right: 5px;
+  padding-top: 7px;
+  padding-bottom: 10px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: white;
+
+  width: 100%;
+}
+.e-header-cells {
+  position: relative !important;
+}
+.e-tbar-btn-text {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+}
+.e-tbar-btn {
+  border-radius: 15% !important;
+  padding: 5px !important;
+}
+.e-tbar-btn-text:hover {
+  color: #fac673 !important;
+  border-radius: 15% !important;
+}
+
+.headerDetail {
+  font-size: 16px !important; /* Slightly larger font for better readability */
+  font-weight: 700 !important;
+  color: #ffffff !important; /* White text for contrast */
+
+  background-color: rgb(29, 36, 27); /* Green background to signify income */
+  margin-right: 3px;
+  border-radius: 12px; /* Softer border radius for a more modern look */
+  padding: 5px 10px; /* Add horizontal padding for more space */
+
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+
+  position: absolute;
+  bottom: 7px; /* Give it a little more space from the bottom */
+  right: 5px; /* Give it a little more space from the right */
+
+  display: inline-block; /* To ensure it behaves like a button/label */
+  text-align: center; /* Center the text inside the element */
+
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease; /* Smooth transition effects */
+}
+
+.headerDetail:hover {
+  background-color: rgb(55, 180, 11); /* Darken the green on hover */
+  transform: translateY(
+    -3px
+  ); /* Lift the element slightly on hover for interaction feedback */
+}
+.e-toolbar-item {
+  font-size: 20px !important;
+}
+
+.e-schedule-event-tooltip {
+  background-color: rgb(20, 20, 20) !important;
+  min-width: 12vw;
+  min-height: 10vh;
+  padding-top: 14px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  padding-bottom: 14px !important;
+  border: none !important;
+  border-radius: 10px !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.e-calendar .e-content td.e-focused-date.e-today span.e-day,
+.e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today span.e-day {
+  background-color: #e9c85ef6 !important;
+  color: #1a1d21 !important;
+  border-radius: 50% !important;
+}
+.e-calendar .e-content td.e-today span.e-day,
+.e-calendar .e-content td.e-focused-date.e-today span.e-day,
+.e-bigger.e-small .e-calendar .e-content td.e-today span.e-day,
+.e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today span.e-day {
+  background: none;
+  border: 1px solid #e9c85ef6;
+  border-radius: 50%;
+  /* box-shadow: none; */
+  color: #e9c85ef6;
+}
+.e-calendar .e-content td.e-today.e-selected:hover span.e-day,
+.e-calendar .e-content td.e-selected:hover span.e-day,
+.e-calendar .e-content td.e-selected.e-focused-date span.e-day,
+.e-bigger.e-small .e-calendar .e-content td.e-today.e-selected:hover span.e-day,
+.e-bigger.e-small .e-calendar .e-content td.e-selected:hover span.e-day,
+.e-bigger.e-small
+  .e-calendar
+  .e-content
+  td.e-selected.e-focused-date
+  span.e-day {
+  background-color: #e9c85ef6;
+  color: #000;
+}
+.e-btn.e-flat.e-primary,
+.e-css.e-btn.e-flat.e-primary {
+  background: transparent;
+  border-color: transparent;
+  color: #e9c85ef6;
+}
+.e-css.e-btn.e-flat.e-primary:hover {
+  background: rgba(233, 200, 94, 0.4);
+  border-color: transparent;
+  color: #e9c85ef6;
+}
+.e-schedule .e-schedule-toolbar .e-active-view .e-tbar-btn-text,
+.e-schedule .e-schedule-toolbar .e-active-view .e-icons {
+  color: #e9c85ef6;
+}
+
+.e-schedule .e-vertical-view .e-header-cells.e-current-day {
+  color: #e9c85ef6;
+  font-weight: 600;
+}
+.e-schedule .e-timeline-view .e-date-header-wrap table td.e-current-day,
+.e-schedule .e-timeline-month-view .e-date-header-wrap table td.e-current-day {
+  color: #e9c85ef6;
+  font-weight: normal;
+}
+.e-btn.e-flat.e-primary:hover {
+  background: rgba(233, 200, 94, 0.4);
+  border-color: transparent;
+  color: #e9c85ef6;
+}
+.e-calendar .e-content td.e-today.e-selected span.e-day,
+.e-bigger.e-small .e-calendar .e-content td.e-today.e-selected span.e-day {
+  background-color: #e9c85ef6;
+  border: 1px solid #e9c85ef6;
+  box-shadow: inset 0 0 0 2px rgba(66, 66, 66, 0.7);
+  color: #000;
+}
+.e-float-line::before {
+  background-color: #e9c85ef6 !important;
+}
+.e-float-line::after {
+  background-color: #e9c85ef6 !important;
+}
+
+e-float-input:not(.e-error) input:focus ~ label.e-float-text,
+.e-float-input.e-bigger:not(.e-error) input:focus ~ label.e-float-text,
+.e-bigger .e-float-input:not(.e-error) input:focus ~ label.e-float-text,
+.e-float-input.e-small:not(.e-error) input:focus ~ label.e-float-text,
+.e-small .e-float-input:not(.e-error) input:focus ~ label.e-float-text,
+.e-float-input:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-bigger:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-control-wrapper:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-control-wrapper.e-bigger:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-small:not(.e-error) input[readonly]:focus ~ label.e-float-text,
+.e-small
+  .e-float-input:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-float-text.e-label-top,
+.e-float-input.e-small.e-bigger:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-small:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-control-wrapper.e-small:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-float-text,
+.e-small
+  .e-float-input.e-control-wrapper:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-float-text.e-label-top,
+.e-float-input.e-control-wrapper.e-small.e-bigger:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper.e-small:not(.e-error)
+  input[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-bigger:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-control-wrapper:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-control-wrapper.e-bigger:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-small:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-float-text,
+.e-small
+  .e-float-input:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-float-text.e-label-top,
+.e-float-input.e-small.e-bigger:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-small:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-control-wrapper.e-small:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-float-text,
+.e-small
+  .e-float-input.e-control-wrapper:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-float-text.e-label-top,
+.e-float-input.e-control-wrapper.e-small.e-bigger:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper.e-small:not(.e-error).e-input-focus
+  input[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-bigger:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-control-wrapper:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-control-wrapper.e-bigger:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-small:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-float-text,
+.e-small
+  .e-float-input:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-float-text.e-label-top,
+.e-float-input.e-small.e-bigger:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-small:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-label-top.e-float-text
+  .e-float-input.e-control-wrapper.e-small:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-float-text,
+.e-small
+  .e-float-input.e-control-wrapper:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-float-text.e-label-top,
+.e-float-input.e-control-wrapper.e-small.e-bigger:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper.e-small:not(.e-error)
+  textarea[readonly]:focus
+  ~ label.e-label-top.e-float-text,
+.e-float-input:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-bigger:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-control-wrapper:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-control-wrapper.e-bigger:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-small:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-float-text,
+.e-small
+  .e-float-input:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-float-text.e-label-top,
+.e-float-input.e-small.e-bigger:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-small:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-label-top.e-float-text
+  .e-float-input.e-control-wrapper.e-small:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-float-text,
+.e-small
+  .e-float-input.e-control-wrapper:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-float-text.e-label-top,
+.e-float-input.e-control-wrapper.e-small.e-bigger:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper.e-small:not(.e-error).e-input-focus
+  textarea[readonly]
+  ~ label.e-label-top.e-float-text,
+.e-float-input.e-small.e-bigger:not(.e-error) input:focus ~ label.e-float-text,
+.e-bigger .e-float-input.e-small:not(.e-error) input:focus ~ label.e-float-text,
+.e-float-input:not(.e-error) textarea:focus ~ label.e-float-text,
+.e-float-input.e-bigger:not(.e-error) textarea:focus ~ label.e-float-text,
+.e-bigger .e-float-input:not(.e-error) textarea:focus ~ label.e-float-text,
+.e-float-input.e-small:not(.e-error) textarea:focus ~ label.e-float-text,
+.e-small .e-float-input:not(.e-error) textarea:focus ~ label.e-float-text,
+.e-float-input.e-small.e-bigger:not(.e-error)
+  textarea:focus
+  ~ label.e-float-text,
+.e-bigger
+  .e-float-input.e-small:not(.e-error)
+  textarea:focus
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper:not(.e-error) input:focus ~ label.e-float-text,
+.e-float-input.e-control-wrapper.e-bigger:not(.e-error)
+  input:focus
+  ~ label.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper:not(.e-error)
+  input:focus
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper.e-small:not(.e-error)
+  input:focus
+  ~ label.e-float-text,
+.e-small
+  .e-float-input.e-control-wrapper:not(.e-error)
+  input:focus
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper.e-small.e-bigger:not(.e-error)
+  input:focus
+  ~ label.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper.e-small:not(.e-error)
+  input:focus
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper:not(.e-error)
+  textarea:focus
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper.e-bigger:not(.e-error)
+  textarea:focus
+  ~ label.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper:not(.e-error)
+  textarea:focus
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper.e-small:not(.e-error)
+  textarea:focus
+  ~ label.e-float-text,
+.e-small
+  .e-float-input.e-control-wrapper:not(.e-error)
+  textarea:focus
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper.e-small.e-bigger:not(.e-error)
+  textarea:focus
+  ~ label.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper.e-small:not(.e-error)
+  textarea:focus
+  ~ label.e-float-text,
+.e-float-input:not(.e-error).e-input-focus input ~ label.e-float-text,
+.e-float-input.e-bigger:not(.e-error).e-input-focus input ~ label.e-float-text,
+.e-bigger .e-float-input:not(.e-error).e-input-focus input ~ label.e-float-text,
+.e-float-input.e-small:not(.e-error).e-input-focus input ~ label.e-float-text,
+.e-small .e-float-input:not(.e-error).e-input-focus input ~ label.e-float-text,
+.e-float-input.e-small.e-bigger:not(.e-error).e-input-focus
+  input
+  ~ label.e-float-text,
+.e-bigger
+  .e-float-input.e-small:not(.e-error).e-input-focus
+  input
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper:not(.e-error).e-input-focus
+  input
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper.e-bigger:not(.e-error).e-input-focus
+  input
+  ~ label.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper:not(.e-error).e-input-focus
+  input
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper.e-small:not(.e-error).e-input-focus
+  input
+  ~ label.e-float-text,
+.e-small
+  .e-float-input.e-control-wrapper:not(.e-error).e-input-focus
+  input
+  ~ label.e-float-text,
+.e-float-input.e-control-wrapper.e-small.e-bigger:not(.e-error).e-input-focus
+  input
+  ~ label.e-float-text,
+.e-bigger
+  .e-float-input.e-control-wrapper.e-small:not(.e-error).e-input-focus
+  input
+  ~ label.e-float-text {
+  color: #e9c85ef6 !important;
+}
+
+button,
+[role="button"] {
+  cursor: pointer !important;
+}
+
+.e-popup.e-popup-open.e-dialog {
+  min-width: 50vw;
+  min-height: 30vw;
+  max-height: none;
+}
+
+input.e-input::selection,
+textarea.e-input::selection,
+.e-input-group input.e-input::selection,
+.e-input-group.e-control-wrapper input.e-input::selection,
+.e-float-input input::selection,
+.e-float-input.e-control-wrapper input::selection,
+.e-input-group textarea.e-input::selection,
+.e-input-group.e-control-wrapper textarea.e-input::selection,
+.e-float-input textarea::selection,
+.e-float-input.e-control-wrapper textarea::selection {
+  background: #e9c85ef6;
+  color: #000;
+}
+.e-input-group:not(.e-float-icon-left):not(.e-float-input)::before,
+.e-input-group:not(.e-float-icon-left):not(.e-float-input)::after,
+.e-input-group.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::before,
+.e-input-group.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::after,
+.e-input-group.e-control-wrapper:not(.e-float-icon-left):not(
+    .e-float-input
+  )::before,
+.e-input-group.e-control-wrapper:not(.e-float-icon-left):not(
+    .e-float-input
+  )::after,
+.e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input)
+  .e-input-in-wrap::before,
+.e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input)
+  .e-input-in-wrap::after {
+  background: #e9c85ef6;
+}
+
+.e-btn.e-primary,
+.e-css.e-btn.e-primary {
+  background: #e9c85ef6;
+  border-color: transparent;
+  color: #000;
+}
+.e-btn.e-flat.e-primary:focus,
+.e-css.e-btn.e-flat.e-primary:focus {
+  background: rgba(0, 176, 255, 0.08);
+  border-color: transparent;
+  color: #e9c85ef6;
+}
+.e-checkbox-wrapper .e-frame.e-check,
+.e-css.e-checkbox-wrapper .e-frame.e-check {
+  background-color: #e9c85ef6 !important;
+  border-color: transparent;
+  color: #000;
+}
+.e-schedule .e-month-view .e-current-date .e-date-header,
+.e-schedule .e-month-agenda-view .e-current-date .e-date-header {
+  background: #e9c85ef6;
+  border-radius: 50%;
+  color: #000;
+  min-width: 20px;
+  padding: 0 4px;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.e-schedule .e-month-view .e-date-header-wrap table td.e-current-day,
+.e-schedule .e-month-agenda-view .e-date-header-wrap table td.e-current-day {
+  color: #e9c85ef6;
+  font-weight: normal;
 }

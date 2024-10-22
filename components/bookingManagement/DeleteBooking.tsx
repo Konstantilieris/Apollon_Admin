@@ -13,6 +13,7 @@ const DeleteBooking = ({ bookingId, clientId }: DeleteParams) => {
   const path = usePathname();
   const router = useRouter();
   const handleDelete = async () => {
+    console.log("delete booking");
     try {
       const res = await deleteBooking({ id: bookingId, clientId, path });
       let deleted = null;
@@ -22,7 +23,7 @@ const DeleteBooking = ({ bookingId, clientId }: DeleteParams) => {
       if (deleted) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white  text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: "Η κράτηση διαγράφηκε",
@@ -31,7 +32,7 @@ const DeleteBooking = ({ bookingId, clientId }: DeleteParams) => {
     } catch (err) {
       toast({
         className: cn(
-          "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-celtic-green border-none text-white  text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Σφάλμα",
         description: "Η κράτηση δεν διαγράφηκε",

@@ -69,7 +69,15 @@ export const Tabs = ({
               />
             )}
 
-            <span className="relative block text-black dark:text-white">
+            <span
+              className={cn(
+                "relative block text-lg text-black dark:text-white",
+
+                {
+                  "dark:text-yellow-500": active.value === tab.value,
+                }
+              )}
+            >
               {tab.title}
             </span>
           </button>
@@ -103,7 +111,7 @@ export const FadeInDiv = ({
     return tab.value === tabs[0].value;
   };
   return (
-    <div className="  h-full w-full">
+    <div className="  h-full w-full ">
       {tabs.map((tab, idx) => (
         <motion.div
           key={tab.value}
@@ -117,10 +125,7 @@ export const FadeInDiv = ({
           animate={{
             y: isActive(tab) ? [10, 100, 10] : 0,
           }}
-          className={cn(
-            " h-full overflow-y-scroll no-scrollbar w-full absolute top-10 left-0 ",
-            className
-          )}
+          className={cn(" h-full  w-full absolute top-10 left-0  ", className)}
         >
           <ScrollArea className="no-scrollbar max-h-[70vh] overflow-y-scroll">
             {tab.content}

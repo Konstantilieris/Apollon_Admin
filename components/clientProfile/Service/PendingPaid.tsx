@@ -20,7 +20,7 @@ const PendingPaid = ({ clientId, item, firstName, lastName }: any) => {
     <>
       <Button
         onClick={() => setOpen(!open)}
-        className="form-button2 ml-12 font-sans font-bold"
+        className="form-button2 ml-12  font-bold"
       >
         Εξόφληση
       </Button>

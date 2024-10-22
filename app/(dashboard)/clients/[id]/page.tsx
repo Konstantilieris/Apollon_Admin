@@ -138,7 +138,7 @@ const page = async ({ params }: { params: any }) => {
           <ClientNoteCard client={JSON.parse(JSON.stringify(client))} />
         </div>
         <div className="flex w-full flex-col gap-4 rounded-2xl bg-neutral-800 px-4 py-2">
-          <h1 className="font-sans text-2xl font-semibold text-yellow-500">
+          <h1 className="text-2xl font-semibold text-yellow-500">
             ΚΑΤΟΙΚΙΔΙΑ ΠΕΛΑΤΗ{" "}
           </h1>
           <AddDog clientId={JSON.parse(JSON.stringify(client._id))} />

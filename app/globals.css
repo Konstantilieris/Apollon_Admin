@@ -1,21 +1,19 @@
+@import url("../styles/theme.css");
+
+@import "../node_modules/@syncfusion/ej2-base/styles/material-dark.css";
+@import "../node_modules/@syncfusion/ej2-buttons/styles/material-dark.css";
+@import "../node_modules/@syncfusion/ej2-calendars/styles/material-dark.css";
+@import "../node_modules/@syncfusion/ej2-dropdowns/styles/material-dark.css";
+@import "../node_modules/@syncfusion/ej2-inputs/styles/material-dark.css";
+@import "../node_modules/@syncfusion/ej2-lists/styles/material-dark.css";
+@import "../node_modules/@syncfusion/ej2-navigations/styles/material-dark.css";
+@import "../node_modules/@syncfusion/ej2-popups/styles/material-dark.css";
+@import "../node_modules/@syncfusion/ej2-splitbuttons/styles/material-dark.css";
+@import "../node_modules/@syncfusion/ej2-react-schedule/styles/material-dark.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url("../styles/theme.css");
-@import url("https://cdn.syncfusion.com/ej2/material.css");
-@import "../node_modules/@syncfusion/ej2-base/styles/tailwind-dark.css";
-@import "../node_modules/@syncfusion/ej2-buttons/styles/tailwind-dark.css";
-@import "../node_modules/@syncfusion/ej2-calendars/styles/tailwind-dark.css";
-@import "../node_modules/@syncfusion/ej2-dropdowns/styles/tailwind-dark.css";
-@import "../node_modules/@syncfusion/ej2-inputs/styles/tailwind-dark.css";
-@import "../node_modules/@syncfusion/ej2-lists/styles/tailwind-dark.css";
-@import "../node_modules/@syncfusion/ej2-navigations/styles/tailwind-dark.css";
-@import "../node_modules/@syncfusion/ej2-popups/styles/tailwind-dark.css";
-@import "../node_modules/@syncfusion/ej2-splitbuttons/styles/tailwind-dark.css";
-@import "../node_modules/@syncfusion/ej2-react-schedule/styles/tailwind-dark.css";
-body {
-  font-family: "Inter", sans-serif;
-}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.3s;
@@ -106,7 +104,7 @@ body {
     @apply flex flex-row items-center gap-4 min-w-[400px] justify-center;
   }
   .form_input {
-    @apply no-focus   min-h-[56px] border font-sans max-w-[250px];
+    @apply no-focus   min-h-[56px] border  max-w-[250px];
   }
   .form_label {
     @apply min-w-[130px] font-semibold text-[20px] max-w-[150px];
@@ -127,16 +125,16 @@ body {
     @apply bg-light-900 dark:dark-gradient shadow-light-400 dark:shadow-dark-100 drop-shadow-2xl;
   }
   .auth_btn {
-    @apply dark-gradient dark:primary-gradient max-w-[100px] 2xl:max-w-[130px] 2xl:min-h-[40px] 2xl:p-6 object-contain p-4 text-center  font-sans text-[1em] font-extrabold text-white hover:scale-105 hover:animate-pulse hover:text-[1.05em]  tracking-widest !important;
+    @apply dark-gradient dark:primary-gradient max-w-[100px] 2xl:max-w-[130px] 2xl:min-h-[40px] 2xl:p-6 object-contain p-4 text-center   text-[1em] font-extrabold text-white hover:scale-105 hover:animate-pulse hover:text-[1.05em]  tracking-widest !important;
   }
   .drawer_btn {
-    @apply dark-gradient dark:primary-gradient max-w-[100px]  p-4 text-center  font-sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
+    @apply dark-gradient dark:primary-gradient max-w-[100px]  p-4 text-center    font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
   }
   .dialog_btn {
-    @apply dark-gradient dark:primary-gradient max-w-[120px]  p-4 text-center  font-sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
+    @apply dark-gradient dark:primary-gradient max-w-[120px]  p-4 text-center    font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
   }
   .drawer_btn_close {
-    @apply bg-red-dark max-w-[100px]  p-4 text-center  font-sans  font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
+    @apply bg-red-dark max-w-[100px]  p-4 text-center    font-bold text-white hover:scale-105 hover:animate-pulse  tracking-widest !important;
   }
   .btn {
     @apply bg-light-800 dark:bg-dark-300 !important;
@@ -344,10 +342,5 @@ code {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
-.custom-schedule {
-  /* Add your custom styles here */
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
+
 /* =====  REACT PHONE NUMBER INPUT OVERRIDES */

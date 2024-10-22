@@ -56,7 +56,7 @@ const ConstantModal = () => {
         const category = JSON.parse(res);
         toast({
           className:
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
           title: "Επιτυχία",
           description: `Η κατηγορία ${values.name} καταχωρήθηκε στο ${category.type}`,
         });
@@ -64,7 +64,7 @@ const ConstantModal = () => {
     } catch (error) {
       toast({
         className:
-          "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
+          "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
         title: "Σφάλμα",
         description: "Κάτι πήγε στραβά",
       });
@@ -82,7 +82,7 @@ const ConstantModal = () => {
         setOpen={constantModal.onClose}
         className="z-50  bg-dark-100 text-white"
       >
-        <ModalContent className=" justify-around font-sans">
+        <ModalContent className=" justify-around ">
           <h1 className="self-center text-2xl font-semibold text-purple-400">
             {constantModal?.modalLabel}
           </h1>
@@ -103,7 +103,7 @@ const ConstantModal = () => {
                       />
                     </FormControl>
 
-                    <FormMessage className="font-sans text-red-500" />
+                    <FormMessage className=" text-red-500" />
                   </FormItem>
                 )}
               />
@@ -111,9 +111,9 @@ const ConstantModal = () => {
             </form>
           </Form>
         </ModalContent>
-        <ModalFooter className="gap-2 bg-purple-400 font-sans">
+        <ModalFooter className="gap-2 bg-purple-400 ">
           <Button
-            className="border-2 border-red-800 bg-dark-200 font-sans text-light-700 transition-colors hover:scale-105   hover:bg-red-800"
+            className="border-2 border-red-800 bg-dark-200  text-light-700 transition-colors hover:scale-105   hover:bg-red-800"
             onClick={constantModal.onClose}
             variant={null}
           >
@@ -121,7 +121,7 @@ const ConstantModal = () => {
           </Button>
           <Button
             onClick={form.handleSubmit(onSubmit)}
-            className="border border-dark-100 bg-purple-800 font-sans transition-colors hover:scale-105 hover:bg-purple-900"
+            className="border border-dark-100 bg-purple-800  transition-colors hover:scale-105 hover:bg-purple-900"
             variant={null}
           >
             {loading ? (

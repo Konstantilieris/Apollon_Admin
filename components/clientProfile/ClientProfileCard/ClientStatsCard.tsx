@@ -7,7 +7,7 @@ const ClientStatsCard = ({ client }: any) => {
     <div className=" w-full min-w-[15vw] max-w-[16vw] self-end  ">
       <div
         className={cn(
-          " relative card h-36 bg-[#12002b] rounded-md shadow-md shadow-purple-800  max-w-[15vw] mx-auto flex flex-col justify-between p-4"
+          " relative card h-36 bg-neutral-900 rounded-md shadow-sm shadow-yellow-600  max-w-[15vw] mx-auto flex flex-col justify-between p-4"
         )}
       >
         <div className="flex w-full flex-row items-center justify-between">

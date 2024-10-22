@@ -1,101 +1,127 @@
 "use client";
+import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { ChargeValidation } from "@/lib/validation";
-import * as z from "zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-
+import ServiceSwitcher from "../shared/constantManagement/ServiceSwitcher";
 import { DateInput } from "../datepicker/DateInput";
+import { Input } from "../ui/input";
 
-const ChargeForm = ({ id }: any) => {
-  const form = useForm<z.infer<typeof ChargeValidation>>({
-    resolver: zodResolver(ChargeValidation),
-    defaultValues: {
-      serviceType: "",
-      amount: "",
-      date: new Date(),
-    },
-  });
-  const onSubmit = async (values: z.infer<typeof ChargeValidation>) => {
-    console.log("submit");
+import { Textarea } from "../ui/textarea";
+import { chargeClient } from "@/lib/actions/service.action";
+import { useToast } from "../ui/use-toast";
+
+const ChargeForm = ({ client, services }: any) => {
+  const [selectedService, setSelectedService] = React.useState("");
+  const { toast } = useToast();
+  const [selectedAmount, setSelectedAmount] = React.useState("");
+  const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+    new Date()
+  );
+  const [selectedNote, setSelectedNote] = React.useState("");
+  const handleCharge = async () => {
+    try {
+      const res = await chargeClient({
+        clientId: client._id,
+        serviceType: selectedService,
+        amount: selectedAmount,
+        date: selectedDate,
+        note: selectedNote,
+      });
+      const service = JSON.parse(JSON.stringify(res));
+      if (service) {
+        setSelectedService("");
+        setSelectedAmount("");
+        setSelectedDate(new Date());
+        setSelectedNote("");
+        toast({
+          className: cn(
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          ),
+          title: "Επιτυχία",
+          description: "Η υπηρεσία δημιουργήθηκε",
+        });
+      }
+    } catch (error) {
+      console.error("Error charging client:", error);
+      toast({
+        className: cn(
+          "bg-celtic-red border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+        ),
+        title: "Σφάλμα",
+        description: "Η υπηρεσία δεν δημιουργήθηκε",
+      });
+    }
   };
+  console.log(selectedService);
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="mt-10 flex flex-col space-y-8"
+    <AnimatePresence mode="wait">
+      <motion.div
+        className={cn(
+          "flex-1 flex flex-col gap-8 mt-20  max-w-[14vw] justify-center pl-8 "
+        )}
+        initial="initialState"
+        animate="animateState"
+        exit="exitState"
+        transition={{ duration: 0.3, ease: "easeIn" }}
+        variants={{
+          initialState: {
+            opacity: 0,
+          },
+          animateState: {
+            opacity: 1,
+          },
+          exitState: {
+            opacity: 0,
+          },
+        }}
       >
-        <FormField
-          control={form.control}
-          name="serviceType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Τύπος Υπηρεσίας</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder=""
-                  {...field}
-                  className="background-light850_dark100 text-dark100_light900 font-sans font-bold"
-                />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ποσό</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="1"
-                  type="number"
-                  {...field}
-                  className="background-light850_dark100 text-dark100_light900 font-sans font-bold"
-                />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem className="flex flex-col items-center gap-4">
-              <FormLabel className="form_label ">Ημερομηνία</FormLabel>
-
-              <FormControl>
-                <DateInput field={field} maxwidth={"min-w-[270px]"} />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          className="background-light850_dark100 text-dark100_light900 max-w-[120px] self-center border-2 border-green-500 font-sans font-bold hover:scale-105"
+        <div className="flex flex-col gap-2 ">
+          <span className="text-yellow-500">ΟΝΟΜΑ ΥΠΗΡΕΣΙΑΣ</span>
+          <ServiceSwitcher
+            items={services}
+            client={client}
+            setAmount={setSelectedAmount}
+            selectedItem={selectedService}
+            setSelectedItem={setSelectedService}
+            placeholder="Επιλέξτε Υπηρεσία"
+            heading="Υπηρεσίες"
+            type="Services"
+            label="Υπηρεσία"
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-yellow-500">ΗΜΕΡΟΜΗΝΙΑ</span>
+          <DateInput
+            field={{ value: selectedDate, onChange: setSelectedDate }}
+            color="dark:bg-dark-100"
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-yellow-500">ΣΗΜΕΙΩΣΗ</span>
+          <Textarea
+            value={selectedNote || ""}
+            onChange={(e) => setSelectedNote(e.target.value)}
+            className="  min-h-[6vh] border-none  font-bold focus-visible:outline-none dark:bg-dark-100"
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-yellow-500">ΚΟΣΤΟΣ</span>
+          <Input
+            type="number"
+            value={selectedAmount}
+            onChange={(e) => setSelectedAmount(e.target.value)}
+            className="  min-h-[6vh] border-none  font-bold focus-visible:outline-none dark:bg-dark-100"
+          />
+        </div>
+        <button
+          onClick={() => handleCharge()}
+          disabled={!selectedService || !selectedAmount}
+          className=" rounded-md bg-light-900 px-8 py-2 font-bold text-yellow-700 shadow-[0_4px_14px_0_rgb(0,0,0,10%)] transition duration-200 ease-linear hover:scale-110 hover:shadow-[0_6px_20px_rgba(93,93,93,23%)]"
         >
-          Submit
-        </Button>
-      </form>
-    </Form>
+          ΠΡΟΣΘΗΚΗ
+        </button>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

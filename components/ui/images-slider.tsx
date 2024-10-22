@@ -187,11 +187,9 @@ export const ImageCarousel = () => {
           onClick={() => {
             !session ? router.push("/sign-in") : router.push("/main");
           }}
-          className="flex animate-pulse items-center space-x-2 bg-white font-sans font-semibold text-black dark:bg-black dark:text-[#8B4513]"
+          className="flex animate-pulse items-center space-x-2 bg-white  font-semibold text-black dark:bg-black dark:text-[#8B4513]"
         >
-          <span className="font-sans">
-            {!session ? "Σύνδεση" : "DashBoard"}
-          </span>
+          <span className="">{!session ? "Σύνδεση" : "Μετάβαση"}</span>
         </HoverBorderGradient>
       </motion.div>
     </ImagesSlider>

@@ -1,17 +1,30 @@
 import mongoose, { Schema, model, models } from "mongoose";
 
-interface IEvent {
+export interface IEvent {
   Id: Schema.Types.ObjectId;
   Subject: String;
   Description?: string;
   Type?: string;
   StartTime: Date;
   EndTime: Date;
-  isReadonly?: boolean;
+
   RecurrenceRule?: string;
-  booking?: boolean;
+  categoryId: number;
   Color?: string;
   Location?: string;
+  isArrival?: boolean;
+  clientName?: string;
+  clientId?: Schema.Types.ObjectId;
+  mobile?: string;
+  isTransport?: string;
+  dogsData?: [
+    {
+      dogId: Schema.Types.ObjectId;
+      roomId: Schema.Types.ObjectId;
+      dogName?: string;
+      roomName?: string;
+    },
+  ];
 }
 const EventSchema = new mongoose.Schema<IEvent>({
   Id: {
@@ -33,14 +46,34 @@ const EventSchema = new mongoose.Schema<IEvent>({
     type: String,
   },
 
-  isReadonly: {
-    type: Boolean,
-    default: false,
-  },
   Color: {
     type: String,
   },
-  booking: {
+  clientName: {
+    type: String,
+  },
+  clientId: { type: Schema.Types.ObjectId, ref: "Client" },
+  mobile: {
+    type: String,
+  },
+
+  dogsData: [
+    {
+      dogId: { type: Schema.Types.ObjectId, ref: "Dog" },
+      roomId: { type: Schema.Types.ObjectId, ref: "Room" },
+      roomName: { type: String },
+      dogName: { type: String },
+    },
+  ],
+  categoryId: {
+    type: Number,
+
+    default: 1,
+  },
+  isTransport: {
+    type: String,
+  },
+  isArrival: {
     type: Boolean,
   },
 

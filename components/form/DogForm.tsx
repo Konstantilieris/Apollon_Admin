@@ -67,7 +67,7 @@ const DogForm = ({
         const client = JSON.parse(newClient);
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: "Ο πελάτης καταχωρήθηκε",
@@ -77,7 +77,7 @@ const DogForm = ({
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία δημιουργίας",
         description: `${error}`,
@@ -93,7 +93,7 @@ const DogForm = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-10 flex w-full flex-col items-start justify-start font-sans"
+          className="mt-10 flex w-full flex-col items-start justify-start "
           autoComplete="off"
         >
           {renderDogFields()}

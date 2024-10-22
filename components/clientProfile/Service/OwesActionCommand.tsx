@@ -12,48 +12,55 @@ import {
 import {
   IconCardsFilled,
   IconCashRegister,
-  IconCircles,
   IconMail,
   IconReceipt,
 } from "@tabler/icons-react";
 
+import { useServiceModal } from "@/hooks/use-service-modal";
 import { Service } from "./OwesTab";
 
-import { useServiceModal } from "@/hooks/use-service-modal";
-
-export function DropdownMenuAction({ service }: { service: Service }) {
-  const { setOpen, setCurrentData } = useServiceModal();
+export function DropdownMenuAction({
+  selectedServices,
+}: {
+  selectedServices: Service[];
+}) {
+  const { setOpen, setSelectedServices } = useServiceModal();
   const handleOpen = (type: string) => {
-    setCurrentData(service, type);
+    setSelectedServices(selectedServices, type);
     setOpen();
   };
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="ml-2 rounded-full bg-purple-600 px-4 py-1 text-white transition hover:scale-110 hover:bg-green-600"
+            className="ml-2 px-4 py-1 text-white transition hover:scale-110 hover:bg-yellow-600"
+            disabled={selectedServices.length === 0}
           >
             <IconCashRegister size={20} className="text-light-900 " />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className=" w-56  bg-dark-200" align="center">
-          <DropdownMenuLabel>ΕΞΟΦΛΗΣΗ</DropdownMenuLabel>
+        <DropdownMenuContent
+          className=" w-56  bg-dark-200 font-sans"
+          align="center"
+        >
+          <DropdownMenuLabel>ΕΝΕΡΓΕΙΕΣ</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem
               className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
               onClick={() => handleOpen("Payment")}
             >
-              Πληρωμή
+              Εξόφληση
               <IconCardsFilled size={20} className="text-green-500/70 " />
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105">
-              Πληρωμή Όλων
-              <IconCircles size={20} className="text-green-500/70 " />
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105">
+
+            <DropdownMenuItem
+              className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
+              onClick={() => handleOpen("Print")}
+            >
               Απόδειξη
               <IconReceipt size={20} className="text-gray-400/80 " />
             </DropdownMenuItem>

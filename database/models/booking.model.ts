@@ -5,7 +5,7 @@ export interface IBooking {
     clientId: Schema.Types.ObjectId;
     clientName: string;
     transportFee?: number;
-    bookingPerDay?: number;
+    bookingFee?: number;
     phone: string;
     location: string;
   };

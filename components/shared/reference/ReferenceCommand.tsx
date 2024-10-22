@@ -44,10 +44,10 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
           }}
           value={reference}
         >
-          <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] max-w-[246px] rounded-lg p-2 font-sans ">
+          <SelectTrigger className="background-light800_dark300 text-dark300_light700 paragraph-regular light-border-2 min-h-[56px] max-w-[246px] rounded-lg p-2  ">
             <SelectValue placeholder="Σύσταση" />
           </SelectTrigger>
-          <SelectContent className="background-light900_dark300 text-dark300_light700 w-full rounded-lg p-4 font-sans">
+          <SelectContent className="background-light900_dark300 text-dark300_light700 w-full rounded-lg p-4 ">
             <SelectItem className=" hover:scale-105" value="client">
               <IconUserPlus className="h-6 w-6 text-indigo-400" />
             </SelectItem>
@@ -108,11 +108,11 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
                         setSelectedClient(client.name);
                         setReference("");
                       }}
-                      className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1 font-sans hover:scale-105
+                      className={cn(`text-dark300_light900 flex flex-col rounded-md px-4 py-1  hover:scale-105
              
             `)}
                     >
-                      <span className="font-sans">{client?.name}</span>
+                      <span className="">{client?.name}</span>
                       <span className="subtle-email">{client.email}</span>
                     </div>
                     <Separator className="my-2" />
@@ -124,7 +124,7 @@ const ReferenceCommand = ({ clients, value, onChange }: any) => {
         </Popover>
       )}
       {selectedClient && (
-        <span className="small-regular ml-4 self-center font-sans text-indigo-300">
+        <span className="small-regular ml-4 self-center  text-indigo-300">
           {selectedClient}
         </span>
       )}

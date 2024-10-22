@@ -221,7 +221,7 @@ export const SidebarButton = ({
           translateX: 7,
           transition: { duration: 0.2 },
         }}
-        className="inline-block whitespace-pre text-lg text-neutral-700  dark:text-neutral-200"
+        className="inline-block whitespace-pre  text-lg  text-neutral-700 dark:text-neutral-200"
       >
         {label}
       </motion.span>

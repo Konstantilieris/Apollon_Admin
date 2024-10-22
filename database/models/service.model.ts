@@ -8,6 +8,7 @@ export interface IService {
   paid: boolean;
   bookingId?: Schema.Types.ObjectId;
   paymentDate?: Date;
+  endDate?: Date;
   notes?: string;
 }
 
@@ -37,6 +38,7 @@ const ServiceSchema = new Schema<IService>({
     default: Date.now,
     required: true,
   },
+
   paid: {
     type: Boolean,
     default: false,

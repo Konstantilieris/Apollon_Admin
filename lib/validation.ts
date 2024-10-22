@@ -34,7 +34,10 @@ export const ChargeValidation = z.object({
   date: z.date(),
 });
 export const ClientValidation = z.object({
-  name: z.string().min(2).max(40),
+  name: z
+    .string()
+    .min(2, { message: "Το όνομα πρέπει να έχει τουλάχιστον δύο χαρακτήρες" })
+    .max(40),
   email: z.string().optional(),
   profession: z.string().optional(),
   numberOfDogs: z.string(),

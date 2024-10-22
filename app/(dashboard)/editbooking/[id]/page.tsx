@@ -12,7 +12,7 @@ const EditChange = async ({ params }: any) => {
   const booking = JSON.parse(await getBookingById(params.id));
 
   return (
-    <section className=" flex h-full w-full flex-col overflow-y-auto px-4 py-8 font-sans dark:bg-neutral-800 ">
+    <section className=" flex h-full w-full flex-col overflow-y-auto px-4 py-8 dark:bg-neutral-800 ">
       <div className="flex flex-row items-center justify-between px-2">
         <span className="flex flex-row items-center gap-2 ">
           <Image

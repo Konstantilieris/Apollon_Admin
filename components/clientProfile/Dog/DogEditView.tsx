@@ -62,7 +62,7 @@ const DogEditView = ({
       if (client) {
         toast({
           className:
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
           title: "Επιτυχία",
           description: "Επιτυχής ενημέρωση",
         });
@@ -70,7 +70,7 @@ const DogEditView = ({
     } catch (error) {
       toast({
         className:
-          "bg-red-500 border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
+          "bg-red-500 border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
         title: "Σφάλμα",
         description: "Κάτι πήγε στραβά",
       });

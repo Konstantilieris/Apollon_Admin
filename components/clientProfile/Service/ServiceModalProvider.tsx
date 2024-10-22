@@ -6,7 +6,7 @@ import { useServiceModal } from "@/hooks/use-service-modal";
 const ServiceModal = dynamic(() => import("./PopoverActionService"), {
   ssr: false,
 });
-const ServiceModalProvider = () => {
+const ServiceModalProvider = ({ client }: any) => {
   const [mount, setMount] = React.useState(false);
   const { isOpen } = useServiceModal();
   useEffect(() => {
@@ -14,7 +14,7 @@ const ServiceModalProvider = () => {
   }, []);
   if (!mount) return null;
 
-  return <>{isOpen && <ServiceModal />}</>;
+  return <>{isOpen && <ServiceModal client={client} />}</>;
 };
 
 export default ServiceModalProvider;

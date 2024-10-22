@@ -34,7 +34,7 @@ export function DatePickerWithRange({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-sans  background-light800_dark300 text-dark300_light700 hover:scale-105 border-yellow-500 border-2 min-h-[46px] font-semibold",
+              "w-[300px] justify-start text-left   background-light800_dark300 text-dark300_light700 hover:scale-105 border-yellow-500 border-2 min-h-[46px] font-semibold",
               !rangeDate && "text-muted-foreground"
             )}
           >
@@ -53,11 +53,11 @@ export function DatePickerWithRange({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="text-dark200_light800 background-light850_dark100  w-auto p-0 font-sans font-semibold"
+          className="text-dark200_light800 background-light850_dark100  w-auto p-0  font-semibold"
           align="start"
         >
           <Calendar
-            className="font-sans"
+            className=""
             disabled={disabled && { before: new Date() }}
             initialFocus
             mode="range"

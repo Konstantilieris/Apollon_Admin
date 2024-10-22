@@ -25,7 +25,7 @@ const page = async ({ searchParams: { id, page, sub, q } }: any) => {
     getFromMainCategorySubCategoriesTotal({ id: mainId }),
   ]);
   return (
-    <section className=" flex h-full w-full flex-row  py-2 font-sans">
+    <section className=" flex h-full w-full flex-row  py-2 ">
       <div className="  custom-scrollbar flex w-full flex-1 flex-col   gap-8  overflow-y-auto scroll-smooth px-5  py-7 max-2xl:gap-2 max-2xl:py-8 sm:px-8">
         <header className=" flex flex-col justify-between gap-8 max-2xl:gap-2">
           <div className="flex flex-col gap-2">

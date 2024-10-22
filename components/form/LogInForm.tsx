@@ -45,18 +45,18 @@ const LogInForm = () => {
     if (res?.error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  font-sans"
         ),
-        title: "Failed to Login try again!",
+        title: "Αποτυχία σύνδεσης!",
         description: `${res?.error}`,
       });
     } else {
       toast({
         className: cn(
-          "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
         ),
         title: "Success",
-        description: "Welcome back admin",
+        description: "Καλώς ήρθατε!",
       });
 
       router.replace("./");
@@ -66,7 +66,7 @@ const LogInForm = () => {
     form.reset();
   };
   return (
-    <section className="   flex   w-full  flex-col items-center gap-4 self-center px-4 font-sans max-sm:px-6">
+    <section className="   flex   w-full  flex-col items-center gap-4 self-center px-4  max-sm:px-6">
       <div className="mb-8 flex flex-row items-center gap-3  text-[60px] font-bold dark:text-light-700">
         Apollon
         <Image

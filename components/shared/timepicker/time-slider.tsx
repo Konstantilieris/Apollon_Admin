@@ -78,7 +78,7 @@ const TimeSlider: React.FC<TimeSliderProps> = ({
           onChange={handleSliderChange}
         />
       </div>
-      <div className="mt-6 flex w-full items-end justify-between font-sans font-medium text-dark-100 dark:text-light-700">
+      <div className="mt-6 flex w-full items-end justify-between font-medium text-dark-100 dark:text-light-700">
         <p>Επιλεγμένος Χρόνος: {timeDisplay}</p>
         <div className="flex flex-row items-center gap-2 p-1">
           <button

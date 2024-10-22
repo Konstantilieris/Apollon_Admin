@@ -19,7 +19,7 @@ const ExpenseInfo = ({ data, totalSum = 0, topSubCategory }: any) => {
   return (
     <div
       className={cn(
-        `category-info background-light850_dark100 shadow-sm border-white rounded-lg text-dark200_light900 font-sans max-h-[150px] min-h-[130px]`
+        `category-info background-light850_dark100 shadow-sm border-white rounded-lg text-dark200_light900  max-h-[150px] min-h-[130px]`
       )}
     >
       <figure className={`flex-center h-fit rounded-full bg-blue-600`}>

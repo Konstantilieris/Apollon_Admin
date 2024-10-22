@@ -12,7 +12,7 @@ import ExpenseActions from "./ExpenseActions";
 
 const ExpensesTable = ({ expenses }: { expenses: any }) => {
   return (
-    <Table className="text-dark400_light700 font-sans ">
+    <Table className="text-dark400_light700  ">
       <TableHeader className="  border-b-8 border-light-700  bg-white  text-base font-semibold text-black dark:border-dark-400 dark:bg-slate-700 dark:text-light-700 xl:text-lg">
         <TableRow>
           <TableHead className="ml-2 text-start max-md:hidden">
@@ -32,9 +32,7 @@ const ExpensesTable = ({ expenses }: { expenses: any }) => {
         {expenses?.map((expense: any) => (
           <TableRow
             key={expense?._id}
-            className={cn(
-              "font-sans background-light800_dark300 text-dark100_light900"
-            )}
+            className={cn(" background-light800_dark300 text-dark100_light900")}
           >
             <TableCell className="max-w-[250px] pl-4 pr-10 text-base font-normal ">
               <ExpenseActions expense={expense} />

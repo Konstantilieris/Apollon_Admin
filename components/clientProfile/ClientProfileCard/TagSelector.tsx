@@ -106,7 +106,7 @@ const TagSelector = ({
   };
 
   return (
-    <Command className="min-w-[15vw] max-h-[40vh] font-sans bg-dark-100/90 ">
+    <Command className="max-h-[40vh] min-w-[15vw]  bg-dark-100/90 ">
       <CommandList className=" ">
         <CommandInput placeholder={placeholder} />
         <CommandEmpty>Δεν βρέθηκε.</CommandEmpty>

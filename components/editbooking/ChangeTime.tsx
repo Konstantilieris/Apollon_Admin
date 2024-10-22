@@ -55,7 +55,7 @@ const UpdateTNT = ({
       if (updated) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: "Η κράτηση τροποποιήθηκε",
@@ -64,7 +64,7 @@ const UpdateTNT = ({
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία τροποποίησης",
         description: `${error}`,
@@ -90,7 +90,7 @@ const UpdateTNT = ({
           <ToggleTransport type={type} hasTransport={hasTransport} />
           <span
             className={cn(
-              "dark:text-light-700 text-dark-100 bg-light-700 dark:bg-dark-300  rounded-lg p-2 font-sans",
+              "dark:text-light-700 text-dark-100 bg-light-700 dark:bg-dark-300  rounded-lg p-2 ",
               {
                 "dark:text-green-300 text-green-600 font-semibold":
                   searchParams.get(type),

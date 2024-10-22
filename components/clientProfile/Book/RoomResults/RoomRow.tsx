@@ -15,7 +15,7 @@ const RoomRow = ({ room }: any) => {
             "text-green-500": room.currentBookings.length === 0,
           })}
         />
-        <h3 className="font-sans text-lg font-semibold">{room?.name}</h3>
+        <h3 className=" text-lg font-semibold">{room?.name}</h3>
       </div>
       <div className="ml-8 flex w-2/3 flex-row gap-2 py-2">
         {room.currentBookings.length > 0 && (

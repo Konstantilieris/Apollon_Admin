@@ -151,6 +151,9 @@ export async function getClientByIdForSuccess(id: string | undefined) {
   }
 }
 export async function getClientByIdForBooking(id: string | undefined) {
+  if (!id) {
+    return null;
+  }
   try {
     await connectToDatabase();
 
@@ -213,7 +216,7 @@ export async function getClientByIdForBooking(id: string | undefined) {
       },
     ]);
 
-    return client.length ? client[0] : null;
+    return client.length ? JSON.stringify(client[0]) : null;
   } catch (error) {
     console.error(error);
     throw error;
@@ -701,7 +704,7 @@ const checkBookingInRangeWithRoomId = async (
       // Check if any dog has the specified roomId
       "dogs.roomId": roomId,
     });
-    return !!booking;
+    return !booking;
   } catch (error) {
     console.error("Error checking booking in range with room id:", error);
     throw error;
@@ -869,6 +872,20 @@ export async function getClientByIdForProfile(id: string | undefined) {
     return client.length ? client[0] : null;
   } catch (error) {
     console.error(error);
+    throw error;
+  }
+}
+export async function getClientsServicePreferences({ id }: { id: string }) {
+  try {
+    connectToDatabase();
+    const client = await Client.findById(id, {
+      servicePreferences: 1,
+      serviceFees: 1,
+    });
+
+    return JSON.parse(JSON.stringify(client));
+  } catch (error) {
+    console.error("Error getting clients service preferences:", error);
     throw error;
   }
 }

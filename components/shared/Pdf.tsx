@@ -20,7 +20,7 @@ const Pdf = () => {
     <div>
       <Button
         onClick={() => printPDF("/assets/form.pdf")}
-        className="btn border-2 border-purple-500 font-sans font-bold hover:animate-pulse"
+        className="btn border-2 border-purple-500  font-bold hover:animate-pulse"
       >
         ΕΚΤΥΠΩΣΗ PDF
       </Button>

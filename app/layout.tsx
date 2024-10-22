@@ -28,7 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={` ${fontSans.variable}  h-screen`}>
+      <body className={`  h-screen  ${fontSans.variable}`}>
         {" "}
         <AuthProvider>
           <ThemeProvider

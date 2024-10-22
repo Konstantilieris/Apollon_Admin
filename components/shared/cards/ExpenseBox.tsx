@@ -29,7 +29,7 @@ const ExpenseBox = async ({ searchParams }: any) => {
           className="text-dark400_light900 flex h-full min-w-[200px] flex-col justify-center gap-2
   text-center"
         >
-          <span className="font-sans text-xl font-semibold">
+          <span className=" text-xl font-semibold">
             {" "}
             Κατηγορίες : <span className="text-blue-500">{total.length}</span>
           </span>
@@ -37,11 +37,11 @@ const ExpenseBox = async ({ searchParams }: any) => {
             Μηνιαία Έξοδα/Έσοδα
           </span>
           <div className="flex flex-row items-center justify-center gap-2">
-            <span className=" flex flex-row text-center font-sans text-lg font-bold text-red-700 dark:text-red-500">
+            <span className=" flex flex-row text-center  text-lg font-bold text-red-700 dark:text-red-500">
               <AnimatedCounter amount={totalSum ? totalSum[0]?.totalSum : 0} />
             </span>
             {"/"}
-            <span className=" text-center font-sans text-lg font-bold text-blue-700 dark:text-blue-500">
+            <span className=" text-center  text-lg font-bold text-blue-700 dark:text-blue-500">
               <AnimatedCounter amount={monthlyIncome} />
             </span>
           </div>

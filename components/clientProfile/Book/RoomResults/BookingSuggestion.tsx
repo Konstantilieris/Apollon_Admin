@@ -23,7 +23,6 @@ interface BookingProps {
 }
 const BookingSuggestion = ({
   client,
-
   rangeDate,
   taxiArrival,
   taxiDeparture,
@@ -77,13 +76,13 @@ const BookingSuggestion = ({
       document.body.style.overflow = "auto";
     }
   }, [openSuggestion]);
-  console.log(client);
+
   const clientData = {
     clientId: client._id,
     clientName: client.name,
-    phone: client.phone.mobile
-      ? client.phone.mobile
-      : client.phone.telephone || "",
+    phone: client?.phone?.mobile
+      ? client?.phone?.mobile
+      : client?.phone?.telephone || "",
     location: client?.location?.address + ", " + client?.location?.city,
     transportFee: client.transportFee,
     bookingFee: client.bookingFee,

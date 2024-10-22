@@ -12,6 +12,7 @@ const LoadingSkeleton = ({
       <Image
         src={"/assets/icons/skeleton.svg"}
         className={animation}
+        priority
         alt="skeleton"
         width={size}
         height={size}

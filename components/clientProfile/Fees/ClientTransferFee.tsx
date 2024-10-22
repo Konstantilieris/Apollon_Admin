@@ -42,14 +42,14 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
           title: "Επιτυχία",
           description: "Η τιμή ανανεώθηκε",
           className: cn(
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
         });
       }
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία",
         description: "Κάτι πήγε στραβά",
@@ -80,7 +80,7 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
           "Τιμή Μεταφοράς"
         )}
       </AlertDialogTrigger>
-      <AlertDialogContent className="bg-light-500 text-dark-100 dark:bg-dark-100 dark:text-light-700">
+      <AlertDialogContent className="bg-light-500 font-sans text-dark-100 dark:bg-dark-100 dark:text-light-700">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex w-full flex-row ">
             <span className="flex flex-1 items-center gap-2">

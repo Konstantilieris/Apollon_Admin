@@ -84,8 +84,8 @@ export function FloatingDockClient({ id }: { id: string }) {
     },
   ];
   return (
-    <div className="fixed bottom-2  ">
-      <FloatingDock mobileClassName="translate-y-20" items={links} />
+    <div className="fixed bottom-2  z-[10000]">
+      <FloatingDock mobileClassName="translate-y-20 " items={links} />
     </div>
   );
 }

@@ -6,10 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const UncheckPayment = ({ clientId, item }: any) => {
   return (
-    <Button
-      onClick={() => {}}
-      className="form-button2 ml-12 font-sans font-bold"
-    >
+    <Button onClick={() => {}} className="form-button2 ml-12  font-bold">
       <Image
         src="/assets/icons/check.svg"
         alt="checked"

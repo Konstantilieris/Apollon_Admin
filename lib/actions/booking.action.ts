@@ -11,7 +11,7 @@ import { DateRange } from "react-day-picker";
 import Appointment from "@/database/models/event.model";
 import Service from "@/database/models/service.model";
 
-import { setTimeOnDate } from "../utils";
+import { calculateTotalPrice, setTimeOnDate } from "../utils";
 
 interface TNTPROPS {
   id: string;
@@ -27,8 +27,8 @@ interface ICreateBooking {
   client: {
     clientId: string;
     clientName: string;
-    transportFee: number;
-    bookingFee: number;
+    transportFee?: number;
+    bookingFee?: number;
     phone: string;
     location: string;
   };
@@ -46,7 +46,7 @@ interface ICreateBooking {
 export async function createBooking({
   rangeDate,
   client,
-  boardingPrice,
+  boardingPrice = 30,
   transportationPrice,
   path,
   flag1,
@@ -188,12 +188,18 @@ export async function createBooking({
           [
             {
               Id: bookingId,
-              Subject: `${updatedClient.name} - ΠΑΡΑΛΑΒΗ`,
+              Subject: `ΠΑΡΑΛΑΒΗ`,
+              clientName: updatedClient.name,
+              clientId: updatedClient._id,
+              mobile: updatedClient.phone.mobile,
               Type: "Taxi_PickUp",
               Description: description,
-              isReadonly: true,
+              categoryId: 3,
+              dogsData,
               Location: location,
               Color: "#7f1d1d",
+              isTransport: "Pet Taxi (Pick-Up)",
+              isArrival: true,
               StartTime: rangeDate.from,
               EndTime: rangeDate.from,
             },
@@ -205,10 +211,15 @@ export async function createBooking({
           [
             {
               Id: bookingId,
-              Subject: `${updatedClient.name} - ΑΦΙΞΗ`,
+              Subject: `ΑΦΙΞΗ`,
+              clientName: updatedClient.name,
+              clientId: updatedClient._id,
+              mobile: updatedClient.phone.mobile,
               Type: "Arrival",
               Description: description,
-              isReadonly: true,
+              isArrival: true,
+              categoryId: 2,
+              dogsData,
               Location: location,
               Color: "#7f1d1d",
               StartTime: rangeDate.from,
@@ -225,11 +236,17 @@ export async function createBooking({
           [
             {
               Id: bookingId,
-              Subject: `${updatedClient.name} - ΠΑΡΑΔΟΣΗ`,
+              Subject: `ΠΑΡΑΔΟΣΗ`,
+              clientName: updatedClient.name,
+              clientId: updatedClient._id,
+              mobile: updatedClient.phone.mobile,
               Type: "Taxi_Delivery",
               Description: description,
               Location: location,
-              isReadonly: true,
+              dogsData,
+              categoryId: 3,
+              isTransport: "Pet Taxi (Drop-Off)",
+              isArrival: false,
               Color: "#7f1d1d",
               StartTime: rangeDate.to,
               EndTime: rangeDate.to,
@@ -242,11 +259,16 @@ export async function createBooking({
           [
             {
               Id: bookingId,
-              Subject: `${updatedClient.name} - ΑΝΑΧΩΡΗΣΗ`,
+              Subject: `ΑΝΑΧΩΡΗΣΗ`,
+              clientName: updatedClient.name,
+              clientId: updatedClient._id,
+              mobile: updatedClient.phone.mobile,
               Type: "Departure",
               Description: description,
               Location: location,
-              isReadonly: true,
+              dogsData,
+              categoryId: 2,
+              isArrival: false,
               Color: "#7f1d1d",
               StartTime: rangeDate.to,
               EndTime: rangeDate.to,
@@ -697,9 +719,11 @@ export async function deleteBooking({
 }) {
   const session = await mongoose.startSession();
   try {
-    connectToDatabase();
+    await connectToDatabase(); // Awaiting database connection
     session.startTransaction();
+
     const deletedBooking = await Booking.findByIdAndDelete(id, { session });
+
     const servicesToDelete = await Service.find(
       {
         bookingId: id,
@@ -707,6 +731,7 @@ export async function deleteBooking({
       },
       { _id: 1 } // Only retrieve the `_id` field
     ).session(session);
+
     const deletedServices = await Service.deleteMany(
       {
         bookingId: id,
@@ -714,15 +739,25 @@ export async function deleteBooking({
       },
       { session }
     );
+
+    // Fetch unpaid services
+    const unpaidService = await Service.find({ bookingId: id, paid: false });
+
+    // Safely handle the amountToDelete logic
+    const amountToDelete =
+      unpaidService.length > 0 ? unpaidService[0].amount : 0;
+
     const serviceIds = servicesToDelete.map((service: any) => service._id);
+
     const updatedClient = await Client.findOneAndUpdate(
       { _id: clientId },
       {
         $pull: { owes: { $in: serviceIds } },
-        $inc: { owesTotal: -deletedBooking.totalAmount },
+        $inc: { owesTotal: -amountToDelete },
       },
       { new: true, session }
     );
+
     if (!deletedBooking || !deletedServices || !updatedClient) {
       throw new Error("Failed to delete booking");
     }
@@ -731,6 +766,7 @@ export async function deleteBooking({
       { Id: id },
       { session }
     );
+
     if (!deleteAppointments) {
       throw new Error("Failed to delete appointments");
     }
@@ -744,9 +780,9 @@ export async function deleteBooking({
     await session.abortTransaction();
     session.endSession();
     console.log("Failed to delete booking", error);
+    throw error; // Ensure the error is thrown, so it can be handled correctly
   }
 }
-
 async function updateAppointment({
   id,
   subject,
@@ -963,6 +999,425 @@ export async function getAllAvailableRooms({
     };
   } catch (error) {
     console.error("Error finding bookings within date range:", error);
+    throw error;
+  }
+}
+export async function checkBookingRoomAvailability({
+  date,
+  bookingId,
+  type,
+}: {
+  date: Date;
+  bookingId: string;
+  type: string;
+}) {
+  try {
+    connectToDatabase();
+
+    // Fetch the booking details
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+
+    // Determine if this is an arrival or departure update
+    const isArrival = type === "Arrival" || type === "Taxi_PickUp";
+    const { fromDate, toDate, dogs } = booking;
+
+    // Create new range date based on dragged event
+    let newRangeDate;
+    if (isArrival) {
+      newRangeDate = { from: date, to: toDate };
+    } else {
+      newRangeDate = { from: fromDate, to: date };
+    }
+
+    // Query to find bookings that overlap with the new range
+    const matchBookings = {
+      $or: [
+        {
+          $and: [
+            { fromDate: { $lte: newRangeDate.to } },
+            { toDate: { $gte: newRangeDate.to } },
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $lte: newRangeDate.from } },
+            { toDate: { $gte: newRangeDate.from } },
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $gte: newRangeDate.from } },
+            { toDate: { $lte: newRangeDate.to } },
+          ],
+        },
+      ],
+    };
+
+    // Fetch the matching bookings
+    const bookings = await Booking.find(matchBookings);
+
+    // Extract room IDs from the dragged booking's dogs
+    const roomIds = dogs.map((dog: any) => dog.roomId.toString());
+
+    // Filter overlapping bookings, exclude the current booking being dragged
+    const overlappingBookings = bookings.filter(
+      (b: any) =>
+        b._id.toString() !== bookingId && // Exclude the current booking
+        b.dogs.some((dog: any) => roomIds.includes(dog.roomId.toString()))
+    );
+
+    // Return true if there are any overlapping bookings
+    return overlappingBookings.length > 0;
+  } catch (error) {
+    console.error("Error checking booking room availability:", error);
+    throw error;
+  }
+}
+export async function updateBookingRoomForDog({
+  bookingId,
+  updatedDogsData,
+}: {
+  bookingId: string;
+  updatedDogsData: { dogId: string; roomId: string; roomName: string }[];
+}) {
+  try {
+    // Find the booking by ID
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+
+    // Update the roomId and roomName for each dog
+    const updatedDogs = booking.dogs.map((dog: any) => {
+      const updatedDog = updatedDogsData.find(
+        (update) => update.dogId.toString() === dog.dogId.toString()
+      );
+
+      if (updatedDog) {
+        // Update the dog's roomId and roomName
+        return {
+          ...dog,
+          roomId: updatedDog.roomId,
+          roomName: updatedDog.roomName,
+        };
+      }
+      return dog; // Return the dog unchanged if no updates are found
+    });
+
+    // Save the updated dogs array back to the booking
+    booking.dogs = updatedDogs;
+    await booking.save();
+
+    return true;
+  } catch (error) {
+    console.error("Error updating room in booking for dogs:", error);
+    throw new Error("Failed to update room for dogs in the booking.");
+  }
+}
+export async function checkBookingRoomRangeDateAvailability({
+  rangeDate,
+  bookingId,
+}: {
+  rangeDate: DateRange;
+  bookingId: string;
+}) {
+  try {
+    connectToDatabase();
+
+    // Fetch the booking details
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+
+    // Determine if this is an arrival or departure update
+
+    // Create new range date based on dragged event
+
+    // Query to find bookings that overlap with the new range
+    const matchBookings = {
+      $or: [
+        {
+          $and: [
+            { fromDate: { $lte: rangeDate.to } },
+            { toDate: { $gte: rangeDate.to } },
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $lte: rangeDate.from } },
+            { toDate: { $gte: rangeDate.from } },
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $gte: rangeDate.from } },
+            { toDate: { $lte: rangeDate.to } },
+          ],
+        },
+      ],
+    };
+
+    // Fetch the matching bookings
+    const bookings = await Booking.find(matchBookings);
+
+    // Extract room IDs from the dragged booking's dogs
+    const roomIds = booking.dogs.map((dog: any) => dog.roomId.toString());
+
+    // Filter overlapping bookings, exclude the current booking being dragged
+    const overlappingBookings = bookings.filter(
+      (b: any) =>
+        b._id.toString() !== bookingId && // Exclude the current booking
+        b.dogs.some((dog: any) => roomIds.includes(dog.roomId.toString()))
+    );
+
+    // Return true if there are any overlapping bookings
+    return overlappingBookings.length > 0;
+  } catch (error) {
+    console.error("Error checking booking room availability:", error);
+    throw error;
+  }
+}
+export async function updateBookingAllInclusive({
+  dogsData,
+  booking,
+  rangeDate,
+  isTransport1,
+  isTransport2,
+  roomPreference,
+}: any) {
+  const session = await mongoose.startSession(); // Start session
+  await connectToDatabase(); // Ensure single connection
+
+  try {
+    session.startTransaction(); // Start transaction
+
+    const servicesToAdd = [];
+    const servicesToDelete = [];
+
+    const calculateBoardingFee = calculateTotalPrice({
+      fromDate: rangeDate.from,
+      toDate: rangeDate.to,
+      dailyPrice: booking.client.bookingFee,
+    });
+    let calculateTotalAmount = 0;
+    calculateTotalAmount += calculateBoardingFee;
+    if (isTransport1) {
+      calculateTotalAmount += booking.client.transportFee;
+    }
+    if (isTransport2) {
+      calculateTotalAmount += booking.client.transportFee;
+    }
+    console.log("Total amount:", calculateTotalAmount);
+
+    // Update booking
+    const updatedBooking = await Booking.findOneAndUpdate(
+      { _id: booking._id },
+      {
+        dogs: dogsData,
+        totalAmount: calculateTotalAmount,
+        fromDate: rangeDate.from,
+        toDate: rangeDate.to,
+        flag1: isTransport1,
+        flag2: isTransport2,
+      },
+      { new: true, session } // Pass session
+    );
+    if (!updatedBooking) {
+      throw new Error("Failed to update booking");
+    }
+
+    // Update service
+    const updatedService = await Service.findOneAndUpdate(
+      { bookingId: booking._id, serviceType: "ΔΙΑΜΟΝΗ" },
+      { amount: calculateBoardingFee },
+      { new: true, session } // Pass session
+    );
+    if (!updatedService) {
+      throw new Error("Failed to update service");
+    }
+
+    // Handle Transport 1 (Pick-up)
+    if (isTransport1 && booking.flag1) {
+      const updatedPickUpService = await Service.findOneAndUpdate(
+        { bookingId: booking._id, serviceType: "Pet Taxi (Pick-Up)" },
+        { date: rangeDate.from },
+        { new: true, session } // Pass session
+      );
+      const updatedAppointment = await Appointment.findOneAndUpdate(
+        { Id: booking._id, Type: "Taxi_PickUp" },
+        { StartTime: rangeDate.from, EndTime: rangeDate.from },
+        { new: true, session } // Pass session
+      );
+      if (!updatedPickUpService || !updatedAppointment) {
+        throw new Error("Failed to update pick-up service");
+      }
+    } else if (isTransport1 && !booking.flag1) {
+      const pickUpService = await Service.create(
+        [
+          {
+            serviceType: "Pet Taxi (Pick-Up)",
+            amount: booking.client.transportFee,
+            clientId: booking.client.clientId,
+            bookingId: booking._id,
+            date: rangeDate.from,
+          },
+        ],
+        { session } // Pass session
+      );
+      const pickUpAppointment = await Appointment.findOneAndUpdate(
+        { Id: booking._id, Type: "Arrival" },
+        {
+          StartTime: rangeDate.from,
+          EndTime: rangeDate.from,
+          Subject: `ΠΑΡΑΛΑΒΗ`,
+          Type: "Taxi_PickUp",
+          categoryId: 3,
+          isTransport: "Pet Taxi (Pick-Up)",
+        },
+        { new: true, session } // Pass session
+      );
+      if (!pickUpService[0] || !pickUpAppointment) {
+        throw new Error("Pick-up service creation failed");
+      }
+      servicesToAdd.push(pickUpService[0]);
+    } else if (!isTransport1 && booking.flag1) {
+      const deletedPickUpService = await Service.findOneAndDelete(
+        { bookingId: booking._id, serviceType: "Pet Taxi (Pick-Up)" },
+        { session } // Pass session
+      );
+      const updatedAppointment = await Appointment.findOneAndUpdate(
+        { Id: booking._id, Type: "Taxi_PickUp" },
+        {
+          StartTime: rangeDate.from,
+          EndTime: rangeDate.from,
+          Subject: `ΑΦΙΞΗ`,
+          Type: "Arrival",
+          categoryId: 2,
+          $unset: { isTransport: "" },
+        },
+        { new: true, session } // Pass session
+      );
+      if (!deletedPickUpService || !updatedAppointment) {
+        throw new Error("Failed to delete pick-up service");
+      }
+      servicesToDelete.push(deletedPickUpService);
+    }
+
+    // Handle Transport 2 (Drop-off)
+    if (isTransport2 && booking.flag2) {
+      const updatedDropOffService = await Service.findOneAndUpdate(
+        { bookingId: booking._id, serviceType: "Pet Taxi (Drop-Off)" },
+        { date: rangeDate.to },
+        { new: true, session } // Pass session
+      );
+      const updatedAppointment = await Appointment.findOneAndUpdate(
+        { Id: booking._id, Type: "Taxi_Delivery" },
+        { StartTime: rangeDate.to, EndTime: rangeDate.to },
+        { new: true, session } // Pass session
+      );
+      if (!updatedDropOffService || !updatedAppointment) {
+        throw new Error("Failed to update drop-off service");
+      }
+    } else if (isTransport2 && !booking.flag2) {
+      const dropOffService = await Service.create(
+        [
+          {
+            serviceType: "Pet Taxi (Drop-Off)",
+            amount: booking.client.transportFee,
+            clientId: booking.client.clientId,
+            bookingId: booking._id,
+            date: rangeDate.to,
+          },
+        ],
+        { session } // Pass session
+      );
+      const dropOffAppointment = await Appointment.findOneAndUpdate(
+        { Id: booking._id, Type: "Departure" },
+        {
+          StartTime: rangeDate.to,
+          EndTime: rangeDate.to,
+          Subject: `ΠΑΡΑΔΟΣΗ`,
+          Type: "Taxi_Delivery",
+          categoryId: 3,
+          isTransport: "Pet Taxi (Drop-Off)",
+        },
+        { new: true, session } // Pass session
+      );
+      if (!dropOffService[0] || !dropOffAppointment) {
+        throw new Error("Drop-off service creation failed");
+      }
+      servicesToAdd.push(dropOffService[0]);
+    } else if (!isTransport2 && booking.flag2) {
+      const deletedDropOffService = await Service.findOneAndDelete(
+        { bookingId: booking._id, serviceType: "Pet Taxi (Drop-Off)" },
+        { session } // Pass session
+      );
+      const updatedAppointment = await Appointment.findOneAndUpdate(
+        { Id: booking._id, Type: "Taxi_Delivery" },
+        {
+          StartTime: rangeDate.to,
+          EndTime: rangeDate.to,
+          Subject: `ΑΝΑΧΩΡΗΣΗ`,
+          Type: "Departure",
+          categoryId: 2,
+          $unset: { isTransport: "" },
+        },
+        { new: true, session } // Pass session
+      );
+      if (!deletedDropOffService || !updatedAppointment) {
+        throw new Error("Failed to delete drop-off service");
+      }
+      servicesToDelete.push(deletedDropOffService);
+    }
+    await Booking.findOneAndUpdate(
+      { _id: booking._id },
+      { $pull: { services: { $in: servicesToDelete } } },
+      { session }
+    );
+    await Booking.findOneAndUpdate(
+      { _id: booking._id },
+      { $push: { services: { $each: servicesToAdd } } },
+      { session }
+    );
+
+    await Client.findOneAndUpdate(
+      { _id: booking.client.clientId },
+      { $pull: { owes: { $in: servicesToDelete } } },
+      { session } // Pass session
+    );
+    const updateClient = await Client.findOneAndUpdate(
+      { _id: booking.client.clientId },
+      {
+        $push: { owes: { $each: servicesToAdd } },
+        owesTotal: calculateTotalAmount,
+        lastActivity: new Date(),
+        roomPreference,
+      },
+      { new: true, session } // Pass session
+    );
+    if (!updateClient) {
+      throw new Error("Failed to update client");
+    }
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    // Re
+    revalidatePath("/calendar");
+    revalidatePath("/bookings");
+
+    return JSON.stringify(updatedBooking);
+  } catch (error) {
+    // Abort the transaction on error
+    await session.abortTransaction();
+    session.endSession();
+    console.log("Failed to update booking", error);
     throw error;
   }
 }

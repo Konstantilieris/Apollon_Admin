@@ -127,7 +127,7 @@ const ChangeDates = ({
       if (booking) {
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
           ),
           title: "Επιτυχία",
           description: "Η κράτηση ενημερώθηκε",
@@ -136,7 +136,7 @@ const ChangeDates = ({
     } catch (error) {
       toast({
         className: cn(
-          "bg-red-dark border-none text-white  font-sans text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
         ),
         title: "Αποτυχία ενημέρωσης",
         description: `${error}`,
@@ -180,7 +180,7 @@ const ChangeDates = ({
           pushable={1}
         />
       </div>
-      <div className="text-md mt-6 flex w-full font-sans font-medium">
+      <div className="text-md mt-6 flex w-full  font-medium">
         <div className="flex flex-col">
           <p>Αρχή Κράτησης: {startDateDisplay}</p>
           <p>Τέλος Κράτησης: {endDateDisplay}</p>

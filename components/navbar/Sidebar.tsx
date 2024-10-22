@@ -135,7 +135,7 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
       <Sidebar open={open} setOpen={setOpen} animate={true}>
         <SidebarBody className="w-full">
           <div className="flex flex-1 flex-col overflow-hidden">
-            <div className="mt-2 flex flex-row items-center gap-2 font-sans text-xl text-dark-100 dark:text-light-900">
+            <div className="mt-2 flex flex-row items-center gap-2  text-xl text-dark-100 dark:text-light-900">
               <Image
                 src="/assets/icons/bone.svg"
                 className="ml-1 h-8 w-6 shrink-0 rounded-full dark:invert"
