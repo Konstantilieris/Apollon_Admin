@@ -23,8 +23,10 @@ const ThirdStage = ({
   const [isNext, setIsNext] = React.useState(false);
   const [availableRooms, setAvailableRooms] = React.useState<any>([]);
 
+  // eslint-disable-next-line no-unused-vars
   const [freeCapacityPercentage, setFreeCapacityPercentage] =
     React.useState("");
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = React.useState(false);
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -84,12 +86,12 @@ const ThirdStage = ({
   const handleSubmit = useCallback(() => {
     // Filter out any dogs that don't have a room assigned (i.e., roomId === null)
     const filteredDogsInRooms = dogsInRooms.filter(
-      (dog) => dog.roomId !== null
+      (dog: any) => dog.roomId !== null
     );
 
     // Check if all the remaining dogs are in the same room (Join)
     const roomPreference = filteredDogsInRooms.every(
-      (dog) => filteredDogsInRooms[0]?.roomId === dog.roomId
+      (dog: any) => filteredDogsInRooms[0]?.roomId === dog.roomId
     )
       ? "Join"
       : "Separate";
@@ -98,7 +100,7 @@ const ThirdStage = ({
     setRoomPreference(roomPreference);
     setData(filteredDogsInRooms); // Save only the dogs with assigned rooms
     setStage(3); // Move to the next stage
-  }, [dogsInRooms, setRoomPreference, setData, setStages]);
+  }, [dogsInRooms, setRoomPreference, setData, setStage]);
 
   return (
     <JoinView
