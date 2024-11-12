@@ -23,7 +23,7 @@ export default async function Layout({
   return (
     <main className=" relative flex h-full min-h-screen w-full flex-col  items-center ">
       <ServiceModalProvider client={JSON.parse(JSON.stringify(client))} />
-      <div className="flex w-full flex-row justify-between rounded-lg px-2 py-4 dark:bg-dark-100">
+      <div className="flex w-full flex-row justify-between rounded-lg px-2 py-4 dark:bg-neutral-800">
         <div className="flex w-full flex-row items-center gap-5">
           <ClientProfileCard client={JSON.parse(JSON.stringify(client))} />
           <ClientStatusCard client={JSON.parse(JSON.stringify(client))} />

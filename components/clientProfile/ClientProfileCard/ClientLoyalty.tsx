@@ -55,7 +55,7 @@ const ClientLoyalty = ({ loyaltyLevel }: { loyaltyLevel: string }) => {
 
   return (
     <div
-      className="group  relative my-1 flex self-start "
+      className="group  relative my-3 flex self-start "
       onMouseEnter={() => setHoveredIndex(1)}
       onMouseLeave={() => setHoveredIndex(null)}
     >

@@ -405,36 +405,54 @@ export async function checkExistingBooking({ rangeDate, clientId }: any) {
   }
 }
 
-export async function countBookingsByMonth() {
+export async function countBookingsByMonth({
+  year = new Date().getFullYear(),
+}: {
+  year?: number;
+}) {
+  // Initialize an array to store the counts and totals for each month
+  const bookingsByMonth = [];
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
 
-  // Initialize an object to store the counts for each month
-  const bookingsByMonth = [];
+  // Loop through each month of the specified year
+  const monthsInYear = year === currentYear ? currentDate.getMonth() + 1 : 12;
 
-  // Loop through each month of the current year
-  for (let month = 0; month < currentDate.getMonth() + 1; month++) {
-    // Set the start date of the current month
-    const startDateOfMonth = new Date(currentYear, month, 1);
-
-    // Calculate the end date of the current month
-    const endDateOfMonth = new Date(currentYear, month + 1, 0, 23, 59, 59);
+  for (let month = 0; month < monthsInYear; month++) {
+    // Set the start and end dates for the month
+    const startDateOfMonth = new Date(year, month, 1);
+    const endDateOfMonth = new Date(year, month + 1, 0, 23, 59, 59);
 
     try {
-      connectToDatabase();
-      const count = await Booking.countDocuments({
-        fromDate: { $gte: startDateOfMonth, $lte: endDateOfMonth },
-      });
+      // Ensure database connection
+      await connectToDatabase();
 
-      // Store the count for the current month
+      // Get count and total amount for the month
+      const bookings = await Booking.aggregate([
+        {
+          $match: {
+            fromDate: { $gte: startDateOfMonth, $lte: endDateOfMonth },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            count: { $sum: 1 },
+            totalAmount: { $sum: "$totalAmount" },
+          },
+        },
+      ]);
+
+      // Store the count and total for the current month
       bookingsByMonth.push({
         month: startDateOfMonth.toLocaleString("en-US", { month: "long" }),
-        count,
+        bookings: bookings[0]?.count || 0,
+        totalAmount: bookings[0]?.totalAmount || 0,
       });
     } catch (error) {
       console.error(
         `Error counting bookings for ${startDateOfMonth.toLocaleString(
-          "el-GR",
+          "en-US",
           { month: "long" }
         )}:`,
         error
@@ -444,6 +462,7 @@ export async function countBookingsByMonth() {
 
   return bookingsByMonth;
 }
+
 export async function getAllBookings({
   fromDate,
   toDate,

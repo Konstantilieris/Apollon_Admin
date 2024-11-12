@@ -6,18 +6,17 @@ import ClientBookingPrice from "../Fees/ClientBookingPrice";
 
 const ClientFeesCard = ({ client }: any) => {
   return (
-    <div className=" w-full min-w-[15vw] max-w-[16vw] self-end  ">
+    <div className=" w-full min-w-[15vw] max-w-[16vw] select-none  self-end ">
       <div
         className={cn(
-          " relative card h-36 bg-neutral-900 rounded-md shadow-sm shadow-yellow-600  max-w-sm mx-auto flex flex-col justify-between p-4"
+          " relative card h-36 bg-neutral-900 rounded-md shadow-sm shadow-neutral-700   max-w-sm mx-auto flex flex-col justify-between p-4"
         )}
       >
         <div className="z-10 flex w-full flex-row items-center justify-between">
-          <IconCoins size={24} />
-
           <p className="relative z-10 text-base font-normal text-light-900">
             ΣΤΑΘΕΡΕΣ ΤΙΜΕΣ
           </p>
+          <IconCoins size={24} className="text-yellow-600" />
         </div>
         <div className="mt-4 flex flex-row justify-between">
           <div className="flex w-full flex-col items-start text-[0.9rem] text-light-900">

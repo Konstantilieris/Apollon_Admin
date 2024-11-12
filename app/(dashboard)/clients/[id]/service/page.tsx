@@ -17,7 +17,7 @@ const page = async ({ params }: { params: { id: string } }) => {
   ]);
 
   return (
-    <div className=" relative flex min-h-[120vh] w-full  p-2">
+    <div className=" relative flex min-h-[120vh] w-full  bg-neutral-900 p-2">
       <CustomerChargeSheet
         services={constants.value}
         client={JSON.parse(JSON.stringify(client))}

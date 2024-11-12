@@ -7,7 +7,7 @@ const AddDog = ({ clientId }: { clientId: string }) => {
   return (
     <>
       <span
-        className="absolute right-4 top-6 flex cursor-pointer flex-row items-center gap-4 rounded-lg bg-dark-100 p-2 text-light-900 transition-transform duration-200 ease-in-out hover:scale-125 hover:text-green-500 "
+        className="absolute right-4 top-6 flex cursor-pointer flex-row items-center gap-4 rounded-lg border border-neutral-600 bg-neutral-950 p-2 text-light-900 transition-transform duration-200 ease-in-out hover:scale-125 hover:text-green-500 "
         onClick={() => setOpen(true)}
       >
         <IconPlus className=" h-6 w-6   " />

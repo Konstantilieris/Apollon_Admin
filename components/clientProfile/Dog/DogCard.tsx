@@ -167,15 +167,15 @@ export function DogCards({
             layoutId={`card-${dog.name}-${id}`}
             key={`card-${dog.name}-${id}`}
             onClick={() => setActive(dog)}
-            className="relative mt-3 flex min-h-[15vh] flex-col gap-4 rounded-lg border border-indigo-400 p-4 shadow-sm shadow-MediumPurple dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8"
+            className="relative mt-3 flex min-h-[15vh] flex-col gap-4 rounded-lg border border-gray-600 p-4 shadow-sm shadow-gray-500 dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8"
           >
             <motion.div
               className="absolute right-2 top-2"
               layoutId={`image-${dog._id}-${id}`}
             >
-              <IconPawFilled className=" text-indigo-300" />
+              <IconPawFilled className=" text-yellow-500" />
             </motion.div>
-            <h1 className="text-2xl font-semibold text-gray-800 dark:text-indigo-300 max-md:hidden">
+            <h1 className="text-xl font-semibold text-light-900 max-md:hidden">
               ΣΤΟΙΧΕΙΑ ΣΚΥΛΟΥ
             </h1>
             <div className="flex w-full flex-col items-start gap-4 text-lg ">

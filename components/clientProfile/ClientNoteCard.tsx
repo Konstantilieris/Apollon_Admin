@@ -69,7 +69,7 @@ export function ClientNoteCard({ client }: { client: any }) {
           <motion.div
             layoutId={`card-${active.name}-${id}`}
             ref={ref}
-            className="fixed left-[28vw] top-[10vh]  z-[2000] flex  h-full  min-h-[60vh]  w-[50vw] flex-col  place-items-center overflow-hidden border border-green-400 bg-white py-4 dark:bg-neutral-900 sm:rounded-3xl md:h-fit md:max-h-[90%]"
+            className="fixed left-[28vw] top-[10vh]  z-[2000] flex  h-full  min-h-[60vh]  w-[50vw] flex-col  place-items-center overflow-hidden border border-gray-500 bg-white py-4 dark:bg-neutral-900 sm:rounded-3xl md:h-fit md:max-h-[90%]"
           >
             <motion.div
               layoutId={`image-${active._id}-${id}`}
@@ -146,7 +146,7 @@ export function ClientNoteCard({ client }: { client: any }) {
         layoutId={`card-${client?.name}-${id}`}
         key={`card-${client?.name}-${id}`}
         onClick={() => setActive(client)}
-        className="relative flex min-h-[15vh]  w-full flex-col gap-4 rounded-lg border border-indigo-400 p-4 shadow-sm shadow-MediumPurple dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8 "
+        className="relative flex min-h-[15vh]  w-full flex-col gap-4 rounded-lg border border-lime-500 p-4  dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8 "
       >
         <motion.div
           className="absolute right-2 top-2"

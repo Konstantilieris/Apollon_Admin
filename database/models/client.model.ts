@@ -92,6 +92,7 @@ export interface IClient {
   status?: string;
   owesTotal?: number;
   totalSpent?: number;
+  credit?: number;
   servicePreferences?: string[];
   loyaltyLevel?: string;
 }
@@ -284,6 +285,7 @@ const ClientSchema = new Schema<IClient>({
   },
   owesTotal: { type: Number, default: 0 },
   totalSpent: { type: Number, default: 0 },
+  credit: { type: Number, default: 0 },
   servicePreferences: {
     type: [String], // e.g., ["grooming", "training"]
   },

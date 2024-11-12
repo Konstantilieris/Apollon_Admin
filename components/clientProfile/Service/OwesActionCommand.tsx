@@ -37,7 +37,6 @@ export function DropdownMenuAction({
           <Button
             variant="outline"
             className="ml-2 px-4 py-1 text-white transition hover:scale-110 hover:bg-yellow-600"
-            disabled={selectedServices.length === 0}
           >
             <IconCashRegister size={20} className="text-light-900 " />
           </Button>
@@ -54,6 +53,13 @@ export function DropdownMenuAction({
               onClick={() => handleOpen("Payment")}
             >
               Εξόφληση
+              <IconCardsFilled size={20} className="text-green-500/70 " />
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
+              onClick={() => handleOpen("PartialPayment")}
+            >
+              Μερική Εξόφληση
               <IconCardsFilled size={20} className="text-green-500/70 " />
             </DropdownMenuItem>
 

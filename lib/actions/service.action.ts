@@ -284,7 +284,7 @@ export async function chargeClient({
     let serviceFeesUpdated = false;
     client.serviceFees = client.serviceFees.map((fee: any) => {
       if (fee.type === serviceType) {
-        fee.value += amount; // Update the value if serviceType exists
+        fee.value = parseFloat(amount);
         serviceFeesUpdated = true;
       }
       return fee;
@@ -292,7 +292,7 @@ export async function chargeClient({
 
     // If serviceType not found in serviceFees, push a new entry
     if (!serviceFeesUpdated) {
-      client.serviceFees.push({ type: serviceType, value: amount });
+      client.serviceFees.push({ type: serviceType, value: parseFloat(amount) });
     }
 
     // Update servicePreferences if not already present
@@ -302,7 +302,7 @@ export async function chargeClient({
 
     // Update owes and owesTotal
     client.owes.push(service[0]._id); // Using service[0] since create() returns an array
-    client.owesTotal += amount;
+    client.owesTotal += parseFloat(amount);
 
     // Save updated client within the transaction
     await client.save({ session });
@@ -319,5 +319,90 @@ export async function chargeClient({
     session.endSession();
     console.error("Error charging client:", error);
     throw error;
+  }
+}
+export async function partialPayment({
+  clientId,
+  amount,
+  path,
+}: {
+  clientId: string;
+  amount: number;
+  path: string;
+}) {
+  await connectToDatabase();
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    // Fetch all unpaid services for the client, sorted by the smallest remaining amount
+    const unpaidServices = await Service.find(
+      { clientId, paid: false },
+      {},
+      { sort: { remainingAmount: 1 } }
+    ).session(session);
+
+    if (unpaidServices.length === 0) {
+      throw new Error("No unpaid services found.");
+    }
+
+    let remainingPayment = amount;
+    let totalPaymentApplied = 0;
+
+    // Apply payment to each unpaid service
+    for (const service of unpaidServices) {
+      if (remainingPayment >= service.remainingAmount!) {
+        remainingPayment -= service.remainingAmount!;
+        totalPaymentApplied += service.remainingAmount!;
+        service.paidAmount = service.amount;
+        service.remainingAmount = 0;
+        service.paid = true;
+        service.paymentDate = new Date();
+      } else {
+        service.paidAmount = (service.paidAmount || 0) + remainingPayment;
+        service.remainingAmount = service.amount - service.paidAmount;
+        totalPaymentApplied += remainingPayment;
+        remainingPayment = 0;
+      }
+
+      await service.save({ session });
+
+      if (remainingPayment <= 0) break;
+    }
+
+    // Update client's credit, owesTotal, and totalSpent
+    const client = await Client.findById(clientId).session(session);
+    if (!client) {
+      throw new Error("Client not found.");
+    }
+
+    // Deduct the applied payment from owesTotal and add it to totalSpent
+    client.owesTotal = (client.owesTotal || 0) - totalPaymentApplied;
+    client.totalSpent = (client.totalSpent || 0) + totalPaymentApplied;
+
+    // If there's any remaining payment, add it to the client's credit
+    if (remainingPayment > 0) {
+      client.credit = (client.credit || 0) + remainingPayment;
+    }
+
+    // Save the updated client with the session
+    await client.save({ session });
+
+    // Commit the transaction
+    await session.commitTransaction();
+
+    // Revalidate the path to update the client state if needed
+    revalidatePath(path);
+
+    return { success: true, message: "Partial payment applied successfully." };
+  } catch (error) {
+    // Abort the transaction in case of an error
+    await session.abortTransaction();
+    console.error("Error processing partial payment:", error);
+    throw error;
+  } finally {
+    // End the session
+    session.endSession();
   }
 }

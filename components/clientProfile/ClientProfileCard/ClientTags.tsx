@@ -2,19 +2,38 @@
 import React, { RefObject, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { IconPlus } from "@tabler/icons-react";
-
+import Carousel from "react-multi-carousel";
 import { useOutsideClick2 } from "@/hooks/use-outside-click2";
-
+import "react-multi-carousel/lib/styles.css";
 import { pushTagOnClient } from "@/lib/actions/client.action";
-import { usePathname } from "next/navigation";
+
 import TagSelector from "./TagSelector";
+import CustomArrow from "@/components/shared/expenses/CustomArrow";
+
 const ClientTags = ({ clientTags, allTags, client }: any) => {
   const [showModal, setShowModal] = useState(false);
   const ref = useRef() as RefObject<HTMLDivElement>;
-  const path = usePathname();
+
   const selectRef = useRef() as RefObject<HTMLDivElement>;
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [clientTagsValue, setClientTagsValue] = useState<string[]>(clientTags);
+  const responsive = {
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 1,
+      slidesToSlide: 1,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 1,
+      slidesToSlide: 1,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+      slidesToSlide: 1,
+    },
+  };
   const modalVariants = {
     hidden: { opacity: 0, y: -50 },
     visible: { opacity: 1, y: 0 },
@@ -51,7 +70,7 @@ const ClientTags = ({ clientTags, allTags, client }: any) => {
   };
 
   return (
-    <div className="relative flex w-full items-center space-x-4 rounded-lg bg-[#240046] p-2 max-w-[10vw] self-end">
+    <div className="relative flex w-full max-w-[10vw] select-none items-center space-x-4 self-end rounded-lg bg-neutral-800 p-2">
       {/* Plus Icon for adding a tag */}
       <IconPlus
         className="cursor-pointer text-white"
@@ -67,7 +86,7 @@ const ClientTags = ({ clientTags, allTags, client }: any) => {
           exit="exit"
           variants={modalVariants}
           transition={{ duration: 0.3 }}
-          className="absolute left-0 top-12 z-50 flex  flex-col gap-2 rounded-lg px-2 py-2 shadow-md dark:bg-dark-200/80 min-w-[20vw] max-h-[50vh] overflow-y-hidden "
+          className="absolute left-0 top-12 z-50 flex  max-h-[50vh] min-w-[20vw] flex-col gap-2 overflow-y-hidden rounded-lg p-2 shadow-md dark:bg-dark-200/80"
         >
           <TagSelector
             items={allTags.value}
@@ -83,16 +102,24 @@ const ClientTags = ({ clientTags, allTags, client }: any) => {
       )}
 
       {/* Carousel for displaying tags */}
-      <div className="no-scrollbar flex space-x-2 overflow-x-auto w-full">
+      <Carousel
+        containerClass=" flex w-full space-x-2 overflow-x-auto min-h-[5vh]"
+        responsive={responsive}
+        infinite={false}
+        dotListClass="flex justify-center mt-4"
+        customLeftArrow={<CustomArrow direction="left" />}
+        customRightArrow={<CustomArrow direction="right" />}
+        renderDotsOutside
+      >
         {clientTagsValue.map((tag: string, index: number) => (
           <div
             key={index}
-            className="whitespace-nowrap rounded-full bg-purple-600 px-4 py-1 text-white uppercase "
+            className="flex min-h-[5vh]  min-w-[4vw] items-center justify-center truncate  rounded-full bg-dark-300 py-1  text-[0.7rem] text-white"
           >
             {tag}
           </div>
         ))}
-      </div>
+      </Carousel>
     </div>
   );
 };

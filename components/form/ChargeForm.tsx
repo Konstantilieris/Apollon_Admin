@@ -33,9 +33,10 @@ const ChargeForm = ({ client, services }: any) => {
         setSelectedAmount("");
         setSelectedDate(new Date());
         setSelectedNote("");
+        window.location.reload();
         toast({
           className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
           ),
           title: "Επιτυχία",
           description: "Η υπηρεσία δημιουργήθηκε",
@@ -52,7 +53,7 @@ const ChargeForm = ({ client, services }: any) => {
       });
     }
   };
-  console.log(selectedService);
+
   return (
     <AnimatePresence mode="wait">
       <motion.div

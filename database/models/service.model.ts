@@ -10,6 +10,8 @@ export interface IService {
   paymentDate?: Date;
   endDate?: Date;
   notes?: string;
+  paidAmount?: number;
+  remainingAmount?: number;
 }
 
 const ServiceSchema = new Schema<IService>({
@@ -38,7 +40,13 @@ const ServiceSchema = new Schema<IService>({
     default: Date.now,
     required: true,
   },
-
+  paidAmount: {
+    type: Number,
+    default: 0, // Starts with 0, increases as payments are made
+  },
+  remainingAmount: {
+    type: Number,
+  },
   paid: {
     type: Boolean,
     default: false,
@@ -47,6 +55,11 @@ const ServiceSchema = new Schema<IService>({
     type: Date,
   },
 });
-
+ServiceSchema.pre("save", function (next) {
+  if (this.isNew && !this.remainingAmount) {
+    this.remainingAmount = this.amount; // Set remainingAmount to the initial amount on document creation
+  }
+  next();
+});
 const Service = models.Service || model<IService>("Service", ServiceSchema);
 export default Service;

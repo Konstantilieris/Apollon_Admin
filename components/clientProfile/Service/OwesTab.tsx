@@ -24,6 +24,8 @@ export interface Service {
   date: Date;
   paid: boolean;
   paymentDate?: Date;
+  remainingAmount?: number;
+  paidAmount?: number;
   _id: string; // Assuming you have a unique ID for each service
 }
 
@@ -34,7 +36,7 @@ export interface UnpaidServicesTableProps {
 const OwesTab = ({ services }: UnpaidServicesTableProps) => {
   // State to store selected services (entire service object)
   const [selectedServices, setSelectedServices] = React.useState<Service[]>([]);
-
+  const [totalSelectedAmount, setTotalSelectedAmount] = React.useState(0);
   // Check if a service is selected by comparing its ID
   const isServiceSelected = (serviceId: string) =>
     selectedServices.some(
@@ -46,6 +48,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
     if (isChecked) {
       // Add the entire service object to selectedServices array
       setSelectedServices((prevSelected) => [...prevSelected, service]);
+      setTotalSelectedAmount((prevAmount) => prevAmount + service.amount);
     } else {
       // Remove the service from the selectedServices array based on its ID
       setSelectedServices((prevSelected) =>
@@ -53,11 +56,18 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
           (selectedService) => selectedService._id !== service._id
         )
       );
+      setTotalSelectedAmount((prevAmount) => prevAmount - service.amount);
     }
   };
 
   return (
     <div className=" ml-8 min-h-[70vh] overflow-x-auto">
+      <div className="mb-1 flex w-full flex-row text-lg">
+        <p className="font-medium ">
+          Σύνολο:{" "}
+          <span className="text-blue-500"> {totalSelectedAmount} €</span>{" "}
+        </p>
+      </div>
       <Table className="min-w-full">
         <TableHeader>
           <TableRow className=" bg-dark-400  text-left">
@@ -65,19 +75,23 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
               <DropdownMenuAction selectedServices={selectedServices} />
             </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-light-900">
-              Υπηρεσία
+              Ημερομηνία
             </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-light-900">
-              Σύνολο
+              Υπηρεσία
             </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-light-900">
               Σημειώση
             </TableHead>
-            <TableHead className="px-4 py-3 pl-20 font-semibold text-light-900">
-              Booking ID
+
+            <TableHead className="text-center font-semibold text-light-900">
+              Οφειλόμενο
             </TableHead>
-            <TableHead className="px-4 py-3 font-semibold text-light-900">
-              Ημερομηνία
+            <TableHead className="text-center font-semibold text-light-900">
+              Eξοφλημένο
+            </TableHead>
+            <TableHead className="text-center font-semibold text-light-900">
+              Σύνολο
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -117,15 +131,6 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                   />
                 </TableCell>
                 {/* Other columns */}
-                <TableCell className="px-4 py-3">{serviceType}</TableCell>
-
-                <TableCell className="py-3 pl-7">{service.amount}</TableCell>
-                <TableCell className="max-w-[7vw] truncate px-4 py-3 pl-8">
-                  {service.notes || "N/A"}
-                </TableCell>
-                <TableCell className="px-4 py-3" style={{ color }}>
-                  {service.bookingId}
-                </TableCell>
                 <TableCell className="px-4 py-3">
                   {new Date(service.date).toLocaleDateString("el-GR", {
                     day: "2-digit",
@@ -133,11 +138,34 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                     year: "numeric",
                   })}
                 </TableCell>
+                <TableCell
+                  className={cn("px-4 py-3 font-medium", {
+                    "text-blue-500": isServiceSelected(service._id),
+                  })}
+                >
+                  {serviceType}
+                </TableCell>
+
+                <TableCell className="max-w-[7vw] truncate px-4 py-3 pl-8">
+                  {service.notes || "N/A"}
+                </TableCell>
+                <TableCell className="text-center" style={{ color }}>
+                  {service.remainingAmount ?? "Ν/Α"} €
+                </TableCell>
+                <TableCell className="text-center">
+                  {service.paidAmount ?? "Ν/Α"} €
+                </TableCell>
+                <TableCell className="text-center">
+                  {service.amount} €
+                </TableCell>
               </TableRow>
             );
           })}
         </TableBody>
       </Table>
+      <span className="ml-4 text-sm text-gray-400">
+        {selectedServices.length} από {services.length} επιλεγμένες υπηρεσίες
+      </span>
     </div>
   );
 };

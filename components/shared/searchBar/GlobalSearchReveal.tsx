@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { cn, formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { IconSearch } from "@tabler/icons-react";
+import { IconSearch, IconSquareLetterXFilled } from "@tabler/icons-react";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -86,11 +86,11 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
           initial="hidden"
           animate={controlSearch}
           transition={{ duration: 0.5, ease: "easeInOut", type: "spring" }}
-          className={cn(" z-50  py-2   px-4 ", className)}
+          className={cn(" z-50  py-2   px-4", className)}
         >
           <motion.div
             ref={ref}
-            className=" flex min-w-[16vw] max-w-[35vw] items-center gap-1 rounded-xl border border-white bg-light-700 px-8 py-2 dark:bg-neutral-950"
+            className=" flex min-w-[16vw] max-w-[35vw] items-center gap-1 rounded-xl border border-white bg-light-700 px-8 py-2 dark:bg-neutral-950 relative "
           >
             <IconSearch className="h-5 w-5 text-dark-100 dark:text-light-800" />
             <Input
@@ -103,6 +103,13 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
                 controlResult.start("visible");
               }}
               className="paragraph-regular no-focus border-none bg-transparent shadow-none outline-none placeholder:text-light-800 dark:text-light-900"
+            />
+            <IconSquareLetterXFilled
+              onClick={() => {
+                setSearchTerm("");
+                controlSearch.start("hidden");
+              }}
+              className="h-5 w-5 text-dark-100 dark:text-light-800 cursor-pointer absolute right-2 hover:scale-110"
             />
           </motion.div>
         </motion.div>

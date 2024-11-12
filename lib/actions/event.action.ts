@@ -90,7 +90,7 @@ export async function updateEventBookingOnlyTimeChange({ event }: any) {
     } else {
       await Booking.findByIdAndUpdate(event.Id, { toDate: event.StartTime });
     }
-    revalidatePath("/calendar");
+
     revalidatePath("/booking");
   } catch (error) {
     console.log(error);
@@ -163,7 +163,7 @@ export async function updateBookingDateChange({ event, pairDate }: any) {
     }
 
     await session.commitTransaction();
-    revalidatePath("/calendar");
+
     revalidatePath("/booking");
     revalidatePath(`/clients/${booking.client.clientId}`);
     return true;

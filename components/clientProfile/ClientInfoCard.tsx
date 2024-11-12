@@ -26,7 +26,7 @@ const ClientInfoCard = ({
   return (
     <div
       className={cn(
-        "flex min-h-[15vh] min-w-[50vw] flex-col gap-4 rounded-lg border border-indigo-400 p-4 shadow-sm shadow-MediumPurple relative max-md:min-w-[42vw] max-md:pt-8",
+        "flex min-h-[15vh] min-w-[50vw] flex-col gap-4 rounded-lg border border-gray-700 p-4 shadow-sm shadow-gray-600 relative max-md:min-w-[42vw] max-md:pt-8",
         containerStyle
       )}
     >

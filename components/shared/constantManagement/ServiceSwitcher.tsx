@@ -52,9 +52,6 @@ const ServiceSwitcher = ({
     value,
   }));
 
-  const currentItem = formattedItems.find(
-    (item: any) => item.value === selectedItem
-  );
   const onConstantSelect = (value: string) => {
     // Debug log
     setOpen(false);
@@ -63,7 +60,7 @@ const ServiceSwitcher = ({
   const servicePreference = client.serviceFees.filter((service: any) =>
     client.servicePreferences.includes(service.type)
   );
-
+  console.log(selectedItem);
   return (
     <>
       {isNew ? (
@@ -87,7 +84,7 @@ const ServiceSwitcher = ({
               aria-label="Select a store"
             >
               <IconTopologyStar2 className="mr-2 h-4 w-4" />
-              {currentItem?.label}
+              {selectedItem || placeholder}
               <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>

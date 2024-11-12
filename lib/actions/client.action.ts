@@ -817,6 +817,7 @@ export async function getClientByIdForProfile(id: string | undefined) {
           serviceFees: 1,
           createdAt: 1,
           status: 1,
+          credit: 1,
           loyaltyLevel: 1,
           owesTotal: 1,
           totalSpent: 1,

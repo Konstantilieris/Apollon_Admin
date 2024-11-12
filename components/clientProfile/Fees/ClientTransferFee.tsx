@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { updateClientTransportationFee } from "@/lib/actions/client.action";
 import { usePathname, useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
+import { IconCar } from "@tabler/icons-react";
 interface Props {
   id: string;
   transportationFee: number | null;
@@ -60,7 +61,7 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
     <AlertDialog>
       <AlertDialogTrigger
         className={cn(
-          "px-8 py-2  bg-black text-white text-sm rounded-md font-semibold hover:bg-dark-200 hover:shadow-sm hover:shadow-pink-500 hover:scale-110 w-full flex justify-center items-center ",
+          "px-8 py-2  bg-neutral-950 text-sm rounded-md font-semibold  hover:shadow-sm hover:shadow-light-900 hover:scale-110 w-full flex justify-center items-center ",
           {
             "border-green-500": transportationFee !== null,
             "border-red-500 text-red-700 font-bold animate-pulse":
@@ -69,13 +70,7 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
         )}
       >
         {transportationFee !== null ? (
-          <Image
-            src={"/assets/icons/car.svg"}
-            alt="client"
-            width={26}
-            height={23}
-            className="object-contain invert dark:invert-0"
-          />
+          <IconCar size={24} className="text-yellow-600" />
         ) : (
           "Τιμή Μεταφοράς"
         )}

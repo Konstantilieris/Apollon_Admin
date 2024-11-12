@@ -12,6 +12,7 @@
       {
         "label": "off"
       }
-    ]
+    ],
+    "typescript-config/strict": "off"
   }
 }
