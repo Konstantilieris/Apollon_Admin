@@ -116,7 +116,7 @@ const GlobalResult = ({
                                   if (item.value === "clients") {
                                     router.push(`/clients/${result._id}`);
                                   } else {
-                                    router.push(`/results/${result._id}/book`);
+                                    router.push(`/clients/${result._id}/book`);
                                   }
                                 }}
                                 className="group relative inline-block cursor-pointer rounded-full bg-slate-800 p-px font-semibold leading-6 text-white no-underline shadow-2xl  shadow-zinc-900 hover:text-yellow-500"
