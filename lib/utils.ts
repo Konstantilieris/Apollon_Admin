@@ -61,11 +61,11 @@ export function formatDateToTime(inputDateString: Date | undefined) {
   const inputDate = new Date(inputDateString);
 
   // Format the date using Intl.DateTimeFormat to UTC+3
-  const formatter = new Intl.DateTimeFormat("en-GB", {
+  const formatter = new Intl.DateTimeFormat("gr-EL", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
-    timeZone: "Europe/Moscow", // UTC+3 time zone (e.g., Europe/Moscow)
+    // UTC+3 time zone (e.g., Europe/Moscow)
   });
 
   const formattedTime = formatter.format(inputDate);
