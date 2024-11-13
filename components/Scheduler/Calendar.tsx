@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 import {
   Week,
@@ -522,4 +522,4 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
   );
 };
 
-export default memo(Scheduler);
+export default Scheduler;
