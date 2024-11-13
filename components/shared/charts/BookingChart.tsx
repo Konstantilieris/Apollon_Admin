@@ -17,9 +17,10 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { cn } from "@/lib/utils";
+import SelectYear from "./SelectYear";
 
 interface ChartData {
-  month: string;
+  date: string;
   bookings: number;
   totalAmount: number;
 }
@@ -53,11 +54,12 @@ export function BookingChart({ chartData }: { chartData: ChartData[] }) {
   return (
     <Card className="min-h-[85vh]">
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
-        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
+        <div className="relative flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <CardTitle>Μηνιαία Ανάλυση Κρατήσεων</CardTitle>
           <CardDescription>
             Παρουσίαση του αριθμού κρατήσεων και του συνολικού ποσού ανά μήνα
           </CardDescription>
+          <SelectYear />
         </div>
         <div className="flex">
           {["bookings", "totalAmount"].map((key) => {
@@ -71,7 +73,7 @@ export function BookingChart({ chartData }: { chartData: ChartData[] }) {
                 )}
                 onClick={() => setActiveChart(chart)}
               >
-                <span className="text-lg text-muted-foreground">
+                <span className="text-muted-foreground text-lg">
                   {chartConfig[chart].label}
                 </span>
                 <span className="text-lg font-bold leading-none sm:text-3xl">
@@ -98,13 +100,13 @@ export function BookingChart({ chartData }: { chartData: ChartData[] }) {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="date"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                const date = new Date(`${value}-2024`);
+                const date = new Date(value);
                 return date.toLocaleDateString("el-GR", {
                   month: "short",
                   year: "numeric",
@@ -115,16 +117,18 @@ export function BookingChart({ chartData }: { chartData: ChartData[] }) {
               cursor={{ fill: "var(--neutral-800)" }}
               content={
                 <ChartTooltipContent
-                  className="w-[150px] bg-dark-100 text-light-900"
+                  className="w-[200px] bg-dark-100 text-lg text-light-900"
                   labelFormatter={(value) => {
-                    return new Date(`${value}-2024`).toLocaleDateString(
-                      "el-GR",
-                      {
-                        month: "short",
-                        year: "numeric",
-                      }
-                    );
+                    return new Date(value).toLocaleDateString("el-GR", {
+                      month: "short",
+                      year: "numeric",
+                    });
                   }}
+                  formatter={(value, name) =>
+                    `${
+                      name === "totalAmount" ? "Σύνολο" : "Κρατήσεις Μήνα"
+                    }: ${value}${name === "totalAmount" ? "€" : ""}`
+                  }
                 />
               }
             />

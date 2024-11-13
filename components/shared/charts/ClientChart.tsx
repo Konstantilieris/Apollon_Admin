@@ -1,123 +1,116 @@
 "use client";
-import React from "react";
-import { Bar } from "react-chartjs-2";
+
+import * as React from "react";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { cn } from "@/lib/utils";
+import SelectYear from "./SelectYear";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+interface ChartData {
+  date: string;
+  count: number;
+}
 
-const ClientChart = ({ chartData }: any) => {
-  const backgroundColors = [
-    "#53D9D9",
-    "#002B49",
-    "#0067A0",
-    "#FF5733",
-    "#FFC300",
-    "#FF6F61",
-    "#C70039",
-    "#ADEFD1",
-    "#FFD700",
-    "#B39CD0",
-    "#7FFFD4",
-    "#FFA07A",
-  ]; // Add more colors as needed
-  const data = {
-    labels: chartData.map((item: any) => item.month),
+// Chart configuration for client count
+const chartConfig = {
+  clients: {
+    label: "Αριθμός Πελατών",
+    color: "var(--yellow-800)",
+  },
+} satisfies ChartConfig;
 
-    datasets: [
-      {
-        label: "Πελάτες",
-        data: chartData.map((item: any) => item.count),
-        backgroundColor: backgroundColors,
-        font: { size: 20 },
-        borderWidth: 1,
-      },
-    ],
-  };
+export function ClientChart({ chartData }: { chartData: ChartData[] }) {
+  const totalClients = React.useMemo(
+    () => chartData.reduce((acc, curr) => acc + curr.count, 0),
+    [chartData]
+  );
 
-  const options = {
-    responsive: true,
-    scales: {
-      x: {
-        display: true,
-
-        title: {
-          display: true,
-          text: "Μήνας",
-          font: {
-            size: 20,
-            style: "italic" as const,
-          },
-        },
-        ticks: {
-          font: {
-            size: 20,
-          },
-          color: "#f54f02",
-        },
-      },
-      y: {
-        display: true,
-        title: {
-          display: true,
-          text: "Αριθμός Πελατών",
-          font: {
-            size: 20,
-            style: "italic" as const,
-          },
-        },
-
-        ticks: {
-          stepSize: 2, // Set the step size to 4
-          min: 0,
-          max: 18,
-          font: {
-            size: 20,
-          },
-          color: "#f54f02", // Set the maximum value to 18
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: "top" as const,
-        labels: {
-          font: {
-            size: 20,
-            weight: "bold" as const,
-          },
-          color: "#03d1ff",
-        },
-        // Change the position to one of the allowed values
-      },
-
-      title: {
-        display: true,
-        text: "Στατιστικά Πελατών ανά Μήνα",
-        font: {
-          size: 20,
-        },
-        color: "#f54f02",
-      },
-    },
-  };
-
-  return <Bar data={data} options={options} className="h-full w-full" />;
-};
-
-export default ClientChart;
+  return (
+    <Card className="min-h-[85vh]">
+      <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+        <div className="relative flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
+          <CardTitle>Μηνιαία Ανάλυση Πελατών</CardTitle>
+          <CardDescription>
+            Παρουσίαση του αριθμού πελατών ανά μήνα
+          </CardDescription>
+          <SelectYear />
+        </div>
+        <div className="flex">
+          <button
+            className={cn(
+              "relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left sm:border-l sm:border-t-0 sm:px-8 sm:py-6",
+              { "bg-neutral-900": true } // Active chart hardcoded as there is only one metric
+            )}
+          >
+            <span className="text-muted-foreground text-lg">
+              {chartConfig.clients.label}
+            </span>
+            <span className="text-lg font-bold leading-none sm:text-3xl">
+              {totalClients.toLocaleString()}
+            </span>
+          </button>
+        </div>
+      </CardHeader>
+      <CardContent className="px-2 sm:p-6">
+        <ChartContainer
+          config={chartConfig}
+          className="aspect-auto h-[65vh] w-full"
+        >
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={32}
+              tickFormatter={(value) => {
+                const date = new Date(value);
+                return date.toLocaleDateString("el-GR", {
+                  month: "short",
+                  year: "numeric",
+                });
+              }}
+            />
+            <ChartTooltip
+              cursor={{ fill: "var(--neutral-800)" }}
+              content={
+                <ChartTooltipContent
+                  className="w-[200px] bg-dark-100 text-lg text-light-900"
+                  labelFormatter={(value) => {
+                    return new Date(value).toLocaleDateString("el-GR", {
+                      month: "short",
+                      year: "numeric",
+                    });
+                  }}
+                  formatter={(value) => `Σύνολο Πελατών: ${value}`}
+                />
+              }
+            />
+            <Bar dataKey="count" fill={chartConfig.clients.color} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+}

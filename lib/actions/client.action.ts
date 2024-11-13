@@ -276,40 +276,43 @@ export async function analyzeNewClientsThisMonth() {
   }
 }
 
-export async function countClientsByMonth() {
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
+export async function countClientsByMonth({
+  year = new Date().getFullYear(),
+}: {
+  year?: number;
+}) {
+  // Initialize an array to store the counts for each month
+  const clientsByMonth = [];
 
-  // Initialize an object to store the counts for each month
-  const clientsByMonth: any = [];
+  // Loop through each month of the specified year
+  const monthsInYear = 12;
 
-  // Loop through each month of the current year
-  for (let month = 0; month < currentDate.getMonth() + 1; month++) {
+  for (let month = 0; month < monthsInYear; month++) {
     // Set the start date of the current month
-    const startDateOfMonth = new Date(currentYear, month, 1);
+    const startDateOfMonth = new Date(year, month, 1);
 
     // Calculate the end date of the current month
-    const endDateOfMonth = new Date(currentYear, month + 1, 0, 23, 59, 59);
+    const endDateOfMonth = new Date(year, month + 1, 0, 23, 59, 59);
 
     try {
-      connectToDatabase();
+      // Ensure database connection
+      await connectToDatabase();
+
+      // Count the number of clients created in the current month
       const count = await Client.find({
         createdAt: { $gte: startDateOfMonth, $lte: endDateOfMonth },
       }).countDocuments();
 
       // Store the count for the current month
       clientsByMonth.push({
-        month: startDateOfMonth.toLocaleString("el-GR", {
-          month: "long",
-        }),
+        date: startDateOfMonth.toISOString(),
         count,
       });
     } catch (error) {
       console.error(
-        `Error counting clients for ${startDateOfMonth.toLocaleString(
-          "default",
-          { month: "long" }
-        )}:`,
+        `Error counting clients for ${startDateOfMonth.toLocaleString("en-US", {
+          month: "long",
+        })}, ${year}:`,
         error
       );
     }
@@ -317,6 +320,7 @@ export async function countClientsByMonth() {
 
   return clientsByMonth;
 }
+
 export async function globalSearch({ query }: any) {
   try {
     connectToDatabase();

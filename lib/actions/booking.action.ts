@@ -412,11 +412,9 @@ export async function countBookingsByMonth({
 }) {
   // Initialize an array to store the counts and totals for each month
   const bookingsByMonth = [];
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
 
   // Loop through each month of the specified year
-  const monthsInYear = year === currentYear ? currentDate.getMonth() + 1 : 12;
+  const monthsInYear = 12;
 
   for (let month = 0; month < monthsInYear; month++) {
     // Set the start and end dates for the month
@@ -445,7 +443,7 @@ export async function countBookingsByMonth({
 
       // Store the count and total for the current month
       bookingsByMonth.push({
-        month: startDateOfMonth.toLocaleString("en-US", { month: "long" }),
+        date: startDateOfMonth.toISOString(),
         bookings: bookings[0]?.count || 0,
         totalAmount: bookings[0]?.totalAmount || 0,
       });
@@ -454,7 +452,7 @@ export async function countBookingsByMonth({
         `Error counting bookings for ${startDateOfMonth.toLocaleString(
           "en-US",
           { month: "long" }
-        )}:`,
+        )}, ${year}:`,
         error
       );
     }
