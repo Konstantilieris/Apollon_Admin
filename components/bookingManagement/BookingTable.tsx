@@ -8,8 +8,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { IconArrowBigRightLineFilled, IconEdit } from "@tabler/icons-react";
-import { formatDateString, formatDateToTime } from "@/lib/utils";
+
 import Link from "next/link";
+import moment from "moment";
 const BookingTable = ({ bookings }: { bookings: any }) => {
   return (
     <Table className="text-dark400_light700 mt-12 w-full">
@@ -53,12 +54,16 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
 
             <TableCell className="p-4 text-center max-md:hidden">
               <div>
-                {formatDateToTime(new Date(booking.toDate))}{" "}
-                {formatDateString(booking.toDate)}
+                {moment
+                  .utc(booking.toDate)
+                  .tz("Europe/Athens")
+                  .format("YYYY-MM-DD HH:mm:ss")}
               </div>
               <div>
-                {formatDateToTime(new Date(booking.fromDate))}{" "}
-                {formatDateString(booking.fromDate)}
+                {moment
+                  .utc(booking.fromDate)
+                  .tz("Europe/Athens")
+                  .format("YYYY-MM-DD HH:mm:ss")}
               </div>
             </TableCell>
 
