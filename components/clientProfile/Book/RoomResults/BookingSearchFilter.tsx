@@ -1,7 +1,7 @@
 import React from "react";
 import Filter from "../../../shared/Filter";
 import SearchBar from "../../../shared/searchBar/SearchBar";
-import AnimatedCounter from "@/components/shared/AnimatedCounter";
+
 import { cn } from "@/lib/utils";
 
 import ArrowPagination from "@/components/shared/ArrowPagination";
@@ -51,7 +51,7 @@ const BookingSearchFilter = ({
           )}
         >
           <span>ΔΙΑΘΕΣΙΜΟΤΗΤΑ: </span>
-          {<AnimatedCounter amount={capacity} noPrefix={true} />}
+          {capacity ?? 0}
           <span>%</span>
         </div>
       )}

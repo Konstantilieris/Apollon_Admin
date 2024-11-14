@@ -6,7 +6,7 @@ import {
 } from "@/lib/actions/expenses.action";
 
 import { cn } from "@/lib/utils";
-import AnimatedCounter from "../AnimatedCounter";
+
 import { getMonthlyIncome } from "@/lib/actions/service.action";
 
 const ExpenseBox = async ({ searchParams }: any) => {
@@ -38,11 +38,11 @@ const ExpenseBox = async ({ searchParams }: any) => {
           </span>
           <div className="flex flex-row items-center justify-center gap-2">
             <span className=" flex flex-row text-center  text-lg font-bold text-red-700 dark:text-red-500">
-              <AnimatedCounter amount={totalSum ? totalSum[0]?.totalSum : 0} />
+              {totalSum ? totalSum[0]?.totalSum : 0}
             </span>
             {"/"}
             <span className=" text-center  text-lg font-bold text-blue-700 dark:text-blue-500">
-              <AnimatedCounter amount={monthlyIncome} />
+              {monthlyIncome ?? 0}
             </span>
           </div>
         </div>

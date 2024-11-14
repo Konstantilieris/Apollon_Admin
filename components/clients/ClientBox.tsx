@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import DatePushUrl from "../datepicker/DatePushUrl";
 import LocalSearch from "../shared/searchBar/LocalSearch";
-import AnimatedCounter from "../shared/AnimatedCounter";
+
 import LoadingSkeleton from "../shared/skeletons/LoadingSkeleton";
 
 const ClientBox = ({ total }: { total: number }) => {
@@ -24,9 +24,7 @@ const ClientBox = ({ total }: { total: number }) => {
         >
           <div className="text-light850_dark500 background-light700_dark400 flex items-center gap-2 rounded-lg border border-slate-400 p-2 dark:border-slate-300 max-lg:hidden">
             Συνολο Πελατών :
-            <div className="font-semibold text-sky-600">
-              <AnimatedCounter amount={total} noPrefix={true} />
-            </div>
+            <div className="font-semibold text-sky-600">{total ?? 0}</div>
           </div>
         </Suspense>
       </div>
