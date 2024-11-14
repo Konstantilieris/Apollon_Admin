@@ -76,7 +76,7 @@ export function BookingCard({ booking }: any) {
                 <IconLetterK size={40} className="text-yellow-500 " />
                 ΡΑΤΗΣΗ
               </motion.div>
-              <span className="flex flex-row items-center gap-2 absolute top-2 right-2 text-green-200 font-bold">
+              <span className="absolute right-2 top-2 flex flex-row items-center gap-2 font-bold text-green-200">
                 <IconMoneybag size={30} />
                 {active.totalAmount} €
               </span>
@@ -94,7 +94,7 @@ export function BookingCard({ booking }: any) {
                 </motion.h3>
                 <motion.p
                   layoutId={`description-${active.dogName}-${id}`}
-                  className="text-base uppercase text-dark-200 dark:text-light-900 flex flex-row items-center gap-2"
+                  className="flex flex-row items-center gap-2 text-base uppercase text-dark-200 dark:text-light-900"
                 >
                   <IconUsersGroup size={30} />
                   ΣΚΥΛΟΙ :{" "}
@@ -102,7 +102,7 @@ export function BookingCard({ booking }: any) {
                 </motion.p>
                 <motion.p
                   layoutId={`dates-${active.bookingId}-${id}`}
-                  className="text-base text-neutral-600 dark:text-light-900 flex flex-row items-center gap-2"
+                  className="flex flex-row items-center gap-2 text-base text-neutral-600 dark:text-light-900"
                 >
                   <IconCalendarWeek size={30} /> ΗΜΕΡΟΜΗΝΙΕΣ: {dateFrom} -{" "}
                   {dateTo}

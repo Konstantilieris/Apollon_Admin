@@ -7,7 +7,6 @@ export const useOutsideClick = (
 ) => {
   useEffect(() => {
     const listener = (event: any) => {
-      event.preventDefault();
       if (!ref.current || ref.current.contains(event.target)) {
         return;
       }

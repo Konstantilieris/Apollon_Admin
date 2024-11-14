@@ -87,7 +87,6 @@ const CreateBooking = ({
           description: "Η κράτηση δημιουργήθηκε",
         });
         router.push("/calendar");
-        window.location.reload();
       }
     } catch (error) {
       toast({
