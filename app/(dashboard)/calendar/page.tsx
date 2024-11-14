@@ -15,10 +15,7 @@ const Calendar = async () => {
   return (
     <section className=" h-full w-full p-1 pb-4">
       <CustomModalProvider />
-      <Scheduler
-        appointments={JSON.parse(JSON.stringify(events))}
-        revenueData={revenueData}
-      />
+      <Scheduler appointments={events} revenueData={revenueData} />
     </section>
   );
 };
