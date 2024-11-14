@@ -40,6 +40,7 @@ import "./calendar.css";
 
 import moment from "moment";
 import useCalendarModal from "@/hooks/use-calendar-modal";
+import { formatTime } from "@/lib/utils";
 
 const registerKey = process.env.NEXT_PUBLIC_REGISTER_KEY; // Set a default value if the key is undefined
 registerLicense(registerKey!);
@@ -377,10 +378,10 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
   };
 
   const renderCell = (args: any) => {
+    // For header cells (e.g., the date headers)
     if (args.element.classList.contains("e-header-cells")) {
       const dateHeader = args.element.querySelector(".e-header-day");
       if (dateHeader) {
-        // Get the current date from the cell's attributes
         const cellDate = new Date(args.date); // args.date holds the date for that cell
         const formattedDate = formatDate(cellDate);
 
@@ -391,6 +392,22 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
           dateHeader.innerHTML += ` <span class='headerDetail'>${revenue}€</span>`;
         }
       }
+    }
+
+    // For work cells (e.g., time slots)
+    if (args.element.classList.contains("e-work-cells")) {
+      const cellDate = new Date(args.date); // args.date holds the date for this cell
+      const formattedTime = formatTime(cellDate, "el"); // Format the time (e.g., "09:30 π.μ.")
+
+      // Create a new element to display the time
+      const timeElement = document.createElement("div");
+      timeElement.style.fontSize = "10px";
+      timeElement.style.color = "#666";
+      timeElement.style.textAlign = "center";
+      timeElement.textContent = formattedTime;
+
+      // Append the time element to the cell
+      args.element.appendChild(timeElement);
     }
   };
 
