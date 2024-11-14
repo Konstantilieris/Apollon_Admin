@@ -510,6 +510,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
       selectedDate={dateRef.current}
       dragStop={onDragStop}
       locale="el"
+      enablePersistence={true}
     >
       <ResourcesDirective>
         <ResourceDirective
