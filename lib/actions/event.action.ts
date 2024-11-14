@@ -92,6 +92,7 @@ export async function updateEventBookingOnlyTimeChange({ event }: any) {
     }
 
     revalidatePath("/booking");
+    revalidatePath(`/calendar`);
   } catch (error) {
     console.log(error);
   }
@@ -165,6 +166,7 @@ export async function updateBookingDateChange({ event, pairDate }: any) {
     await session.commitTransaction();
 
     revalidatePath("/booking");
+    revalidatePath(`/calendar`);
     revalidatePath(`/clients/${booking.client.clientId}`);
     return true;
   } catch (error) {
