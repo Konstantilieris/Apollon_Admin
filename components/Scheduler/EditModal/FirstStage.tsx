@@ -15,6 +15,7 @@ import Link from "next/link";
 import { deleteBooking } from "@/lib/actions/booking.action";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import BottomGradient from "@/components/ui/bottom-gradient";
 
 const FirstStage = ({ event, pairDate, setStage, onClose, reset }: any) => {
   const [loading, setLoading] = useState(false);
@@ -106,24 +107,22 @@ const FirstStage = ({ event, pairDate, setStage, onClose, reset }: any) => {
       <div className="absolute bottom-0 right-4 flex w-full flex-row items-center justify-end gap-4">
         <button
           onClick={handleDelete}
-          className="group relative  z-50 border border-black bg-transparent px-8  py-2 text-light-900 transition duration-200 dark:border-white"
+          className="group/btn  relative mt-4 rounded-lg bg-dark-300 px-8 py-2 text-lg font-semibold tracking-widest text-red-600 transition hover:bg-dark-100"
         >
-          <div className="absolute -bottom-2 -right-2 -z-10 h-full w-full bg-red-700 transition-all duration-200 group-hover:bottom-0 group-hover:right-0" />
-          <span className="relative text-xl">
-            {" "}
-            {loading ? (
-              <IconLoader className="animate-spin" size={20} />
-            ) : (
-              "ΔΙΑΓΡΑΦΗ"
-            )}
-          </span>
+          <BottomGradient className="via-red-600" />
+          {loading ? (
+            <IconLoader className="animate-spin" size={20} />
+          ) : (
+            "ΔΙΑΓΡΑΦΗ"
+          )}
         </button>
+
         <button
           onClick={() => setStage(1)}
-          className="group relative  z-50 border border-black bg-transparent px-8  py-2 text-black transition duration-200 dark:border-white"
+          className="group/btn  relative mt-4  rounded-lg bg-dark-300 px-8 py-2 text-lg font-semibold tracking-widest text-yellow-500 transition hover:bg-dark-100"
         >
-          <div className="absolute -bottom-2 -right-2 -z-10 h-full w-full bg-yellow-400 transition-all duration-200 group-hover:bottom-0 group-hover:right-0" />
-          <span className="relative text-xl">ΕΠΕΞΕΡΓΑΣΙΑ</span>
+          <BottomGradient />
+          ΕΠΕΞΕΡΓΑΣΙΑ
         </button>
       </div>
     </div>

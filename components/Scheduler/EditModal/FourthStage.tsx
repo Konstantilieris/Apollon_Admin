@@ -10,11 +10,10 @@ import React, { useEffect, useState } from "react";
 import {
   IconCalendar,
   IconCar,
-  IconArrowLeft,
-  IconCheck,
   IconArrowRight,
   IconHome,
 } from "@tabler/icons-react";
+import ButtonModal from "./buttonModal";
 
 interface props {
   setStage: any;
@@ -133,28 +132,17 @@ const FourthStage = ({
 
       {/* Buttons Section */}
       <div className="mb-4 ml-2 flex h-full flex-row items-end justify-end gap-4 self-end">
-        <button
+        <ButtonModal
+          title="ΕΠΙΣΤΡΟΦΗ"
           onClick={() => setStage(1)}
-          className="group relative  z-50 border border-black bg-transparent px-8  py-2 text-black transition duration-200 dark:border-white"
-        >
-          <div className="absolute -bottom-2 -right-2 -z-10 h-full w-full bg-pink-600 transition-all duration-200 group-hover:bottom-0 group-hover:right-0" />
-          <span className="relative flex flex-row items-center text-xl">
-            <IconArrowLeft size={20} />
-            Επιστροφή
-          </span>
-        </button>
-
-        <button
+          gradientColor="via-yellow-500"
+        />
+        <ButtonModal
+          title="ΑΠΟΘΗΚΕΥΣΗ"
+          gradientColor="via-blue-500"
+          containerStyle="text-blue-500"
           onClick={handleComplete}
-          className="group relative  z-50 border border-black bg-transparent px-8  py-2 text-black transition duration-200 dark:border-white"
-        >
-          <div className="absolute -bottom-2 -right-2 -z-10 h-full w-full bg-green-500 transition-all duration-200 group-hover:bottom-0 group-hover:right-0" />
-          <span className="relative flex flex-row items-center text-xl">
-            {" "}
-            ΟΛΟΚΛΗΡΩΣΗ
-            <IconCheck size={20} className="ml-2 group-hover:animate-ping" />
-          </span>
-        </button>
+        />
       </div>
     </div>
   );

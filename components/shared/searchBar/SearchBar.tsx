@@ -46,7 +46,7 @@ const SearchBar = ({
 
   return (
     <div
-      className={`flex max-h-[50px] min-h-[36px] grow items-center gap-4 rounded-[10px] bg-light-700  px-4  dark:bg-dark-300  ${otherClasses}`}
+      className={`flex max-h-[50px] min-h-[36px]  grow items-center gap-4 rounded-[10px] bg-light-700  p-4  text-light-900 dark:bg-neutral-800  ${otherClasses}`}
     >
       {iconPosition === "left" && (
         <Image
@@ -54,7 +54,7 @@ const SearchBar = ({
           alt="search Icon"
           width={24}
           height={24}
-          className="cursor-pointer invert dark:invert-0"
+          className="cursor-pointer "
         />
       )}
       <Input
@@ -62,7 +62,7 @@ const SearchBar = ({
         placeholder={placeholder}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="paragraph-regular  placeholder no-focus border-none bg-transparent shadow-none outline-none "
+        className="paragraph-regular  no-focus border-none bg-transparent text-lg shadow-none outline-none  placeholder:text-light-900 "
       />
       {iconPosition === "right" && (
         <Image

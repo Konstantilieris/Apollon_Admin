@@ -24,7 +24,9 @@ const BookingBox = ({ totalSum }: { totalSum: number }) => {
         >
           <div className="text-light850_dark500 background-light700_dark400 flex items-center gap-2 rounded-lg border border-slate-400 p-2 dark:border-slate-300">
             Συνολο Κρατήσεων :
-            <div className="font-semibold text-sky-600">{totalSum ?? 0}</div>
+            <div className="font-semibold text-yellow-500">
+              {totalSum ?? 0}€
+            </div>
           </div>
         </Suspense>
       </div>

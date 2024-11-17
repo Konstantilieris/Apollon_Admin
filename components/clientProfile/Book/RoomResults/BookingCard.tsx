@@ -67,16 +67,16 @@ export function BookingCard({ booking }: any) {
             <motion.div
               layoutId={`card-${active.clientName}-${id}`}
               ref={ref}
-              className="relative flex h-full w-full max-w-[40vw]  flex-col overflow-hidden bg-light-700 p-2 dark:bg-blue-700 sm:rounded-3xl md:h-fit md:max-h-[90%]"
+              className="relative flex h-full w-full max-w-[40vw]  flex-col overflow-hidden bg-light-700 p-2 dark:bg-neutral-800 sm:rounded-3xl md:h-fit md:max-h-[90%]"
             >
               <motion.div
                 layoutId={`image-${active.bookingId}-${id}`}
                 className="absolute left-1 top-1 flex flex-row items-center font-bold "
               >
-                <IconLetterK size={40} className="text-yellow-500 " />
+                <IconLetterK size={40} className="text-light-900 " />
                 ΡΑΤΗΣΗ
               </motion.div>
-              <span className="absolute right-2 top-2 flex flex-row items-center gap-2 font-bold text-green-200">
+              <span className="absolute right-2 top-2 flex flex-row items-center gap-2 font-bold text-light-900">
                 <IconMoneybag size={30} />
                 {active.totalAmount} €
               </span>
@@ -102,7 +102,7 @@ export function BookingCard({ booking }: any) {
                 </motion.p>
                 <motion.p
                   layoutId={`dates-${active.bookingId}-${id}`}
-                  className="flex flex-row items-center gap-2 text-base text-neutral-600 dark:text-light-900"
+                  className="flex flex-row items-center gap-2  text-base text-neutral-600 dark:text-light-900"
                 >
                   <IconCalendarWeek size={30} /> ΗΜΕΡΟΜΗΝΙΕΣ: {dateFrom} -{" "}
                   {dateTo}
@@ -115,7 +115,7 @@ export function BookingCard({ booking }: any) {
 
       <motion.div
         key={booking.bookingId}
-        className="relative mr-2 mt-1 flex w-1/6   rounded-lg bg-blue-700 p-4  text-light-700"
+        className="relative mr-2 mt-1 flex w-1/6   rounded-lg bg-neutral-800 p-4  text-light-700"
       >
         <motion.div
           layoutId={`image-${booking.bookingId}-${id}`}
@@ -125,7 +125,7 @@ export function BookingCard({ booking }: any) {
         </motion.div>
         <IconLayoutBottombarExpandFilled
           size={30}
-          className="absolute right-2 top-2 text-yellow-500 hover:scale-110"
+          className="absolute right-2 top-2 text-light-900 hover:scale-110"
           onClick={() => setActive(booking)}
         />
         <motion.h3

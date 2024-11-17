@@ -82,17 +82,15 @@ const SelectRooms = ({
 
       setDogsInRooms(updatedDogsInRooms);
     } else {
-      const updatedDogsInRooms = dogsInRooms.map((dogInRoom: any) => {
-        if (dogInRoom.dogId === dogId) {
-          // Check if the dog is already in the selected room and toggle it
-          if (dogInRoom.roomId === room._id) {
-            return { ...dogInRoom, roomId: null, roomName: null }; // Remove from room
-          } else {
-            return { ...dogInRoom, roomId: room._id, roomName: room.name }; // Assign to room
-          }
-        }
-        return dogInRoom;
-      });
+      const updatedDogsInRooms = dogsInRooms.map((dogInRoom: any) =>
+        dogInRoom.dogId === dogId
+          ? {
+              ...dogInRoom,
+              roomId: dogInRoom.roomId === room._id ? null : room._id,
+              roomName: dogInRoom.roomId === room._id ? null : room.name,
+            }
+          : dogInRoom
+      );
 
       setDogsInRooms(updatedDogsInRooms);
     }
@@ -128,15 +126,14 @@ const SelectRooms = ({
     return (
       <div className="mt-4 flex w-full items-center gap-4 rounded-lg bg-gray-100 p-4 dark:bg-neutral-800">
         <span className="flex flex-row items-center text-lg font-medium text-gray-800 dark:text-gray-200">
-          Γρήγορη πρόταση από την τελευταία κράτηση: {suggestionType}{" "}
-          <IconArrowRight size={24} />
+          {suggestionType} <IconArrowRight size={24} />
         </span>
 
         {quickSuggestion?.type === "Join" ? (
           <button
             className={cn(
               "min-w-[140px] min-h-[40px] flex items-center justify-center gap-2 rounded-md bg-black px-8 py-2 text-sm font-semibold text-white hover:bg-black/[0.8] hover:shadow-lg",
-              { "bg-red-600": quickSuggestion.rooms?.availability }
+              { "bg-red-600": !quickSuggestion.rooms?.availability }
             )}
             disabled={!quickSuggestion.rooms?.availability}
             onClick={() => {
@@ -162,7 +159,11 @@ const SelectRooms = ({
                 <span className="min-w-[5vw]">{room?.dogName}</span>
                 <button
                   className={cn(
-                    "min-w-[10vw] flex items-center justify-center gap-2 rounded-md bg-black px-8 py-2 text-sm font-semibold text-white hover:bg-black/[0.8] hover:shadow-lg"
+                    "min-w-[10vw] flex items-center justify-center gap-2 rounded-md bg-black px-8 py-2 text-sm font-semibold text-white hover:bg-black/[0.8] hover:shadow-lg",
+                    {
+                      "bg-red-600 hover:bg-red-600 cursor-pointer":
+                        !room.availability,
+                    }
                   )}
                   onClick={() => {
                     const newRoom: any = {

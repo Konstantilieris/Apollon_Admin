@@ -108,7 +108,7 @@ const CreateBooking = ({
   }
 
   return (
-    <div className="relative flex min-h-[70vh] w-full max-w-[75vw] flex-col justify-between px-6 pr-12 text-xl">
+    <div className="relative flex min-h-[70vh] w-full max-w-[75vw] flex-col items-center justify-between px-6 pr-12 text-xl">
       <h1 className=" mt-4 self-start  text-2xl  text-yellow-400">
         Δημιουργία Κράτησης
       </h1>
@@ -116,73 +116,77 @@ const CreateBooking = ({
         size={50}
         className="absolute right-2 top-2 text-yellow-500"
       />
-      <h2 className="mt-8   uppercase">ΠΕΛΑΤΗΣ : {client.clientName}</h2>
-      <div className="flex min-w-[180px] flex-col gap-2 rounded-lg bg-gray-100 p-3  text-xl dark:bg-neutral-900 ">
+      <h2 className="mt-8   min-w-[26vw] text-start text-2xl uppercase">
+        ΠΕΛΑΤΗΣ : {client.clientName}
+      </h2>
+      <div className="flex  min-w-[26vw]  flex-col gap-2  self-center rounded-lg bg-gray-100 p-3 text-center text-xl dark:bg-neutral-900">
         {dogs.map((dog: any) => (
           <div
             key={dog.dogId}
-            className="flex w-full flex-row  items-center justify-between  text-gray-800 dark:text-light-700"
+            className="flex  flex-row  items-center justify-between  text-gray-800 dark:text-light-700"
           >
             <span className="min-w-[7vw]"> {dog.dogName}</span>
 
             <IconArrowRight size={18} className="min-w-[5vw] text-yellow-500" />
-            <span className="min-w-[5vw]">{dog.roomName}</span>
+            <span className="ml-8 min-w-[7vw]">{dog.roomName}</span>
           </div>
         ))}
       </div>
-      <div className="flex w-full flex-col gap-2">
-        <div className="flex  flex-row gap-8">
-          <h2 className="min-w-[12vw] ">
-            ΗΜ. {taxiArrival ? "ΠΑΡΑΛΑΒΗΣ" : "ΑΦΙΞΗΣ"}
-          </h2>
-          <h2 className="">{rangeDate?.from?.toLocaleDateString()} </h2>
-        </div>
-
-        <div className="flex flex-row gap-8">
-          <h2 className="min-w-[12vw] ">
-            ΗΜ.{taxiArrival ? "ΠΑΡΑΔΟΣΗΣ" : "ΑΝΑΧΩΡΗΣΗΣ"} :
-          </h2>
-          <h2 className="">{rangeDate?.to?.toLocaleDateString()} </h2>
-        </div>
-        <div className="flex flex-row gap-8">
-          <h2 className="min-w-[12vw] ">
-            ΩΡΑ {taxiArrival ? "ΠΑΡΑΛΑΒΗΣ" : "ΑΦΙΞΗΣ"}:
+      <div className="flex h-full w-full flex-col items-center gap-2 ">
+        <div className="flex min-w-[25vw]  gap-8 text-start">
+          <h2 className="min-w-[11vw] ">
+            ΗΜ. {taxiArrival ? "ΠΑΡΑΛΑΒΗΣ" : "ΑΦΙΞΗΣ"} :
           </h2>
           <h2 className="">
+            {rangeDate?.from?.toLocaleDateString()}{" "}
             {rangeDate?.from?.toLocaleTimeString("el-GR", {
               hour: "numeric",
               minute: "numeric",
               hour12: true,
-            })}
+            })}{" "}
           </h2>
         </div>
-        <div className="flex flex-row gap-8">
-          <h2 className="min-w-[12vw] ">
-            ΩΡΑ {taxiArrival ? "ΠΑΡΑΔΟΣΗΣ" : "ΑΝΑΧΩΡΗΣΗΣ"}:
+
+        <div className="flex min-w-[25vw]  gap-8 text-start ">
+          <h2 className=" min-w-[11vw]">
+            ΗΜ.{taxiDeparture ? "ΠΑΡΑΔΟΣΗΣ" : "ΑΝΑΧΩΡΗΣΗΣ"} :
           </h2>
           <h2 className="">
+            {rangeDate?.to?.toLocaleDateString()}{" "}
             {rangeDate?.to?.toLocaleTimeString("el-GR", {
               hour: "numeric",
               minute: "numeric",
               hour12: true,
-            })}
+            })}{" "}
           </h2>
         </div>
+        <div className="flex min-w-[25vw]  gap-8 text-start ">
+          <h2 className=" min-w-[11vw]">ΣΥΝΟΛΟ ΗΜΕΡΩΝ :</h2>
+          <h2 className="">
+            {rangeDate.to && rangeDate.from
+              ? Math.round(
+                  (rangeDate.to.getTime() - rangeDate.from.getTime()) /
+                    (1000 * 60 * 60 * 24)
+                )
+              : "N/A"}{" "}
+          </h2>
+        </div>
+
         {taxiArrival && (
-          <div className="flex flex-row gap-8">
-            <h2 className="min-w-[12vw] ">ΚΟΣΤΟΣ ΠΑΡΑΛΑΒΗΣ:</h2>
+          <div className="flex  min-w-[25vw] gap-8">
+            <h2 className="min-w-[11vw]">ΚΟΣΤΟΣ ΠΑΡΑΛΑΒΗΣ:</h2>
             <h2 className="">{client.transportFee || 0}€</h2>
           </div>
         )}
         {taxiDeparture && (
-          <div className="flex flex-row gap-8">
-            <h2 className="min-w-[12vw] ">ΚΟΣΤΟΣ ΠΑΡΑΔΟΣΗΣ:</h2>
+          <div className="flex min-w-[25vw] gap-8">
+            <h2 className="min-w-[11vw] ">ΚΟΣΤΟΣ ΠΑΡΑΔΟΣΗΣ:</h2>
             <h2 className="">{client.transportFee || 0}€</h2>
           </div>
         )}
 
-        <div className="flex flex-row gap-8">
-          <h2 className="min-w-[12vw] ">ΚΟΣΤΟΣ ΔΙΑΜΟΝΗΣ:</h2>
+        <div className="flex  min-w-[25vw] gap-8">
+          <h2 className="min-w-[11vw]">ΚΟΣΤΟΣ ΔΙΑΜΟΝΗΣ:</h2>
           <input
             type="number"
             className="border-2 border-dark-100 bg-dark-200 text-light-700"
@@ -190,9 +194,9 @@ const CreateBooking = ({
             onChange={(e) => setAmount(+e.target.value)}
           />
         </div>
-        <div className="flex flex-row gap-8">
-          <h2 className="min-w-[12vw] ">ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ:</h2>
-          <h2 className="">{totalAmount}€</h2>
+        <div className="flex  min-w-[25vw]   gap-8 text-start">
+          <h2 className="min-w-[11vw] ">ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ:</h2>
+          <h2 className="ml-1">{totalAmount}€</h2>
         </div>
       </div>
       <div>

@@ -71,7 +71,7 @@ export const DogTooltip = ({
           </AnimatePresence>
           <IconUserFilled
             className={cn(
-              "relative !m-0 h-8 w-8 object-cover object-top !p-0  text-yellow-600 animate-pulse"
+              "relative !m-0 h-8 w-8 object-cover object-top !p-0  text-light-700 animate-pulse"
             )}
           />
         </div>

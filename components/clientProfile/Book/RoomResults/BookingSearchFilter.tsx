@@ -19,17 +19,17 @@ const BookingSearchFilter = ({
     ? parseInt(freeCapacityPercentage)
     : null;
   return (
-    <header className="mx-1 mt-8 flex min-h-[70px] w-full items-center px-4">
-      <div className="ml-4 flex flex-1 items-center gap-4">
+    <header className="relative mx-1 mt-8 flex min-h-[70px] w-full items-center justify-between overflow-x-hidden rounded-lg bg-neutral-700 px-4">
+      <div className="flex   gap-4">
         <SearchBar
-          otherClasses="max-w-[180px] min-w-[180px] "
+          otherClasses=" min-w-[14vw] max-w-[20vw] "
           imgSrc="/assets/icons/search.svg"
           iconPosition="left"
           placeholder="Αναζήτηση..."
           route={"/booking"}
         />
         <Filter
-          containerClasses="min-w-[145px] "
+          containerClasses="min-w-[150px]"
           otherClasses="focus:outline-none border-none "
           filters={[
             { name: "Όλα", value: "all" },
@@ -42,7 +42,7 @@ const BookingSearchFilter = ({
       {capacity && (
         <div
           className={cn(
-            "mr-12 flex gap-2 rounded-lg bg-neutral-800 px-4 py-2 font-semibold",
+            "mr-12 flex gap-2 rounded-lg bg-neutral-800 px-4 py-2 font-semibold  justify-end",
             capacity < 50
               ? "text-red-500"
               : capacity < 75

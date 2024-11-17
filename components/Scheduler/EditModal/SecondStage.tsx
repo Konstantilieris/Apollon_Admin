@@ -3,13 +3,10 @@ import { BookingDatePicker } from "@/components/datepicker/BookingDatePicker";
 import { IBooking } from "@/database/models/booking.model";
 import { IEvent } from "@/database/models/event.model";
 import { checkBookingRoomRangeDateAvailability } from "@/lib/actions/booking.action";
-import {
-  IconArrowLeft,
-  IconCalendarEvent,
-  IconUser,
-} from "@tabler/icons-react";
+import { IconCalendarEvent, IconUser } from "@tabler/icons-react";
 import React from "react";
 import { DateRange } from "react-day-picker";
+import ButtonModal from "./buttonModal";
 interface props {
   event: IEvent;
   rangeDate: DateRange | undefined;
@@ -76,25 +73,19 @@ const SecondStage = ({
         />
       </div>
       <div className="my-auto mt-4 flex h-full justify-center gap-4">
-        <button
+        <ButtonModal
+          gradientColor="via-yellow-500"
+          containerStyle=" self-end"
           onClick={() => setStage(0)}
-          className="group relative  z-50 self-end border border-black bg-transparent px-8 py-2 text-black transition duration-200 dark:border-white"
-        >
-          <div className="absolute -bottom-2 -right-2 -z-10 h-full w-full bg-pink-700 transition-all duration-200 group-hover:bottom-0 group-hover:right-0" />
-          <span className="relative flex flex-row items-center text-xl">
-            <IconArrowLeft size={20} />
-            Επιστροφή
-          </span>
-        </button>
-
-        <button
+          title="ΕΠΙΣΤΡΟΦΗ"
+        />
+        <ButtonModal
+          title="ΣΥΝΕΧΕΙΑ"
+          containerStyle=" self-end"
+          gradientColor="via-yellow-500"
           onClick={handleStage1}
           disabled={!rangeDate?.from || !rangeDate?.to}
-          className="group relative  z-50 self-end border border-black bg-transparent px-8 py-2 text-black transition duration-200 dark:border-white"
-        >
-          <div className="absolute -bottom-2 -right-2 -z-10 h-full w-full bg-yellow-400 transition-all duration-200 group-hover:bottom-0 group-hover:right-0" />
-          <span className="relative text-xl">ΣΥΝΕΧΕΙΑ</span>
-        </button>
+        />
       </div>
     </div>
   );

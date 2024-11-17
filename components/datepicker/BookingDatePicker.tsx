@@ -109,7 +109,7 @@ export function BookingDatePicker({
         <PopoverTrigger asChild>
           <Button
             className={cn(
-              "w-full justify-start text-left  border border-yellow-500 rounded-lg min-h-[60px] font-semibold dark:bg-neutral-900 min-w-[322px] text-[1rem] max-w-[380px]",
+              "w-full justify-start text-left  border border-yellow-500 rounded-lg min-h-[60px]  dark:bg-neutral-900 min-w-[322px] text-[1rem] max-w-[380px]",
               !date && "text-muted-foreground hover:scale-105 "
             )}
           >

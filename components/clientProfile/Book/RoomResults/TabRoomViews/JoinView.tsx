@@ -54,28 +54,27 @@ const JoinView = ({
   return (
     <div className="min-h-[50vh] px-4 py-2 ">
       <div className="flex h-full w-full flex-col gap-4">
-        <div className="flex w-full flex-row  items-center  ">
-          <div className="flex min-w-[180px] flex-col gap-2 rounded-lg bg-gray-100 p-3 text-lg dark:bg-neutral-900">
-            {dogsInRooms.map((dog: any) => (
-              <div
-                key={dog.dogId}
-                className="flex w-full flex-row  items-center justify-between  text-gray-800 dark:text-gray-300"
-              >
-                <span className="min-w-[7vw]"> {dog.dogName}</span>
-
-                <IconArrowRight
-                  size={18}
-                  className="min-w-[5vw] text-yellow-500"
-                />
-                <span className="min-w-[5vw]">{dog.roomName}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className=" flex min-h-[53vh] w-full flex-col items-center justify-between gap-3 ">
           <div className=" flex w-full  justify-center rounded-lg bg-neutral-900 p-4 text-center text-lg">
             Επιλογη Δωματίων
+          </div>
+          <div className="flex w-full flex-row  justify-center ">
+            <div className="flex  min-w-[30vw] flex-col gap-2 rounded-lg bg-gray-100 p-3 text-lg dark:bg-neutral-900">
+              {dogsInRooms.map((dog: any) => (
+                <div
+                  key={dog.dogId}
+                  className="flex w-full  flex-row items-center  justify-center text-gray-800 dark:text-gray-300"
+                >
+                  <span className="min-w-[7vw]"> {dog.dogName}</span>
+
+                  <IconArrowRight
+                    size={18}
+                    className="min-w-[5vw] text-yellow-500"
+                  />
+                  <span className="min-w-[5vw]">{dog.roomName}</span>
+                </div>
+              ))}
+            </div>
           </div>
           {roomsToDisplay.map((room: any) => (
             <div

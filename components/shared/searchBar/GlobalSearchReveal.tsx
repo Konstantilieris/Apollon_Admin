@@ -18,31 +18,24 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const controlResult = useAnimation();
   const [stage, setStage] = useState(false);
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (
+      event.shiftKey &&
+      (event.key === "Z" ||
+        event.key === "z" ||
+        event.key === "ζ" ||
+        event.key === "Ζ")
+    ) {
+      event.preventDefault();
+      controlSearch.start("visible");
+    }
+  };
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      const topThreshold = 25; // Top area in px
-      const centerThreshold = window.innerWidth / 10; // Define "center"
-
-      // Check if cursor is within top 100px and horizontally centered
-      const isInTopCenter =
-        event.clientY <= topThreshold &&
-        event.clientX >= window.innerWidth / 2 - centerThreshold &&
-        event.clientX <= window.innerWidth / 2 + centerThreshold;
-
-      if (isInTopCenter) {
-        controlSearch.start("visible");
-      }
-    };
-
-    // Add event listener
-    window.addEventListener("mousemove", handleMouseMove);
-
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      // Clean up event listener
-      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [controlSearch]);
-
+  }, []);
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchTerm) {
@@ -90,7 +83,7 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
         >
           <motion.div
             ref={ref}
-            className=" flex min-w-[16vw] max-w-[35vw] items-center gap-1 rounded-xl border border-white bg-light-700 px-8 py-2 dark:bg-neutral-950 relative "
+            className=" relative flex min-w-[16vw] max-w-[35vw] items-center gap-1 rounded-xl border border-white bg-light-700 px-8 py-2 dark:bg-neutral-950 "
           >
             <IconSearch className="h-5 w-5 text-dark-100 dark:text-light-800" />
             <Input
@@ -109,7 +102,7 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
                 setSearchTerm("");
                 controlSearch.start("hidden");
               }}
-              className="h-5 w-5 text-dark-100 dark:text-light-800 cursor-pointer absolute right-2 hover:scale-110"
+              className="absolute right-2 h-5 w-5 cursor-pointer text-dark-100 hover:scale-110 dark:text-light-800"
             />
           </motion.div>
         </motion.div>

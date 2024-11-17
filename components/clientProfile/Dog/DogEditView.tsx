@@ -38,7 +38,7 @@ const DogEditView = ({
     defaultValues: {
       name: active.name ? active.name : "",
       gender: active.gender ? active.gender : "",
-      birthdate: active.birthdate ? active.birthdate : "",
+      birthdate: active.birthdate ? new Date(active.birthdate) : undefined,
       food: active.food ? active.food : "",
       breed: active.breed ? active.breed : "",
       behavior: active.behavior ? active.behavior : "",

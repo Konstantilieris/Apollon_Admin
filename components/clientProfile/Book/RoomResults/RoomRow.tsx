@@ -12,7 +12,7 @@ const RoomRow = ({ room }: any) => {
           size={40}
           className={cn("absolute left-2 top-2 ", {
             "text-red-500": room.currentBookings.length > 0,
-            "text-green-500": room.currentBookings.length === 0,
+            "text-light-900": room.currentBookings.length === 0,
           })}
         />
         <h3 className=" text-lg font-semibold">{room?.name}</h3>
@@ -21,7 +21,7 @@ const RoomRow = ({ room }: any) => {
         {room.currentBookings.length > 0 && (
           <IconArrowBigRightLines
             size={70}
-            className="mr-12 self-center text-yellow-600"
+            className="mr-12 self-center text-light-700"
           />
         )}
         {room.currentBookings.map((booking: any) => (

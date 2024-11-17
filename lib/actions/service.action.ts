@@ -213,7 +213,7 @@ export async function getRevenueData() {
           moment(endDate).diff(moment(startDate), "days") + 1;
 
         // Divide the amount by the number of days
-        amountPerDay = (service.amount / numberOfDays).toFixed(2);
+        amountPerDay = (service.amount / numberOfDays).toFixed(3);
       }
 
       // Loop through each day between fromDate and toDate (or just the service's own date if no booking)

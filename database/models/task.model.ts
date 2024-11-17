@@ -2,9 +2,8 @@ import { Schema, models, model } from "mongoose";
 
 export interface ITask {
   title: string;
-  description: string;
-  status?: string;
-  priority: number;
+  column?: string;
+  id?: string;
 }
 const TaskSchema = new Schema<ITask>(
   {
@@ -12,9 +11,10 @@ const TaskSchema = new Schema<ITask>(
       type: String,
       required: true,
     },
-    description: { type: String, required: true },
-    status: { type: String, default: "Pending" },
-    priority: { type: Number, required: true },
+    column: {
+      type: String,
+      default: "backlog",
+    },
   },
   { timestamps: true }
 );

@@ -389,7 +389,9 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
         if (revenueData[formattedDate]) {
           const revenue = revenueData[formattedDate];
           // Append the revenue next to the date header
-          dateHeader.innerHTML += ` <span class='headerDetail'>${revenue}€</span>`;
+          dateHeader.innerHTML += ` <span class='headerDetail'>${revenue.toFixed(
+            2
+          )}€</span>`;
         }
       }
     }
@@ -401,7 +403,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
 
       // Create a new element to display the time
       const timeElement = document.createElement("div");
-      timeElement.style.fontSize = "10px";
+      timeElement.style.fontSize = "14px";
       timeElement.style.color = "#666";
       timeElement.style.textAlign = "center";
       timeElement.textContent = formattedTime;

@@ -53,17 +53,17 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
             </TableCell>
 
             <TableCell className="p-4 text-center max-md:hidden">
-              <div>
-                {moment
-                  .utc(booking.toDate)
-                  .tz("Europe/Athens")
-                  .format("YYYY-MM-DD HH:mm:ss")}
-              </div>
-              <div>
+              <div className="tracking-wide">
                 {moment
                   .utc(booking.fromDate)
                   .tz("Europe/Athens")
-                  .format("YYYY-MM-DD HH:mm:ss")}
+                  .format("DD-MM-YYYY HH:mm")}
+              </div>
+              <div className="tracking-wide">
+                {moment
+                  .utc(booking.toDate)
+                  .tz("Europe/Athens")
+                  .format("DD-MM-YYYY HH:mm")}
               </div>
             </TableCell>
 
