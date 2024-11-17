@@ -85,12 +85,37 @@ const FirstStage = ({ event, pairDate, setStage, onClose, reset }: any) => {
       <p className="flex flex-row items-center gap-2">
         <IconCalendar />
         {event.isArrival
-          ? event.StartTime.toLocaleString("el-GR")
-          : new Date(pairDate).toLocaleString("el-GR")}
-        -{"  "}
+          ? new Date(event.StartTime).toLocaleString("el-GR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              // 24-hour format
+            })
+          : new Date(pairDate).toLocaleString("el-GR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+        -{" "}
         {!event.isArrival
-          ? event.StartTime.toLocaleString("el-GR")
-          : new Date(pairDate).toLocaleString("el-GR")}
+          ? new Date(event.StartTime).toLocaleString("el-GR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : new Date(pairDate).toLocaleString("el-GR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
       </p>
       <p className="flex flex-row items-center gap-2">
         <IconNote />
