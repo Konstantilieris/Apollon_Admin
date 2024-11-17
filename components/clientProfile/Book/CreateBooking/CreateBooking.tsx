@@ -138,7 +138,7 @@ const CreateBooking = ({
             ΗΜ. {taxiArrival ? "ΠΑΡΑΛΑΒΗΣ" : "ΑΦΙΞΗΣ"} :
           </h2>
           <h2 className="">
-            {rangeDate?.from?.toLocaleDateString()}{" "}
+            {rangeDate?.from?.toLocaleDateString()} -{" "}
             {rangeDate?.from?.toLocaleTimeString("el-GR", {
               hour: "numeric",
               minute: "numeric",
@@ -152,7 +152,7 @@ const CreateBooking = ({
             ΗΜ.{taxiDeparture ? "ΠΑΡΑΔΟΣΗΣ" : "ΑΝΑΧΩΡΗΣΗΣ"} :
           </h2>
           <h2 className="">
-            {rangeDate?.to?.toLocaleDateString()}{" "}
+            {rangeDate?.to?.toLocaleDateString()} -{" "}
             {rangeDate?.to?.toLocaleTimeString("el-GR", {
               hour: "numeric",
               minute: "numeric",
