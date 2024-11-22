@@ -57,7 +57,7 @@ export function DatePickerWithRange({
           align="start"
         >
           <Calendar
-            className=""
+            className="font-sans"
             disabled={disabled && { before: new Date() }}
             initialFocus
             mode="range"

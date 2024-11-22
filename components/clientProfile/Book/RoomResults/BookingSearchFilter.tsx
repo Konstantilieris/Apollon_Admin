@@ -18,9 +18,10 @@ const BookingSearchFilter = ({
   const capacity = freeCapacityPercentage
     ? parseInt(freeCapacityPercentage)
     : null;
+
   return (
     <header className="relative mx-1 mt-8 flex min-h-[70px] w-full items-center justify-between overflow-x-hidden rounded-lg bg-neutral-700 px-4">
-      <div className="flex   gap-4">
+      <div className="flex   gap-2">
         <SearchBar
           otherClasses=" min-w-[14vw] max-w-[20vw] "
           imgSrc="/assets/icons/search.svg"
@@ -39,22 +40,20 @@ const BookingSearchFilter = ({
         />
       </div>
       <ArrowPagination pageNumber={pageNumber} isNext={isNext} />
-      {capacity && (
-        <div
-          className={cn(
-            "mr-12 flex gap-2 rounded-lg bg-neutral-800 px-4 py-2 font-semibold  justify-end",
-            capacity < 50
-              ? "text-red-500"
-              : capacity < 75
-                ? "text-yellow-500"
-                : "text-green-500"
-          )}
-        >
-          <span>ΔΙΑΘΕΣΙΜΟΤΗΤΑ: </span>
-          {capacity ?? 0}
-          <span>%</span>
-        </div>
-      )}
+
+      <div
+        className={cn(
+          "mr-12 flex gap-2 rounded-lg bg-neutral-800 px-4 py-2 font-semibold  ",
+          capacity && capacity < 20 && "text-red-500",
+          capacity && capacity >= 20 && capacity < 50 && "text-yellow-500",
+          capacity && capacity >= 50 && "text-green-500",
+          !capacity && "text-yellow-500"
+        )}
+      >
+        <span>ΔΙΑΘΕΣΙΜΟΤΗΤΑ: </span>
+        {capacity ?? 0}
+        <span>%</span>
+      </div>
     </header>
   );
 };

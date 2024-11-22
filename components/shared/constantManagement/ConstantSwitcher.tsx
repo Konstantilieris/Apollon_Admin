@@ -122,9 +122,9 @@ const ConstantSwitcher = ({
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[270px] p-0  dark:bg-dark-200">
+      <PopoverContent className="w-[25vw] p-0  dark:bg-neutral-950">
         <Command>
-          <CommandList className="custom-scrollbar font-sans">
+          <CommandList className=" font-sans">
             <CommandInput placeholder={placeholder} />
             <CommandEmpty>Δεν βρέθηκε.</CommandEmpty>
             <CommandGroup heading={heading} className="text-indigo-400">
@@ -135,7 +135,7 @@ const ConstantSwitcher = ({
                   onSelect={() => {
                     onConstantSelect(item.value);
                   }}
-                  className="text-sm hover:scale-105 dark:text-light-700"
+                  className="text-lg hover:scale-105 dark:text-light-700"
                 >
                   {renderIcons(type)} {item.value}
                   <Check
@@ -153,7 +153,7 @@ const ConstantSwitcher = ({
             <CommandGroup heading="ΕΝΕΡΓΕΙΕΣ" className="text-green-500">
               <CommandItem
                 value="Δημιουργια"
-                className="flex flex-row items-center  font-semibold text-green-400 hover:scale-105 hover:animate-pulse"
+                className="flex flex-row items-center  font-sans font-semibold tracking-widest text-light-900 hover:scale-105 hover:animate-pulse"
                 disabled={false}
                 onSelect={() => {
                   // Debug log
@@ -161,7 +161,7 @@ const ConstantSwitcher = ({
                   onOpen(type, label);
                 }}
               >
-                <IconCirclePlus className="mr-2 h-5 w-5 text-green-400" />
+                <IconCirclePlus className="mr-2 h-5 w-5  text-light-900" />
                 ΝΕΑ ΠΡΟΣΘΗΚΗ
               </CommandItem>
             </CommandGroup>

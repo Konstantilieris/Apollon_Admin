@@ -71,9 +71,6 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
       <Table className="min-w-full">
         <TableHeader>
           <TableRow className=" bg-dark-400  text-left">
-            <TableHead className="px-2 py-3 font-semibold text-light-900">
-              <DropdownMenuAction selectedServices={selectedServices} />
-            </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-light-900">
               Ημερομηνία
             </TableHead>
@@ -92,6 +89,9 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
             </TableHead>
             <TableHead className="text-center font-semibold text-light-900">
               Σύνολο
+            </TableHead>
+            <TableHead className="flex h-full w-full justify-end px-2 py-3 pb-2 font-semibold text-light-900">
+              <DropdownMenuAction selectedServices={selectedServices} />
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -121,15 +121,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 )}
               >
                 {/* Actions column */}
-                <TableCell className="mx-auto ml-4 flex flex-row justify-items-end">
-                  <Checkbox
-                    id={`checkbox-${service._id}`}
-                    checked={isServiceSelected(service._id)}
-                    onCheckedChange={(checked: boolean | string) =>
-                      handleCheckboxChange(service, checked === true)
-                    }
-                  />
-                </TableCell>
+
                 {/* Other columns */}
                 <TableCell className="px-4 py-3">
                   {new Date(service.date).toLocaleDateString("el-GR", {
@@ -157,6 +149,15 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 </TableCell>
                 <TableCell className="text-center">
                   {service.amount} €
+                </TableCell>
+                <TableCell className=" mr-6 flex flex-row justify-end">
+                  <Checkbox
+                    id={`checkbox-${service._id}`}
+                    checked={isServiceSelected(service._id)}
+                    onCheckedChange={(checked: boolean | string) =>
+                      handleCheckboxChange(service, checked === true)
+                    }
+                  />
                 </TableCell>
               </TableRow>
             );

@@ -15,7 +15,7 @@ const ContainerRooms = ({
   freeCapacityPercentage,
 }: ContainerRoomProps) => {
   return (
-    <section className="text-dark400_light500 mr-4 h-full  w-full overflow-auto rounded-lg border border-neutral-400 bg-light-900   dark:bg-neutral-950">
+    <section className="text-dark400_light500 mr-4 h-full  w-full overflow-auto overflow-x-hidden rounded-lg border border-neutral-400   bg-light-900 px-1 dark:bg-neutral-950">
       <BookingSearchFilter
         freeCapacityPercentage={freeCapacityPercentage}
         pageNumber={pageNumber}

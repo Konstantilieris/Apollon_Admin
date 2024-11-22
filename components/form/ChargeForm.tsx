@@ -25,7 +25,7 @@ const ChargeForm = ({ client, services }: any) => {
         serviceType: selectedService,
         amount: selectedAmount,
         date: selectedDate,
-        note: selectedNote,
+        notes: selectedNote,
       });
       const service = JSON.parse(JSON.stringify(res));
       if (service) {

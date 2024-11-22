@@ -82,7 +82,7 @@ export function DateInput({ field, maxwidth, color }: Props) {
       </div>
       <PopoverContent className="background-light900_dark300 text-dark300_light700 absolute right-[25px] top-0 w-auto p-0 ">
         <Calendar
-          className="rounded-md border shadow"
+          className="rounded-md border font-sans shadow"
           mode="single"
           selected={field.value}
           disabled={(date) => date < new Date("1900-01-01")}

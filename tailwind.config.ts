@@ -56,6 +56,7 @@ module.exports = {
           600: "#76828D",
           700: "#ABB8C4",
         },
+        "muted-foreground": "#adb5bd",
         light: {
           900: "#FFFFFF",
           800: "#F4F6F8",

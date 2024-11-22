@@ -13,7 +13,7 @@ import {
 
 export const NoteKanban = ({ tasks }: { tasks: ITask[] }) => {
   return (
-    <div className="h-full  w-full  rounded-lg   bg-neutral-900 text-neutral-50 shadow-sm shadow-neutral-500">
+    <div className="background-light900_dark200  h-full  w-full  rounded-lg text-neutral-50 shadow-sm shadow-neutral-500">
       <Board tasks={tasks} />
     </div>
   );

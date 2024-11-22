@@ -7,7 +7,7 @@ export async function getAllTasks() {
   try {
     connectToDatabase();
     const tasks = await Task.find();
-    return JSON.stringify(tasks);
+    return JSON.parse(JSON.stringify(tasks));
   } catch (error) {
     console.log(error);
     throw error;

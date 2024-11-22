@@ -61,18 +61,17 @@ const ClientBookingPrice = ({ id, price, name }: Props) => {
     <AlertDialog>
       <AlertDialogTrigger
         className={cn(
-          "px-8 py-2  bg-neutral-950 text-white text-sm rounded-md font-semibold  hover:shadow-sm hover:shadow-light-800 hover:scale-110 w-full flex justify-center items-center ",
+          "px-8 py-2  bg-neutral-950 text-white text-sm max-w-[80px] rounded-md font-semibold  hover:shadow-sm hover:shadow-light-800 hover:scale-110 w-full flex justify-center items-center ",
           {
             "border-green-500": price !== null,
-            "border-red-500 text-red-700 font-bold animate-pulse":
-              price === null,
+            " text-red-700 font-bold animate-pulse text-sm": price === null,
           }
         )}
       >
         {price !== null ? (
           <IconCalendar size={24} className="text-yellow-600" />
         ) : (
-          "ΝΟ"
+          "ΗΜΕΡΗΣΙΟ"
         )}
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-light-500 font-sans text-dark-100 dark:bg-dark-100 dark:text-light-700">

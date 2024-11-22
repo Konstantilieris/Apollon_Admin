@@ -74,16 +74,6 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
           />
           <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
             <CustomFormField
-              fieldType={FormFieldType.INPUT}
-              control={form.control}
-              name="email"
-              label="Email address"
-              placeholder="johndoe@gmail.com"
-              iconSrc="/assets/icons/email.svg"
-              iconAlt="email"
-            />
-
-            <CustomFormField
               fieldType={FormFieldType.SKELETON}
               control={form.control}
               name="profession"
@@ -105,6 +95,15 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
           </div>
           <div className=" flex flex-col gap-6">
             <h2 className="sub-header ">Στοιχέια Επικοινωνίας</h2>
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="email"
+              label="Email address"
+              placeholder="johndoe@gmail.com"
+              iconSrc="/assets/icons/email.svg"
+              iconAlt="email"
+            />
             <CustomFormField
               fieldType={FormFieldType.PHONE_INPUT}
               control={form.control}
@@ -149,7 +148,7 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
               <SelectItem
                 key={residence + i}
                 value={residence}
-                className="flex cursor-pointer items-center gap-2"
+                className="flex cursor-pointer items-center gap-2 font-sans text-lg"
               >
                 <p>{residence} </p>
               </SelectItem>

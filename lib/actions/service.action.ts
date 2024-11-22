@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 
 import mongoose from "mongoose";
 import moment from "moment";
+import FinancialSummary from "@/database/models/financial.model";
 
 export async function getMonthlyIncome() {
   const startDate = startOfMonth(new Date());
@@ -145,7 +146,11 @@ export async function payService({ service, path }: any) {
     if (!client) {
       throw new Error("Client not found or update failed.");
     }
-
+    await FinancialSummary.findOneAndUpdate(
+      {}, // Assuming a single document for financial summary
+      { $inc: { totalRevenue: service.amount } }, // Increment total revenue
+      { session } // Create if it doesn't exist
+    );
     // Commit the transaction if all updates succeed
     await session.commitTransaction();
 
@@ -388,7 +393,11 @@ export async function partialPayment({
 
     // Save the updated client with the session
     await client.save({ session });
-
+    await FinancialSummary.findOneAndUpdate(
+      {},
+      { $inc: { totalRevenue: totalPaymentApplied } }, // Increment total revenue by the applied payment amount
+      { session } // Create if not exists, and include in the transaction
+    );
     // Commit the transaction
     await session.commitTransaction();
 
@@ -404,5 +413,137 @@ export async function partialPayment({
   } finally {
     // End the session
     session.endSession();
+  }
+}
+export async function getPercentageIncrease() {
+  try {
+    await connectToDatabase(); // Ensure the database is connected
+
+    const now = new Date();
+    const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const endOfLastMonth = new Date(startOfCurrentMonth.getTime() - 1);
+
+    // Aggregate total revenue for paid services in the current and last month
+    const result = await Service.aggregate([
+      {
+        $match: {
+          paid: true,
+          paymentDate: { $gte: startOfLastMonth }, // Services from the start of last month onwards
+        },
+      },
+      {
+        $addFields: {
+          month: { $month: "$paymentDate" },
+          year: { $year: "$paymentDate" },
+        },
+      },
+      {
+        $group: {
+          _id: { year: "$year", month: "$month" },
+          totalRevenue: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    // Extract totals for current and last month
+    const currentMonthRevenue =
+      result.find(
+        (r) =>
+          r._id.year === now.getFullYear() && r._id.month === now.getMonth() + 1
+      )?.totalRevenue || 0;
+
+    const lastMonthRevenue =
+      result.find(
+        (r) =>
+          r._id.year === endOfLastMonth.getFullYear() &&
+          r._id.month === endOfLastMonth.getMonth() + 1
+      )?.totalRevenue || 0;
+
+    // Calculate percentage increase
+    const percentageIncrease =
+      lastMonthRevenue > 0
+        ? ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100
+        : currentMonthRevenue > 0
+          ? 100
+          : 0;
+
+    return percentageIncrease;
+  } catch (error) {
+    console.error("Error calculating percentage increase:", error);
+    throw new Error("Failed to calculate percentage increase");
+  }
+}
+export async function updateTotalRevenue() {
+  try {
+    connectToDatabase(); // Connect to your database
+
+    // Aggregate the total revenue from all paid services
+    const totalRevenueResult = await Service.aggregate([
+      {
+        $match: { paid: true }, // Include only paid services
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$amount" }, // Sum up the amounts
+        },
+      },
+    ]);
+
+    const totalRevenue = totalRevenueResult[0]?.totalRevenue || 0;
+
+    // Update the FinancialSummary collection
+    await FinancialSummary.findOneAndUpdate(
+      {}, // Assuming a single document for financial summary
+      { $set: { totalRevenue } }, // Update the totalRevenue field
+      { upsert: true, new: true } // Create if it doesn’t exist, return the updated document
+    );
+
+    console.log(
+      `FinancialSummary updated with total revenue: $${totalRevenue}`
+    );
+  } catch (error) {
+    console.error("Error updating total revenue:", error);
+    throw new Error("Failed to update total revenue.");
+  }
+}
+export async function getTotalRevenue() {
+  try {
+    connectToDatabase(); // Connect to your database
+
+    // Find the FinancialSummary document and return the totalRevenue field
+    const financialSummary = await FinancialSummary.findOne();
+    return financialSummary?.totalRevenue || 0;
+  } catch (error) {
+    console.error("Error fetching total revenue:", error);
+    throw new Error("Failed to fetch total revenue.");
+  }
+}
+export async function getAllServicesWithClientNames() {
+  try {
+    connectToDatabase(); // Connect to your database
+    // Fetch all services and populate the client details
+    const services = await Service.find()
+      .populate({
+        path: "clientId", // Field to populate
+        select: "name", // Only include the 'name' field from the Client model
+      })
+      .exec();
+
+    // Return the populated services
+    return services.map((service) => ({
+      id: service._id,
+      serviceType: service.serviceType,
+      amount: service.amount,
+      date: service.date,
+      paid: service.paid,
+      paymentDate: service.paymentDate,
+      clientName: service.clientId?.name || "Unknown Client",
+      clientId: service.clientId._id, // Safely access the populated name
+    }));
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    throw new Error("Failed to fetch services with client names.");
   }
 }

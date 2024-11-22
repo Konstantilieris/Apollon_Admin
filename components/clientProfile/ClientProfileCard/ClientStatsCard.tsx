@@ -1,41 +1,78 @@
+"use client";
 import { cn } from "@/lib/utils";
-import { IconExchange } from "@tabler/icons-react";
+
 import React from "react";
 
+import { Card, CardContent } from "@/components/ui/card";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+
 const ClientStatsCard = ({ client }: any) => {
+  const chartData = [
+    {
+      type: "ΣΥΝΟΛΟ",
+      amount: client.totalSpent ?? 0,
+      fill: "var(--lime-500)",
+    },
+    {
+      type: "ΟΦΕΙΛΗ",
+      amount: client.owesTotal ?? 0,
+      fill: "var(--red-500)",
+    },
+
+    { type: "ΥΠΟΛΟΙΠΟ", amount: client.credit ?? 0, fill: "var(--blue-500)" },
+  ];
+
+  const chartConfig: ChartConfig = {
+    amount: {
+      label: "Ποσό",
+    },
+  };
   return (
-    <div className=" w-full min-w-[15vw] max-w-[17vw] select-none  self-end ">
-      <div
-        className={cn(
-          " relative card h-36 bg-neutral-900 rounded-md shadow-sm shadow-neutral-700   max-w-[15vw] mx-auto flex flex-col justify-between p-4"
-        )}
-      >
-        <div className="flex w-full flex-row items-center justify-between">
-          <p className=" flex  w-full  flex-row min-w-[8vw] ">
-            ΣΥΝΟΛΟ: {client.totalSpent} € <br />
-          </p>
-          <p className="flex w-full items-center justify-end">
-            <IconExchange size={32} stroke={1.5} className="text-LimeGreen" />
-          </p>
-        </div>
-        <div className="flex w-full flex-row items-center justify-between text-start">
-          <p className=" flex  w-full min-w-[8vw] flex-row  text-start">
-            ΠΙΣΤΩΣΗ : {client.credit ?? 0} €{" "}
-          </p>
-          <p className="flex w-full items-center justify-end">
-            <IconExchange size={32} className="  text-blue-500" />
-          </p>
-        </div>
-        <div className="flex w-full flex-row items-center justify-between text-start">
-          <p className=" flex  w-full min-w-[8vw] flex-row  text-start">
-            ΧΡΕΟΣ : {client.owesTotal} €{" "}
-          </p>
-          <p className="flex w-full items-center justify-end">
-            <IconExchange size={32} className="  text-red-500" />
-          </p>
-        </div>
-      </div>
-    </div>
+    <Card className=" max-h-[15vh] w-full min-w-[15vw] max-w-[17vw]  select-none self-end overflow-y-hidden border-none bg-neutral-900 py-1">
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <BarChart
+            data={chartData}
+            layout="vertical"
+            margin={{
+              left: 20,
+            }}
+          >
+            <YAxis
+              dataKey="type"
+              type="category"
+              tickLine={false}
+              tickMargin={2}
+              axisLine={false}
+              tick={{
+                fill: "white",
+                fontSize: 13,
+                fontWeight: 500,
+                fontFamily: "inherit",
+              }}
+            />
+            <XAxis dataKey="amount" type="number" hide />
+            <ChartTooltip
+              cursor={false}
+              formatter={(value: number) => `Ποσό: ${value} €`}
+              content={
+                <ChartTooltipContent
+                  hideLabel
+                  className="min-w-[7vw] bg-neutral-950 p-1 font-sans text-sm text-light-900"
+                />
+              }
+            />
+            <Bar dataKey="amount" layout="vertical" radius={5} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
   );
 };
 

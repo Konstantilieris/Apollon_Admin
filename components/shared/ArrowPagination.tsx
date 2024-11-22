@@ -24,7 +24,7 @@ const ArrowPagination = ({ pageNumber, isNext }: Props) => {
   };
 
   return (
-    <div className="  mr-24 flex  w-full items-center justify-center gap-2 p-2 text-yellow-500">
+    <div className="   flex  w-full  items-center justify-center gap-2 self-center p-2 text-yellow-500">
       <Button
         disabled={pageNumber === 1}
         className="light-border-2 btn flex min-h-[36px] items-center justify-center gap-2 border "

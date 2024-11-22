@@ -15,7 +15,7 @@ const PrintableReceipt = ({
     <div ref={printRef} className="p-4">
       {/* Receipt Header */}
       <div className="mb-4 text-center">
-        <h1 className="text-2xl font-bold">ΑΠΟΛΛΩΝ ΣΧΟΛΗ ΣΚΥΛΩΝ</h1>
+        <h1 className="text-2xl font-bold">ΣΧΟΛΗ ΣΚΥΛΛΩΝ ΑΠΟΛΛΩΝ</h1>
         <h2 className="text-xl font-bold">ΠΡΟΣΦΟΡΑ</h2>
         <p className="text-lg">
           {new Date().toLocaleDateString("el-GR", {
@@ -98,7 +98,7 @@ const PrintableReceipt = ({
 
       {/* Thank You Message */}
       <div className="mt-6 text-center">
-        <p className="text-sm">Ευχαριστούμε για την προτίμηση!</p>
+        <p className="text-lg">Ευχαριστούμε για την εμπιστοσύνη σας</p>
       </div>
     </div>
   );

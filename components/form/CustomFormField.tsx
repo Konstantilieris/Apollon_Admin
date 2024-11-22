@@ -113,7 +113,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
     case FormFieldType.DATE_PICKER:
       return (
         <FormControl>
-          <DateInput field={field} maxwidth="min-w-[245px] max-w-[245px]" />
+          <DateInput field={field} maxwidth="min-w-[245px] max-w-[245px] " />
         </FormControl>
       );
     case FormFieldType.SELECT:

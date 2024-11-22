@@ -894,3 +894,69 @@ export async function getClientsServicePreferences({ id }: { id: string }) {
     throw error;
   }
 }
+export async function getClientStatistics() {
+  try {
+    connectToDatabase(); // Replace with your MongoDB connection string
+
+    const now = new Date();
+    const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const endOfLastMonth = new Date(startOfCurrentMonth.getTime() - 1);
+
+    // Get total number of clients
+    const totalClients = await Client.countDocuments();
+
+    // Aggregate client registrations for the current and last month
+    const registrations = await Client.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startOfLastMonth }, // Filter clients created from the start of last month onwards
+        },
+      },
+      {
+        $addFields: {
+          month: { $month: "$createdAt" },
+          year: { $year: "$createdAt" },
+        },
+      },
+      {
+        $group: {
+          _id: { year: "$year", month: "$month" },
+          count: { $sum: 1 }, // Count the number of clients per month
+        },
+      },
+    ]);
+
+    // Extract counts for the current and last month
+    const currentMonthRegistrations =
+      registrations.find(
+        (r) =>
+          r._id.year === now.getFullYear() && r._id.month === now.getMonth() + 1
+      )?.count || 0;
+
+    const lastMonthRegistrations =
+      registrations.find(
+        (r) =>
+          r._id.year === endOfLastMonth.getFullYear() &&
+          r._id.month === endOfLastMonth.getMonth() + 1
+      )?.count || 0;
+
+    // Calculate percentage increase
+    const clientIncrease =
+      lastMonthRegistrations > 0
+        ? ((currentMonthRegistrations - lastMonthRegistrations) /
+            lastMonthRegistrations) *
+          100
+        : currentMonthRegistrations > 0
+          ? 100
+          : 0;
+
+    return {
+      totalClients,
+      clientIncrease,
+    };
+  } catch (error) {
+    console.error("Error calculating client statistics:", error);
+    throw new Error("Failed to calculate client statistics.");
+  }
+}

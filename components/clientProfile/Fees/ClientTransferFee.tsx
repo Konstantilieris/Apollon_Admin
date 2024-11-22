@@ -72,7 +72,7 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
         {transportationFee !== null ? (
           <IconCar size={24} className="text-yellow-600" />
         ) : (
-          "Τιμή Μεταφοράς"
+          " ΜΕΤΑΦΟΡΑ"
         )}
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-light-500 font-sans text-dark-100 dark:bg-dark-100 dark:text-light-700">
