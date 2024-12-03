@@ -36,7 +36,7 @@ export function DropdownMenuAction({
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="ml-2 px-4 py-1 text-white transition hover:scale-110 hover:bg-yellow-600"
+            className="ml-2 bg-dark-100 px-4 py-1 text-white transition hover:scale-110 hover:bg-yellow-600"
           >
             <IconCashRegister size={20} className="text-light-900 " />
           </Button>

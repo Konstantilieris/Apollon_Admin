@@ -61,7 +61,7 @@ const ClientBookingPrice = ({ id, price, name }: Props) => {
     <AlertDialog>
       <AlertDialogTrigger
         className={cn(
-          "px-8 py-2  bg-neutral-950 text-white text-sm max-w-[80px] rounded-md font-semibold  hover:shadow-sm hover:shadow-light-800 hover:scale-110 w-full flex justify-center items-center ",
+          "px-8 py-2  bg-neutral-950 text-white text-sm max-w-[140px] rounded-md font-semibold  hover:shadow-sm hover:shadow-light-800 hover:scale-110 w-full flex justify-center items-center ",
           {
             "border-green-500": price !== null,
             " text-red-700 font-bold animate-pulse text-sm": price === null,

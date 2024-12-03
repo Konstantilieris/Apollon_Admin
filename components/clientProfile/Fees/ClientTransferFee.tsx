@@ -61,7 +61,7 @@ const ClientTransferFee = ({ id, transportationFee, name }: Props) => {
     <AlertDialog>
       <AlertDialogTrigger
         className={cn(
-          "px-8 py-2  bg-neutral-950 text-sm rounded-md font-semibold  hover:shadow-sm hover:shadow-light-900 hover:scale-110 w-full flex justify-center items-center ",
+          "max-w-[140px] px-8 py-2  bg-neutral-950 text-sm rounded-md font-semibold  hover:shadow-sm hover:shadow-light-900 hover:scale-110 w-full flex justify-center items-center ",
           {
             "border-green-500": transportationFee !== null,
             "border-red-500 text-red-700 font-bold animate-pulse":

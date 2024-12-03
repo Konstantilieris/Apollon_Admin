@@ -15,6 +15,7 @@ import {
   ResourceDirective,
   TimelineViews,
   Inject,
+  Resize,
 } from "@syncfusion/ej2-react-schedule";
 import {
   registerLicense,
@@ -40,7 +41,7 @@ import "./calendar.css";
 
 import moment from "moment";
 import useCalendarModal from "@/hooks/use-calendar-modal";
-import { formatTime } from "@/lib/utils";
+import { cn, formatTime } from "@/lib/utils";
 
 const registerKey = process.env.NEXT_PUBLIC_REGISTER_KEY; // Set a default value if the key is undefined
 registerLicense(registerKey!);
@@ -178,11 +179,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
   const renderIcon = useCallback((categoryId: number) => {
     switch (categoryId) {
       case 1:
-        return (
-          <span className="absolute right-0 top-0 rounded-full border border-white p-1 text-xl">
-            🤠
-          </span>
-        );
+        return <span className="absolute -top-1 right-0  p-1 text-xl">🤠</span>;
       case 2:
         return (
           <IconLetterK
@@ -207,21 +204,6 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
     { text: "Transport", id: 3, color: "#32CD32" },
   ];
 
-  const renderType = useCallback((type: string) => {
-    switch (type) {
-      case "Arrival":
-        return "ΑΦΙΞΗ";
-      case "Departure":
-        return "ΑΝΑΧΩΡΗΣΗ";
-      case "Taxi_PickUp":
-        return "ΠΑΡΑΛΑΒΗ";
-      case "Taxi_Delivery":
-        return "ΠΑΡΑΔΟΣΗ";
-      default:
-        return type;
-    }
-  }, []);
-
   const eventTemplate = (props: any) => {
     return (
       <div
@@ -229,9 +211,19 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
           // Apply the event color or default
           color: "white", // You can also change the text color here
         }}
-        className="text-center"
+        className={cn("flex  gap-2 pl-1 pt-1 text-[1rem] w-full  ")}
       >
-        {props.categoryId > 1 ? renderType(props.Type) : props.Subject}
+        <span
+          className={cn(" ", { "w-full text-center": props.categoryId === 1 })}
+        >
+          {props.Subject}
+        </span>
+
+        <span className=" max-w-[6rem] truncate pt-[2px] text-sm">
+          {" "}
+          {props.clientName ?? ""}{" "}
+        </span>
+        {}
       </div>
     );
   };
@@ -241,7 +233,11 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
     return (
       <div className="h-full w-full border-none  text-light-900 outline-none">
         {renderIcon(props.categoryId)}
-        <div className="mt-4 flex w-full flex-col gap-4 px-4">
+        <div
+          className={cn("mt-4 flex w-full flex-col gap-4 px-4", {
+            "pt-2": props.categoryId === 1,
+          })}
+        >
           <div className="text-xl uppercase">{props.Subject}</div>
           {props.clientName ? (
             <div className="flex flex-row items-center gap-2 text-lg">
@@ -469,7 +465,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
     }
     handleDoubleClick(args); // Handle the double-click immediately
   };
-  const timeScale = { enable: true, interval: 60, slotCount: 4 };
+  const timeScale = { enable: true, interval: 60, slotCount: 2 };
   const onPopupOpen = (args: any) => {
     if (args.type === "Editor") {
       const categoryElement = args.element.querySelector("#categoryId");
@@ -484,6 +480,13 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
     }
   };
 
+  const onResizeStart = (args: any) => {
+    const eventData = args.data;
+    if (eventData.categoryId !== 1) {
+      args.cancel = true; // Prevent resizing for events not in category 1
+    }
+  };
+
   return (
     <ScheduleComponent
       ref={scheduleObj}
@@ -493,10 +496,13 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
       height={"100%"}
       width={"100%"}
       startHour="07:00"
-      endHour="23:30"
+      endHour="23:45"
       timeScale={timeScale}
       renderCell={renderCell}
+      allowResizing={true}
+      resizeStart={onResizeStart}
       eventSettings={{
+        ignorewhitespace: true,
         dataSource: appointments,
         tooltipTemplate: tooltip,
         enableTooltip: !isDragging,
@@ -535,7 +541,15 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
       </ViewsDirective>
 
       <Inject
-        services={[Day, Week, Month, TimelineMonth, DragAndDrop, TimelineViews]}
+        services={[
+          Day,
+          Week,
+          Month,
+          TimelineMonth,
+          DragAndDrop,
+          TimelineViews,
+          Resize,
+        ]}
       />
     </ScheduleComponent>
   );

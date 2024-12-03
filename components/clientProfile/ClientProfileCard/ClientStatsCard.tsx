@@ -1,9 +1,8 @@
 "use client";
-import { cn } from "@/lib/utils";
 
 import React from "react";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 import {
   ChartConfig,
@@ -11,6 +10,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { IconSquareRotatedFilled } from "@tabler/icons-react";
 
 const ClientStatsCard = ({ client }: any) => {
   const chartData = [
@@ -20,7 +20,7 @@ const ClientStatsCard = ({ client }: any) => {
       fill: "var(--lime-500)",
     },
     {
-      type: "ΟΦΕΙΛΗ",
+      type: "ΟΦΕΙΛΕΣ",
       amount: client.owesTotal ?? 0,
       fill: "var(--red-500)",
     },
@@ -33,8 +33,23 @@ const ClientStatsCard = ({ client }: any) => {
       label: "Ποσό",
     },
   };
+
   return (
-    <Card className=" max-h-[15vh] w-full min-w-[15vw] max-w-[17vw]  select-none self-end overflow-y-hidden border-none bg-neutral-900 py-1">
+    <Card className="group relative max-h-[15vh] w-full min-w-[15vw]  max-w-[17vw] select-none self-end overflow-y-hidden border-none bg-neutral-900 py-1">
+      <CardTitle className="absolute right-0 top-0 z-50 flex translate-y-0 flex-row gap-4 rounded-xl bg-neutral-900 p-1 text-sm  opacity-100 transition-all duration-700 group-hover:translate-y-[-20px] group-hover:opacity-0">
+        <span className="flex flex-row items-center text-lime-500">
+          <IconSquareRotatedFilled size={14} />
+          {client.totalSpent ?? 0}
+        </span>
+        <span className="flex flex-row items-center text-red-500">
+          <IconSquareRotatedFilled size={14} />
+          {client.owesTotal ?? 0}
+        </span>
+        <span className="flex flex-row items-center text-blue-500">
+          <IconSquareRotatedFilled size={14} />
+          {client.credit ?? 0}
+        </span>
+      </CardTitle>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
@@ -68,7 +83,7 @@ const ClientStatsCard = ({ client }: any) => {
                 />
               }
             />
-            <Bar dataKey="amount" layout="vertical" radius={5} />
+            <Bar dataKey="amount" layout="vertical" radius={5}></Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>

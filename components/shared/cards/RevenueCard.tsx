@@ -1,16 +1,28 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import React from "react";
+import { RevenueCardChart } from "./RevenueCardChart";
 
-const RevenueCard = ({ total, percentage }: any) => {
+const RevenueCard = ({ total, percentage, chartData }: any) => {
   return (
-    <Card className="max-h-[20vh]">
+    <Card className="background-light900_dark200 flex h-full w-full min-w-[20vw] flex-col border-none shadow-sm shadow-neutral-500">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">ΕΣΟΔΑ</CardTitle>€
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{total ?? 0} €</div>
-        <p className=" text-xs ">{percentage ?? 0}% από τον προηγούμενο μήνα</p>
+        <p className=" text-xs ">
+          {parseFloat(percentage.toFixed(2)) ?? 0}% από τον προηγούμενο μήνα
+        </p>
       </CardContent>
+      <CardFooter className="mt-auto ">
+        <RevenueCardChart chartData={chartData} />
+      </CardFooter>
     </Card>
   );
 };

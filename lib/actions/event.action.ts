@@ -34,6 +34,22 @@ export async function getAllEvents() {
     console.log(error);
   }
 }
+export async function getEventsInRange(startDate: Date, endDate: Date) {
+  try {
+    await connectToDatabase();
+
+    // Query to find events within the specified date range
+    const events = await Event.find({
+      StartTime: { $gte: new Date(startDate) },
+      EndTime: { $lte: new Date(endDate) },
+    });
+
+    return events ? JSON.parse(JSON.stringify(events)) : [];
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return [];
+  }
+}
 
 export async function getEventsByDate({ date }: { date: Date }) {
   try {

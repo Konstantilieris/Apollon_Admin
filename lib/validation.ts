@@ -33,6 +33,12 @@ export const ChargeValidation = z.object({
   amount: z.string(),
   date: z.date(),
 });
+export const IncomeValidation = z.object({
+  serviceType: z.string(),
+  notes: z.string().optional(),
+  amount: z.string(),
+  date: z.date(),
+});
 export const ClientValidation = z.object({
   name: z
     .string()

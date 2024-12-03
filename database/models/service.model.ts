@@ -56,7 +56,7 @@ const ServiceSchema = new Schema<IService>({
   },
 });
 ServiceSchema.pre("save", function (next) {
-  if (this.isNew && !this.remainingAmount) {
+  if (this.isNew && !this.remainingAmount && !this.paid) {
     this.remainingAmount = this.amount; // Set remainingAmount to the initial amount on document creation
   }
   next();

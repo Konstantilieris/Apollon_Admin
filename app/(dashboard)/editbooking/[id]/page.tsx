@@ -32,7 +32,8 @@ const EditChange = async ({ params }: any) => {
             height={30}
             className="invert dark:invert-0"
           />{" "}
-          {booking?.dogs.map((dog: any) => dog.dogName).join(", ")}
+          {booking?.dogs &&
+            booking?.dogs?.map((dog: any) => dog.dogName).join(", ")}
         </span>
       </div>
 

@@ -1,10 +1,17 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import React from "react";
+import { SubscriptionCardChart } from "./SubscriptionCardChart";
 
-const SubscriptionCard = ({ total, percentage }: any) => {
+const SubscriptionCard = ({ total, percentage, clientRegistrations }: any) => {
   return (
-    <Card className="max-h-[20vh]">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <Card className=" background-light900_dark200 flex h-full w-full min-w-[20vw] flex-col border-none shadow-sm shadow-neutral-500">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
         <CardTitle className="text-sm font-medium">ΕΓΓΡΑΦΕΣ</CardTitle>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -21,10 +28,15 @@ const SubscriptionCard = ({ total, percentage }: any) => {
           <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
       </CardHeader>
-      <CardContent>
+      <CardContent className="">
         <div className="text-2xl font-bold">+{total ?? 0}</div>
-        <p className=" text-xs">{percentage ?? 0} % απο τον περασμένο μήνα</p>
+        <p className=" text-xs">
+          {parseFloat(percentage.toFixed(2)) ?? 0} % απο τον περασμένο μήνα
+        </p>
       </CardContent>
+      <CardFooter className="mt-auto w-full ">
+        <SubscriptionCardChart clientRegistrations={clientRegistrations} />
+      </CardFooter>
     </Card>
   );
 };

@@ -3,90 +3,22 @@
 import React, { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { useOutsideClick } from "@/hooks/use-outside-click";
-import { getAllAvailableRooms } from "@/lib/actions/booking.action";
-
 import BookingSuggestionResult from "./BookingSuggestionResult";
-import SelectRooms from "./SelectRooms";
-import CreateBooking from "../CreateBooking/CreateBooking";
+
 import { IconLoader } from "@tabler/icons-react";
 
-import { DateRange } from "react-day-picker";
+import SteppedProgress from "@/components/ui/BookingProgress";
+import { useBookingStore } from "@/hooks/booking-store";
 interface BookingProps {
   client: any;
 
-  rangeDate: DateRange;
-
-  taxiArrival: Boolean;
-  taxiDeparture: Boolean;
   setOpen: (open: boolean) => void;
 }
-const BookingSuggestion = ({
-  client,
-  rangeDate,
-  taxiArrival,
-  taxiDeparture,
-  setOpen,
-}: BookingProps) => {
+const BookingSuggestion = ({ client, setOpen }: BookingProps) => {
   const [loading, setLoading] = React.useState(false);
-  const [openSuggestion, setOpenSuggestion] = React.useState(false);
+
   const ref = useRef(null);
-  const [stages, setStages] = React.useState(0);
-  const [availableRooms, setAvailableRooms] = React.useState<any>([]);
-  const [isNext, setIsNext] = React.useState(false);
 
-  const [data, setData] = React.useState<any>();
-  const [roomPreference, setRoomPreference] = React.useState(
-    client.roomPreference
-  );
-  const [freeCapacityPercentage, setFreeCapacityPercentage] =
-    React.useState("");
-  useOutsideClick(ref, () => {
-    setOpenSuggestion(false);
-    setOpen(false);
-  });
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      setLoading(true);
-      try {
-        const { emptyRooms, freeCapacityPercentage } =
-          await getAllAvailableRooms({
-            rangeDate,
-          });
-
-        if (emptyRooms.length > 0) {
-          setAvailableRooms(emptyRooms);
-          setIsNext(isNext);
-          setFreeCapacityPercentage(freeCapacityPercentage);
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-        setOpenSuggestion(true);
-      }
-    };
-    fetchSuggestions();
-  }, [rangeDate]);
-
-  useEffect(() => {
-    if (openSuggestion) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [openSuggestion]);
-
-  const clientData = {
-    clientId: client._id,
-    clientName: client.name,
-    phone: client?.phone?.mobile
-      ? client?.phone?.mobile
-      : client?.phone?.telephone || "",
-    location: client?.location?.address + ", " + client?.location?.city,
-    transportFee: client.transportFee,
-    bookingFee: client.bookingFee,
-  };
   if (loading) {
     return (
       <AnimatePresence>
@@ -117,29 +49,10 @@ const BookingSuggestion = ({
       </AnimatePresence>
     );
   }
-  if (openSuggestion && !loading) {
+  if (!loading) {
     return (
-      <BookingSuggestionResult stages={stages} isRef={ref}>
-        {stages === 0 ? (
-          <SelectRooms
-            client={client}
-            availableRooms={availableRooms}
-            rangeDate={rangeDate}
-            setStages={setStages}
-            setData={setData}
-            setRoomPreference={setRoomPreference}
-          />
-        ) : (
-          <CreateBooking
-            dogs={data}
-            rangeDate={rangeDate}
-            taxiArrival={taxiArrival}
-            taxiDeparture={taxiDeparture}
-            client={clientData}
-            roomPreference={roomPreference}
-            setStage={setStages}
-          />
-        )}
+      <BookingSuggestionResult isRef={ref} setOpen={setOpen}>
+        <SteppedProgress client={client} />
       </BookingSuggestionResult>
     );
   }

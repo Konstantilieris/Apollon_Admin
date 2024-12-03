@@ -33,7 +33,8 @@ interface ICreateBooking {
     location: string;
   };
 
-  rangeDate: DateRange;
+  dateArrival: Date | undefined;
+  dateDeparture: Date | undefined;
   boardingPrice: number;
   transportationPrice: number;
   path: string;
@@ -44,7 +45,8 @@ interface ICreateBooking {
 }
 
 export async function createBooking({
-  rangeDate,
+  dateArrival,
+  dateDeparture,
   client,
   boardingPrice = 30,
   transportationPrice,
@@ -54,7 +56,7 @@ export async function createBooking({
   dogsData,
   roomPrefer,
 }: ICreateBooking) {
-  if (!rangeDate.from || !rangeDate.to) {
+  if (!dateArrival || !dateDeparture) {
     throw new Error("Invalid date range");
   }
 
@@ -88,7 +90,7 @@ export async function createBooking({
             amount: boardingPrice,
             clientId: client.clientId,
             bookingId,
-            date: rangeDate.from,
+            date: dateArrival,
           },
         ],
         { session }
@@ -109,7 +111,7 @@ export async function createBooking({
               amount: transportationPrice,
               clientId: client.clientId,
               bookingId,
-              date: rangeDate.from,
+              date: dateArrival,
             },
           ],
           { session }
@@ -129,7 +131,7 @@ export async function createBooking({
               amount: transportationPrice,
               clientId: client.clientId,
               bookingId,
-              date: rangeDate.to,
+              date: dateDeparture,
             },
           ],
           { session }
@@ -147,8 +149,8 @@ export async function createBooking({
           {
             _id: bookingId,
             client,
-            fromDate: rangeDate.from,
-            toDate: rangeDate.to,
+            fromDate: dateArrival,
+            toDate: dateDeparture,
             totalAmount,
             flag1,
             flag2,
@@ -178,9 +180,9 @@ export async function createBooking({
       }-${updatedClient.location.address ?? ""}-${
         updatedClient.location.postalCode ?? ""
       }`;
-      const description = `${updatedClient.name}-${
-        updatedClient.phone.mobile ?? ""
-      } ${dogsData.map(({ dogName }: any) => dogName).join(", ")}`;
+      const description = `${updatedClient.name}-${dogsData
+        .map(({ dogName }: any) => dogName)
+        .join(", ")}`;
 
       if (flag1) {
         console.log("Creating pick-up appointment...");
@@ -200,8 +202,8 @@ export async function createBooking({
               Color: "#7f1d1d",
               isTransport: "Pet Taxi (Pick-Up)",
               isArrival: true,
-              StartTime: rangeDate.from,
-              EndTime: rangeDate.from,
+              StartTime: dateArrival,
+              EndTime: dateArrival,
             },
           ],
           { session }
@@ -222,8 +224,8 @@ export async function createBooking({
               dogsData,
               Location: location,
               Color: "#7f1d1d",
-              StartTime: rangeDate.from,
-              EndTime: rangeDate.from,
+              StartTime: dateArrival,
+              EndTime: dateArrival,
             },
           ],
           { session }
@@ -248,8 +250,8 @@ export async function createBooking({
               isTransport: "Pet Taxi (Drop-Off)",
               isArrival: false,
               Color: "#7f1d1d",
-              StartTime: rangeDate.to,
-              EndTime: rangeDate.to,
+              StartTime: dateDeparture,
+              EndTime: dateDeparture,
             },
           ],
           { session }
@@ -270,8 +272,8 @@ export async function createBooking({
               categoryId: 2,
               isArrival: false,
               Color: "#7f1d1d",
-              StartTime: rangeDate.to,
-              EndTime: rangeDate.to,
+              StartTime: dateDeparture,
+              EndTime: dateDeparture,
             },
           ],
           { session }
@@ -309,11 +311,9 @@ export async function getBookingById(bookingId: string) {
   try {
     connectToDatabase();
     const booking = await Booking.findById(bookingId);
-
     if (!booking) {
-      throw new Error("Booking not found");
+      return JSON.stringify({});
     }
-
     return JSON.stringify(booking);
   } catch (error) {
     console.error("Failed to retrieve booking:", error);
@@ -920,9 +920,11 @@ export async function updateTnt({
   }
 }
 export async function getAllAvailableRooms({
-  rangeDate,
+  dateArrival,
+  dateDeparture,
 }: {
-  rangeDate: DateRange;
+  dateArrival: Date;
+  dateDeparture: Date;
 }) {
   try {
     connectToDatabase();
@@ -931,20 +933,20 @@ export async function getAllAvailableRooms({
       $or: [
         {
           $and: [
-            { fromDate: { $lte: rangeDate.to } },
-            { toDate: { $gte: rangeDate.to } },
+            { fromDate: { $lte: dateDeparture } },
+            { toDate: { $gte: dateDeparture } },
           ],
         },
         {
           $and: [
-            { fromDate: { $lte: rangeDate.from } },
-            { toDate: { $gte: rangeDate.from } },
+            { fromDate: { $lte: dateArrival } },
+            { toDate: { $gte: dateArrival } },
           ],
         },
         {
           $and: [
-            { fromDate: { $gte: rangeDate.from } },
-            { toDate: { $lte: rangeDate.to } },
+            { fromDate: { $gte: dateArrival } },
+            { toDate: { $lte: dateDeparture } },
           ],
         },
       ],

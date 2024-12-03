@@ -10,10 +10,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { IconArrowRight, IconLetterKSmall } from "@tabler/icons-react";
 
-import { DateRange } from "react-day-picker";
+import { useBookingStore } from "@/hooks/booking-store";
 
 interface BookingProps {
-  dogs: any;
   client: {
     clientId: string;
     clientName: string;
@@ -22,41 +21,47 @@ interface BookingProps {
     bookingFee: number;
     transportFee: number;
   };
-  taxiArrival: Boolean;
-  taxiDeparture: Boolean;
-  rangeDate: DateRange;
-  roomPreference: string;
+
   setStage: (stage: number) => void;
 }
 const CreateBooking = ({
-  roomPreference,
-  dogs,
   client,
-  rangeDate,
-  taxiArrival,
-  taxiDeparture,
+
   setStage,
 }: BookingProps) => {
   const pathname = usePathname();
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const {
+    dateArrival,
+    dateDeparture,
+    taxiArrival,
+    taxiDeparture,
+    data,
+    roomPreference,
+    extraDay,
+  } = useBookingStore();
   const router = useRouter();
   const [amount, setAmount] = useState(
     calculateTotalPrice({
-      fromDate: rangeDate.from ? rangeDate.from : new Date(),
-      toDate: rangeDate.to ? rangeDate.to : new Date(),
+      fromDate: dateArrival || new Date(),
+      toDate: dateDeparture || new Date(),
       dailyPrice: client.bookingFee,
     })
   );
+
+  const extraDayPrice = extraDay ? client.bookingFee : 0;
   const transportFeeArrival = taxiArrival ? client.transportFee : 0;
   const transportFeeDeparture = taxiDeparture ? client.transportFee : 0;
   const [totalAmount, setTotalAmount] = React.useState(
-    amount + transportFeeArrival + transportFeeDeparture
+    amount + transportFeeArrival + transportFeeDeparture + extraDayPrice
   );
   const { toast } = useToast();
 
   useEffect(() => {
-    setTotalAmount(() => amount + transportFeeArrival + transportFeeDeparture);
+    setTotalAmount(
+      () => amount + transportFeeArrival + transportFeeDeparture + extraDayPrice
+    );
   }, [amount]);
   useEffect(() => {
     setMounted(true);
@@ -68,10 +73,11 @@ const CreateBooking = ({
     try {
       const res = await createBooking({
         client,
-        rangeDate,
+        dateArrival,
+        dateDeparture,
         boardingPrice: amount,
         transportationPrice: client.transportFee,
-        dogsData: dogs,
+        dogsData: data,
         flag1: taxiArrival,
         flag2: taxiDeparture,
         path: pathname,
@@ -108,7 +114,7 @@ const CreateBooking = ({
   }
 
   return (
-    <div className="relative flex min-h-[70vh] w-full max-w-[75vw] flex-col items-center justify-between px-6 pr-12 text-xl">
+    <div className="relative flex min-h-[70vh] w-full max-w-[75vw] flex-col items-center gap-8 px-6 pr-12 text-xl">
       <h1 className=" mt-4 self-start  text-2xl  text-yellow-400">
         Δημιουργία Κράτησης
       </h1>
@@ -120,7 +126,7 @@ const CreateBooking = ({
         ΠΕΛΑΤΗΣ : {client.clientName}
       </h2>
       <div className="flex  min-w-[26vw]  flex-col gap-2  self-center rounded-lg bg-gray-100 p-3 text-center text-xl dark:bg-neutral-900">
-        {dogs.map((dog: any) => (
+        {data.map((dog: any) => (
           <div
             key={dog.dogId}
             className="flex  flex-row  items-center justify-between  text-gray-800 dark:text-light-700"
@@ -137,9 +143,9 @@ const CreateBooking = ({
           <h2 className="min-w-[11vw] ">
             ΗΜ. {taxiArrival ? "ΠΑΡΑΛΑΒΗΣ" : "ΑΦΙΞΗΣ"} :
           </h2>
-          <h2 className="">
-            {rangeDate?.from?.toLocaleDateString()} -{" "}
-            {rangeDate?.from?.toLocaleTimeString("el-GR", {
+          <h2 className="ml-2">
+            {dateArrival?.toLocaleDateString()} -{" "}
+            {dateArrival?.toLocaleTimeString("el-GR", {
               hour: "numeric",
               minute: "numeric",
               hour12: true,
@@ -151,9 +157,9 @@ const CreateBooking = ({
           <h2 className=" min-w-[11vw]">
             ΗΜ.{taxiDeparture ? "ΠΑΡΑΔΟΣΗΣ" : "ΑΝΑΧΩΡΗΣΗΣ"} :
           </h2>
-          <h2 className="">
-            {rangeDate?.to?.toLocaleDateString()} -{" "}
-            {rangeDate?.to?.toLocaleTimeString("el-GR", {
+          <h2 className="ml-2">
+            {dateDeparture?.toLocaleDateString()} -{" "}
+            {dateDeparture?.toLocaleTimeString("el-GR", {
               hour: "numeric",
               minute: "numeric",
               hour12: true,
@@ -162,14 +168,15 @@ const CreateBooking = ({
         </div>
         <div className="flex min-w-[25vw]  gap-8 text-start ">
           <h2 className=" min-w-[11vw]">ΣΥΝΟΛΟ ΗΜΕΡΩΝ :</h2>
-          <h2 className="">
-            {rangeDate.to && rangeDate.from
+          <h2 className="ml-2">
+            {dateDeparture && dateArrival
               ? Math.round(
-                  (rangeDate.to.getTime() - rangeDate.from.getTime()) /
+                  (dateDeparture.getTime() - dateArrival.getTime()) /
                     (1000 * 60 * 60 * 24)
                 )
               : "N/A"}{" "}
           </h2>
+          {extraDay && <h2 className="items-center text-green-500">+ 1</h2>}
         </div>
 
         {taxiArrival && (
@@ -184,19 +191,23 @@ const CreateBooking = ({
             <h2 className="">{client.transportFee || 0}€</h2>
           </div>
         )}
-
+        <div className="flex min-w-[25vw] gap-8">
+          <h2 className="min-w-[11vw]">ΗΜΕΡΗΣΙΟ ΚΟΣΤΟΣ: </h2>
+          <span className="ml-2">{client.bookingFee ?? 0} €</span>
+        </div>
         <div className="flex  min-w-[25vw] gap-8">
           <h2 className="min-w-[11vw]">ΚΟΣΤΟΣ ΔΙΑΜΟΝΗΣ:</h2>
           <input
             type="number"
-            className="border-2 border-dark-100 bg-dark-200 text-light-700"
+            className="ml-2 border-2 border-dark-100 bg-dark-200 text-light-700"
             value={amount}
             onChange={(e) => setAmount(+e.target.value)}
           />
         </div>
+
         <div className="flex  min-w-[25vw]   gap-8 text-start">
           <h2 className="min-w-[11vw] ">ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ:</h2>
-          <h2 className="ml-1">{totalAmount}€</h2>
+          <h2 className="ml-2">{totalAmount} €</h2>
         </div>
       </div>
       <div>

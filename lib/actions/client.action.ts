@@ -9,7 +9,8 @@ import { sanitizeQuery } from "../utils";
 import mongoose from "mongoose";
 import Booking, { IBooking } from "@/database/models/booking.model";
 import { DateRange } from "react-day-picker";
-
+import moment from "moment";
+import "moment/locale/el";
 interface CreateClientProps {
   clientData: {
     name: string;
@@ -958,5 +959,46 @@ export async function getClientStatistics() {
   } catch (error) {
     console.error("Error calculating client statistics:", error);
     throw new Error("Failed to calculate client statistics.");
+  }
+}
+export async function getRegistrationsForPast6Months() {
+  try {
+    connectToDatabase();
+
+    const sixMonthsAgo = moment()
+      .subtract(6, "months")
+      .startOf("month")
+      .toDate(); // Start from the beginning of the 6th month
+
+    // Aggregate query to group clients by month and count them
+    const result = await Client.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sixMonthsAgo }, // Filter for the past 6 months
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$createdAt" }, // Group by month of createdAt
+          count: { $sum: 1 }, // Count the number of clients
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sort by month in ascending order
+      },
+    ]);
+
+    // Transform the result into a readable format
+    const monthlyRegistrations = result.map((item) => ({
+      month: moment()
+        .month(item._id - 1)
+        .format("MMMM"), // Convert month number to name
+      numberOfClients: item.count,
+    }));
+
+    return monthlyRegistrations;
+  } catch (error) {
+    console.error(`Error fetching client registrations:`, error);
+    throw error;
   }
 }

@@ -13,7 +13,7 @@ export interface IBooking {
   toDate: Date;
   services: Schema.Types.ObjectId[];
   totalAmount: number;
-
+  paidAmount?: number;
   dogs: Object[];
   flag1: boolean;
   flag2: boolean;
@@ -32,6 +32,7 @@ const BookingSchema = new Schema<IBooking>(
     toDate: { type: Date, required: true },
 
     totalAmount: { type: Number, required: true },
+    paidAmount: { type: Number, default: 0 },
     services: [
       {
         type: Schema.Types.ObjectId,

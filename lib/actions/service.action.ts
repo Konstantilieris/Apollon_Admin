@@ -4,10 +4,11 @@ import { connectToDatabase } from "../mongoose";
 import { startOfMonth, endOfMonth } from "date-fns";
 import Client from "@/database/models/client.model";
 import { revalidatePath } from "next/cache";
-
+import "moment/locale/el";
 import mongoose from "mongoose";
 import moment from "moment";
 import FinancialSummary from "@/database/models/financial.model";
+import Booking from "@/database/models/booking.model";
 
 export async function getMonthlyIncome() {
   const startDate = startOfMonth(new Date());
@@ -116,7 +117,12 @@ export async function payService({ service, path }: any) {
     // Ensure service exists and is unpaid
     const newService = await Service.findOneAndUpdate(
       { _id: service._id, paid: false, serviceType: service.serviceType },
-      { paid: true, paymentDate: new Date() },
+      {
+        paid: true,
+        paymentDate: new Date(),
+        paidAmount: service.amount,
+        remainingAmount: 0,
+      },
       { new: true, session }
     );
 
@@ -133,9 +139,9 @@ export async function payService({ service, path }: any) {
       {
         $pull: { owes: service._id },
         $inc: {
-          owesTotal: -service.amount,
-          totalSpent: service.amount,
-          points: service.amount,
+          owesTotal: -service.remainingAmount,
+          totalSpent: service.remainingAmount,
+          points: service.remainingAmount,
         },
       },
       { new: true, session }
@@ -146,9 +152,20 @@ export async function payService({ service, path }: any) {
     if (!client) {
       throw new Error("Client not found or update failed.");
     }
+    if (service.bookingId) {
+      await Booking.findByIdAndUpdate(
+        service.bookingId,
+        {
+          $inc: {
+            paidAmount: service.remaningAmount,
+          },
+        },
+        { session }
+      );
+    }
     await FinancialSummary.findOneAndUpdate(
       {}, // Assuming a single document for financial summary
-      { $inc: { totalRevenue: service.amount } }, // Increment total revenue
+      { $inc: { totalRevenue: service.remainingAmount } }, // Increment total revenue
       { session } // Create if it doesn't exist
     );
     // Commit the transaction if all updates succeed
@@ -372,7 +389,22 @@ export async function partialPayment({
       }
 
       await service.save({ session });
-
+      if (service.paid) {
+        await Client.updateOne(
+          { _id: clientId },
+          { $pull: { owes: service._id } },
+          { session }
+        );
+      }
+      if (service.bookingId) {
+        const booking = await Booking.findById(service.bookingId).session(
+          session
+        );
+        if (booking) {
+          booking.paidAmount = (booking.paidAmount || 0) + service.paidAmount!;
+          await booking.save({ session });
+        }
+      }
       if (remainingPayment <= 0) break;
     }
 
@@ -545,5 +577,128 @@ export async function getAllServicesWithClientNames() {
   } catch (error) {
     console.error("Error fetching services:", error);
     throw new Error("Failed to fetch services with client names.");
+  }
+}
+export async function deleteSelectedService({ service, path, clientId }: any) {
+  const session = await mongoose.startSession();
+
+  try {
+    connectToDatabase();
+    session.startTransaction();
+    await Service.findByIdAndDelete(service._id, { session });
+
+    const client = await Client.findByIdAndUpdate(
+      clientId,
+      {
+        $inc: { totalSpent: -service.amount },
+      },
+      { new: true, session }
+    );
+    if (!client) {
+      throw new Error("Client not found.");
+    }
+    await FinancialSummary.findOneAndUpdate(
+      {},
+      { $inc: { totalRevenue: -service.amount } },
+      { session }
+    );
+    await session.commitTransaction();
+    session.endSession();
+    revalidatePath(path);
+    return { success: true };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error deleting service:", error);
+    throw error;
+  }
+}
+export async function createIncome({
+  serviceType,
+  notes,
+  amount,
+  date,
+  path,
+}: {
+  serviceType: string;
+  notes: string;
+  amount: number;
+  date: Date;
+  path: string;
+}) {
+  const ADMIN_ID = "66c753da1234567800000014";
+  const session = await mongoose.startSession();
+  try {
+    connectToDatabase();
+    session.startTransaction();
+    const service = await Service.create(
+      {
+        serviceType,
+        notes,
+        paid: true,
+        remainingAmount: 0,
+        paidAmount: amount,
+        paymentDate: date,
+        amount,
+        date,
+        clientId: ADMIN_ID,
+      },
+      { session }
+    );
+    await FinancialSummary.findOneAndUpdate(
+      {},
+      { $inc: { totalRevenue: amount } },
+      { session }
+    );
+    await session.commitTransaction();
+    session.endSession();
+    revalidatePath(path);
+    return JSON.parse(JSON.stringify(service));
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error creating income:", error);
+    throw error;
+  }
+}
+export async function getPaidServicesIncomeLast6Months() {
+  try {
+    const sixMonthsAgo = moment()
+      .subtract(6, "months")
+      .startOf("month")
+      .toDate(); // Start of the 6th month
+
+    const result = await Service.aggregate([
+      {
+        $match: {
+          paid: true, // Only include paid services
+          paymentDate: { $gte: sixMonthsAgo }, // Filter for the past 6 months
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$paymentDate" }, // Group by the month of paymentDate
+          totalIncome: { $sum: "$paidAmount" }, // Sum the paidAmount for each month
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sort by month in ascending order
+      },
+    ]);
+
+    // Map result to include month names
+    const incomeByMonth = result.map((item) => ({
+      month: moment()
+        .month(item._id - 1)
+        .format("MMMM"), // Convert month number to name
+      totalIncome: item.totalIncome,
+    }));
+
+    console.log(`Paid services income for the last 6 months:`, incomeByMonth);
+
+    return incomeByMonth;
+  } catch (error) {
+    console.error(`Error fetching paid services income:`, error);
+    throw error;
   }
 }

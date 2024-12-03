@@ -1,9 +1,11 @@
 "use client";
+import { useBookingStore } from "@/hooks/booking-store";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
-const BookingSuggestionResult = ({ children, stages, isRef }: any) => {
+const BookingSuggestionResult = ({ children, setOpen }: any) => {
+  const { resetStore } = useBookingStore();
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -33,6 +35,10 @@ const BookingSuggestionResult = ({ children, stages, isRef }: any) => {
             backdropFilter: "blur(0px)",
           }}
           className={`fixed  z-50 h-full w-full bg-black/50 `}
+          onClick={() => {
+            setOpen(false);
+            resetStore();
+          }}
         >
           <motion.div
             className={cn(
@@ -60,34 +66,9 @@ const BookingSuggestionResult = ({ children, stages, isRef }: any) => {
               stiffness: 260,
               damping: 15,
             }}
+            onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              className={cn(
-                "flex-1  flex flex-col gap-2 h-full ml-12 max-w-[90vw] "
-              )}
-              ref={isRef}
-              key={stages}
-              initial="initialState"
-              animate="animateState"
-              exit="exitState"
-              transition={{ duration: 0.4, ease: "easeIn" }}
-              variants={{
-                initialState: {
-                  opacity: 0,
-                  clipPath: "polygon(50% 0, 50% 0, 50% 100%, 50% 100%)",
-                },
-                animateState: {
-                  opacity: 1,
-                  clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)",
-                },
-                exitState: {
-                  opacity: 0,
-                  clipPath: "polygon(50% 0, 50% 0, 50% 100%, 50% 100%)",
-                },
-              }}
-            >
-              {children}
-            </motion.div>
+            {children}
           </motion.div>
         </motion.div>
       </motion.div>

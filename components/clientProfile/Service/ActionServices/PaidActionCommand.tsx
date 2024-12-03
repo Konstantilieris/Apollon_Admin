@@ -10,7 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useServiceModal } from "@/hooks/use-service-modal";
-import { IconCashRegister, IconMail, IconReceipt } from "@tabler/icons-react";
+import {
+  IconCashRegister,
+  IconMail,
+  IconReceipt,
+  IconTrash,
+} from "@tabler/icons-react";
 import { Service } from "../OwesTab";
 export function DropdownMenuActionPaid({
   selectedServices,
@@ -29,7 +34,7 @@ export function DropdownMenuActionPaid({
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="ml-2 px-4 py-1 text-white transition hover:scale-110 hover:bg-yellow-600"
+            className="ml-2 bg-dark-100 px-4 py-1 text-white transition hover:scale-110 hover:bg-yellow-600"
           >
             <IconCashRegister size={20} className="text-light-900 " />
           </Button>
@@ -48,9 +53,17 @@ export function DropdownMenuActionPaid({
               Απόδειξη
               <IconReceipt size={20} className="text-gray-400/80 " />
             </DropdownMenuItem>
+
             <DropdownMenuItem className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105">
               Email
               <IconMail size={20} className="text-gray-400/80 " />
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
+              onClick={() => handleOpen("Delete")}
+            >
+              Διαγραφή
+              <IconTrash size={20} className="text-gray-400/80 " />
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

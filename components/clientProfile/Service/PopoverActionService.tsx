@@ -9,6 +9,7 @@ import ServicePayments from "./ActionServices/ServicePayments";
 
 import PrintServices from "./ActionServices/PrintServices";
 import PartialPayment from "./ActionServices/PartialPayment";
+import DeleteServices from "./ActionServices/DeleteServices";
 
 const ServiceModal = (client: any) => {
   const { selectedServices, type, onClose } = useServiceModal();
@@ -23,6 +24,8 @@ const ServiceModal = (client: any) => {
         return <PrintServices client={client} />;
       case "PartialPayment":
         return <PartialPayment client={client} />;
+      case "Delete":
+        return <DeleteServices client={client} />;
       default:
         return <div>No content to display</div>;
     }

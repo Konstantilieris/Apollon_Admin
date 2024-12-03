@@ -43,6 +43,7 @@ import {
   TableRow,
 } from "../ui/table";
 import Link from "next/link";
+import CreatePaymentTrigger from "../payments/PaymentSheet";
 
 export type Service = {
   id: string;
@@ -128,7 +129,7 @@ export const columns: ColumnDef<Service>[] = [
     cell: ({ row }) => {
       const paymentDate = row.getValue("paymentDate");
       return typeof paymentDate === "string" || typeof paymentDate === "number"
-        ? new Date(paymentDate).toLocaleDateString("en-US", {
+        ? new Date(paymentDate).toLocaleDateString("el-GR", {
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -169,7 +170,9 @@ export const columns: ColumnDef<Service>[] = [
             align="end"
             className=" bg-neutral-900  font-sans text-light-900"
           >
-            <DropdownMenuLabel className="text-xl">Ενέργειες</DropdownMenuLabel>
+            <DropdownMenuLabel className="text-lg ">
+              Ενέργειες
+            </DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(payment.id)}
               className="text-lg transition-colors duration-300 hover:text-indigo-500 "
@@ -230,13 +233,13 @@ export function PaymentsDataTable({ services }: { services: Service[] }) {
   };
 
   return (
-    <Card className="h-full bg-neutral-950">
+    <Card className="h-full border-none ">
       <CardHeader>
-        <CardTitle>ΠΛΗΡΩΜΕΣ</CardTitle>
-        <CardDescription>ΔΙΑΧΕΙΡΗΣΟΥ ΤΙΣ ΠΛΗΡΩΜΕΣ</CardDescription>
+        <CardTitle>ΕΣΟΔΑ</CardTitle>
+        <CardDescription>ΔΙΑΧΕΙΡΙΣΟΥ ΤΙΣ ΠΛΗΡΩΜΕΣ</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="mb-4 flex items-center gap-4">
+        <div className="mb-4 flex w-full  items-center gap-4">
           <Input
             placeholder="Ψάξε με πελάτη"
             value={
@@ -247,34 +250,37 @@ export function PaymentsDataTable({ services }: { services: Service[] }) {
             }
             className="max-w-sm"
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Στήλες <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-neutral-900 ">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="font-sans text-lg capitalize transition-colors duration-300 hover:text-indigo-500"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {columnList[column.id]}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex w-full flex-row items-center justify-end gap-2 ">
+            <CreatePaymentTrigger />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="">
+                  Στήλες <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-neutral-900 ">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="font-sans text-[1rem] capitalize transition-colors duration-300 hover:text-indigo-500"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {columnList[column.id]}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-        <div className="rounded-md border bg-dark-100 font-sans">
+        <div className="rounded-md border bg-neutral-950 font-sans">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

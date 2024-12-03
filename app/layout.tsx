@@ -17,7 +17,7 @@ const fontSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Apollo dashboard Next js",
+  title: "APOLLO CRM",
   description: "CMR",
 };
 
