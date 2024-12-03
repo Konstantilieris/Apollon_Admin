@@ -7,10 +7,11 @@ import { IconHomeFilled } from "@tabler/icons-react";
 import React, { useCallback, useEffect } from "react";
 
 const RoomSelectionView = ({ rangeDate, client, setData, setStage }: any) => {
-  const [_, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [availableRooms, setAvailableRooms] = React.useState<any>([]);
   const [isNext, setIsNext] = React.useState(false);
-  const [_, setFreeCapacityPercentage] = React.useState("");
+  const [freeCapacityPercentage, setFreeCapacityPercentage] =
+    React.useState("");
   const [dogsInRooms, setDogsInRooms] = React.useState(
     client.dog.map((dog: any) => ({
       dogId: dog._id,
