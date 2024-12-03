@@ -1,17 +1,16 @@
 "use client";
 import JoinView from "@/components/clientProfile/Book/RoomResults/TabRoomViews/JoinView";
 import { getAllAvailableRooms } from "@/lib/actions/booking.action";
-import { getClientByIdForBooking } from "@/lib/actions/client.action";
+
 import { IconHomeFilled } from "@tabler/icons-react";
-import { useParams } from "next/navigation";
+
 import React, { useCallback, useEffect } from "react";
 
 const RoomSelectionView = ({ rangeDate, client, setData, setStage }: any) => {
-  const [loading, setLoading] = React.useState(false);
+  const [_, setLoading] = React.useState(false);
   const [availableRooms, setAvailableRooms] = React.useState<any>([]);
   const [isNext, setIsNext] = React.useState(false);
-  const [isFreeCapacityPercentage, setFreeCapacityPercentage] =
-    React.useState("");
+  const [_, setFreeCapacityPercentage] = React.useState("");
   const [dogsInRooms, setDogsInRooms] = React.useState(
     client.dog.map((dog: any) => ({
       dogId: dog._id,
@@ -26,7 +25,8 @@ const RoomSelectionView = ({ rangeDate, client, setData, setStage }: any) => {
       try {
         const { emptyRooms, freeCapacityPercentage } =
           await getAllAvailableRooms({
-            rangeDate,
+            dateArrival: rangeDate.from,
+            dateDeparture: rangeDate.to,
           });
 
         if (emptyRooms.length > 0) {
