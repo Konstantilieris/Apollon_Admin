@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 import JoinView from "@/components/clientProfile/Book/RoomResults/TabRoomViews/JoinView";
 import { getAllAvailableRooms } from "@/lib/actions/booking.action";
