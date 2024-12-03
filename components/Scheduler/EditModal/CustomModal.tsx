@@ -7,10 +7,10 @@ import SecondStage from "./SecondStage";
 import ThirdStage from "./ThirdStage";
 import useCalendarModal from "@/hooks/use-calendar-modal";
 
-import { DateRange } from "react-day-picker";
 import FourthStage from "./FourthStage";
 import { getClientByIdForBooking } from "@/lib/actions/client.action";
 import { getBookingById } from "@/lib/actions/booking.action";
+import useEditBookingStore from "@/hooks/editBooking-store";
 
 export const CustomModal: React.FC = () => {
   // Framer motion variants for open/close animations
@@ -21,10 +21,16 @@ export const CustomModal: React.FC = () => {
   const [data, setData] = useState<any>(
     selectedEvent?.dogsData ? selectedEvent?.dogsData : []
   );
-  const [booking, setBooking] = useState<any>();
-  const [rangeDate, setRangeDate] = useState<DateRange | undefined>();
-  const [isTransport1, setIsTransport1] = useState(false);
-  const [isTransport2, setIsTransport2] = useState(false);
+
+  const {
+    setDateArrival,
+    setDateDeparture,
+    setTaxiArrival,
+    setTaxiDeparture,
+    booking,
+    setBooking,
+  } = useEditBookingStore();
+
   const [roomPreference, setRoomPreference] = useState("");
   const backdropVariants = useMemo(
     () => ({
@@ -43,14 +49,16 @@ export const CustomModal: React.FC = () => {
   );
   useEffect(() => {
     if (selectedEvent && pairDate) {
-      setRangeDate({
-        from: selectedEvent.isArrival
+      setDateArrival(
+        selectedEvent.isArrival
           ? new Date(selectedEvent.StartTime)
-          : new Date(pairDate),
-        to: selectedEvent.isArrival
+          : new Date(pairDate)
+      );
+      setDateDeparture(
+        selectedEvent.isArrival
           ? new Date(pairDate)
-          : new Date(selectedEvent.EndTime),
-      });
+          : new Date(selectedEvent.EndTime)
+      );
     }
   }, [selectedEvent, pairDate]);
   useEffect(() => {
@@ -80,11 +88,11 @@ export const CustomModal: React.FC = () => {
   }, [client]);
   useEffect(() => {
     if (booking) {
-      setIsTransport1(booking.flag1);
-      setIsTransport2(booking.flag2);
+      setTaxiArrival(booking.flag1);
+      setTaxiDeparture(booking.flag2);
     } else {
-      setIsTransport1(false);
-      setIsTransport2(false);
+      setTaxiArrival(false);
+      setTaxiDeparture(false);
     }
   }, [booking]);
   if (!open) return null;
@@ -105,14 +113,8 @@ export const CustomModal: React.FC = () => {
         return (
           <SecondStage
             event={selectedEvent}
-            rangeDate={rangeDate}
             setStage={setStage}
             stage={stage}
-            setRangeDate={setRangeDate}
-            setIsTransport1={setIsTransport1}
-            setIsTransport2={setIsTransport2}
-            isTransport1={isTransport1}
-            isTransport2={isTransport2}
             booking={booking}
           />
         );
@@ -120,9 +122,7 @@ export const CustomModal: React.FC = () => {
         return (
           <ThirdStage
             event={selectedEvent}
-            data={JSON.parse(JSON.stringify(data))}
             setData={setData}
-            rangeDate={rangeDate}
             setRoomPreference={setRoomPreference}
             setStage={setStage}
             client={client}
@@ -133,9 +133,6 @@ export const CustomModal: React.FC = () => {
           <FourthStage
             stage={stage}
             roomPreference={roomPreference}
-            rangeDate={rangeDate}
-            isTransport1={isTransport1}
-            isTransport2={isTransport2}
             bookingId={selectedEvent.Id}
             data={JSON.parse(JSON.stringify(data))}
             setStage={setStage}

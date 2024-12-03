@@ -19,7 +19,7 @@ const BookingBox = ({ client }: any) => {
   return (
     <div className=" relative flex w-full flex-row items-center justify-center rounded-full bg-dark-100">
       <div className="absolute flex flex-row items-center gap-2">
-        <BookingDatePicker />
+        <BookingDatePicker useHook={useBookingStore} />
 
         <Button
           className="min-h-[60px] min-w-[174px] rounded-lg border border-yellow-500 text-[1rem]  hover:scale-105 dark:bg-neutral-900"

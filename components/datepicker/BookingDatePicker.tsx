@@ -18,14 +18,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useBookingStore } from "@/hooks/booking-store";
+
 import { useSearchParams, useRouter } from "next/navigation";
 import { DateRange } from "react-day-picker";
 
 interface BookingDateProps {
   className?: string;
+  useHook: any;
 }
-export function BookingDatePicker({ className }: BookingDateProps) {
+export function BookingDatePicker({ className, useHook }: BookingDateProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isDisabled = (date: Date) => {
@@ -33,7 +34,7 @@ export function BookingDatePicker({ className }: BookingDateProps) {
     return date.getTime() < today.setHours(0, 0, 0, 0); // Disable dates before today
   };
   const { dateArrival, dateDeparture, setDateArrival, setDateDeparture } =
-    useBookingStore();
+    useHook();
   const [rangeDate, setRangeDate] = React.useState<DateRange | undefined>(
     dateArrival && dateDeparture
       ? {

@@ -1,19 +1,17 @@
 import JoinView from "@/components/clientProfile/Book/RoomResults/TabRoomViews/JoinView";
+import useEditBookingStore from "@/hooks/editBooking-store";
 import { getAllAvailableRooms } from "@/lib/actions/booking.action";
 import React, { useCallback, useEffect } from "react";
 interface props {
-  data: any;
   setData: any;
-  rangeDate: any;
+
   event: any;
   setRoomPreference: any;
   setStage: any;
   client: any;
 }
 const ThirdStage = ({
-  data,
   setData,
-  rangeDate,
   event,
   setRoomPreference,
   setStage,
@@ -22,7 +20,7 @@ const ThirdStage = ({
   const [dogsInRooms, setDogsInRooms] = React.useState(event.dogsData);
   const [isNext, setIsNext] = React.useState(false);
   const [availableRooms, setAvailableRooms] = React.useState<any>([]);
-
+  const { dateArrival, dateDeparture } = useEditBookingStore();
   // eslint-disable-next-line no-unused-vars
   const [freeCapacityPercentage, setFreeCapacityPercentage] =
     React.useState("");
@@ -32,9 +30,11 @@ const ThirdStage = ({
     const fetchSuggestions = async () => {
       setLoading(true);
       try {
+        if (!dateArrival || !dateDeparture) return;
         const { emptyRooms, freeCapacityPercentage } =
           await getAllAvailableRooms({
-            rangeDate,
+            dateArrival,
+            dateDeparture,
           });
 
         if (emptyRooms.length > 0) {
@@ -49,7 +49,7 @@ const ThirdStage = ({
       }
     };
     fetchSuggestions();
-  }, [rangeDate]);
+  }, [dateArrival, dateDeparture]);
   const handleSelectRoom = (room: any, type: string, dogId?: string) => () => {
     if (type === "Join") {
       // Handle 'Join' functionality (all dogs in the same room)

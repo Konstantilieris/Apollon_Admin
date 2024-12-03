@@ -14,12 +14,11 @@ import {
   IconHome,
 } from "@tabler/icons-react";
 import ButtonModal from "./buttonModal";
+import useEditBookingStore from "@/hooks/editBooking-store";
 
 interface props {
   setStage: any;
-  rangeDate: any;
-  isTransport1: any;
-  isTransport2: any;
+
   bookingId: any;
   data: any;
   onClose: any;
@@ -28,9 +27,7 @@ interface props {
 }
 const FourthStage = ({
   setStage,
-  rangeDate,
-  isTransport1,
-  isTransport2,
+
   bookingId,
   data,
   onClose,
@@ -39,6 +36,8 @@ const FourthStage = ({
 }: props) => {
   const [booking, setBooking] = useState<IBooking>();
   const { toast } = useToast();
+  const { dateArrival, dateDeparture, taxiArrival, taxiDeparture } =
+    useEditBookingStore();
   useEffect(() => {
     const fetchData = async () => {
       const res = await getBookingById(JSON.parse(JSON.stringify(bookingId)));
@@ -55,9 +54,9 @@ const FourthStage = ({
       const res = await updateBookingAllInclusive({
         dogsData: data,
         booking,
-        rangeDate,
-        isTransport1,
-        isTransport2,
+        rangeDate: { from: dateArrival, to: dateDeparture },
+        isTransport1: taxiArrival,
+        isTransport2: taxiDeparture,
         roomPreference,
       });
       const newBooking = JSON.parse(res);
@@ -96,12 +95,12 @@ const FourthStage = ({
           <div className="flex items-center gap-2">
             <IconCalendar className="text-yellow-500" size={24} />
             <span>Ημερομηνία Άφιξης:</span>
-            <span>{formatDate(rangeDate.from, "el-GR")}</span>
+            <span>{formatDate(dateArrival, "el-GR")}</span>
           </div>
           <div className="flex items-center gap-2">
             <IconCalendar className="text-yellow-500" size={24} />
             <span>Ημερομηνία Αναχώρησης:</span>
-            <span>{formatDate(rangeDate.to, "el-GR")}</span>
+            <span>{formatDate(dateDeparture, "el-GR")}</span>
           </div>
         </div>
 
@@ -110,12 +109,12 @@ const FourthStage = ({
           <div className="flex items-center gap-2">
             <IconCar className="text-yellow-500" size={24} />
             <span>Μεταφορά Αφιξης:</span>
-            <span>{isTransport1 ? "Ναι" : "Όχι"}</span>
+            <span>{taxiArrival ? "Ναι" : "Όχι"}</span>
           </div>
           <div className="flex items-center gap-2">
             <IconCar className="text-yellow-500" size={24} />
             <span>Μεταφορά Αναχώρησης:</span>
-            <span>{isTransport2 ? "Ναι" : "Όχι"}</span>
+            <span>{taxiDeparture ? "Ναι" : "Όχι"}</span>
           </div>
         </div>
         <div className="mt-2   flex min-w-[16vw] flex-col px-2 text-start">

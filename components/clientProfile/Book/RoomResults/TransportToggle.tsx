@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 
 import { IconUserFilled, IconCar, IconUser } from "@tabler/icons-react";
@@ -17,9 +16,9 @@ const ToggleWrapper = ({
   };
 }) => {
   return (
-    <div className="pl-4 flex flex-col gap-2 mt-3">
+    <div className="mt-3 flex flex-col gap-2 pl-4">
       <DarkModeToggle taxi={taxi} setTaxi={setTaxi} />
-      <span className="text-light-700 pl-4 text-lg">
+      <span className="pl-4 text-lg text-light-700">
         {taxi ? label.on : label.off}
       </span>
     </div>
@@ -36,7 +35,7 @@ const DarkModeToggle = ({
   return (
     <button
       onClick={() => setTaxi(!taxi)}
-      className={`p-2 w-28 h-[60px] rounded-lg flex shadow-lg relative bg-gradient-to-b ${
+      className={`relative flex h-[60px] w-28 rounded-lg bg-gradient-to-b p-2 shadow-lg ${
         taxi
           ? "justify-end from-yellow-500 to-dark-100"
           : "justify-start from-indigo-600 to-dark-100"
@@ -86,7 +85,7 @@ const Stars = () => {
           duration: 5,
           ease: "easeIn",
         }}
-        className="text-slate-300 text-xs absolute right-10 top-2"
+        className="absolute right-10 top-2 text-xs text-slate-300"
       >
         <IconUserFilled />
       </motion.span>
@@ -101,7 +100,7 @@ const Stars = () => {
           ease: "easeIn",
         }}
         style={{ rotate: "-45deg" }}
-        className="text-slate-300 text-lg absolute right-4 top-3"
+        className="absolute right-4 top-3 text-lg text-slate-300"
       >
         <IconUserFilled />
       </motion.span>
@@ -116,7 +115,7 @@ const Stars = () => {
           duration: 2.5,
           ease: "easeIn",
         }}
-        className="text-slate-300 absolute right-8 top-8"
+        className="absolute right-8 top-8 text-slate-300"
       >
         <IconUserFilled />
       </motion.span>
@@ -134,7 +133,7 @@ const Clouds = () => {
           repeat: Infinity,
           delay: 0.25,
         }}
-        className="text-light-500 text-xs absolute left-10 top-1"
+        className="absolute left-10 top-1 text-xs text-light-500"
       >
         <IconCar />
       </motion.span>
@@ -145,7 +144,7 @@ const Clouds = () => {
           repeat: Infinity,
           delay: 0.5,
         }}
-        className=" text-lg absolute left-4 top-4"
+        className=" absolute left-4 top-4 text-lg"
       >
         <IconCar className="text-light-500" />
       </motion.span>
@@ -155,7 +154,7 @@ const Clouds = () => {
           duration: 12.5,
           repeat: Infinity,
         }}
-        className="text-white absolute left-9 top-8"
+        className="absolute left-9 top-8 text-white"
       >
         <IconCar className="text-light-500" />
       </motion.span>
@@ -166,7 +165,7 @@ const Clouds = () => {
           repeat: Infinity,
           delay: 0.75,
         }}
-        className="text-white absolute text-xs left-14 top-4"
+        className="absolute left-14 top-4 text-xs text-white"
       >
         <IconCar className="text-light-500" />
       </motion.span>

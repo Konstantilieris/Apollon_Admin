@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import moment from "moment";
 import "moment/locale/el";
+import { cn } from "@/lib/utils";
 
 const generateTimeOptions = (start: any, end: any, interval: any) => {
   const times = [];
@@ -27,7 +28,12 @@ const generateTimeOptions = (start: any, end: any, interval: any) => {
   return times;
 };
 
-const TimeSelect = ({ placeHolderText, date, setDate }: any) => {
+const TimeSelect = ({
+  placeHolderText,
+  date,
+  setDate,
+  className = "",
+}: any) => {
   const times = generateTimeOptions(420, 1380, 30); // 07:00 (420 minutes) to 23:00 (1380 minutes) with 30-minute intervals
   const [selectedTime, setSelectedTime] = React.useState<string | undefined>();
 
@@ -43,7 +49,12 @@ const TimeSelect = ({ placeHolderText, date, setDate }: any) => {
   return (
     <div className="mt-2 flex flex-col space-y-2 pl-4">
       <Select value={selectedTime} onValueChange={handleTimeChange}>
-        <SelectTrigger className="h-[60px] w-[300px] bg-neutral-900 font-sans text-lg">
+        <SelectTrigger
+          className={cn(
+            "h-[60px] w-[300px] bg-neutral-900 font-sans text-lg",
+            className
+          )}
+        >
           <SelectValue placeholder={placeHolderText} />
         </SelectTrigger>
         <SelectContent className="w-full bg-neutral-900 font-sans text-lg">
