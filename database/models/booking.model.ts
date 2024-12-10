@@ -55,6 +55,11 @@ const BookingSchema = new Schema<IBooking>(
 BookingSchema.pre("save", async function (next) {
   const booking = this;
 
+  // Run this check only if the document is new
+  if (!booking.isNew) {
+    return next();
+  }
+
   // Check for overlapping bookings
   const overlappingBookings = await Booking.find({
     "dogs.dogId": { $in: booking.dogs.map((dog: any) => dog.dogId) },
@@ -67,6 +72,8 @@ BookingSchema.pre("save", async function (next) {
   if (overlappingBookings.length > 0) {
     return next(new Error("Overlapping bookings for one or more dogs"));
   }
+
+  next();
 });
 
 const Booking = models.Booking || model<IBooking>("Booking", BookingSchema);

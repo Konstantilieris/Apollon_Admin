@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import CreateBooking from "../clientProfile/Book/CreateBooking/CreateBooking";
 import SelectRooms from "../clientProfile/Book/RoomResults/SelectRooms";
@@ -10,7 +10,7 @@ interface SteppedProgressProps {
 }
 const SteppedProgress = ({ client }: SteppedProgressProps) => {
   const { stepsComplete, setStepsComplete } = useBookingStore();
-  console.log(stepsComplete);
+
   const numSteps = 3;
   const clientData = {
     clientId: client._id,

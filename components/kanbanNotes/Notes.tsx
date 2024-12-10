@@ -78,7 +78,7 @@ const Column = ({
 
   const handleDragEnd = async (e) => {
     const cardId = e.dataTransfer.getData("cardId");
-    console.log(cardId);
+
     setActive(false);
     clearHighlights();
 

@@ -147,8 +147,6 @@ export async function payService({ service, path }: any) {
       { new: true, session }
     );
 
-    console.log("Client update result:", client);
-
     if (!client) {
       throw new Error("Client not found or update failed.");
     }
@@ -693,8 +691,6 @@ export async function getPaidServicesIncomeLast6Months() {
         .format("MMMM"), // Convert month number to name
       totalIncome: item.totalIncome,
     }));
-
-    console.log(`Paid services income for the last 6 months:`, incomeByMonth);
 
     return incomeByMonth;
   } catch (error) {
