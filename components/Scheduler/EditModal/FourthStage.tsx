@@ -91,7 +91,7 @@ const FourthStage = ({
       </h1>
 
       {/* Date Info Section */}
-      <div className="mt-20 px-8 space-y-8 text-2xl">
+      <div className="mt-20 space-y-8 px-8 text-2xl">
         <div className="flex flex-col gap-4 ">
           <div className="flex items-center gap-2">
             <IconCalendar className="text-yellow-500" size={24} />
@@ -127,7 +127,7 @@ const FourthStage = ({
         {data.map((dog: any, index: number) => (
           <div
             key={index}
-            className=" mt-2  flex flex-row gap-2 items-center  w-full justify-start"
+            className=" mt-2  flex w-full flex-row items-center  justify-start gap-2"
           >
             <IconHome className="text-yellow-500" />{" "}
             <span className="">{dog.dogName}</span>

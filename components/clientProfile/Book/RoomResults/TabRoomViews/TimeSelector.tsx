@@ -63,7 +63,7 @@ const TimeSelect = ({
               <SelectItem
                 key={time}
                 value={time}
-                className=" w-full  text-center hover:scale-105 hover:bg-light-500 text-lg"
+                className=" w-full  text-center text-lg hover:scale-105 hover:bg-light-500"
               >
                 {time}
               </SelectItem>
@@ -72,7 +72,7 @@ const TimeSelect = ({
         </SelectContent>
       </Select>
       <span className="ml-4  text-light-700">
-        {date ? moment(date).locale("el").format("YYYY/MM/DD-HH:mm") : ""}
+        {date ? moment(date).locale("el").format("DD/MM/YYYY-HH:mm") : ""}
       </span>
     </div>
   );

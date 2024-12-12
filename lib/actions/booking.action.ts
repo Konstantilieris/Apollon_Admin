@@ -1261,7 +1261,11 @@ export async function updateBookingAllInclusive({
     // Update service
     const updatedService = await Service.findOneAndUpdate(
       { bookingId: booking._id, serviceType: "ΔΙΑΜΟΝΗ" },
-      { amount: calculateBoardingFee },
+      {
+        amount: calculateBoardingFee,
+        remaingAmount: calculateBoardingFee,
+        date: rangeDate.from,
+      },
       { new: true, session } // Pass session
     );
     if (!updatedService) {
