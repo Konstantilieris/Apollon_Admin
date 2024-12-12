@@ -95,6 +95,8 @@ const RoomSelectionView = ({ rangeDate, client, setData, setStage }: any) => {
         {" "}
         <JoinView
           client={client}
+          setStages={setStage}
+          freeCapacityPercentage={parseFloat(freeCapacityPercentage)}
           availableRooms={availableRooms}
           handleSelectRoom={handleSelectRoom}
           dogsInRooms={dogsInRooms}
