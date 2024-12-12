@@ -280,7 +280,7 @@ export function PaymentsDataTable({ services }: { services: Service[] }) {
             </DropdownMenu>
           </div>
         </div>
-        <div className="rounded-md border bg-neutral-950 font-sans">
+        <div className="rounded-md border bg-neutral-900 font-sans">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

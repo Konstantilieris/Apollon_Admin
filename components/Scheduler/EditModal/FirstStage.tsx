@@ -54,35 +54,38 @@ const FirstStage = ({ event, pairDate, setStage, onClose, reset }: any) => {
   };
 
   return (
-    <div className="relative flex h-full w-full flex-col gap-4 p-4" ref={ref}>
-      <h1 className="text-xl text-[#e9c85ef6]">Στοιχεία Κράτησης</h1>
-      <p className="flex flex-row items-center gap-4 text-lg font-semibold">
+    <div
+      className="relative flex h-full w-full flex-col gap-4 space-y-2 p-4 text-lg"
+      ref={ref}
+    >
+      <h1 className="text-2xl text-[#e9c85ef6] ">Στοιχεία Κράτησης</h1>
+      <p className="flex flex-row items-center gap-4 pl-1 text-xl font-semibold tracking-widest">
         {event.isTransport && <IconCar />}
         {event.Subject}
       </p>
       {event.clientName && (
         <Link
           href={`/clients/${event.clientId}`}
-          className="flex flex-row items-center gap-2 hover:scale-105 hover:text-blue-500"
+          className="flex flex-row items-center gap-2  pl-1  hover:text-blue-500 "
         >
           <IconUser />
           {event?.clientName}
         </Link>
       )}
       {event.mobile && (
-        <p className="flex flex-row items-center gap-2">
+        <p className="flex flex-row items-center gap-2  pl-1 ">
           <IconPhone />
           {event?.mobile}
         </p>
       )}
       {event.Location && (
-        <p className="flex flex-row items-center gap-2">
+        <p className="flex flex-row items-center gap-2 pl-1 uppercase">
           <IconMapPin />
           {event?.Location}
         </p>
       )}
 
-      <p className="flex flex-row items-center gap-2">
+      <p className="flex flex-row items-center gap-2 pl-1 ">
         <IconCalendar />
         {event.isArrival
           ? new Date(event.StartTime).toLocaleString("el-GR", {
@@ -117,12 +120,12 @@ const FirstStage = ({ event, pairDate, setStage, onClose, reset }: any) => {
               minute: "2-digit",
             })}
       </p>
-      <p className="flex flex-row items-center gap-2">
+      <p className="flex flex-row items-center gap-2 pl-1 ">
         <IconNote />
         {event?.Description}
       </p>
       {event.dogsData?.map((dog: any) => (
-        <p key={dog.dogId} className="flex flex-row items-center gap-2">
+        <p key={dog.dogId} className="flex flex-row items-center gap-2 pl-1 ">
           <IconHome />
           {dog.dogName}
           <IconArrowRight />

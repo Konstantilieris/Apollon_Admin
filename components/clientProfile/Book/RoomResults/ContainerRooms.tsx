@@ -15,7 +15,7 @@ const ContainerRooms = ({
   freeCapacityPercentage,
 }: ContainerRoomProps) => {
   return (
-    <section className="text-dark400_light500 mr-4 h-full  w-full overflow-auto overflow-x-hidden rounded-lg border border-neutral-400   bg-light-900 px-1 dark:bg-neutral-950">
+    <section className="text-dark400_light500  mr-4  flex h-full w-full flex-col items-center overflow-x-hidden overflow-y-scroll  rounded-lg border border-neutral-400 bg-light-900 px-1 dark:bg-neutral-950">
       <BookingSearchFilter
         freeCapacityPercentage={freeCapacityPercentage}
         pageNumber={pageNumber}
@@ -26,7 +26,7 @@ const ContainerRooms = ({
           ΕΠΕΛΕΞΕ ΗΜΕΡΟΜΗΝΙΕΣ
         </div>
       ) : (
-        <div className="flex flex-col gap-2  px-8 py-9">
+        <div className="flex w-full flex-col  gap-2 px-8 py-9">
           {rooms.map((room: any) => (
             <RoomRow key={room._id} room={JSON.parse(JSON.stringify(room))} />
           ))}

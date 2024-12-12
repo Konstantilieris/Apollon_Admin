@@ -33,7 +33,7 @@ const SpringModalPayment = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={() => setIsOpen(false)}
-          className="fixed inset-x-0 top-0 z-50 grid cursor-pointer place-items-center overflow-y-scroll bg-slate-900/20 p-8 backdrop-blur"
+          className="fixed inset-0 z-50 grid cursor-pointer place-items-center overflow-y-scroll bg-neutral-900/30 p-8 backdrop-blur"
         >
           <motion.div
             initial={{ scale: 0, rotate: "12.5deg" }}

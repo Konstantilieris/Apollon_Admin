@@ -63,7 +63,7 @@ const TimeSelect = ({
               <SelectItem
                 key={time}
                 value={time}
-                className=" w-full  text-center hover:scale-105 hover:bg-light-500"
+                className=" w-full  text-center hover:scale-105 hover:bg-light-500 text-lg"
               >
                 {time}
               </SelectItem>

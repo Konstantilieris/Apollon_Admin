@@ -13,7 +13,7 @@ const Calendar = async () => {
   ]);
 
   return (
-    <section className=" h-full w-full  p-1 pb-4">
+    <section className=" h-full w-full  p-2 pb-4">
       <CustomModalProvider />
       <Scheduler appointments={events} revenueData={revenueData} />
     </section>

@@ -29,6 +29,7 @@ export const CustomModal: React.FC = () => {
     setTaxiDeparture,
     booking,
     setBooking,
+    setExtraDay,
   } = useEditBookingStore();
 
   const [roomPreference, setRoomPreference] = useState("");
@@ -69,6 +70,7 @@ export const CustomModal: React.FC = () => {
       );
 
       setBooking(JSON.parse(res));
+      setExtraDay(JSON.parse(res).extraDay);
     };
     fetchData();
   }, [selectedEvent]);

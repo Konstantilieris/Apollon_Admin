@@ -9,6 +9,7 @@ const CheckBoxDay = () => {
     <div className="mt-8 flex items-center space-x-2 pl-8">
       <Checkbox
         id="terms"
+        className="h-6 w-6"
         checked={extraDay}
         onCheckedChange={(value: boolean) => setExtraDay(value)}
       />

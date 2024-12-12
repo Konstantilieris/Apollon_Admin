@@ -38,9 +38,9 @@ const SteppedProgress = ({ client }: SteppedProgressProps) => {
 
   return (
     <div className=" h-full w-full px-4 py-14">
-      <div className="mx-auto h-full w-full rounded-md bg-neutral-900 p-8 shadow-lg">
+      <div className="mx-auto h-full w-full rounded-md bg-neutral-950 p-8 shadow-lg">
         <Steps numSteps={numSteps} stepsComplete={stepsComplete} />
-        <div className="my-6 min-h-[60vh] rounded-lg border-2 border-dashed border-neutral-600 bg-neutral-800 p-2">
+        <div className="relative my-6 min-h-[60vh] rounded-lg border-2 border-dashed border-neutral-600 bg-neutral-800 p-2">
           {renderStep()}
         </div>
       </div>
@@ -58,7 +58,7 @@ const Steps = ({
   const stepArray = Array.from(Array(numSteps).keys());
 
   return (
-    <div className="flex items-center justify-between gap-3">
+    <div className="flex h-full items-center justify-between gap-3">
       {stepArray.map((num) => {
         const stepNum = num + 1;
         const isActive = stepNum <= stepsComplete;

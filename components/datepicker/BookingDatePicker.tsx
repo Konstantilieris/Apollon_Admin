@@ -105,11 +105,11 @@ export function BookingDatePicker({ className, useHook }: BookingDateProps) {
         <PopoverTrigger asChild>
           <Button
             className={cn(
-              "w-full justify-start text-left  border border-yellow-500 rounded-lg min-h-[60px]  dark:bg-neutral-900 min-w-[322px] text-[1rem] max-w-[380px]",
+              "w-full justify-start text-left  border border-yellow-500 rounded-lg min-h-[60px]  dark:bg-neutral-900 min-w-[322px] text-lg max-w-[380px]",
               !rangeDate && "text-muted-foreground hover:scale-105 "
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="mr-2 h-6 w-6" />
             {rangeDate?.from ? (
               rangeDate.to ? (
                 <>

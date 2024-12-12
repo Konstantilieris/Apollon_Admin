@@ -35,11 +35,13 @@ const page = async ({ params }: { params: any }) => {
     [
       {
         key: "ΤΗΛ.ΕΡΓΑΣΙΑΣ: ",
-        value: client?.phone?.contact ? client?.phone.work_phone : "N/A",
+        value: client?.phone?.work_phone ? client?.phone.work_phone : "N/A",
       },
       {
         key: "ΕΚΤΑΚΤΗ ΕΠΑΦΗ: ",
-        value: client?.phone?.partner ? client?.phone.emergencyContact : "N/A",
+        value: client?.phone?.emergencyContact
+          ? client?.phone.emergencyContact
+          : "N/A",
       },
     ],
   ];

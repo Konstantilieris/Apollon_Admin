@@ -7,11 +7,12 @@ import { IconUser } from "@tabler/icons-react";
 import React from "react";
 
 import ButtonModal from "./buttonModal";
-
+import { Checkbox } from "@/components/ui/checkbox";
 import TimeSelect from "@/components/clientProfile/Book/RoomResults/TabRoomViews/TimeSelector";
 import { BookingDatePicker } from "@/components/datepicker/BookingDatePicker";
 import useEditBookingStore from "@/hooks/editBooking-store";
 import ToggleWrapper from "@/components/clientProfile/Book/RoomResults/TransportToggle";
+
 interface props {
   event: IEvent;
 
@@ -35,6 +36,8 @@ const SecondStage = ({
     taxiDeparture,
     setTaxiArrival,
     setTaxiDeparture,
+    extraDay,
+    setExtraDay,
   } = useEditBookingStore();
   const handleStage1 = async () => {
     if (!dateArrival || !dateDeparture || !booking) return;
@@ -57,14 +60,34 @@ const SecondStage = ({
         <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
           Επεξεργασία Κράτησης:{" "}
           <span className="font-bold text-yellow-500 ">
-            {booking?.client.clientName}
+            {booking?.client?.clientName}
           </span>
         </h1>
         <IconUser size={32} className="text-yellow-500 " />
       </div>
-      <div className=" flex h-full flex-col items-center   gap-6 ">
-        <BookingDatePicker useHook={useEditBookingStore} className="pl-4" />
-        <div>
+      <div className="mt-12 flex h-full w-full flex-col items-center justify-center  gap-6 space-y-4">
+        <div className="flex  flex-row items-center gap-4">
+          <BookingDatePicker
+            useHook={useEditBookingStore}
+            className=" place-content-center"
+          />
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="terms"
+              className="h-6 w-6"
+              checked={extraDay}
+              onCheckedChange={(value: boolean) => setExtraDay(value)}
+            />
+            <label
+              htmlFor="terms"
+              className="font-sans text-lg  leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Χρέωση 24ωρη
+            </label>
+          </div>
+        </div>
+
+        <div className="flex flex-row">
           <TimeSelect
             date={dateArrival}
             setDate={setDateArrival}
@@ -80,7 +103,7 @@ const SecondStage = ({
             }}
           />
         </div>
-        <div>
+        <div className="flex flex-row">
           <TimeSelect
             date={dateDeparture}
             setDate={setDateDeparture}

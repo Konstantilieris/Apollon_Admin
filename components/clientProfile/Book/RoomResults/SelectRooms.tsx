@@ -1,7 +1,5 @@
 "use client";
-import { getLastBookingOfClient } from "@/lib/actions/client.action";
 
-import { IconHomeFilled } from "@tabler/icons-react";
 import React, { useCallback, useEffect } from "react";
 
 import { ClientProfileProps } from "@/types";
@@ -125,18 +123,16 @@ const SelectRooms = ({
   // Render Quick Suggestion based on last booking
 
   return (
-    <section className="relative flex w-full flex-col px-4 max-md:items-start max-md:justify-items-start">
-      <IconHomeFilled className="absolute left-0 top-0 h-8 w-8 text-yellow-500 max-md:hidden" />
-
-      <section>
-        <JoinView
-          client={client}
-          availableRooms={availableRooms}
-          handleSelectRoom={handleSelectRoom}
-          dogsInRooms={dogsInRooms}
-          handleSubmit={handleSubmit}
-        />
-      </section>
+    <section className="absolute inset-0 h-full w-full">
+      <JoinView
+        freeCapacityPercentage={parseFloat(freeCapacityPercentage)}
+        client={client}
+        availableRooms={availableRooms}
+        handleSelectRoom={handleSelectRoom}
+        dogsInRooms={dogsInRooms}
+        handleSubmit={handleSubmit}
+        setStages={setStages}
+      />
     </section>
   );
 };

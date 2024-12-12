@@ -8,7 +8,7 @@ import BookingSuggestionResult from "./BookingSuggestionResult";
 import { IconLoader } from "@tabler/icons-react";
 
 import SteppedProgress from "@/components/ui/BookingProgress";
-import { useBookingStore } from "@/hooks/booking-store";
+
 interface BookingProps {
   client: any;
 

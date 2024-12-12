@@ -9,6 +9,7 @@ export interface IBooking {
     phone: string;
     location: string;
   };
+  extraDay?: boolean;
   fromDate: Date;
   toDate: Date;
   services: Schema.Types.ObjectId[];
@@ -30,7 +31,7 @@ const BookingSchema = new Schema<IBooking>(
     },
     fromDate: { type: Date, required: true },
     toDate: { type: Date, required: true },
-
+    extraDay: { type: Boolean, default: false },
     totalAmount: { type: Number, required: true },
     paidAmount: { type: Number, default: 0 },
     services: [

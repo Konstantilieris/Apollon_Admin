@@ -22,7 +22,7 @@ const BookingBox = ({ client }: any) => {
         <BookingDatePicker useHook={useBookingStore} />
 
         <Button
-          className="min-h-[60px] min-w-[174px] rounded-lg border border-yellow-500 text-[1rem]  hover:scale-105 dark:bg-neutral-900"
+          className="min-h-[60px] min-w-[174px] rounded-lg border border-yellow-500   text-lg tracking-wider hover:scale-105 dark:bg-neutral-900"
           disabled={!dateArrival || !dateDeparture}
           onClick={() => {
             setOpen(true);

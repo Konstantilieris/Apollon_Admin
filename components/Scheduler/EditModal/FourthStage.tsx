@@ -36,7 +36,7 @@ const FourthStage = ({
 }: props) => {
   const [booking, setBooking] = useState<IBooking>();
   const { toast } = useToast();
-  const { dateArrival, dateDeparture, taxiArrival, taxiDeparture } =
+  const { dateArrival, dateDeparture, taxiArrival, taxiDeparture, extraDay } =
     useEditBookingStore();
   useEffect(() => {
     const fetchData = async () => {
@@ -52,6 +52,7 @@ const FourthStage = ({
 
     try {
       const res = await updateBookingAllInclusive({
+        extraDay,
         dogsData: data,
         booking,
         rangeDate: { from: dateArrival, to: dateDeparture },
@@ -83,15 +84,15 @@ const FourthStage = ({
   };
 
   return (
-    <div className="flex h-[60vh] w-full flex-col gap-4 px-4 py-8">
+    <div className="flex h-[60vh] w-full flex-col gap-4 px-4 py-8 ">
       <h1 className="flex flex-row gap-2 text-3xl">
         Πραγματοποιειται ενημέρωση στην κράτηση{" "}
         <span className="text-yellow-500">{bookingId}</span>
       </h1>
 
       {/* Date Info Section */}
-      <div className="mt-20 px-8">
-        <div className="flex flex-col gap-4 text-xl">
+      <div className="mt-20 px-8 space-y-8 text-2xl">
+        <div className="flex flex-col gap-4 ">
           <div className="flex items-center gap-2">
             <IconCalendar className="text-yellow-500" size={24} />
             <span>Ημερομηνία Άφιξης:</span>
@@ -102,10 +103,15 @@ const FourthStage = ({
             <span>Ημερομηνία Αναχώρησης:</span>
             <span>{formatDate(dateDeparture, "el-GR")}</span>
           </div>
+          <div className="flex items-center gap-2">
+            <IconCalendar className="text-yellow-500" size={24} />
+            <span>Επιπλέον Ημέρα:</span>
+            <span>{extraDay ? "Ναι" : "Όχι"}</span>
+          </div>
         </div>
 
         {/* Transport Info Section */}
-        <div className="mt-4 flex flex-col gap-4 text-xl">
+        <div className="mt-4 flex flex-col gap-4 ">
           <div className="flex items-center gap-2">
             <IconCar className="text-yellow-500" size={24} />
             <span>Μεταφορά Αφιξης:</span>
@@ -117,16 +123,18 @@ const FourthStage = ({
             <span>{taxiDeparture ? "Ναι" : "Όχι"}</span>
           </div>
         </div>
-        <div className="mt-2   flex min-w-[16vw] flex-col px-2 text-start">
-          {data.map((dog: any, index: number) => (
-            <div key={index} className=" mt-2  flex flex-row gap-3 text-xl">
-              <IconHome className="text-yellow-500" />{" "}
-              <span className="min-w-[5vw]">{dog.dogName}</span>
-              <IconArrowRight />
-              <span className="ml-4">{dog.roomName}</span>
-            </div>
-          ))}
-        </div>
+
+        {data.map((dog: any, index: number) => (
+          <div
+            key={index}
+            className=" mt-2  flex flex-row gap-2 items-center  w-full justify-start"
+          >
+            <IconHome className="text-yellow-500" />{" "}
+            <span className="">{dog.dogName}</span>
+            <IconArrowRight />
+            <span className="">{dog.roomName}</span>
+          </div>
+        ))}
       </div>
 
       {/* Buttons Section */}

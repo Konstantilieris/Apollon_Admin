@@ -27,7 +27,13 @@ import {
 import * as greekLocale from "cldr-data/main/el/ca-gregorian.json"; // Greek CLDR data
 import * as greekNumbers from "cldr-data/main/el/numbers.json";
 import * as greekTime from "cldr-data/main/el/timeZoneNames.json";
-import { IconCar, IconUser, IconLetterK, IconPhone } from "@tabler/icons-react";
+import {
+  IconCar,
+  IconUser,
+  IconLetterK,
+  IconPhone,
+  IconCalendar,
+} from "@tabler/icons-react";
 import {
   createEvent,
   deleteEvent,
@@ -194,14 +200,23 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
             className="absolute right-0 top-0 rounded-full border border-white p-1 text-green-500"
           />
         );
+      case 4:
+        return (
+          <IconLetterK
+            size={30}
+            className="absolute right-0 top-0 rounded-full border border-white p-1 text-purple-400"
+          />
+        );
       default:
         return null;
     }
   }, []);
   const mockCategoryData = [
     { text: "Personal", id: 1, color: "#00008B" },
-    { text: "Booking", id: 2, color: "#4B0082" },
+    { text: "Arrival", id: 2, color: "#4B0082" },
+    { text: "Departure", id: 4, color: "#9d174d" },
     { text: "Transport", id: 3, color: "#32CD32" },
+    { text: "Training", id: 5, color: "#ea580c" },
   ];
 
   const eventTemplate = (props: any) => {
@@ -219,9 +234,11 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
           {props.Subject}
         </span>
 
-        <span className=" max-w-[6rem] truncate pt-[2px] text-sm">
+        <span className="  flex flex-row gap-1 truncate pt-[2px] text-sm">
           {" "}
-          {props.clientName ?? ""}{" "}
+          {props.dogsData
+            ? props.dogsData.map((dog: any) => dog.dogName).join(", ")
+            : ""}
         </span>
         {}
       </div>
@@ -230,22 +247,31 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
 
   const tooltip = (props: any) => {
     if (open || isDragging) return null;
+
     return (
-      <div className="h-full w-full border-none  text-light-900 outline-none">
+      <div className="h-full min-w-[22vw] border-none  text-light-900 outline-none ">
         {renderIcon(props.categoryId)}
         <div
           className={cn("mt-4 flex w-full flex-col gap-4 px-4", {
             "pt-2": props.categoryId === 1,
           })}
         >
-          <div className="text-xl uppercase">{props.Subject}</div>
+          <div className="text-lg uppercase">{props.Subject}</div>
           {props.clientName ? (
-            <div className="flex flex-row items-center gap-2 text-lg">
+            <div className="flex flex-row items-center gap-2 truncate text-lg">
               <IconUser size={24} className="text-light-900" />
               {props.clientName}
             </div>
           ) : (
             <></>
+          )}
+          {props.StartTime ? (
+            <div className="flex flex-row items-center gap-2 text-lg">
+              <IconCalendar size={24} className="text-light-900" />
+              {formatTime(new Date(props.StartTime), "el")}
+            </div>
+          ) : (
+            ""
           )}
           {props.mobile ? (
             <div className="flex flex-row items-center gap-2 text-lg">
@@ -281,7 +307,11 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
     const draggedEvent = args.data;
 
     // Check if it's a booking event and has a paired event (e.g., arrival/departure or pick-up/delivery)
-    if (draggedEvent?.categoryId === 2 || draggedEvent?.categoryId === 3) {
+    if (
+      draggedEvent?.categoryId === 2 ||
+      draggedEvent?.categoryId === 3 ||
+      draggedEvent?.categoryId === 4
+    ) {
       const { Id, StartTime, EndTime, Type, isArrival } = draggedEvent;
 
       // Find the paired event (e.g., the other event with the same bookingId)
@@ -400,7 +430,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
       // Create a new element to display the time
       const timeElement = document.createElement("div");
       timeElement.style.fontSize = "14px";
-      timeElement.style.color = "#666";
+      timeElement.style.color = "#cbd5e1";
       timeElement.style.textAlign = "center";
       timeElement.textContent = formattedTime;
 
@@ -411,7 +441,11 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
 
   const handleDoubleClick = (args: any) => {
     const eventData = args.event;
-    if (eventData?.categoryId === 2 || eventData?.categoryId === 3) {
+    if (
+      eventData?.categoryId === 2 ||
+      eventData?.categoryId === 3 ||
+      eventData?.categoryId === 4
+    ) {
       args.cancel = true;
       // Prevent the default popup
       const pairEvent = appointments.find(
@@ -429,7 +463,11 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
   };
 
   const handleSingleClick = (args: any) => {
-    if (args.event.categoryId === 2 || args.event.categoryId === 3) {
+    if (
+      args.event.categoryId === 2 ||
+      args.event.categoryId === 3 ||
+      args.event.categoryId === 4
+    ) {
       args.cancel = true;
       setSelectedEvent(args.event);
 
@@ -445,7 +483,11 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
     }
   };
   const onEventClick = (args: any) => {
-    if (args.event.categoryId === 2 || args.event.categoryId === 3) {
+    if (
+      args.event.categoryId === 2 ||
+      args.event.categoryId === 3 ||
+      args.event.categoryId === 4
+    ) {
       args.cancel = true;
     }
     if (clickTimeoutRef.current) {
@@ -492,7 +534,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
       ref={scheduleObj}
       popupOpen={onPopupOpen}
       rowAutoHeight={true}
-      className="   w-full rounded-lg"
+      className="   w-full rounded-lg "
       height={"100%"}
       width={"100%"}
       startHour="07:00"

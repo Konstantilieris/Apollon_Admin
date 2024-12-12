@@ -32,7 +32,7 @@ interface ICreateBooking {
     phone: string;
     location: string;
   };
-
+  extraDay: boolean;
   dateArrival: Date | undefined;
   dateDeparture: Date | undefined;
   boardingPrice: number;
@@ -55,6 +55,7 @@ export async function createBooking({
   flag2,
   dogsData,
   roomPrefer,
+  extraDay,
 }: ICreateBooking) {
   if (!dateArrival || !dateDeparture) {
     throw new Error("Invalid date range");
@@ -152,6 +153,7 @@ export async function createBooking({
             fromDate: dateArrival,
             toDate: dateDeparture,
             totalAmount,
+            extraDay,
             flag1,
             flag2,
             dogs: dogsData,
@@ -269,7 +271,7 @@ export async function createBooking({
               Description: description,
               Location: location,
               dogsData,
-              categoryId: 2,
+              categoryId: 4,
               isArrival: false,
               Color: "#7f1d1d",
               StartTime: dateDeparture,
@@ -1204,6 +1206,7 @@ export async function checkBookingRoomRangeDateAvailability({
 export async function updateBookingAllInclusive({
   dogsData,
   booking,
+  extraDay,
   rangeDate,
   isTransport1,
   isTransport2,
@@ -1218,11 +1221,16 @@ export async function updateBookingAllInclusive({
     const servicesToAdd = [];
     const servicesToDelete = [];
 
-    const calculateBoardingFee = calculateTotalPrice({
+    let calculateBoardingFee = calculateTotalPrice({
       fromDate: rangeDate.from,
       toDate: rangeDate.to,
       dailyPrice: booking.client.bookingFee,
     });
+    if (extraDay && !booking.extraDay) {
+      calculateBoardingFee += booking.client.bookingFee;
+    } else if (!extraDay && booking.extraDay) {
+      calculateBoardingFee -= booking.client.bookingFee;
+    }
     let calculateTotalAmount = 0;
     calculateTotalAmount += calculateBoardingFee;
     if (isTransport1) {

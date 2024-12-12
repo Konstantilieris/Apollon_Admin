@@ -20,17 +20,17 @@ const BookingSearchFilter = ({
     : null;
 
   return (
-    <header className="relative mx-1 mt-8 flex min-h-[70px] w-full items-center justify-between overflow-x-hidden rounded-lg bg-neutral-700 px-4">
+    <header className="relative mx-4  mt-12 flex min-h-[70px] w-full max-w-[94vw] items-center justify-between  rounded-lg bg-neutral-900 p-4">
       <div className="flex   gap-2">
         <SearchBar
-          otherClasses=" min-w-[14vw] max-w-[20vw] "
+          otherClasses=" min-w-[14vw] max-w-[20vw] z-30"
           imgSrc="/assets/icons/search.svg"
           iconPosition="left"
           placeholder="Αναζήτηση..."
           route={"/booking"}
         />
         <Filter
-          containerClasses="min-w-[150px]"
+          containerClasses="min-w-[150px] z-30"
           otherClasses="focus:outline-none border-none "
           filters={[
             { name: "Όλα", value: "all" },
@@ -39,11 +39,16 @@ const BookingSearchFilter = ({
           ]}
         />
       </div>
-      <ArrowPagination pageNumber={pageNumber} isNext={isNext} />
+
+      <ArrowPagination
+        pageNumber={pageNumber}
+        isNext={isNext}
+        className="absolute inset-x-0"
+      />
 
       <div
         className={cn(
-          "mr-12 flex gap-2 rounded-lg bg-neutral-800 px-4 py-2 font-semibold  ",
+          " flex gap-2 rounded-lg bg-neutral-800 px-4 py-4 font-semibold  ",
           capacity && capacity < 20 && "text-red-500",
           capacity && capacity >= 20 && capacity < 50 && "text-yellow-500",
           capacity && capacity >= 50 && "text-green-500",

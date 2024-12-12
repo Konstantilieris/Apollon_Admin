@@ -68,10 +68,12 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
               position: "fixed",
               top: 2,
               left: "40%",
+              display: "block",
             },
             hidden: {
               opacity: 0,
               position: "absolute",
+              display: "none",
               top: 1,
               left: -400,
             },

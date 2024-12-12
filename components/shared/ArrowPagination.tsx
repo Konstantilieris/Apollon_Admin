@@ -1,15 +1,16 @@
 "use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { formUrlQuery } from "@/lib/utils";
+import { cn, formUrlQuery } from "@/lib/utils";
 import { useSearchParams, useRouter } from "next/navigation";
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 interface Props {
   pageNumber: number;
   isNext: boolean | undefined;
+  className?: string;
 }
 
-const ArrowPagination = ({ pageNumber, isNext }: Props) => {
+const ArrowPagination = ({ pageNumber, isNext, className }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const handleNavigation = (direction: string) => {
@@ -24,7 +25,12 @@ const ArrowPagination = ({ pageNumber, isNext }: Props) => {
   };
 
   return (
-    <div className="   flex  w-full  items-center justify-center gap-2 self-center p-2 text-yellow-500">
+    <div
+      className={cn(
+        "flex  w-full  items-center justify-center gap-2 p-2 text-yellow-500",
+        className
+      )}
+    >
       <Button
         disabled={pageNumber === 1}
         className="light-border-2 btn flex min-h-[36px] items-center justify-center gap-2 border "
