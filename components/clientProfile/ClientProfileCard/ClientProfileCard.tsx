@@ -19,7 +19,7 @@ export async function ClientProfileCard({ client }: any) {
         <div className="z-10 flex flex-row items-center space-x-4">
           <ClientIcon id={client._id} />
           <div className="flex flex-col">
-            <p className="relative z-10 text-base font-normal text-light-900">
+            <p className="relative z-10 text-base font-normal tracking-widest text-light-900">
               {client?.name}
             </p>
             <p className="text-sm text-light-700">
