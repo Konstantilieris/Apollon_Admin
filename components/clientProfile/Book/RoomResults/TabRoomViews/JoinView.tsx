@@ -98,7 +98,7 @@ const JoinView = ({
 
                   <IconArrowRight
                     size={24}
-                    className="min-w-[5vw] text-yellow-500 ml-14"
+                    className="ml-14 min-w-[5vw] text-yellow-500"
                   />
                   <span className="min-w-[5vw] text-center">
                     {dog.roomName}

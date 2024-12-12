@@ -105,10 +105,12 @@ const ThirdStage = ({
   return (
     <JoinView
       client={client}
+      setStages={setStage}
       availableRooms={availableRooms}
       handleSelectRoom={handleSelectRoom}
       dogsInRooms={dogsInRooms}
       handleSubmit={handleSubmit}
+      freeCapacityPercentage={parseFloat(freeCapacityPercentage)}
     />
   );
 };
