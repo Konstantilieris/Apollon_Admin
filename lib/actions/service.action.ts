@@ -356,6 +356,8 @@ export async function partialPayment({
   try {
     session.startTransaction();
 
+    console.log("Starting partial payment process");
+
     // Fetch all unpaid services for the client, sorted by the smallest remaining amount
     const unpaidServices = await Service.find(
       { clientId, paid: false },
@@ -364,17 +366,27 @@ export async function partialPayment({
     ).session(session);
 
     if (unpaidServices.length === 0) {
-      throw new Error("No unpaid services found.");
+      throw new Error("No unpaid services found for the client.");
     }
+
+    console.log(`Found ${unpaidServices.length} unpaid services.`);
 
     let remainingPayment = amount;
     let totalPaymentApplied = 0;
 
     // Apply payment to each unpaid service
     for (const service of unpaidServices) {
-      if (remainingPayment >= service.remainingAmount!) {
-        remainingPayment -= service.remainingAmount!;
-        totalPaymentApplied += service.remainingAmount!;
+      console.log(
+        `Processing service ${service._id}: Remaining amount: ${service.remainingAmount}, Paid amount: ${service.paidAmount}`
+      );
+
+      if (!service.remainingAmount || service.remainingAmount < 0) {
+        throw new Error(`Service ${service._id} has invalid remainingAmount.`);
+      }
+
+      if (remainingPayment >= service.remainingAmount) {
+        remainingPayment -= service.remainingAmount;
+        totalPaymentApplied += service.remainingAmount;
         service.paidAmount = service.amount;
         service.remainingAmount = 0;
         service.paid = true;
@@ -386,7 +398,13 @@ export async function partialPayment({
         remainingPayment = 0;
       }
 
+      console.log(
+        `Updated service ${service._id}: Remaining amount: ${service.remainingAmount}, Paid amount: ${service.paidAmount}`
+      );
+
       await service.save({ session });
+
+      // Remove service from client's owes list if fully paid
       if (service.paid) {
         await Client.updateOne(
           { _id: clientId },
@@ -394,15 +412,18 @@ export async function partialPayment({
           { session }
         );
       }
+
+      // Update booking if linked to the service
       if (service.bookingId) {
         const booking = await Booking.findById(service.bookingId).session(
           session
         );
         if (booking) {
-          booking.paidAmount = (booking.paidAmount || 0) + service.paidAmount!;
+          booking.paidAmount = (booking.paidAmount || 0) + service.paidAmount;
           await booking.save({ session });
         }
       }
+
       if (remainingPayment <= 0) break;
     }
 
@@ -412,39 +433,53 @@ export async function partialPayment({
       throw new Error("Client not found.");
     }
 
-    // Deduct the applied payment from owesTotal and add it to totalSpent
-    client.owesTotal = (client.owesTotal || 0) - totalPaymentApplied;
+    console.log(
+      `Updating client ${client._id}: OwesTotal: ${client.owesTotal}, TotalSpent: ${client.totalSpent}`
+    );
+
+    client.owesTotal = Math.max((client.owesTotal || 0) - totalPaymentApplied, 0);
     client.totalSpent = (client.totalSpent || 0) + totalPaymentApplied;
 
-    // If there's any remaining payment, add it to the client's credit
     if (remainingPayment > 0) {
       client.credit = (client.credit || 0) + remainingPayment;
     }
 
-    // Save the updated client with the session
     await client.save({ session });
+
+    console.log(
+      `Client ${client._id} updated: OwesTotal: ${client.owesTotal}, TotalSpent: ${client.totalSpent}, Credit: ${client.credit}`
+    );
+
+    // Update financial summary
     await FinancialSummary.findOneAndUpdate(
       {},
-      { $inc: { totalRevenue: totalPaymentApplied } }, // Increment total revenue by the applied payment amount
-      { session } // Create if not exists, and include in the transaction
+      { $inc: { totalRevenue: totalPaymentApplied } },
+      { session, upsert: true }
     );
+
+    console.log(`Financial summary updated: TotalRevenue incremented by ${totalPaymentApplied}`);
+
     // Commit the transaction
     await session.commitTransaction();
 
-    // Revalidate the path to update the client state if needed
+    console.log("Partial payment transaction committed successfully.");
+
+    // Revalidate the path
     revalidatePath(path);
 
     return { success: true, message: "Partial payment applied successfully." };
-  } catch (error) {
+  } catch (error:any) {
+    console.error("Error processing partial payment:", error);
+
     // Abort the transaction in case of an error
     await session.abortTransaction();
-    console.error("Error processing partial payment:", error);
-    throw error;
+
+    return { success: false, message: error.message || "Failed to process partial payment." };
   } finally {
-    // End the session
     session.endSession();
   }
 }
+
 export async function getPercentageIncrease() {
   try {
     await connectToDatabase(); // Ensure the database is connected
