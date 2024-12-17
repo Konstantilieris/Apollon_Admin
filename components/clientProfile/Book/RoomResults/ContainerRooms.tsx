@@ -15,14 +15,14 @@ const ContainerRooms = ({
   freeCapacityPercentage,
 }: ContainerRoomProps) => {
   return (
-    <section className="text-dark400_light500  mr-4  flex h-full w-full flex-col items-center overflow-x-hidden overflow-y-scroll  rounded-lg border border-neutral-400 bg-light-900 px-1 dark:bg-neutral-950">
+    <section className="text-dark400_light500  mr-4  flex h-full min-h-[70vh] w-full flex-col items-center overflow-x-hidden   rounded-lg border border-neutral-400 bg-light-900 px-1  dark:bg-neutral-950">
       <BookingSearchFilter
         freeCapacityPercentage={freeCapacityPercentage}
         pageNumber={pageNumber}
         isNext={isNext}
       />
       {rooms.length === 0 ? (
-        <div className="flex h-full w-full animate-pulse items-center justify-center text-xl dark:text-yellow-500">
+        <div className="my-auto flex h-full w-full animate-pulse items-center justify-center text-xl dark:text-yellow-500">
           ΕΠΕΛΕΞΕ ΗΜΕΡΟΜΗΝΙΕΣ
         </div>
       ) : (

@@ -1,19 +1,33 @@
 "use client";
-import React, { RefObject, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { IconPlus } from "@tabler/icons-react";
 import Carousel from "react-multi-carousel";
 import { useOutsideClick2 } from "@/hooks/use-outside-click2";
-import "react-multi-carousel/lib/styles.css";
+
 import { pushTagOnClient } from "@/lib/actions/client.action";
 
 import TagSelector from "./TagSelector";
 import CustomArrow from "@/components/shared/expenses/CustomArrow";
+import { getConstant } from "@/lib/actions/constant.action";
+import "react-multi-carousel/lib/styles.css";
+export interface Constant {
+  _id: string;
+  type: string;
+  value: string[];
+}
 
-const ClientTags = ({ clientTags, allTags, client }: any) => {
+const ClientTags = ({ clientTags, client }: any) => {
   const [showModal, setShowModal] = useState(false);
   const ref = useRef() as RefObject<HTMLDivElement>;
-
+  const [allTags, setAllTags] = useState<Constant | null>();
+  useEffect(() => {
+    const fetchTags = async () => {
+      const tags = await getConstant("Tags");
+      setAllTags(tags);
+    };
+    fetchTags();
+  }, []);
   const selectRef = useRef() as RefObject<HTMLDivElement>;
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [clientTagsValue, setClientTagsValue] = useState<string[]>(clientTags);
@@ -70,7 +84,7 @@ const ClientTags = ({ clientTags, allTags, client }: any) => {
   };
 
   return (
-    <div className="relative flex w-full max-w-[10vw] select-none items-center space-x-4 self-end rounded-lg bg-neutral-800 p-2">
+    <div className="relative flex h-[100px] w-[300px]  select-none items-center space-x-2 rounded-lg bg-neutral-800 p-2">
       {/* Plus Icon for adding a tag */}
       <IconPlus
         className="cursor-pointer text-white"
@@ -78,7 +92,7 @@ const ClientTags = ({ clientTags, allTags, client }: any) => {
       />
 
       {/* Modal using Framer Motion */}
-      {showModal && (
+      {showModal && allTags && (
         <motion.div
           ref={ref}
           initial="hidden"
@@ -103,7 +117,7 @@ const ClientTags = ({ clientTags, allTags, client }: any) => {
 
       {/* Carousel for displaying tags */}
       <Carousel
-        containerClass=" flex w-full space-x-2 overflow-x-auto min-h-[5vh]"
+        containerClass=" flex min-w-[200px] space-x-2 overflow-x-auto min-h-[5vh]"
         responsive={responsive}
         infinite={false}
         dotListClass="flex justify-center mt-4"

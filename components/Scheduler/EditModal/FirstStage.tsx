@@ -9,18 +9,36 @@ import {
   IconHome,
   IconArrowRight,
   IconLoader,
+  IconMoneybag,
 } from "@tabler/icons-react";
-import React, { useRef, useState } from "react";
+import React, { Suspense, useRef, useState } from "react";
 import Link from "next/link";
 import { deleteBooking } from "@/lib/actions/booking.action";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import BottomGradient from "@/components/ui/bottom-gradient";
+import { FiArrowRight } from "react-icons/fi";
 
-const FirstStage = ({ event, pairDate, setStage, onClose, reset }: any) => {
+interface Props {
+  event: any;
+  pairDate: Date;
+  setStage: (stage: number) => void;
+  onClose: () => void;
+  reset: () => void;
+  price: number;
+}
+const FirstStage = ({
+  event,
+  pairDate,
+  setStage,
+  onClose,
+  reset,
+  price,
+}: Props) => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const ref = useRef(null);
+
   const handleDelete = async () => {
     setLoading(true);
     try {
@@ -64,13 +82,32 @@ const FirstStage = ({ event, pairDate, setStage, onClose, reset }: any) => {
         {event.Subject}
       </p>
       {event.clientName && (
-        <Link
-          href={`/clients/${event.clientId}`}
-          className="flex flex-row items-center gap-2  pl-1  hover:text-blue-500 "
-        >
-          <IconUser />
-          {event?.clientName}
-        </Link>
+        <div className="flex flex-row items-center gap-4  ">
+          <div className="flex flex-row items-center gap-2  pl-1   ">
+            <IconUser />
+            {event?.clientName}
+          </div>
+          <Link
+            className="group flex h-10 items-center gap-2 rounded-full bg-neutral-700 pl-3 pr-4 transition-all duration-300 ease-in-out hover:bg-black hover:pl-2 hover:text-white active:bg-neutral-700"
+            href={`/clients/${event.clientId}`}
+            passHref
+          >
+            <span className="rounded-full bg-black p-1 text-sm transition-colors duration-300 group-hover:bg-white">
+              <FiArrowRight className="translate-x-[200%] text-[0px] transition-all duration-300 group-hover:translate-x-0 group-hover:text-lg group-hover:text-black group-active:-rotate-45" />
+            </span>
+            <span>ΠΡΟΦΙΛ</span>
+          </Link>
+          <Link
+            className="group flex h-10 items-center gap-2 rounded-full bg-neutral-700 pl-3 pr-4 transition-all duration-300 ease-in-out hover:bg-black hover:pl-2 hover:text-white active:bg-neutral-700"
+            href={`/clients/${event.clientId}/service`}
+            passHref
+          >
+            <span className="rounded-full bg-black p-1 text-sm transition-colors duration-300 group-hover:bg-white">
+              <FiArrowRight className="translate-x-[200%] text-[0px] transition-all duration-300 group-hover:translate-x-0 group-hover:text-lg group-hover:text-black group-active:-rotate-45" />
+            </span>
+            <span>ΥΠΗΡΕΣΙΕΣ</span>
+          </Link>
+        </div>
       )}
       {event.mobile && (
         <p className="flex flex-row items-center gap-2  pl-1 ">
@@ -132,6 +169,13 @@ const FirstStage = ({ event, pairDate, setStage, onClose, reset }: any) => {
           {dog.roomName}
         </p>
       ))}
+      <Suspense fallback={<IconLoader className="animate-spin" size={20} />}>
+        <div className="flex flex-row items-center gap-4 pl-1 text-xl font-semibold tracking-widest">
+          <IconMoneybag />
+          {price} €
+        </div>
+      </Suspense>
+
       <div className="absolute bottom-0 right-4 flex w-full flex-row items-center justify-end gap-4">
         <button
           onClick={handleDelete}

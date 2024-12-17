@@ -105,7 +105,8 @@ export const CustomModal: React.FC = () => {
         return (
           <FirstStage
             event={selectedEvent}
-            pairDate={pairDate}
+            price={booking?.totalAmount}
+            pairDate={pairDate!}
             setStage={setStage}
             onClose={onClose}
             reset={reset}
@@ -142,7 +143,7 @@ export const CustomModal: React.FC = () => {
           />
         );
       default:
-        return <FirstStage event={selectedEvent} pairDate={pairDate} />;
+        return null;
     }
   };
 

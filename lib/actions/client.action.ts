@@ -1002,3 +1002,132 @@ export async function getRegistrationsForPast6Months() {
     throw error;
   }
 }
+export async function getIfDogsBehaviorUnaccepted({
+  clientId,
+}: {
+  clientId: string;
+}) {
+  try {
+    connectToDatabase();
+    const client = await Client.findById(clientId, { dog: 1 });
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    const dogs = client.dog;
+    let unaccepted = false;
+    for (const dog of dogs) {
+      if (dog.behavior === "Unaccepted") {
+        unaccepted = true;
+        break;
+      }
+    }
+    return unaccepted;
+  } catch (error) {
+    console.error("Error checking if dogs behavior is unaccepted:", error);
+    throw error;
+  }
+}
+export async function getAverageStay(clientId: string): Promise<number> {
+  try {
+    connectToDatabase;
+    // Find all bookings for the given clientId
+    const bookings = await Booking.find({ "client.clientId": clientId });
+
+    if (bookings.length === 0) {
+      console.log("No bookings found for the given clientId.");
+      return 0; // Return 0 if no bookings found
+    }
+
+    // Calculate total stay duration in days
+    const totalStay = bookings.reduce((sum, booking) => {
+      const fromDate = new Date(booking.fromDate);
+      const toDate = new Date(booking.toDate);
+      const stayDuration =
+        (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24); // Difference in days
+      return sum + stayDuration;
+    }, 0);
+
+    // Calculate the average stay
+    const avgStay = totalStay / bookings.length;
+
+    return avgStay;
+  } catch (error) {
+    console.error("Error calculating average stay:", error);
+    throw error; // Re-throw the error for the caller to handle
+  }
+}
+export async function getBookingLength(clientId: string): Promise<number> {
+  try {
+    connectToDatabase();
+    const bookings = await Booking.find({
+      "client.clientId": clientId,
+    }).countDocuments();
+    if (bookings === 0) {
+      console.log("No bookings found for the given clientId.");
+      return 0;
+    }
+
+    return bookings;
+  } catch (error) {
+    console.error("Error calculating booking length:", error);
+    throw error;
+  }
+}
+export async function getAverageBookingsPerMonth(
+  clientId: string
+): Promise<number> {
+  try {
+    // Fetch all bookings for the client
+    connectToDatabase();
+    const bookings = await Booking.find({ "client.clientId": clientId });
+
+    if (bookings.length === 0) {
+      console.log("No bookings found for the given clientId.");
+      return 0; // Return 0 if no bookings exist
+    }
+
+    // Determine the earliest and latest dates in the bookings
+    const earliestBooking = bookings.reduce(
+      (earliest, current) =>
+        current.fromDate < earliest.fromDate ? current : earliest,
+      bookings[0]
+    );
+    const latestBooking = bookings.reduce(
+      (latest, current) => (current.toDate > latest.toDate ? current : latest),
+      bookings[0]
+    );
+
+    const totalMonths =
+      (latestBooking.toDate.getFullYear() -
+        earliestBooking.fromDate.getFullYear()) *
+        12 +
+      (latestBooking.toDate.getMonth() - earliestBooking.fromDate.getMonth()) +
+      1;
+
+    // Calculate average bookings per month
+    const avgBookingsPerMonth = bookings.length / totalMonths;
+
+    return avgBookingsPerMonth;
+  } catch (error) {
+    console.error("Error calculating average bookings per month:", error);
+    throw error;
+  }
+}
+export async function getLastBooking(clientId: string) {
+  try {
+    connectToDatabase();
+    const lastBooking = await Booking.find({
+      "client.clientId": clientId,
+    })
+      .sort({ createdAt: -1 })
+      .limit(1);
+    if (lastBooking.length === 0) {
+      console.log("No bookings found for the given clientId.");
+      return null;
+    }
+    return JSON.parse(JSON.stringify(lastBooking[0]));
+  } catch (error) {
+    console.error("Error fetching last booking:", error);
+    throw error;
+  }
+}

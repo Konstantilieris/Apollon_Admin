@@ -1,6 +1,6 @@
 import { Schema, models, model } from "mongoose";
 
-interface IConstant {
+export interface IConstant {
   type: string;
   value: string[];
 }

@@ -2,6 +2,7 @@ import BookingBox from "@/components/clientProfile/Book/BookingBox";
 
 import ContainerRooms from "@/components/clientProfile/Book/RoomResults/ContainerRooms";
 import LoadingSkeleton from "@/components/shared/skeletons/LoadingSkeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { getAllRoomsAndBookings } from "@/lib/actions/booking.action";
 import { getClientByIdForBooking } from "@/lib/actions/client.action";
@@ -30,19 +31,21 @@ const page = async ({ params, searchParams }: PageProps) => {
   const pageNumber = searchParams.page ? +searchParams.page : 1;
 
   return (
-    <section className="flex h-full w-full flex-col ">
-      <BookingBox client={JSON.parse(client || "")} />
-      <Suspense
-        fallback={<LoadingSkeleton size={100} animation="animate-spin" />}
-      >
-        <ContainerRooms
-          rooms={rooms}
-          isNext={isNext}
-          pageNumber={pageNumber}
-          freeCapacityPercentage={freeCapacityPercentage}
-        />
-      </Suspense>
-    </section>
+    <ScrollArea className=" mb-20 h-full w-full">
+      <section className="mt-12 flex h-full w-full flex-col">
+        <BookingBox client={JSON.parse(client || "")} />
+        <Suspense
+          fallback={<LoadingSkeleton size={100} animation="animate-spin" />}
+        >
+          <ContainerRooms
+            rooms={rooms}
+            isNext={isNext}
+            pageNumber={pageNumber}
+            freeCapacityPercentage={freeCapacityPercentage}
+          />
+        </Suspense>
+      </section>
+    </ScrollArea>
   );
 };
 

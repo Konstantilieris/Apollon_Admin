@@ -98,8 +98,8 @@ const page = async ({ params }: { params: any }) => {
   ];
 
   return (
-    <ScrollArea className="h-full w-full ">
-      <div className="no-scrollbar relative mb-20 flex h-full w-full flex-row justify-between gap-1 overflow-y-scroll py-4 max-md:flex-col">
+    <ScrollArea className=" mb-20 h-full w-full">
+      <div className=" relative  flex h-full w-full flex-row justify-between gap-1 py-4 max-md:flex-col">
         <div className="ml-4   flex w-full   flex-col items-start gap-4 ">
           <ClientInfoCard
             title="ΣΤΟΙΧΕΙΑ ΠΕΛΑΤΗ"

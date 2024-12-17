@@ -28,7 +28,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 type ConstantProps = {
-  items: { value: string }[];
+  items: string[];
   className?: string;
   type: string;
   label: string;

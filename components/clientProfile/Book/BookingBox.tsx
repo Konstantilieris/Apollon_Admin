@@ -17,7 +17,7 @@ const BookingBox = ({ client }: any) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className=" relative flex w-full flex-row items-center justify-center rounded-full bg-dark-100">
+    <div className=" relative flex h-full w-full flex-row items-center justify-center rounded-full bg-dark-100">
       <div className="absolute flex flex-row items-center gap-2">
         <BookingDatePicker useHook={useBookingStore} />
 
