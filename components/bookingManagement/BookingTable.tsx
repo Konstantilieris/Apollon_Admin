@@ -32,6 +32,9 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
             Μεταφορά
           </TableHead>
           <TableHead className="px-4 text-center max-md:hidden">
+            Πληρωμένο Ποσό
+          </TableHead>
+          <TableHead className="px-4 text-center max-md:hidden">
             Συνολικό Κόστος
           </TableHead>
         </TableRow>
@@ -51,7 +54,6 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
                 />
               </Link>
             </TableCell>
-
             <TableCell className="p-4 text-center max-md:hidden">
               <div className="tracking-wide">
                 {moment
@@ -66,7 +68,6 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
                   .format("DD-MM-YYYY HH:mm")}
               </div>
             </TableCell>
-
             <TableCell className="truncate p-4 text-center text-base font-normal uppercase">
               <Link
                 href={`/clients/${booking?.client?.clientId}`}
@@ -75,11 +76,9 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
                 {booking?.client?.clientName}
               </Link>
             </TableCell>
-
             <TableCell className="p-4 text-center text-base font-normal">
               {booking?.client?.phone}
             </TableCell>
-
             <TableCell className="p-4 text-center text-base font-normal max-md:hidden">
               {booking?.dogs?.map((dog: any) => (
                 <div key={dog._id} className="">
@@ -87,13 +86,11 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
                 </div>
               ))}
             </TableCell>
-
             <TableCell className="p-4 text-center text-base font-normal">
               {booking?.dogs?.map((dog: any) => (
                 <div key={dog._id}>{dog?.roomName || "N/A"}</div>
               ))}
             </TableCell>
-
             <TableCell className="p-4 text-center text-base font-normal">
               {booking?.flag1 && (
                 <div className="font-semibold uppercase text-green-500 dark:text-green-400">
@@ -108,6 +105,9 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
               {!booking?.flag1 && !booking?.flag2 && <span>ΟΧΙ</span>}
             </TableCell>
 
+            <TableCell className="p-4 text-center text-base font-normal">
+              {booking?.paidAmount} €
+            </TableCell>
             <TableCell className="p-4 text-center text-base font-normal">
               {booking?.totalAmount} €
             </TableCell>

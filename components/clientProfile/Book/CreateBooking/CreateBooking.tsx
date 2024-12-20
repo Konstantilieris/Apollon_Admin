@@ -63,6 +63,7 @@ const CreateBooking = ({
       () => amount + transportFeeArrival + transportFeeDeparture + extraDayPrice
     );
   }, [amount]);
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -76,6 +77,7 @@ const CreateBooking = ({
         dateArrival,
         dateDeparture,
         extraDay,
+        extraDayPrice,
         boardingPrice: amount,
         transportationPrice: client.transportFee,
         dogsData: data,

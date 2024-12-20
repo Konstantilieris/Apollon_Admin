@@ -8,7 +8,6 @@ import "moment/locale/el";
 import mongoose from "mongoose";
 import moment from "moment";
 import FinancialSummary from "@/database/models/financial.model";
-import Booking from "@/database/models/booking.model";
 
 export async function getMonthlyIncome() {
   const startDate = startOfMonth(new Date());
@@ -150,17 +149,7 @@ export async function payService({ service, path }: any) {
     if (!client) {
       throw new Error("Client not found or update failed.");
     }
-    if (service.bookingId) {
-      await Booking.findByIdAndUpdate(
-        service.bookingId,
-        {
-          $inc: {
-            paidAmount: service.remaningAmount,
-          },
-        },
-        { session }
-      );
-    }
+
     await FinancialSummary.findOneAndUpdate(
       {}, // Assuming a single document for financial summary
       { $inc: { totalRevenue: service.remainingAmount } }, // Increment total revenue
@@ -413,17 +402,6 @@ export async function partialPayment({
         );
       }
 
-      // Update booking if linked to the service
-      if (service.bookingId) {
-        const booking = await Booking.findById(service.bookingId).session(
-          session
-        );
-        if (booking) {
-          booking.paidAmount = (booking.paidAmount || 0) + service.paidAmount;
-          await booking.save({ session });
-        }
-      }
-
       if (remainingPayment <= 0) break;
     }
 
@@ -437,7 +415,10 @@ export async function partialPayment({
       `Updating client ${client._id}: OwesTotal: ${client.owesTotal}, TotalSpent: ${client.totalSpent}`
     );
 
-    client.owesTotal = Math.max((client.owesTotal || 0) - totalPaymentApplied, 0);
+    client.owesTotal = Math.max(
+      (client.owesTotal || 0) - totalPaymentApplied,
+      0
+    );
     client.totalSpent = (client.totalSpent || 0) + totalPaymentApplied;
 
     if (remainingPayment > 0) {
@@ -457,7 +438,9 @@ export async function partialPayment({
       { session, upsert: true }
     );
 
-    console.log(`Financial summary updated: TotalRevenue incremented by ${totalPaymentApplied}`);
+    console.log(
+      `Financial summary updated: TotalRevenue incremented by ${totalPaymentApplied}`
+    );
 
     // Commit the transaction
     await session.commitTransaction();
@@ -468,13 +451,16 @@ export async function partialPayment({
     revalidatePath(path);
 
     return { success: true, message: "Partial payment applied successfully." };
-  } catch (error:any) {
+  } catch (error: any) {
     console.error("Error processing partial payment:", error);
 
     // Abort the transaction in case of an error
     await session.abortTransaction();
 
-    return { success: false, message: error.message || "Failed to process partial payment." };
+    return {
+      success: false,
+      message: error.message || "Failed to process partial payment.",
+    };
   } finally {
     session.endSession();
   }

@@ -42,14 +42,16 @@ interface ICreateBooking {
   flag1: Boolean;
   flag2: Boolean;
   roomPrefer: string;
+  extraDayPrice: number;
 }
 
 export async function createBooking({
   dateArrival,
   dateDeparture,
   client,
-  boardingPrice = 30,
+  boardingPrice,
   transportationPrice,
+  extraDayPrice,
   path,
   flag1,
   flag2,
@@ -80,7 +82,8 @@ export async function createBooking({
       // Step 1: Generate bookingId and create services
       const bookingId = new mongoose.Types.ObjectId();
       const servicesToAdd = [];
-      let totalAmount = 0;
+      // Calculate total amount
+      let totalAmount = extraDayPrice + boardingPrice;
 
       // Create boarding service
       console.log("Creating boarding service...");
@@ -88,7 +91,7 @@ export async function createBooking({
         [
           {
             serviceType: "ΔΙΑΜΟΝΗ",
-            amount: boardingPrice,
+            amount: totalAmount,
             clientId: client.clientId,
             bookingId,
             date: dateArrival,
@@ -505,6 +508,7 @@ export async function getAllBookings({
           fromDate: 1,
           toDate: 1,
           totalAmount: 1,
+          paidAmount: 1,
           dogs: 1,
           flag1: 1,
           flag2: 1,
