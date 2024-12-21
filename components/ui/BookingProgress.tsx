@@ -16,8 +16,8 @@ const SteppedProgress = ({ client }: SteppedProgressProps) => {
     clientId: client._id,
     clientName: client.name,
     phone: client?.phone?.mobile
-      ? client?.phone?.mobile
-      : client?.phone?.telephone || "",
+      ? client?.phone?.mobile || " "
+      : client?.phone?.telephone || " ",
     location: client?.location?.address + ", " + client?.location?.city,
     transportFee: client.transportFee,
     bookingFee: client.bookingFee,

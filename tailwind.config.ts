@@ -21,6 +21,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        bronze: "#8C5726",
         bankGradient: "#0179FE",
         Tomato: "#FF6347",
         SteelBlue: "#4682B4",

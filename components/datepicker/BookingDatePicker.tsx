@@ -29,10 +29,7 @@ interface BookingDateProps {
 export function BookingDatePicker({ className, useHook }: BookingDateProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const isDisabled = (date: Date) => {
-    const today = new Date();
-    return date.getTime() < today.setHours(0, 0, 0, 0); // Disable dates before today
-  };
+
   const { dateArrival, dateDeparture, setDateArrival, setDateDeparture } =
     useHook();
   const [rangeDate, setRangeDate] = React.useState<DateRange | undefined>(
@@ -126,7 +123,7 @@ export function BookingDatePicker({ className, useHook }: BookingDateProps) {
         </PopoverTrigger>
         <PopoverContent
           align="center"
-          className="flex max-h-[44vh] min-h-[46vh] w-auto flex-col overflow-hidden p-0  dark:bg-neutral-950"
+          className="flex  w-auto flex-col overflow-hidden p-0  dark:bg-neutral-950"
         >
           <div className="flex  h-full ">
             <Calendar
@@ -137,7 +134,6 @@ export function BookingDatePicker({ className, useHook }: BookingDateProps) {
               onSelect={handleRangeDate}
               numberOfMonths={2}
               locale={el}
-              disabled={isDisabled}
             />
           </div>
         </PopoverContent>

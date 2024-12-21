@@ -8,6 +8,7 @@ import "moment/locale/el";
 import mongoose from "mongoose";
 import moment from "moment";
 import FinancialSummary from "@/database/models/financial.model";
+import Booking from "@/database/models/booking.model";
 
 export async function getMonthlyIncome() {
   const startDate = startOfMonth(new Date());
@@ -716,6 +717,78 @@ export async function getPaidServicesIncomeLast6Months() {
     return incomeByMonth;
   } catch (error) {
     console.error(`Error fetching paid services income:`, error);
+    throw error;
+  }
+}
+export async function discountSelectedServices({
+  services,
+  discount,
+  clientId,
+  path,
+}: {
+  services: any[];
+  discount: number[];
+  clientId: string;
+  path: string;
+}) {
+  const session = await mongoose.startSession();
+  try {
+    console.log("Discounting services...", services);
+    console.log("Discount", discount);
+    connectToDatabase();
+    session.startTransaction();
+    // calculate total Reduction for client's totalOwes
+    const totalReduction = discount.reduce((acc, curr) => acc + curr, 0);
+    // for loop the services
+    for (let i = 0; i < services.length; i++) {
+      // update each service
+      const service = await Service.findByIdAndUpdate(
+        services[i]._id,
+        {
+          $inc: { remainingAmount: -discount[i], amount: -discount[i] },
+        },
+        { new: true, session }
+      );
+      if (!service) {
+        throw new Error("Service not found.");
+      }
+      // update booking if service has serviceType 'ΔΙΑΜΟΝΗ'
+      if (service.serviceType === "ΔΙΑΜΟΝΗ") {
+        const booking = await Booking.findOneAndUpdate(
+          { _id: service.bookingId },
+          {
+            $inc: { totalAmount: -discount[i] },
+          },
+          { new: true, session }
+        );
+        if (!booking) {
+          throw new Error("Booking not found.");
+        }
+      }
+    }
+    console.log("Services Updated");
+    console.log("Total Reduction", totalReduction);
+
+    // update client's totalOwes
+    const client = await Client.updateOne(
+      { _id: clientId },
+      {
+        $inc: { owesTotal: -totalReduction },
+      },
+      { new: true, session }
+    );
+    if (!client) {
+      throw new Error("Client not found.");
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+    revalidatePath(path);
+    return true;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error discounting services:", error);
     throw error;
   }
 }

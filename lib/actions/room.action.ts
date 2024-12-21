@@ -6,11 +6,17 @@ import { connectToDatabase } from "../mongoose";
 import { DateRange } from "react-day-picker";
 import { revalidatePath } from "next/cache";
 
-export async function createRooms(name: string, path: string) {
+export async function createRoom({
+  name,
+  path,
+}: {
+  name: string;
+  path: string;
+}) {
   try {
     connectToDatabase();
 
-    const room = await Room.create({ name, price: 25 });
+    const room = await Room.create({ name });
     if (room) {
       revalidatePath(path);
       return JSON.parse(JSON.stringify(room));

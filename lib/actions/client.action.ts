@@ -1029,7 +1029,7 @@ export async function getIfDogsBehaviorUnaccepted({
 }
 export async function getAverageStay(clientId: string): Promise<number> {
   try {
-    connectToDatabase;
+    connectToDatabase();
     // Find all bookings for the given clientId
     const bookings = await Booking.find({ "client.clientId": clientId });
 

@@ -18,7 +18,7 @@ const ClientTable = ({ clients }: { clients: any }) => {
           <TableHead className="ml-2 text-start max-lg:hidden">
             Ημερομηνία
           </TableHead>
-          <TableHead className="text-center">Ονοματεπώνυμο</TableHead>
+          <TableHead className="text-center xl:pr-48">Ονοματεπώνυμο</TableHead>
           <TableHead className="px-2 text-center ">Σκύλος</TableHead>
           <TableHead className="px-2 text-center max-lg:hidden">
             Επάγγελμα

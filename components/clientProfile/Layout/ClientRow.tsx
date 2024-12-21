@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IDog } from "@/database/models/client.model";
 import RowRenderer from "@/components/clientProfile/ClientProfileCard/RowRenderer";
 import ChipTabs from "@/components/clientProfile/ClientProfileCard/ChipTabs";
+import { HeroSectionWithBeamsAndGrid } from "./BackgroundAnimation";
+
 export const dynamic = "force-dynamic";
 const ClientRow = async ({ id }: { id: string }) => {
   const client = await getClientById(id);
@@ -16,7 +18,8 @@ const ClientRow = async ({ id }: { id: string }) => {
     .join("") // Combine the initials
     .toUpperCase(); // Ensure they are uppercase
   return (
-    <section className="flex min-h-[200px] w-full flex-col bg-neutral-950">
+    <section className="relative flex min-h-[200px] w-full flex-col overflow-y-hidden bg-neutral-950">
+      <HeroSectionWithBeamsAndGrid />
       <div className="mt-4 flex h-full w-full flex-row px-8 py-4">
         <Avatar className="h-auto max-h-[10vh] w-auto max-w-[10vh]">
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />

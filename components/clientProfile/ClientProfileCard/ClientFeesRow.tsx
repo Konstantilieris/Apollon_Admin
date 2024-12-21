@@ -4,7 +4,7 @@ import ClientTransportCard from "./ClientTransportCard";
 
 const ClientFeesRow = ({ client }: any) => {
   return (
-    <div className=" flex w-full items-end justify-start gap-20 ">
+    <div className=" flex w-full items-end justify-end gap-12 ">
       <ClientTransportCard client={client} />
     </div>
   );

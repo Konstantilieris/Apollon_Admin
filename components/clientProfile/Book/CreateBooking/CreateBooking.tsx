@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { calculateTotalPrice, cn } from "@/lib/utils";
 import { createBooking } from "@/lib/actions/booking.action";
@@ -40,8 +40,9 @@ const CreateBooking = ({
     data,
     roomPreference,
     extraDay,
+    resetStore,
   } = useBookingStore();
-  const router = useRouter();
+
   const [amount, setAmount] = useState(
     calculateTotalPrice({
       fromDate: dateArrival || new Date(),
@@ -95,7 +96,6 @@ const CreateBooking = ({
           title: "Επιτυχία",
           description: "Η κράτηση δημιουργήθηκε",
         });
-        router.push("/calendar");
       }
     } catch (error) {
       toast({
@@ -105,6 +105,9 @@ const CreateBooking = ({
         title: "Failed to create Booking",
         description: `${error}`,
       });
+    } finally {
+      setLoading(false);
+      resetStore();
     }
   };
   if (loading) {

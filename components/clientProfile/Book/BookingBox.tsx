@@ -5,17 +5,25 @@ import { Button } from "@/components/ui/button";
 
 import { IconCheck } from "@tabler/icons-react";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import BookingSuggestion from "./RoomResults/BookingSuggestion";
 
 import { useBookingStore } from "@/hooks/booking-store";
+import { usePathname } from "next/navigation";
 
 const BookingBox = ({ client }: any) => {
-  const { dateArrival, dateDeparture, setStepsComplete } = useBookingStore();
+  const path = usePathname();
+  const { dateArrival, dateDeparture, setStepsComplete, resetStore } =
+    useBookingStore();
 
   const [open, setOpen] = useState(false);
-
+  // Reset the store when the user leaves the page
+  useEffect(() => {
+    return () => {
+      resetStore();
+    };
+  }, [path]);
   return (
     <div className=" relative flex h-full w-full flex-row items-center justify-center rounded-full bg-dark-100">
       <div className="absolute flex flex-row items-center gap-2">
