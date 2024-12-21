@@ -102,8 +102,6 @@ export async function createBooking({
       if (!boardingService[0])
         throw new Error("Boarding service creation failed");
       servicesToAdd.push(boardingService[0]._id);
-      totalAmount += boardingPrice;
-      console.log("firstTotalAmount", totalAmount);
 
       // Create transportation services based on flags
       if (flag1) {
