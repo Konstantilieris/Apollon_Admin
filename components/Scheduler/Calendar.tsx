@@ -180,6 +180,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
 
   const dateRef = useRef(new Date());
   const [isDragging, setIsDragging] = useState(false);
+
   // eslint-disable-next-line no-undef
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const renderIcon = useCallback((categoryId: number) => {
@@ -548,7 +549,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
         ignorewhitespace: true,
         dataSource: appointments,
         tooltipTemplate: tooltip,
-        enableTooltip: !isDragging || !open,
+        enableTooltip: !isDragging && !open,
         allowEditing: true,
         resources: ["Categories"],
 
