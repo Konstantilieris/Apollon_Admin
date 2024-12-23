@@ -44,7 +44,6 @@ import {
 } from "../ui/table";
 import Link from "next/link";
 import CreatePaymentTrigger from "../payments/PaymentSheet";
-import { id } from "date-fns/locale";
 
 export type Service = {
   id: string;

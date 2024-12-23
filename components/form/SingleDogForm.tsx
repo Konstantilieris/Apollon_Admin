@@ -31,7 +31,7 @@ const SingleDogForm = ({ form }: any) => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <section className="mb-4 w-full space-y-4 ">
+    <section className="mb-4 w-full space-y-8 ">
       <CustomFormField
         fieldType={FormFieldType.INPUT}
         control={form.control}
@@ -48,7 +48,7 @@ const SingleDogForm = ({ form }: any) => {
         renderSkeleton={(field) => (
           <FormControl>
             <RadioGroup
-              className="flex h-11 gap-6  xl:justify-between"
+              className="mb-8 flex w-80  flex-col gap-2 "
               onValueChange={field.onChange}
               defaultValue={field.value}
             >
@@ -64,6 +64,25 @@ const SingleDogForm = ({ form }: any) => {
                 </div>
               ))}
             </RadioGroup>
+          </FormControl>
+        )}
+      />
+      <CustomFormField
+        fieldType={FormFieldType.SKELETON}
+        control={form.control}
+        name={`breed`}
+        label="Ράτσα"
+        renderSkeleton={(field) => (
+          <FormControl>
+            <ConstantSwitcher
+              items={breeds.value}
+              type="Breeds"
+              label="Ράτσα"
+              placeholder="Ράτσα"
+              heading="ΡΑΤΣΕΣ"
+              selectedItem={field.value}
+              setSelectedItem={field.onChange}
+            />
           </FormControl>
         )}
       />
@@ -89,19 +108,27 @@ const SingleDogForm = ({ form }: any) => {
       <CustomFormField
         fieldType={FormFieldType.SKELETON}
         control={form.control}
-        name={`breed`}
-        label="Ράτσα"
+        name={`sterilized`}
+        label="Στειρωμένο"
         renderSkeleton={(field) => (
           <FormControl>
-            <ConstantSwitcher
-              items={breeds.value}
-              type="Breeds"
-              label="Ράτσα"
-              placeholder="Ράτσα"
-              heading="ΡΑΤΣΕΣ"
-              selectedItem={field.value}
-              setSelectedItem={field.onChange}
-            />
+            <RadioGroup
+              className="flex w-80 flex-col  gap-2 "
+              onValueChange={(value) => field.onChange(value === "Ναι")}
+              defaultValue={field.value ? "Ναι" : "Όχι"} // Map boolean to "Ναι" or "Όχι"
+            >
+              {TypesOfSterilized.map((option, i) => (
+                <div key={option.label + i} className="radio-group">
+                  <RadioGroupItem id={option.label} value={option.label} />
+                  <Label
+                    htmlFor={option.label}
+                    className="cursor-pointer text-dark-300 dark:text-light-700"
+                  >
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
           </FormControl>
         )}
       />
@@ -136,33 +163,6 @@ const SingleDogForm = ({ form }: any) => {
               selectedItem={field.value}
               setSelectedItem={field.onChange}
             />
-          </FormControl>
-        )}
-      />
-      <CustomFormField
-        fieldType={FormFieldType.SKELETON}
-        control={form.control}
-        name={`sterilized`}
-        label="Στειρωμένο"
-        renderSkeleton={(field) => (
-          <FormControl>
-            <RadioGroup
-              className="flex h-11 gap-6  xl:justify-between"
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-            >
-              {TypesOfSterilized.map((option, i) => (
-                <div key={option + i} className="radio-group">
-                  <RadioGroupItem value={option} id={option} />
-                  <Label
-                    htmlFor={option}
-                    className="cursor-pointer text-dark-300 dark:text-light-700"
-                  >
-                    {option}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
           </FormControl>
         )}
       />

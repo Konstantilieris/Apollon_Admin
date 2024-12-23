@@ -43,13 +43,12 @@ const DogEditView = ({
       breed: active.breed ? active.breed : "",
       behavior: active.behavior ? active.behavior : "",
       microchip: active.microchip ? active.microchip : "",
-      sterilized: active.sterilized ? active.sterilized : "Όχι",
+      sterilized: active.sterilized ?? false,
     },
   });
   const onSubmit = async (values: z.infer<typeof SingleDogValidation>) => {
     const dog = {
       ...values,
-      sterilized: values.sterilized === "Ναί",
     };
 
     try {
@@ -103,7 +102,7 @@ const DogEditView = ({
               autoComplete="off"
             >
               <SingleDogForm form={form} />
-              <div className="flex w-full flex-row justify-end gap-2">
+              <div className="flex w-full flex-row justify-center gap-2">
                 <button
                   className="rounded bg-neutral-500 px-4 py-2   text-white"
                   onClick={() => {

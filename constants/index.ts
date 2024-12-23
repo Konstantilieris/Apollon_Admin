@@ -98,7 +98,10 @@ export const TypesOfResidence = [
   "Εργασία",
 ];
 
-export const TypesOfSterilized = ["Ναί", "Όχι"];
+export const TypesOfSterilized = [
+  { label: "Ναι", value: true },
+  { label: "Όχι", value: false },
+];
 
 export const colors = [
   { label: "Tomato", value: "#FF6347" },

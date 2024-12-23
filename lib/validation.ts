@@ -138,7 +138,7 @@ export const SingleDogValidation = z.object({
   breed: z.string().optional(),
   behavior: z.string().optional(),
   microchip: z.string().optional(),
-  sterilized: z.string().optional(),
+  sterilized: z.boolean().optional(),
 });
 
 export const BookingValidation1 = z.object({
