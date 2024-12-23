@@ -99,7 +99,7 @@ const DogForm = ({
           {renderDogFields()}
         </form>
       </Form>
-      <div className="mb-20 mt-12 flex h-full w-full flex-row justify-center gap-8 self-end">
+      <div className="mb-20 mt-12 flex h-full w-full flex-row items-center justify-center gap-8 self-end">
         <button className="relative p-[3px]" onClick={() => setStage(0)}>
           <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-500 to-orange-950" />
           <div className="group relative  rounded-[6px] bg-light-700 px-8  py-2 font-semibold text-dark-300 transition duration-200 hover:bg-transparent dark:bg-black dark:text-white dark:hover:bg-transparent">

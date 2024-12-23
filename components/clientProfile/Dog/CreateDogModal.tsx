@@ -42,7 +42,7 @@ const CreateDogModal = ({
       breed: "",
       behavior: "",
       microchip: "",
-      sterilized: "Όχι",
+      sterilized: false,
     },
   });
   useEffect(() => {
@@ -58,7 +58,7 @@ const CreateDogModal = ({
       breed: values.breed,
       behavior: values.behavior,
       microchip: values.microchip,
-      sterilized: values.sterilized === "Ναί",
+      sterilized: values.sterilized,
     };
     setLoading(true);
     try {

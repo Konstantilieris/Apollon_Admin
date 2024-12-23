@@ -127,16 +127,16 @@ const DogField = ({ form, index, breeds, behaviors, foods }: any) => {
             <RadioGroup
               className="flex h-11 gap-6 xl:justify-between"
               defaultValue={"Όχι"}
-              onValueChange={(value) => field.onChange(value === "Ναί")}
+              onValueChange={(value) => field.onChange(value === "Ναι")}
             >
               {TypesOfSterilized.map((option: any, i: number) => (
                 <div key={option + i} className="radio-group">
-                  <RadioGroupItem value={option} id={option} />
+                  <RadioGroupItem id={option.label} value={option.label} />
                   <Label
-                    htmlFor={option}
+                    htmlFor={option.label}
                     className="cursor-pointer text-dark-300 dark:text-light-700"
                   >
-                    {option}
+                    {option.label}
                   </Label>
                 </div>
               ))}
