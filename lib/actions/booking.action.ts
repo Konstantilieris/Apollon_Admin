@@ -514,7 +514,7 @@ export async function getAllBookings({
         },
       },
       {
-        $sort: { fromDate: -1 },
+        $sort: { fromDate: 1, toDate: 1 },
       },
       {
         $facet: {
@@ -1216,18 +1216,34 @@ export async function updateBookingAllInclusive({
 }: any) {
   const session = await mongoose.startSession(); // Start session
   await connectToDatabase(); // Ensure single connection
-
+  console.log("$$$$booking", dogsData);
   try {
     session.startTransaction(); // Start transaction
 
     const servicesToAdd = [];
     const servicesToDelete = [];
+    // update appointments with dogsData
+    const appointments = await Appointment.updateMany(
+      { Id: booking._id },
+      {
+        dogsData,
+      },
+      { session }
+    );
+    if (!appointments) {
+      throw new Error("Failed to update appointments");
+    }
 
     let calculateBoardingFee = calculateTotalPrice({
       fromDate: rangeDate.from,
       toDate: rangeDate.to,
       dailyPrice: booking.client.bookingFee,
     });
+    if (booking.extraDay) {
+      calculateBoardingFee += booking.client.bookingFee;
+    }
+    console.log("$$$$boarding", calculateBoardingFee);
+    console.log("$$$$booking", booking.client.bookingFee);
     if (extraDay && !booking.extraDay) {
       calculateBoardingFee += booking.client.bookingFee;
     } else if (!extraDay && booking.extraDay) {
@@ -1251,6 +1267,7 @@ export async function updateBookingAllInclusive({
         totalAmount: calculateTotalAmount,
         fromDate: rangeDate.from,
         toDate: rangeDate.to,
+        extraDay,
         flag1: isTransport1,
         flag2: isTransport2,
       },
@@ -1265,14 +1282,16 @@ export async function updateBookingAllInclusive({
       { bookingId: booking._id, serviceType: "ΔΙΑΜΟΝΗ" },
       {
         amount: calculateBoardingFee,
-        remaingAmount: calculateBoardingFee,
+        remainingAmount: calculateBoardingFee,
         date: rangeDate.from,
       },
       { new: true, session } // Pass session
     );
+
     if (!updatedService) {
       throw new Error("Failed to update service");
     }
+    console.log("$$$$service", updatedService);
 
     // Handle Transport 1 (Pick-up)
     if (isTransport1 && booking.flag1) {
@@ -1283,7 +1302,7 @@ export async function updateBookingAllInclusive({
       );
       const updatedAppointment = await Appointment.findOneAndUpdate(
         { Id: booking._id, Type: "Taxi_PickUp" },
-        { StartTime: rangeDate.from, EndTime: rangeDate.from },
+        { StartTime: rangeDate.from, EndTime: rangeDate.from, dogsData },
         { new: true, session } // Pass session
       );
       if (!updatedPickUpService || !updatedAppointment) {
@@ -1306,6 +1325,7 @@ export async function updateBookingAllInclusive({
         { Id: booking._id, Type: "Arrival" },
         {
           StartTime: rangeDate.from,
+          dogsData,
           EndTime: rangeDate.from,
           Subject: `ΠΑΡΑΛΑΒΗ`,
           Type: "Taxi_PickUp",
@@ -1326,6 +1346,7 @@ export async function updateBookingAllInclusive({
       const updatedAppointment = await Appointment.findOneAndUpdate(
         { Id: booking._id, Type: "Taxi_PickUp" },
         {
+          dogsData,
           StartTime: rangeDate.from,
           EndTime: rangeDate.from,
           Subject: `ΑΦΙΞΗ`,
@@ -1350,7 +1371,8 @@ export async function updateBookingAllInclusive({
       );
       const updatedAppointment = await Appointment.findOneAndUpdate(
         { Id: booking._id, Type: "Taxi_Delivery" },
-        { StartTime: rangeDate.to, EndTime: rangeDate.to },
+
+        { StartTime: rangeDate.to, EndTime: rangeDate.to, dogsData },
         { new: true, session } // Pass session
       );
       if (!updatedDropOffService || !updatedAppointment) {
@@ -1372,6 +1394,7 @@ export async function updateBookingAllInclusive({
       const dropOffAppointment = await Appointment.findOneAndUpdate(
         { Id: booking._id, Type: "Departure" },
         {
+          dogsData,
           StartTime: rangeDate.to,
           EndTime: rangeDate.to,
           Subject: `ΠΑΡΑΔΟΣΗ`,
@@ -1397,6 +1420,7 @@ export async function updateBookingAllInclusive({
           EndTime: rangeDate.to,
           Subject: `ΑΝΑΧΩΡΗΣΗ`,
           Type: "Departure",
+          dogsData,
           categoryId: 2,
           $unset: { isTransport: "" },
         },

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 
 import {
   Table,
@@ -12,8 +12,9 @@ import {
 
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { cn, stringToHexColor } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { DropdownMenuAction } from "./OwesActionCommand";
+import { IconSelector } from "@tabler/icons-react";
 
 export interface Service {
   serviceType: string;
@@ -37,12 +38,21 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
   // State to store selected services (entire service object)
   const [selectedServices, setSelectedServices] = React.useState<Service[]>([]);
   const [totalSelectedAmount, setTotalSelectedAmount] = React.useState(0);
-  // Check if a service is selected by comparing its ID
+  const [oweServices, setOweServices] = React.useState<Service[]>(
+    services.length ? services : []
+  );
   const isServiceSelected = (serviceId: string) =>
     selectedServices.some(
       (selectedService) => selectedService._id === serviceId
     );
-
+  const [sortOrder, setSortOrder] = useState<{ [key: string]: "asc" | "desc" }>(
+    {
+      date: "asc",
+      name: "asc",
+      remaining: "asc",
+      amount: "asc",
+    }
+  );
   // Handle checkbox changes
   const handleCheckboxChange = (service: Service, isChecked: boolean) => {
     if (isChecked) {
@@ -59,7 +69,31 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
       setTotalSelectedAmount((prevAmount) => prevAmount - service.amount);
     }
   };
+  const handleSort = (key: string) => {
+    return () => {
+      const newOrder = sortOrder[key] === "asc" ? "desc" : "asc";
 
+      const sortedServices = [...oweServices].sort((a, b) => {
+        let comparison = 0;
+
+        if (key === "date") {
+          comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+        } else if (key === "name") {
+          comparison = a.serviceType.localeCompare(b.serviceType);
+        } else if (key === "remaining") {
+          comparison = (a.remainingAmount ?? 0) - (b.remainingAmount ?? 0);
+        } else if (key === "amount") {
+          comparison = a.amount - b.amount;
+        }
+
+        // Reverse order if descending
+        return newOrder === "asc" ? comparison : -comparison;
+      });
+
+      setOweServices(sortedServices);
+      setSortOrder({ ...sortOrder, [key]: newOrder });
+    };
+  };
   return (
     <div className=" ml-8 min-h-[70vh] overflow-x-auto">
       <div className="mb-1 flex w-full flex-row text-lg">
@@ -72,23 +106,47 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
         <TableHeader>
           <TableRow className=" bg-dark-400  text-left">
             <TableHead className="px-4 py-3 font-semibold text-light-900">
-              Ημερομηνία
+              <span className="flex items-center">
+                Ημερομηνία
+                <IconSelector
+                  className="cursor-pointer"
+                  onClick={handleSort("date")}
+                />
+              </span>
             </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-light-900">
-              Υπηρεσία
+              <span className="flex items-center">
+                Υπηρεσία
+                <IconSelector
+                  className="cursor-pointer"
+                  onClick={handleSort("name")}
+                />
+              </span>
             </TableHead>
-            <TableHead className="px-4 py-3 font-semibold text-light-900">
+            <TableHead className="pl-12 font-semibold text-light-900">
               Σημειώση
             </TableHead>
 
             <TableHead className="text-center font-semibold text-light-900">
-              Οφειλόμενο
+              <span className="flex items-center">
+                Οφειλόμενο
+                <IconSelector
+                  className="cursor-pointer"
+                  onClick={handleSort("remaining")}
+                />
+              </span>
             </TableHead>
             <TableHead className="text-center font-semibold text-light-900">
               Eξοφλημένο
             </TableHead>
-            <TableHead className="text-center font-semibold text-light-900">
-              Σύνολο
+            <TableHead className=" font-semibold text-light-900">
+              <span className=" flex items-center">
+                Σύνολο
+                <IconSelector
+                  className="cursor-pointer"
+                  onClick={handleSort("amount")}
+                />
+              </span>
             </TableHead>
             <TableHead className="flex h-full w-full justify-end px-2 py-3 pb-2 font-semibold text-light-900">
               <DropdownMenuAction selectedServices={selectedServices} />
@@ -96,17 +154,12 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {services.map((service: Service, index: number) => {
-            let color;
+          {oweServices.map((service: Service, index: number) => {
             let serviceType = service.serviceType;
             if (serviceType === "Pet Taxi (Drop-Off)") {
               serviceType = "Pet Taxi (ΠΑΡΑΔΟΣΗ)";
             } else if (serviceType === "Pet Taxi (Pick-Up)") {
               serviceType = "Pet Taxi (ΠΑΡΑΛΑΒΗ)";
-            }
-
-            if (service.bookingId) {
-              color = stringToHexColor(service.bookingId);
             }
 
             return (
@@ -141,15 +194,13 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 <TableCell className="max-w-[7vw] truncate px-4 py-3 pl-8">
                   {service.notes || "N/A"}
                 </TableCell>
-                <TableCell className="text-center" style={{ color }}>
+                <TableCell className="pl-8">
                   {service.remainingAmount ?? "Ν/Α"} €
                 </TableCell>
                 <TableCell className="text-center">
                   {service.paidAmount ?? "Ν/Α"} €
                 </TableCell>
-                <TableCell className="text-center">
-                  {service.amount} €
-                </TableCell>
+                <TableCell className="pl-8">{service.amount} €</TableCell>
                 <TableCell className=" mr-6 flex flex-row justify-end">
                   <Checkbox
                     id={`checkbox-${service._id}`}

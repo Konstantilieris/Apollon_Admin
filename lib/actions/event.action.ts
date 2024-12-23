@@ -127,7 +127,7 @@ export async function updateBookingDateChange({ event, pairDate }: any) {
     if (!booking) {
       throw new Error(`Booking not found for ID ${event.Id}`);
     }
-
+    console.log("booking", booking);
     bookingFee = booking.client.bookingFee || 0;
 
     if (event.isArrival) {
@@ -158,7 +158,7 @@ export async function updateBookingDateChange({ event, pairDate }: any) {
     );
     await Service.findOneAndUpdate(
       { bookingId: event.Id, serviceType: "ΔΙΑΜΟΝΗ" },
-      { $inc: { amount: total } },
+      { $inc: { amount: total, remainingAmount: total } },
       { session }
     );
 

@@ -22,8 +22,7 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
           <TableHead className="px-4 text-center max-md:hidden">
             Ημερομηνία
           </TableHead>
-          <TableHead className="px-4 text-center">Ονοματεπώνυμο</TableHead>
-          <TableHead className="px-4 text-center">Τηλέφωνο</TableHead>
+          <TableHead className="px-4 text-center">Συν.Ημέρες</TableHead>
           <TableHead className="flex items-center justify-center gap-1 px-4 text-center">
             Σκύλοι <IconArrowBigRightLineFilled size={20} />
           </TableHead>
@@ -31,9 +30,10 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
           <TableHead className="px-4 text-center max-md:hidden">
             Μεταφορά
           </TableHead>
-          <TableHead className="px-4 text-center max-md:hidden">
-            Πληρωμένο Ποσό
-          </TableHead>
+
+          <TableHead className="px-4 text-center">Ονοματεπώνυμο</TableHead>
+          <TableHead className="px-4 text-center">Τηλέφωνο</TableHead>
+
           <TableHead className="px-4 text-center max-md:hidden">
             Συνολικό Κόστος
           </TableHead>
@@ -68,16 +68,9 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
                   .format("DD-MM-YYYY HH:mm")}
               </div>
             </TableCell>
-            <TableCell className="truncate p-4 text-center text-base font-normal uppercase">
-              <Link
-                href={`/clients/${booking?.client?.clientId}`}
-                className="hover:underline"
-              >
-                {booking?.client?.clientName}
-              </Link>
-            </TableCell>
-            <TableCell className="p-4 text-center text-base font-normal">
-              {booking?.client?.phone}
+            {/* next table cell calculate total days based on fromDate and toDate */}
+            <TableCell className="p-4 text-center max-md:hidden">
+              {moment(booking.toDate).diff(booking.fromDate, "days")}
             </TableCell>
             <TableCell className="p-4 text-center text-base font-normal max-md:hidden">
               {booking?.dogs?.map((dog: any) => (
@@ -104,10 +97,18 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
               )}
               {!booking?.flag1 && !booking?.flag2 && <span>ΟΧΙ</span>}
             </TableCell>
-
-            <TableCell className="p-4 text-center text-base font-normal">
-              {booking?.paidAmount} €
+            <TableCell className="truncate p-4 text-center text-base font-normal uppercase">
+              <Link
+                href={`/clients/${booking?.client?.clientId}`}
+                className="hover:underline"
+              >
+                {booking?.client?.clientName}
+              </Link>
             </TableCell>
+            <TableCell className="p-4 text-center text-base font-normal">
+              {booking?.client?.phone}
+            </TableCell>
+
             <TableCell className="p-4 text-center text-base font-normal">
               {booking?.totalAmount} €
             </TableCell>

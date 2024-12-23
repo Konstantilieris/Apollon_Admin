@@ -249,7 +249,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
     if (open || isDragging) return null;
 
     return (
-      <div className="h-full min-w-[22vw] border-none  text-light-900 outline-none ">
+      <div className="z-30 h-full min-w-[22vw]  border-none text-light-900 outline-none">
         {renderIcon(props.categoryId)}
         <div
           className={cn("mt-4 flex w-full flex-col gap-4 px-4", {
@@ -329,7 +329,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
         if (isArrival) {
           if (moment(EndTime).isAfter(pairedStartTime)) {
             alert(
-              "The arrival or pick-up cannot be later than the departure or delivery."
+              "Το χρονικό διάστημα της άφιξης δεν μπορεί να είναι μετά την αναχώρηση ή την παράδοση."
             );
             isTimeChangeValid = false;
 
@@ -340,7 +340,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
           // For departure or delivery, make sure the dragged event starts after the paired arrival or pick-up
           if (moment(StartTime).isBefore(pairedEndTime)) {
             alert(
-              "The departure or delivery cannot be earlier than the arrival or pick-up."
+              "Η αναχώρηση ή η παράδοση δεν μπορεί να είναι πριν από την άφιξη ή την παραλαβή."
             );
             isTimeChangeValid = false;
             args.cancel = true;
@@ -377,9 +377,10 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
           });
 
           if (roomAvailability) {
-            alert("The room is not available for the selected time range.");
-            setStage(2);
+            alert("ΤΟ ΔΩΜΑΤΙΟ ΔΕΝ ΕΙΝΑΙ ΔΙΑΘΕΣΙΜΟ");
             setSelectedEvent(draggedEvent);
+            setStage(2);
+
             args.cancel = true;
             removeClass([document.body], ["e-popup-open", "e-navigate"]);
             toggleOpen();
@@ -547,7 +548,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
         ignorewhitespace: true,
         dataSource: appointments,
         tooltipTemplate: tooltip,
-        enableTooltip: !isDragging,
+        enableTooltip: !isDragging || !open,
         allowEditing: true,
         resources: ["Categories"],
 

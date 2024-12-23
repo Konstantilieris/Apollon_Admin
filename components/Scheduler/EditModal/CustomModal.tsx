@@ -79,7 +79,8 @@ export const CustomModal: React.FC = () => {
     const fetchData = async () => {
       if (!selectedEvent?.clientId) return;
       const res = await getClientByIdForBooking(selectedEvent?.clientId);
-      setClient(JSON.parse(JSON.stringify(res)));
+      if (!res) return;
+      setClient(JSON.parse(res));
     };
     fetchData();
   }, [selectedEvent]);
@@ -149,7 +150,7 @@ export const CustomModal: React.FC = () => {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90"
       initial="hidden"
       animate="visible"
       exit="hidden"

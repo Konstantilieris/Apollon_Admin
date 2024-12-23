@@ -38,10 +38,11 @@ const FourthStage = ({
   const { toast } = useToast();
   const { dateArrival, dateDeparture, taxiArrival, taxiDeparture, extraDay } =
     useEditBookingStore();
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await getBookingById(JSON.parse(JSON.stringify(bookingId)));
-
+      console.log("$extraDay", extraDay);
       setBooking(JSON.parse(res));
     };
     fetchData();

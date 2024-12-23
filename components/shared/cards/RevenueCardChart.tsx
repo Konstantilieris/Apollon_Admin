@@ -17,6 +17,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function RevenueCardChart({ chartData }: any) {
+  console.log(chartData);
   return (
     <div className="h-full w-full">
       <ChartContainer config={chartConfig}>

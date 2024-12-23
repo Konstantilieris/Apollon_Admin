@@ -101,7 +101,9 @@ const ThirdStage = ({
     setData(filteredDogsInRooms); // Save only the dogs with assigned rooms
     setStage(3); // Move to the next stage
   }, [dogsInRooms, setRoomPreference, setData, setStage]);
-
+  useEffect(() => {
+    console.log(dogsInRooms);
+  }, [dogsInRooms]);
   return (
     <JoinView
       client={client}
