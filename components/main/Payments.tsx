@@ -44,6 +44,7 @@ import {
 } from "../ui/table";
 import Link from "next/link";
 import CreatePaymentTrigger from "../payments/PaymentSheet";
+import { id } from "date-fns/locale";
 
 export type Service = {
   id: string;
@@ -98,14 +99,25 @@ export const columns: ColumnDef<Service>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="uppercase">{row.getValue("clientName")}</div>
+      <div className=" uppercase">{row.getValue("clientName")}</div>
     ),
   },
   {
     accessorKey: "date",
-    header: "ΗΜ. ΠΑΡΟΧΗΣ",
+    // Sort by date
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          ΗΜ. ΠΑΡΟΧΗΣ
+          <ArrowUpDown />
+        </Button>
+      );
+    },
     cell: ({ row }) => (
-      <div>
+      <div className="ml-8">
         {new Date(row.getValue("date")).toLocaleDateString("el-GR", {
           year: "numeric",
           month: "short",
@@ -116,30 +128,68 @@ export const columns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "paid",
-    header: "ΕΞΟΦΛΕΙΜΕΝΟ",
+    // Sort by paid status
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          ΕΞΟΦΛΕΙΜΕΝΟ
+          <ArrowUpDown />
+        </Button>
+      );
+    },
     cell: ({ row }) => (
-      <div className="ml-8 capitalize">
+      <div className="ml-12 capitalize">
         {row.getValue("paid") ? "NAI" : "OXI"}
       </div>
     ),
   },
   {
     accessorKey: "paymentDate",
-    header: "ΗΜ. ΠΛΗΡΩΜΗΣ",
+    // Sort by payment date
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          ΗΜ. ΠΛΗΡΩΜΗΣ
+          <ArrowUpDown />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const paymentDate = row.getValue("paymentDate");
-      return typeof paymentDate === "string" || typeof paymentDate === "number"
-        ? new Date(paymentDate).toLocaleDateString("el-GR", {
+      return typeof paymentDate === "string" ||
+        typeof paymentDate === "number" ? (
+        <span className="ml-8">
+          {new Date(paymentDate).toLocaleDateString("el-GR", {
             year: "numeric",
             month: "short",
             day: "numeric",
-          })
-        : "ΑΠΛΗΡΩΤΟ";
+          })}
+        </span>
+      ) : (
+        <span className="ml-8 tracking-widest text-red-500">ΑΠΛΗΡΩΤΟ</span>
+      );
     },
   },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right ">ΣΥΝΟΛΟ</div>,
+    // sort by amount
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          ΣΥΝΟΛΟ
+          <ArrowUpDown />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"));
 
@@ -149,7 +199,7 @@ export const columns: ColumnDef<Service>[] = [
         currency: "EUR",
       }).format(amount);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="ml-6 text-start font-medium">{formatted}</div>;
     },
   },
   {
