@@ -1217,6 +1217,31 @@ export async function updateBookingAllInclusive({
   const session = await mongoose.startSession(); // Start session
   await connectToDatabase(); // Ensure single connection
   console.log("$$$$booking", dogsData);
+  // if booking.client.transportFee is null or booking.client.bookingFee is null fetch from client
+  if (!booking.client.transportFee || !booking.client.bookingFee) {
+    const client = await Client.findById(booking.client.clientId);
+    if (!client) {
+      throw new Error("Client not found");
+    }
+
+    if (!booking.client.transportFee) {
+      const transportFeeService = client.serviceFees.find(
+        (service: any) => service.type === "transportFee"
+      );
+      booking.client.transportFee = transportFeeService
+        ? transportFeeService.value
+        : 30; // Default to 0 if not found
+    }
+
+    if (!booking.client.bookingFee) {
+      const bookingFeeService = client.serviceFees.find(
+        (service: any) => service.type === "bookingFee"
+      );
+      booking.client.bookingFee = bookingFeeService
+        ? bookingFeeService.value
+        : 30; // Default to 0 if not found
+    }
+  }
   try {
     session.startTransaction(); // Start transaction
 
@@ -1233,6 +1258,8 @@ export async function updateBookingAllInclusive({
     if (!appointments) {
       throw new Error("Failed to update appointments");
     }
+    console.log("$$$bookingfee", booking.client.bookingFee);
+    console.log("$$$transportfee", booking.client.transportFee);
 
     let calculateBoardingFee = calculateTotalPrice({
       fromDate: rangeDate.from,
@@ -1242,8 +1269,8 @@ export async function updateBookingAllInclusive({
     if (booking.extraDay) {
       calculateBoardingFee += booking.client.bookingFee;
     }
-    console.log("$$$$boarding", calculateBoardingFee);
-    console.log("$$$$booking", booking.client.bookingFee);
+    console.log("$$$$transport", booking.client.transportFee);
+
     if (extraDay && !booking.extraDay) {
       calculateBoardingFee += booking.client.bookingFee;
     } else if (!extraDay && booking.extraDay) {
@@ -1259,11 +1286,15 @@ export async function updateBookingAllInclusive({
     }
     console.log("Total amount:", calculateTotalAmount);
 
-    // Update booking
+    // Update booking and pass on client transport fee and booking fee
     const updatedBooking = await Booking.findOneAndUpdate(
       { _id: booking._id },
       {
         dogs: dogsData,
+        client: {
+          transportFee: booking.client.transportFee,
+          bookingFee: booking.client.bookingFee,
+        },
         totalAmount: calculateTotalAmount,
         fromDate: rangeDate.from,
         toDate: rangeDate.to,

@@ -3,14 +3,17 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { partialPayment } from "@/lib/actions/service.action";
 import { formatDate } from "@/lib/utils";
+import { IconLoader } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
 import React from "react";
 
 const PartialPayment = ({ client }: { client: any }) => {
   const [amount, setAmount] = React.useState<string | null>("0");
+  const [loading, setLoading] = React.useState(false);
   const path = usePathname();
   const { toast } = useToast();
   const handlePartialPayment = async () => {
+    setLoading(true);
     try {
       const res = await partialPayment({
         clientId: client.client._id,
@@ -29,6 +32,7 @@ const PartialPayment = ({ client }: { client: any }) => {
       console.error("Error charging client:", error);
     } finally {
       window.location.reload();
+      setLoading(false);
     }
   };
   return (
@@ -65,9 +69,13 @@ const PartialPayment = ({ client }: { client: any }) => {
       <button
         className="w-full max-w-[20vw] rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
         onClick={handlePartialPayment}
-        disabled={parseFloat(amount ?? "0") <= 0}
+        disabled={parseFloat(amount ?? "0") <= 0 || loading}
       >
-        Εξόφληση
+        {loading ? (
+          <IconLoader className="animate-spin" size={24} />
+        ) : (
+          "Εξόφληση"
+        )}
       </button>
     </div>
   );

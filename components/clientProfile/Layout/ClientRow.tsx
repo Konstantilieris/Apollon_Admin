@@ -6,6 +6,7 @@ import { IDog } from "@/database/models/client.model";
 import RowRenderer from "@/components/clientProfile/ClientProfileCard/RowRenderer";
 import ChipTabs from "@/components/clientProfile/ClientProfileCard/ChipTabs";
 import { HeroSectionWithBeamsAndGrid } from "./BackgroundAnimation";
+import { formatDateString } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 const ClientRow = async ({ id }: { id: string }) => {
@@ -26,15 +27,18 @@ const ClientRow = async ({ id }: { id: string }) => {
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
         <div className="flex w-full flex-col gap-2 p-2">
-          <span className="text-sm tracking-wide sm:text-lg md:text-xl">
+          <span className="text-sm tracking-widest sm:text-lg md:text-xl">
             {client?.name ?? ""}
+          </span>
+          <span className="text-base tracking-widest text-gray-400">
+            {formatDateString(client.createdAt)}
           </span>
           <div className="flex flex-row justify-between">
             <div className="flex flex-col">
-              <span className="text-sm text-gray-400 md:text-lg">
+              <span className="text-sm tracking-widest text-gray-400 md:text-lg">
                 Κατοικίδια
               </span>
-              <span className="text-sm text-light-900 md:text-lg">
+              <span className="text-sm tracking-widest text-light-900 md:text-lg">
                 {client?.dog.map((dog: IDog) => dog?.name).join(", ")}
               </span>
             </div>
