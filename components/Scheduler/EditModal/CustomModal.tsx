@@ -30,6 +30,7 @@ export const CustomModal: React.FC = () => {
     booking,
     setBooking,
     setExtraDay,
+    resetStore,
   } = useEditBookingStore();
 
   const [roomPreference, setRoomPreference] = useState("");
@@ -155,7 +156,11 @@ export const CustomModal: React.FC = () => {
       animate="visible"
       exit="hidden"
       variants={backdropVariants}
-      onClick={onClose}
+      onClick={() => {
+        onClose();
+        resetStore();
+        reset();
+      }}
       // Close modal on click outside the content
     >
       <motion.div

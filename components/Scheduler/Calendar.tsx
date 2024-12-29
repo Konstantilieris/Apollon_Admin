@@ -42,7 +42,6 @@ import {
   updateEventBookingOnlyTimeChange,
 } from "@/lib/actions/event.action";
 
-import { checkBookingRoomAvailability } from "@/lib/actions/booking.action";
 import "./calendar.css";
 
 import moment from "moment";
@@ -305,54 +304,52 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
   const onDragStop = async (args: any) => {
     setIsDragging(false);
     if (open) return;
+
     const draggedEvent = args.data;
 
-    // Check if it's a booking event and has a paired event (e.g., arrival/departure or pick-up/delivery)
     if (
-      draggedEvent?.categoryId === 2 ||
-      draggedEvent?.categoryId === 3 ||
-      draggedEvent?.categoryId === 4
+      draggedEvent?.categoryId === 2 || // Arrival
+      draggedEvent?.categoryId === 3 || // Transport
+      draggedEvent?.categoryId === 4 // Departure
     ) {
       const { Id, StartTime, EndTime, Type, isArrival } = draggedEvent;
 
-      // Find the paired event (e.g., the other event with the same bookingId)
+      // Find the paired event
       const pairedEvent = appointments.find(
         (event: any) => event.Id === Id && event.isArrival !== isArrival
       );
 
-      let isTimeChangeValid = true; // Track if the time change is valid
+      let isTimeChangeValid = true;
 
       if (pairedEvent) {
         const pairedStartTime = pairedEvent.StartTime;
         const pairedEndTime = pairedEvent.EndTime;
 
-        // Check constraints based on the event type (arrival/departure or pick-up/delivery)
+        // Validate time constraints
         if (isArrival) {
           if (moment(EndTime).isAfter(pairedStartTime)) {
             alert(
               "Το χρονικό διάστημα της άφιξης δεν μπορεί να είναι μετά την αναχώρηση ή την παράδοση."
             );
             isTimeChangeValid = false;
-
-            args.cancel = true;
+            args.cancel = true; // Cancel drag and revert
+            return;
           }
           setPairDate(pairedStartTime);
         } else if (!isArrival) {
-          // For departure or delivery, make sure the dragged event starts after the paired arrival or pick-up
           if (moment(StartTime).isBefore(pairedEndTime)) {
             alert(
               "Η αναχώρηση ή η παράδοση δεν μπορεί να είναι πριν από την άφιξη ή την παραλαβή."
             );
             isTimeChangeValid = false;
-            args.cancel = true;
+            args.cancel = true; // Cancel drag and revert
+            return;
           }
         }
         setPairDate(pairedEndTime);
       }
 
-      // If time constraints are valid and there's a time change, check room availability
       if (isTimeChangeValid) {
-        // Check if only the time has changed (compare the mm/dd/yyyy of both dates)
         const originalEvent = appointments.find(
           (event: any) => event.Id === Id && event.Type === Type
         );
@@ -362,7 +359,6 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
         ).toLocaleDateString();
         const draggedStartDate = new Date(StartTime).toLocaleDateString();
 
-        // If only the time has changed (same mm/dd/yyyy), skip room availability check
         if (originalStartDate === draggedStartDate) {
           try {
             await updateEventBookingOnlyTimeChange({ event: draggedEvent });
@@ -370,31 +366,14 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
             console.error(error);
           }
         } else {
-          // If the date has changed, check for room availability
-          const roomAvailability = await checkBookingRoomAvailability({
-            date: StartTime,
-            bookingId: Id,
-            type: Type,
-          });
-
-          if (roomAvailability) {
-            alert("ΤΟ ΔΩΜΑΤΙΟ ΔΕΝ ΕΙΝΑΙ ΔΙΑΘΕΣΙΜΟ");
-            setSelectedEvent(draggedEvent);
-            setStage(2);
-
-            args.cancel = true;
-            removeClass([document.body], ["e-popup-open", "e-navigate"]);
-            toggleOpen();
-          } else {
-            try {
-              const pairDate = pairedEvent?.StartTime;
-              await updateBookingDateChange({
-                event: draggedEvent,
-                pairDate,
-              });
-            } catch (error) {
-              console.error(error);
-            }
+          try {
+            const pairDate = pairedEvent?.StartTime;
+            await updateBookingDateChange({
+              event: draggedEvent,
+              pairDate,
+            });
+          } catch (error) {
+            console.error(error);
           }
         }
       }
@@ -536,9 +515,9 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
       ref={scheduleObj}
       popupOpen={onPopupOpen}
       rowAutoHeight={true}
-      className="   w-full rounded-lg "
-      height={"100%"}
-      width={"100%"}
+      className="h-full w-full rounded-lg"
+      width="100%"
+      height="100%"
       startHour="07:00"
       endHour="23:45"
       timeScale={timeScale}

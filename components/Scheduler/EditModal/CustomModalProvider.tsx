@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 const CustomModalProvider = () => {
   const [mount, setMount] = useState(false);
-  const { selectedEvent, onClose } = useCalendarModal();
+  const { selectedEvent, onClose, reset } = useCalendarModal();
   const pathname = usePathname();
   useEffect(() => {
     setMount(true);
@@ -15,6 +15,7 @@ const CustomModalProvider = () => {
   // close modal when pathname changes
   useEffect(() => {
     onClose();
+    reset();
   }, [pathname]);
   if (!mount) return null;
   if (!selectedEvent) return null;
