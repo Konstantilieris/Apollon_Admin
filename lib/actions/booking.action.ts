@@ -1294,6 +1294,10 @@ export async function updateBookingAllInclusive({
         client: {
           transportFee: booking.client.transportFee,
           bookingFee: booking.client.bookingFee,
+          clientId: booking.client.clientId,
+          clientName: booking.client.clientName,
+          phone: booking.client.phone,
+          location: booking.client.location,
         },
         totalAmount: calculateTotalAmount,
         fromDate: rangeDate.from,
@@ -1472,7 +1476,7 @@ export async function updateBookingAllInclusive({
       { $push: { services: { $each: servicesToAdd } } },
       { session }
     );
-
+    console.log("clientId", booking);
     await Client.findOneAndUpdate(
       { _id: booking.client.clientId },
       { $pull: { owes: { $in: servicesToDelete } } },
