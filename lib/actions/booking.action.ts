@@ -1395,6 +1395,18 @@ export async function updateBookingAllInclusive({
         throw new Error("Failed to delete pick-up service");
       }
       servicesToDelete.push(deletedPickUpService);
+    } else if (!isTransport1 && !booking.flag1) {
+      const updatedAppointment = await Appointment.findOneAndUpdate(
+        { Id: booking._id, Type: "Arrival" },
+        {
+          StartTime: rangeDate.from,
+          EndTime: rangeDate.from,
+        },
+        { new: true, session } // Pass session
+      );
+      if (!updatedAppointment) {
+        throw new Error("Failed to delete pick-up service");
+      }
     }
 
     // Handle Transport 2 (Drop-off)
@@ -1465,6 +1477,18 @@ export async function updateBookingAllInclusive({
         throw new Error("Failed to delete drop-off service");
       }
       servicesToDelete.push(deletedDropOffService);
+    } else if (!isTransport2 && !booking.flag2) {
+      const updatedAppointment = await Appointment.findOneAndUpdate(
+        { Id: booking._id, Type: "Departure" },
+        {
+          StartTime: rangeDate.to,
+          EndTime: rangeDate.to,
+        },
+        { new: true, session } // Pass session
+      );
+      if (!updatedAppointment) {
+        throw new Error("Failed to delete drop-off service");
+      }
     }
     await Booking.findOneAndUpdate(
       { _id: booking._id },

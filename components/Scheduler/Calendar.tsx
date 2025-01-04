@@ -47,6 +47,8 @@ import "./calendar.css";
 import moment from "moment";
 import useCalendarModal from "@/hooks/use-calendar-modal";
 import { cn, formatTime } from "@/lib/utils";
+import { checkBookingRoomAvailability } from "@/lib/actions/booking.action";
+import BarLoader from "../ui/shuffleLoader";
 
 const registerKey = process.env.NEXT_PUBLIC_REGISTER_KEY; // Set a default value if the key is undefined
 registerLicense(registerKey!);
@@ -176,10 +178,10 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
   const { setPairDate, setStage, setSelectedEvent, toggleOpen, open } =
     useCalendarModal();
   const scheduleObj = useRef(null);
-
+  const [loading, setLoading] = useState(false);
   const dateRef = useRef(new Date());
   const [isDragging, setIsDragging] = useState(false);
-
+  const [originalStartTime, setOriginalStartTime] = useState<Date | null>(null);
   // eslint-disable-next-line no-undef
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const renderIcon = useCallback((categoryId: number) => {
@@ -300,9 +302,12 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
   const todayDayOfWeek = today.getDay();
   const onDragStart = (args: any) => {
     setIsDragging(true);
+    // set Start Time to compare with end time
+    setOriginalStartTime(args.data.StartTime);
   };
   const onDragStop = async (args: any) => {
     setIsDragging(false);
+
     if (open) return;
 
     const draggedEvent = args.data;
@@ -313,6 +318,8 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
       draggedEvent?.categoryId === 4 // Departure
     ) {
       const { Id, StartTime, EndTime, Type, isArrival } = draggedEvent;
+
+      // Find the original event startTime
 
       // Find the paired event
       const pairedEvent = appointments.find(
@@ -350,30 +357,49 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
       }
 
       if (isTimeChangeValid) {
-        const originalEvent = appointments.find(
-          (event: any) => event.Id === Id && event.Type === Type
-        );
-
-        const originalStartDate = new Date(
-          originalEvent.StartTime
-        ).toLocaleDateString();
-        const draggedStartDate = new Date(StartTime).toLocaleDateString();
-
-        if (originalStartDate === draggedStartDate) {
+        const originalStartDate = moment(originalStartTime).startOf("day");
+        console.log("originalStartDate", originalStartDate);
+        const draggedStartDate = moment(StartTime).startOf("day");
+        console.log("draggedStartDate", draggedStartDate);
+        if (originalStartDate.isSame(draggedStartDate)) {
+          console.log("Only time change");
           try {
             await updateEventBookingOnlyTimeChange({ event: draggedEvent });
           } catch (error) {
             console.error(error);
+          } finally {
+            setOriginalStartTime(null);
           }
         } else {
+          args.cancel = true;
+          setLoading(true);
+          const roomAvailability = await checkBookingRoomAvailability({
+            date: StartTime,
+            bookingId: Id,
+            type: Type,
+          });
+          if (roomAvailability) {
+            alert("Δεν υπάρχει διαθέσιμο δωμάτιο για αυτήν την ημερομηνία.");
+            setSelectedEvent(draggedEvent);
+            setStage(2);
+            toggleOpen();
+            setLoading(false);
+            return;
+          }
+          args.cancel = false;
+          console.log("Date change");
+          const pairDate = pairedEvent?.StartTime;
           try {
-            const pairDate = pairedEvent?.StartTime;
             await updateBookingDateChange({
               event: draggedEvent,
               pairDate,
             });
           } catch (error) {
             console.error(error);
+          } finally {
+            setOriginalStartTime(null);
+            setLoading(false);
+            // if roomAvailability revert the change
           }
         }
       }
@@ -509,7 +535,12 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
       args.cancel = true; // Prevent resizing for events not in category 1
     }
   };
-
+  if (loading)
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <BarLoader />
+      </div>
+    );
   return (
     <ScheduleComponent
       ref={scheduleObj}

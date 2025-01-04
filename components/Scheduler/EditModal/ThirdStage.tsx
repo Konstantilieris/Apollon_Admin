@@ -17,7 +17,11 @@ const ThirdStage = ({
   setStage,
   client,
 }: props) => {
-  const [dogsInRooms, setDogsInRooms] = React.useState(event.dogsData);
+  // here we are in the third stage because there is no availability for this room and we need to select another room
+  // so there is no point in initialising the dogsInRooms with the dogsData from the event but rather with the dogs without a room so we need to take the event.dogsData and filter out roomName and roomId
+  const [dogsInRooms, setDogsInRooms] = React.useState(
+    event.dogsData.map((dog: any) => ({ ...dog, roomId: null, roomName: null }))
+  );
   const [isNext, setIsNext] = React.useState(false);
   const [availableRooms, setAvailableRooms] = React.useState<any>([]);
   const { dateArrival, dateDeparture } = useEditBookingStore();
