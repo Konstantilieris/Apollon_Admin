@@ -3,14 +3,27 @@ import { Tabs } from "@/components/ui/animatedTabs";
 import React from "react";
 import OwesTab from "./OwesTab";
 import PaidTab from "./PaidTab";
+import PaymentTab from "./PaymentsTab";
 
-export function ServiceTabs({ debts, paid }: { debts: any; paid: any }) {
+export function ServiceTabs({
+  debts,
+  paid,
+  payments,
+}: {
+  debts: any;
+  paid: any;
+  payments: any;
+}) {
   const totalDebt = debts.reduce(
     (acc: any, service: any) => acc + service.amount,
     0
   );
   const totalAmount = paid.reduce(
     (acc: any, service: any) => acc + service.amount,
+    0
+  );
+  const totalPayments = payments.reduce(
+    (acc: any, payment: any) => acc + payment.amount,
     0
   );
   const tabs = [
@@ -27,6 +40,20 @@ export function ServiceTabs({ debts, paid }: { debts: any; paid: any }) {
         </div>
       ),
     },
+    {
+      title: "ΠΛΗΡΩΜΕΣ",
+      value: "payments",
+      content: (
+        <div className="relative h-full w-full overflow-hidden rounded-2xl border border-dark-400 bg-gradient-to-br from-dark-100 to-dark-200 p-10 text-xl  text-white md:text-4xl">
+          <p className="mb-8 text-xl">ΠΛΗΡΩΜΕΣ</p>
+          <span className="absolute right-12 top-4 rounded-lg border border-gray-700 bg-dark-100 p-4 text-lg text-green-500">
+            {totalPayments} €
+          </span>
+          <PaymentTab payments={payments} />
+        </div>
+      ),
+    },
+
     {
       title: "ΙΣΤΟΡΙΚΟ",
       value: "services",

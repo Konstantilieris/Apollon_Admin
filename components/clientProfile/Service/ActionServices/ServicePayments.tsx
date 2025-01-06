@@ -16,7 +16,9 @@ const ServicePayments = () => {
 
     try {
       await Promise.all(
-        selectedServices.map((service) => payService({ service, path }))
+        selectedServices.map((service) =>
+          payService({ serviceId: service._id, path })
+        )
       );
       toast({
         title: "Επιτυχία",

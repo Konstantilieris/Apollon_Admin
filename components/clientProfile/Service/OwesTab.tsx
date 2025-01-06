@@ -164,7 +164,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
 
             return (
               <TableRow
-                key={index}
+                key={service._id}
                 className={cn(
                   "border-b border-gray-200 hover:bg-dark-200 bg-dark-300",
                   {

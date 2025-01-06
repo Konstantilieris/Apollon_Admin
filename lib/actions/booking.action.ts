@@ -95,6 +95,7 @@ export async function createBooking({
             clientId: client.clientId,
             bookingId,
             date: dateArrival,
+            endDate: dateDeparture,
           },
         ],
         { session }
@@ -114,6 +115,7 @@ export async function createBooking({
               clientId: client.clientId,
               bookingId,
               date: dateArrival,
+              endDate: dateArrival,
             },
           ],
           { session }
@@ -134,6 +136,7 @@ export async function createBooking({
               clientId: client.clientId,
               bookingId,
               date: dateDeparture,
+              endDate: dateDeparture,
             },
           ],
           { session }
@@ -687,6 +690,7 @@ export async function updateBookingDates({
       {
         amount: price,
         date: fromDate,
+        endDate: toDate,
       },
       { new: true, session }
     );
@@ -1319,6 +1323,7 @@ export async function updateBookingAllInclusive({
         amount: calculateBoardingFee,
         remainingAmount: calculateBoardingFee,
         date: rangeDate.from,
+        endDate: rangeDate.to,
       },
       { new: true, session } // Pass session
     );
@@ -1332,7 +1337,7 @@ export async function updateBookingAllInclusive({
     if (isTransport1 && booking.flag1) {
       const updatedPickUpService = await Service.findOneAndUpdate(
         { bookingId: booking._id, serviceType: "Pet Taxi (Pick-Up)" },
-        { date: rangeDate.from },
+        { date: rangeDate.from, endDate: rangeDate.from },
         { new: true, session } // Pass session
       );
       const updatedAppointment = await Appointment.findOneAndUpdate(
@@ -1352,6 +1357,7 @@ export async function updateBookingAllInclusive({
             clientId: booking.client.clientId,
             bookingId: booking._id,
             date: rangeDate.from,
+            endDate: rangeDate.from,
           },
         ],
         { session } // Pass session
@@ -1413,7 +1419,7 @@ export async function updateBookingAllInclusive({
     if (isTransport2 && booking.flag2) {
       const updatedDropOffService = await Service.findOneAndUpdate(
         { bookingId: booking._id, serviceType: "Pet Taxi (Drop-Off)" },
-        { date: rangeDate.to },
+        { date: rangeDate.to, endDate: rangeDate.to },
         { new: true, session } // Pass session
       );
       const updatedAppointment = await Appointment.findOneAndUpdate(
@@ -1434,6 +1440,7 @@ export async function updateBookingAllInclusive({
             clientId: booking.client.clientId,
             bookingId: booking._id,
             date: rangeDate.to,
+            endDate: rangeDate.to,
           },
         ],
         { session } // Pass session

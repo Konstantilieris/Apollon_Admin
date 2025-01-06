@@ -77,7 +77,7 @@ const PaidTab = ({ services }: any) => {
             }
 
             return (
-              <TableRow key={index} className="bg-dark-300 text-left">
+              <TableRow key={service._id} className="bg-dark-300 text-left">
                 <TableCell className="px-4 py-3">{serviceType}</TableCell>
                 <TableCell className="px-4 py-3">{service.notes}</TableCell>
 
