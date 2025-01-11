@@ -47,7 +47,7 @@ const Discount = ({ client }: any) => {
       await discountSelectedServices({
         services: selectedServices,
         discount,
-        clientId: client._id,
+        clientId: client.client._id,
         path,
       });
 
