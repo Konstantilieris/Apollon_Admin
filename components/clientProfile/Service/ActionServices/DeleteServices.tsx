@@ -48,6 +48,15 @@ const DeleteServices = ({ client }: any) => {
       // Close the modal after success/failure
     }
   };
+  // if there are no selected services, display a message
+  if (selectedServices.length === 0) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <p className="text-lg">Δεν υπάρχουν επιλεγμένες υπηρεσίες.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full w-full flex-col justify-between">
       <h1 className="text-xl text-light-900 ">Διαγραφή Υπηρεσιών</h1>
@@ -63,7 +72,8 @@ const DeleteServices = ({ client }: any) => {
               <p>Υπηρεσία: {service.serviceType}</p>
               <p className="ml-4">Σημειώση: {service.notes || "Ν/Α"}</p>
               <p className="ml-4">
-                Ημερομηνία: {formatDate(new Date(service.date), "el")}
+                Ημερομηνία: {formatDate(new Date(service.date), "el")}-{" "}
+                {formatDate(new Date(service.endDate), "el")}
               </p>
               <p className="ml-4">Ποσό: {service.amount}€</p>
             </div>

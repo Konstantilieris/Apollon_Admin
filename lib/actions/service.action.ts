@@ -10,6 +10,7 @@ import moment from "moment";
 import FinancialSummary from "@/database/models/financial.model";
 import Booking from "@/database/models/booking.model";
 import Payment from "@/database/models/payment.model";
+import { deleteBooking } from "./booking.action";
 
 export async function getMonthlyIncome() {
   const startDate = startOfMonth(new Date());
@@ -406,40 +407,7 @@ export async function getAllServicesWithClientNames() {
     throw new Error("Failed to fetch services with client names.");
   }
 }
-export async function deleteSelectedService({ service, path, clientId }: any) {
-  const session = await mongoose.startSession();
 
-  try {
-    connectToDatabase();
-    session.startTransaction();
-    await Service.findByIdAndDelete(service._id, { session });
-
-    const client = await Client.findByIdAndUpdate(
-      clientId,
-      {
-        $inc: { totalSpent: -service.amount },
-      },
-      { new: true, session }
-    );
-    if (!client) {
-      throw new Error("Client not found.");
-    }
-    await FinancialSummary.findOneAndUpdate(
-      {},
-      { $inc: { totalRevenue: -service.amount } },
-      { session }
-    );
-    await session.commitTransaction();
-    session.endSession();
-    revalidatePath(path);
-    return { success: true };
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    console.error("Error deleting service:", error);
-    throw error;
-  }
-}
 export async function createIncome({
   serviceType,
   notes,
@@ -911,5 +879,86 @@ export async function reversePayment({ paymentId }: any) {
     throw error;
   } finally {
     session.endSession();
+  }
+}
+export async function deleteSelectedService({ service, path, clientId }: any) {
+  const session = await mongoose.startSession();
+
+  try {
+    connectToDatabase();
+    session.startTransaction();
+
+    /// this snippet is for the unpaid services lets say the admin wants to delete a service that has been fully paid
+
+    // if the service has a booking ID call the deleteBooking function else delete the service
+    if (service.paid) {
+      const payment = await Payment.deleteOne({
+        serviceId: service._id,
+      }).session(session);
+      if (payment) {
+        console.log("Payment deleted successfully");
+      }
+      const client = await Client.findByIdAndUpdate(
+        clientId,
+        {
+          $inc: {
+            totalSpent: -service.paidAmount,
+            points: -service.paidAmount,
+          },
+        },
+        { new: true, session }
+      );
+      if (client) {
+        console.log("Client updated successfully");
+      }
+      await FinancialSummary.findOneAndUpdate(
+        {},
+        { $inc: { totalRevenue: -service.paidAmount } },
+        { session }
+      );
+      await Service.findByIdAndDelete(service._id).session(session);
+      await session.commitTransaction();
+      session.endSession();
+      return { message: "success" };
+    }
+    if (service.bookingId) {
+      const booking = await deleteBooking({
+        id: service.bookingId,
+        clientId,
+        path,
+      });
+      if (booking) {
+        console.log("Booking deleted successfully");
+        return { message: "success" };
+      }
+    }
+    // deleting the service is not that simple as it has to be removed from the client's owes array
+    // and the total owes amount has to be updated and the paid amount has to be deducted from the total spent amount
+    // and the total revenue has to be updated
+    const client = await Client.findById(clientId).session(session);
+    if (!client) {
+      throw new Error("Client not found.");
+    }
+    client.owes = client.owes.filter(
+      (owe: any) => owe.toString() !== service._id
+    );
+    client.owesTotal -= service.remainingAmount;
+    client.totalSpent -= service.paidAmount;
+    await client.save({ session });
+    await FinancialSummary.findOneAndUpdate(
+      {},
+      { $inc: { totalRevenue: -service.paidAmount } },
+      { session }
+    );
+    await Service.findByIdAndDelete(service._id).session(session);
+    await session.commitTransaction();
+    session.endSession();
+    revalidatePath(path);
+    return { message: "success" };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error deleting service:", error);
+    throw error;
   }
 }

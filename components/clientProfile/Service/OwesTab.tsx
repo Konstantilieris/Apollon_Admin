@@ -21,11 +21,13 @@ export interface Service {
   clientId: string;
   amount: number;
   notes?: string;
+  endDate: Date;
   bookingId?: string;
   date: Date;
   paid: boolean;
   paymentDate?: Date;
   remainingAmount?: number;
+  discount?: number;
   paidAmount?: number;
   _id: string; // Assuming you have a unique ID for each service
 }
@@ -94,6 +96,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
       setSortOrder({ ...sortOrder, [key]: newOrder });
     };
   };
+
   return (
     <div className=" ml-8 min-h-[70vh] overflow-x-auto">
       <div className="mb-1 flex w-full flex-row text-lg">
@@ -114,9 +117,10 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 />
               </span>
             </TableHead>
+
             <TableHead className="px-4 py-3 font-semibold text-light-900">
               <span className="flex items-center">
-                Υπηρεσία
+                Τύπος
                 <IconSelector
                   className="cursor-pointer"
                   onClick={handleSort("name")}
@@ -126,7 +130,12 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
             <TableHead className="pl-12 font-semibold text-light-900">
               Σημειώση
             </TableHead>
-
+            <TableHead className="px-4 py-3 font-semibold text-light-900">
+              Έκπτωση
+            </TableHead>
+            <TableHead className="text-center font-semibold text-light-900">
+              Eξοφλημένο
+            </TableHead>
             <TableHead className="text-center font-semibold text-light-900">
               <span className="flex items-center">
                 Οφειλόμενο
@@ -136,9 +145,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 />
               </span>
             </TableHead>
-            <TableHead className="text-center font-semibold text-light-900">
-              Eξοφλημένο
-            </TableHead>
+
             <TableHead className=" font-semibold text-light-900">
               <span className=" flex items-center">
                 Σύνολο
@@ -164,7 +171,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
 
             return (
               <TableRow
-                key={service._id}
+                key={service._id + index}
                 className={cn(
                   "border-b border-gray-200 hover:bg-dark-200 bg-dark-300",
                   {
@@ -182,6 +189,12 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                     month: "2-digit",
                     year: "numeric",
                   })}
+                  -{" "}
+                  {new Date(service.endDate).toLocaleDateString("el-GR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
                 </TableCell>
                 <TableCell
                   className={cn("px-4 py-3 font-medium", {
@@ -194,11 +207,14 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 <TableCell className="max-w-[7vw] truncate px-4 py-3 pl-8">
                   {service.notes || "N/A"}
                 </TableCell>
-                <TableCell className="pl-8">
-                  {service.remainingAmount ?? "Ν/Α"} €
+                <TableCell className="pl-11">
+                  {service.discount ?? 0} €
                 </TableCell>
                 <TableCell className="text-center">
                   {service.paidAmount ?? "Ν/Α"} €
+                </TableCell>
+                <TableCell className="pl-12">
+                  {service.remainingAmount ?? "Ν/Α"} €
                 </TableCell>
                 <TableCell className="pl-8">{service.amount} €</TableCell>
                 <TableCell className=" mr-6 flex flex-row justify-end">

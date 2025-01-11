@@ -59,7 +59,21 @@ export function DropdownMenuAction({
               className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
               onClick={() => handleOpen("PartialPayment")}
             >
-              Μερική Εξόφληση
+              Έναντι Πληρωμή
+              <IconCardsFilled size={20} className="text-green-500/70 " />
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
+              onClick={() => handleOpen("Edit")}
+            >
+              Επεξεργασία
+              <IconCardsFilled size={20} className="text-green-500/70 " />
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
+              onClick={() => handleOpen("Delete")}
+            >
+              Διαγραφή
               <IconCardsFilled size={20} className="text-green-500/70 " />
             </DropdownMenuItem>
             <DropdownMenuItem
