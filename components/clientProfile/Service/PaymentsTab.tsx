@@ -8,13 +8,18 @@ import {
   TableCell,
   TableBody,
 } from "@/components/ui/table";
-import { IconRefresh } from "@tabler/icons-react";
-import { reversePayment } from "@/lib/actions/service.action";
+import { IconRefresh, IconTrash } from "@tabler/icons-react";
+import {
+  removeReversedPayment,
+  reversePayment,
+} from "@/lib/actions/service.action";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 const PaymentTab = ({ payments }: { payments: any[] }) => {
   const { toast } = useToast();
+  const path = usePathname();
   const handleReversePayment = async ({ payment }: any) => {
     if (payment.reversed || !payment) return;
     try {
@@ -41,6 +46,33 @@ const PaymentTab = ({ payments }: { payments: any[] }) => {
       window.location.reload();
     }
   };
+  const handleDeletePayment = async ({ payment }: any) => {
+    if (!payment || !payment.reversed) return;
+    try {
+      const res = await removeReversedPayment({ paymentId: payment._id, path });
+      if (res.message === "success") {
+        toast({
+          title: "Επιτυχία",
+          description: "Η διαγραφή ολοκληρώθηκε.",
+          className: cn(
+            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
+          ),
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting payment:", error);
+      toast({
+        title: "Error",
+        className: cn(
+          "bg-red-500 border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
+        ),
+        description: "Η διαγραφή απέτυχε.",
+      });
+    } finally {
+      window.location.reload();
+    }
+  };
+
   return (
     <div className="ml-8 min-h-[70vh] overflow-x-auto">
       <Table className="min-w-full rounded-xl border border-none border-gray-200 shadow-md">
@@ -66,6 +98,9 @@ const PaymentTab = ({ payments }: { payments: any[] }) => {
             </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-light-900">
               Αντιστροφή
+            </TableHead>
+            <TableHead className="px-4 py-3 font-semibold text-light-900">
+              Διαγραφή
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -124,10 +159,20 @@ const PaymentTab = ({ payments }: { payments: any[] }) => {
               {/* Reversed */}
               <TableCell className="py-3 pl-8">
                 <IconRefresh
-                  className={cn("h-6 w-6 text-light-900 hover:scale-110", {
+                  className={cn("h-6 w-6 text-light-900 ", {
                     "text-gray-400": payment.reversed,
+                    "hover:scale-110": !payment.reversed,
                   })}
                   onClick={() => handleReversePayment({ payment })}
+                />
+              </TableCell>
+              <TableCell className="py-3 pl-8">
+                <IconTrash
+                  className={cn("h-6 w-6 text-light-900 ", {
+                    "text-gray-400": !payment.reversed,
+                    "text-red-500 hover:scale-110": payment.reversed,
+                  })}
+                  onClick={() => handleDeletePayment({ payment })}
                 />
               </TableCell>
             </TableRow>

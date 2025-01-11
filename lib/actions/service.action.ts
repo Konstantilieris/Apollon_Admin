@@ -892,10 +892,12 @@ export async function deleteSelectedService({ service, path, clientId }: any) {
 
     // if the service has a booking ID call the deleteBooking function else delete the service
     if (service.paid) {
-      const payment = await Payment.deleteOne({
+      // delete the payments that are related to the service and stand not reversed
+      const deletedPayments = await Payment.deleteMany({
         serviceId: service._id,
+        reversed: false,
       }).session(session);
-      if (payment) {
+      if (deletedPayments) {
         console.log("Payment deleted successfully");
       }
       const client = await Client.findByIdAndUpdate(
@@ -959,6 +961,26 @@ export async function deleteSelectedService({ service, path, clientId }: any) {
     await session.abortTransaction();
     session.endSession();
     console.error("Error deleting service:", error);
+    throw error;
+  }
+}
+export async function removeReversedPayment({
+  paymentId,
+  path,
+}: {
+  paymentId: string;
+  path: string;
+}) {
+  connectToDatabase();
+  try {
+    const payment = await Payment.deleteOne({ _id: paymentId });
+    if (!payment) {
+      throw new Error("Payment not found.");
+    }
+    revalidatePath(path);
+    return { message: "success" };
+  } catch (error) {
+    console.error("Error removing reversed payments:", error);
     throw error;
   }
 }
