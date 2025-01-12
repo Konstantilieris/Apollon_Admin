@@ -3,11 +3,11 @@ import mongoose, { Schema, model, models } from "mongoose";
 export interface IEvent {
   Id: Schema.Types.ObjectId;
   Subject: String;
+  bookingId?: Schema.Types.ObjectId;
   Description?: string;
   Type?: string;
   StartTime: Date;
   EndTime: Date;
-
   RecurrenceRule?: string;
   categoryId: number;
   Color?: string;
@@ -31,7 +31,10 @@ const EventSchema = new mongoose.Schema<IEvent>({
     type: String,
     required: true,
   },
-
+  bookingId: {
+    type: Schema.Types.ObjectId,
+    ref: "Booking",
+  },
   Subject: {
     type: String,
     required: true,

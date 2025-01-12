@@ -35,7 +35,11 @@ const TimeSelect = ({
   className = "",
 }: any) => {
   const times = generateTimeOptions(420, 1380, 30); // 07:00 (420 minutes) to 23:00 (1380 minutes) with 30-minute intervals
-  const [selectedTime, setSelectedTime] = React.useState<string | undefined>();
+  // extract the time from the date with moment and set it to the selected time
+
+  const [selectedTime, setSelectedTime] = React.useState<string | undefined>(
+    date ? moment(date).format("HH:mm") : undefined
+  );
 
   const handleTimeChange = (time: string) => {
     setSelectedTime(time);

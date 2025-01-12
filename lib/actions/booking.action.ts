@@ -196,6 +196,7 @@ export async function createBooking({
           [
             {
               Id: bookingId,
+              bookingId,
               Subject: `ΠΑΡΑΛΑΒΗ`,
               clientName: updatedClient.name,
               clientId: updatedClient._id,
@@ -219,6 +220,7 @@ export async function createBooking({
           [
             {
               Id: bookingId,
+              bookingId,
               Subject: `ΑΦΙΞΗ`,
               clientName: updatedClient.name,
               clientId: updatedClient._id,
@@ -244,6 +246,7 @@ export async function createBooking({
           [
             {
               Id: bookingId,
+              bookingId,
               Subject: `ΠΑΡΑΔΟΣΗ`,
               clientName: updatedClient.name,
               clientId: updatedClient._id,
@@ -267,6 +270,7 @@ export async function createBooking({
           [
             {
               Id: bookingId,
+              bookingId,
               Subject: `ΑΝΑΧΩΡΗΣΗ`,
               clientName: updatedClient.name,
               clientId: updatedClient._id,

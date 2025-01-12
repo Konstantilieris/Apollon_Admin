@@ -21,6 +21,7 @@ import {
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { DateRange } from "react-day-picker";
+import moment from "moment";
 
 interface BookingDateProps {
   className?: string;
@@ -42,9 +43,21 @@ export function BookingDatePicker({ className, useHook }: BookingDateProps) {
   );
   const debounceTimer = React.useRef<any | null>(null);
   const handleRangeDate = (dateRange: DateRange | undefined) => {
+    if (dateRange?.from) {
+      const adjustedFrom = moment(dateRange.from).hours(10).minutes(0).toDate();
+      setDateArrival(adjustedFrom);
+    } else {
+      setDateArrival(undefined);
+    }
+
+    if (dateRange?.to) {
+      const adjustedTo = moment(dateRange.to).hours(10).minutes(0).toDate();
+      setDateDeparture(adjustedTo);
+    } else {
+      setDateDeparture(undefined);
+    }
+
     setRangeDate(dateRange);
-    setDateArrival(dateRange?.from);
-    setDateDeparture(dateRange?.to);
 
     // Clear any existing debounce timer
     if (debounceTimer.current) {
@@ -53,8 +66,16 @@ export function BookingDatePicker({ className, useHook }: BookingDateProps) {
 
     // Start a new debounce timer
     debounceTimer.current = setTimeout(() => {
-      const dateFromUrl = dateToInt(dateRange?.from);
-      const dateToUrl = dateToInt(dateRange?.to);
+      const dateFromUrl = dateToInt(
+        dateRange?.from
+          ? moment(dateRange.from).hours(10).minutes(0).toDate()
+          : undefined
+      );
+      const dateToUrl = dateToInt(
+        dateRange?.to
+          ? moment(dateRange.to).hours(10).minutes(0).toDate()
+          : undefined
+      );
 
       if (!dateRange?.from && !dateRange?.to) {
         const newUrl = removeKeysFromQuery({

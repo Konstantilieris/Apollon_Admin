@@ -26,10 +26,37 @@ type eventProps = {
 export async function getAllEvents() {
   try {
     await connectToDatabase();
-    const events = await Event.find();
-    if (events) {
-      return JSON.parse(JSON.stringify(events));
-    }
+    // we need to fetch for each event the services with the same bookingId and see if they are paid maybe with aggregation
+    const eventsWithPaidField = await Event.aggregate([
+      {
+        $lookup: {
+          from: "services", // The services collection
+          localField: "bookingId", // Event ID (Id field in your model)
+          foreignField: "bookingId", // Booking ID in the services collection
+          as: "relatedServices",
+        },
+      },
+      {
+        $addFields: {
+          paid: {
+            $cond: {
+              if: { $eq: [{ $size: "$relatedServices" }, 0] }, // No related services
+              then: false, // Mark as unpaid if no related services
+              else: {
+                $allElementsTrue: "$relatedServices.paid", // True if all related services are paid
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          relatedServices: 0, // Exclude related services if not needed in the output
+        },
+      },
+    ]);
+
+    return JSON.parse(JSON.stringify(eventsWithPaidField));
   } catch (error) {
     console.log(error);
   }

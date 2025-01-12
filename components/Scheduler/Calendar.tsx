@@ -33,6 +33,7 @@ import {
   IconLetterK,
   IconPhone,
   IconCalendar,
+  IconCheck,
 } from "@tabler/icons-react";
 import {
   createEvent,
@@ -242,6 +243,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
             ? props.dogsData.map((dog: any) => dog.dogName).join(", ")
             : ""}
         </span>
+        {props.paid && <IconCheck size={24} className="text-green-500" />}
         {}
       </div>
     );
