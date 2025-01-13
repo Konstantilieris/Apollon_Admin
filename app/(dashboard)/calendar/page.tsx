@@ -11,7 +11,7 @@ const Calendar = async () => {
     getAllEvents(),
     getRevenueData(),
   ]);
-  console.log(events);
+
   return (
     <section className=" h-screen w-full   p-2 pb-4">
       <CustomModalProvider />

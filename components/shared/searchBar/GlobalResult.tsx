@@ -115,8 +115,12 @@ const GlobalResult = ({
                                 onClick={() => {
                                   if (item.value === "clients") {
                                     router.push(`/clients/${result._id}`);
-                                  } else {
+                                  } else if (item.value === "booking") {
                                     router.push(`/clients/${result._id}/book`);
+                                  } else {
+                                    router.push(
+                                      `/clients/${result._id}/service`
+                                    );
                                   }
                                 }}
                                 className="group relative inline-block cursor-pointer rounded-full bg-slate-800 p-px font-semibold leading-6 text-white no-underline shadow-2xl  shadow-zinc-900 hover:text-yellow-500"
