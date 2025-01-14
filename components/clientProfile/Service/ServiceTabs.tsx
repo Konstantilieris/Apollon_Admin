@@ -34,7 +34,7 @@ export function ServiceTabs({
         <div className=" relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-dark-400 bg-gradient-to-br from-dark-100 to-dark-200 p-10   text-light-900 shadow-md shadow-dark-400 md:text-4xl">
           <p className="mb-8 text-lg">ΟΦΕΙΛΕΣ</p>
           <span className="absolute right-12 top-6 rounded-lg border border-gray-700 bg-dark-100 p-2 text-[1.2rem] text-light-900">
-            {totalDebt} €
+            {totalDebt.toFixed(2)} €
           </span>
           <OwesTab services={debts} />
         </div>
@@ -47,7 +47,7 @@ export function ServiceTabs({
         <div className="relative h-full w-full overflow-hidden rounded-2xl border border-dark-400 bg-gradient-to-br from-dark-100 to-dark-200 p-10 text-xl  text-white md:text-4xl">
           <p className="mb-8 text-xl">ΠΛΗΡΩΜΕΣ</p>
           <span className="absolute right-12 top-4 rounded-lg border border-gray-700 bg-dark-100 p-4 text-lg text-green-500">
-            {totalPayments} €
+            {totalPayments.toFixed(2)} €
           </span>
           <PaymentTab payments={payments} />
         </div>

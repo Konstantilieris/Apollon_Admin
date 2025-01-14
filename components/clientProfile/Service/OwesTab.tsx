@@ -130,11 +130,21 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
             <TableHead className="pl-12 font-semibold text-light-900">
               Σημειώση
             </TableHead>
+            <TableHead className=" font-semibold text-light-900">
+              <span className=" flex items-center">
+                Σύνολο
+                <IconSelector
+                  className="cursor-pointer"
+                  onClick={handleSort("amount")}
+                />
+              </span>
+            </TableHead>
+
+            <TableHead className="text-center font-semibold text-light-900">
+              Έξοφλημένο
+            </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-light-900">
               Έκπτωση
-            </TableHead>
-            <TableHead className="text-center font-semibold text-light-900">
-              Eξοφλημένο
             </TableHead>
             <TableHead className="text-center font-semibold text-light-900">
               <span className="flex items-center">
@@ -146,15 +156,6 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
               </span>
             </TableHead>
 
-            <TableHead className=" font-semibold text-light-900">
-              <span className=" flex items-center">
-                Σύνολο
-                <IconSelector
-                  className="cursor-pointer"
-                  onClick={handleSort("amount")}
-                />
-              </span>
-            </TableHead>
             <TableHead className="flex h-full w-full justify-end px-2 py-3 pb-2 font-semibold text-light-900">
               <DropdownMenuAction selectedServices={selectedServices} />
             </TableHead>
@@ -207,16 +208,18 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 <TableCell className="max-w-[7vw] truncate px-4 py-3 pl-8">
                   {service.notes || "N/A"}
                 </TableCell>
-                <TableCell className="pl-11">
-                  {service.discount ?? 0} €
-                </TableCell>
+                <TableCell className="pl-8">{service.amount} €</TableCell>
                 <TableCell className="text-center">
                   {service.paidAmount ?? "Ν/Α"} €
                 </TableCell>
+                <TableCell className="pl-11">
+                  {service.discount ?? 0} €
+                </TableCell>
+
                 <TableCell className="pl-12">
                   {service.remainingAmount ?? "Ν/Α"} €
                 </TableCell>
-                <TableCell className="pl-8">{service.amount} €</TableCell>
+
                 <TableCell className=" mr-6 flex flex-row justify-end">
                   <Checkbox
                     id={`checkbox-${service._id}`}
