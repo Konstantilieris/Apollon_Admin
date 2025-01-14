@@ -13,29 +13,24 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
   const controlSearch = useAnimation();
   const ref = React.useRef(null);
   const router = useRouter();
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const controlResult = useAnimation();
   const [stage, setStage] = useState(false);
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (
-      event.shiftKey &&
-      (event.key === "Z" ||
-        event.key === "z" ||
-        event.key === "ζ" ||
-        event.key === "Ζ")
-    ) {
-      event.preventDefault();
-      controlSearch.start("visible");
-    }
-  };
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.shiftKey && ["Z", "z", "ζ", "Ζ"].includes(event.key)) {
+        event.preventDefault();
+        controlSearch.start("visible");
+      }
+    };
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [controlSearch]);
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchTerm) {
@@ -57,6 +52,7 @@ export const FloatingSearch = ({ className }: { className?: string }) => {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, searchParams, pathname, router]);
+  // if we change page we want to close the search bar and the result bar
 
   return (
     <div className="z-[9999]">

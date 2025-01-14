@@ -67,7 +67,7 @@ const ClientBookingPrice = ({ id, price, name }: Props) => {
         <IconCalendar size={40} className=" text-yellow-600" />
         <div className="flex w-full flex-col items-start ">
           <span className="text-lg font-bold uppercase tracking-wide">
-            {price !== null ? price : 0} €
+            {price !== null ? price.toFixed(2) : 0} €
           </span>
           <span className="text-sm leading-5 tracking-wide text-gray-400">
             Χρέωση Ημερ.Κράτησης
@@ -94,7 +94,8 @@ const ClientBookingPrice = ({ id, price, name }: Props) => {
             <Input
               value={daily}
               type="number"
-              onChange={(e) => setDaily(~~e.target.value)}
+              step="0.01"
+              onChange={(e) => setDaily(parseFloat(e.target.value) || 0)}
               className="bg-light-700 text-dark-100 dark:bg-dark-200 dark:text-light-700"
             />
             <span className="ml-2  mt-1 text-[15px] dark:text-green-300 ">
