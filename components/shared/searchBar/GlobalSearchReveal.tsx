@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { cn, formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import GlobalResult from "./GlobalResult";
 
-export const FloatingSearch = memo(({ className }: { className?: string }) => {
+export const FloatingSearch = ({ className }: { className?: string }) => {
   const controlSearch = useAnimation();
   const ref = React.useRef(null);
   const router = useRouter();
@@ -140,5 +140,4 @@ export const FloatingSearch = memo(({ className }: { className?: string }) => {
       </AnimatePresence>
     </div>
   );
-});
-FloatingSearch.displayName = "FloatingSearch";
+};
