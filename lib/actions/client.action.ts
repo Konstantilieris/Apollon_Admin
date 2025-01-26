@@ -104,27 +104,11 @@ export async function CreateClient({
   }
 }
 
-export async function getAllClientsByQuery(
-  searchQuery: string | undefined,
-  limit?: number
-) {
+export async function getAllClientsByQuery() {
   try {
     connectToDatabase();
-    let query = {};
-    if (searchQuery) {
-      query = {
-        $or: [
-          { name: { $regex: searchQuery, $options: "i" } },
-          {
-            "dog.name": {
-              $regex: searchQuery,
-              $options: "i",
-            },
-          },
-        ],
-      };
-    }
-    const clients = await Client.find(query, { name: 1 }).limit(limit || 5);
+
+    const clients = await Client.find({}, { name: 1 });
     return JSON.parse(JSON.stringify(clients));
   } catch (error) {
     console.log(error);

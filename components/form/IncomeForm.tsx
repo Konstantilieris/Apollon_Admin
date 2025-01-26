@@ -10,6 +10,7 @@ import * as z from "zod";
 import { IncomeValidation } from "@/lib/validation";
 import { usePathname } from "next/navigation";
 import { createIncome } from "@/lib/actions/service.action";
+
 interface props {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -25,6 +26,7 @@ const IncomeForm = ({ setIsOpen }: props) => {
     },
   });
   const onSubmit = async (values: z.infer<typeof IncomeValidation>) => {
+    console.log(values);
     try {
       await createIncome({
         serviceType: values.serviceType,

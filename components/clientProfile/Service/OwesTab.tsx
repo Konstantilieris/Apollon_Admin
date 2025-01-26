@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { DropdownMenuAction } from "./OwesActionCommand";
 import { IconSelector } from "@tabler/icons-react";
+import moment from "moment";
 
 export interface Service {
   serviceType: string;
@@ -54,6 +55,18 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
       remaining: "asc",
       amount: "asc",
     }
+  );
+  const totalDebt = services.reduce(
+    (acc: any, service: any) => acc + service.remainingAmount,
+    0
+  );
+  const totalAmount = services.reduce(
+    (acc: any, service: any) => acc + service.amount,
+    0
+  );
+  const totalPayments = services.reduce(
+    (acc: any, service: any) => acc + service.paidAmount,
+    0
   );
   // Handle checkbox changes
   const handleCheckboxChange = (service: Service, isChecked: boolean) => {
@@ -117,6 +130,9 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 />
               </span>
             </TableHead>
+            <TableHead className="px-4 py-3 font-semibold text-light-900">
+              <span className="flex items-center">Διάρκεια</span>
+            </TableHead>
 
             <TableHead className="px-4 py-3 font-semibold text-light-900">
               <span className="flex items-center">
@@ -137,11 +153,17 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                   className="cursor-pointer"
                   onClick={handleSort("amount")}
                 />
+                <span className="ml-2 rounded-lg border border-light-900 bg-dark-100 p-2 text-base text-light-900">
+                  {totalAmount.toFixed(2)} €
+                </span>
               </span>
             </TableHead>
 
             <TableHead className="text-center font-semibold text-light-900">
               Έξοφλημένο
+              <span className="ml-2 rounded-lg border border-green-500 bg-dark-100 p-2 text-base text-light-900">
+                {totalPayments.toFixed(2)} €
+              </span>
             </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-light-900">
               Έκπτωση
@@ -153,6 +175,9 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                   className="cursor-pointer"
                   onClick={handleSort("remaining")}
                 />
+                <span className=" ml-2 rounded-lg border border-red-500 bg-dark-100 p-2 text-base text-light-900">
+                  {totalDebt.toFixed(2)} €
+                </span>
               </span>
             </TableHead>
 
@@ -163,6 +188,8 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
         </TableHeader>
         <TableBody>
           {oweServices.map((service: Service, index: number) => {
+            const start = moment(service.date);
+            const end = moment(service.endDate);
             let serviceType = service.serviceType;
             if (serviceType === "Pet Taxi (Drop-Off)") {
               serviceType = "Pet Taxi (ΠΑΡΑΔΟΣΗ)";
@@ -196,6 +223,9 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                     month: "2-digit",
                     year: "numeric",
                   })}
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  {end.diff(start, "days")} ημέρες
                 </TableCell>
                 <TableCell
                   className={cn("px-4 py-3 font-medium", {

@@ -32,8 +32,8 @@ const Pagination = ({ pageNumber, isNext }: Props) => {
       >
         <IconArrowLeft size={20} />
       </Button>
-      <div className="flex items-center justify-center rounded-md bg-indigo-500 px-3.5 py-2">
-        <p className="body-semibold text-light-900">{pageNumber}</p>
+      <div className="flex items-center justify-center rounded-md bg-yellow-500 px-3.5 py-2">
+        <span className=" font-extrabold text-dark-100">{pageNumber}</span>
       </div>
       <Button
         disabled={!isNext}

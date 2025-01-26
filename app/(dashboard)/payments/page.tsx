@@ -1,15 +1,17 @@
 import { PaymentsDataTable } from "@/components/main/Payments";
-import { getAllServicesWithClientNames } from "@/lib/actions/service.action";
+import { getAllPayments, getTotalRevenue } from "@/lib/actions/payment.action";
+
 import React from "react";
 export const dynamic = "force-dynamic";
-const Page = async () => {
-  const services = JSON.parse(
-    JSON.stringify(await getAllServicesWithClientNames())
-  );
+const Page = async ({ searchParams }: any) => {
+  const [payments, totalRevenue] = await Promise.all([
+    getAllPayments({ reverse: searchParams.reverse }),
+    getTotalRevenue(),
+  ]);
 
   return (
     <div className="h-full px-2 py-1">
-      <PaymentsDataTable services={services} />
+      <PaymentsDataTable payments={payments} revenue={totalRevenue} />
     </div>
   );
 };

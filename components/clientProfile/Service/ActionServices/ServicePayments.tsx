@@ -39,6 +39,7 @@ const ServicePayments = () => {
     } finally {
       setLoading(false); // Set loading to false after completion
       onClose();
+      window.location.reload();
 
       // Close the modal after success/failure
     }

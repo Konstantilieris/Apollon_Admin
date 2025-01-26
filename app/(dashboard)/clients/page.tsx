@@ -21,7 +21,7 @@ const Clients = async ({ searchParams }: any) => {
             <h1 className="text-dark100_light900 font-semibold max-lg:text-sm lg:text-lg">
               {" "}
               ΔΙΑΧΕΙΡΙΣΗ
-              <span className="text-bankGradient">&nbsp;ΠΕΛΑΤΩΝ</span>
+              <span className="text-yellow-500">&nbsp;ΠΕΛΑΤΩΝ</span>
             </h1>
             <p className="text-dark500_light500 mb-4 font-normal max-md:text-sm lg:text-lg">
               Διαχειριστείτε τους πελάτες σας με ευκολία και ακρίβεια.

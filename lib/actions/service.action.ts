@@ -426,20 +426,43 @@ export async function createIncome({
   try {
     connectToDatabase();
     session.startTransaction();
-    const service = await Service.create(
-      {
-        serviceType,
-        notes,
-        paid: true,
-        remainingAmount: 0,
-        paidAmount: amount,
-        paymentDate: date,
-        amount,
-        date,
-        clientId: ADMIN_ID,
-      },
+    console.log("Creating income...", serviceType, amount, date, ADMIN_ID);
+    const [service] = await Service.create(
+      [
+        {
+          serviceType,
+          notes,
+          paid: true,
+          remainingAmount: 0,
+          paidAmount: amount,
+          paymentDate: date,
+          amount,
+          date,
+          clientId: ADMIN_ID,
+        },
+      ],
       { session }
     );
+    if (!service) {
+      throw new Error("Service not created.");
+    }
+    const payment = await Payment.create(
+      [
+        {
+          serviceId: service._id, // or service[0]._id if create() returns array
+          clientId: ADMIN_ID,
+          notes: serviceType,
+          amount,
+          paymentDate: date,
+
+          // Any other payment-related fields you need
+        },
+      ],
+      { session }
+    );
+    if (!payment) {
+      throw new Error("Payment not created.");
+    }
     await FinancialSummary.findOneAndUpdate(
       {},
       { $inc: { totalRevenue: amount } },
@@ -937,26 +960,95 @@ export async function deleteSelectedService({ service, path, clientId }: any) {
     // deleting the service is not that simple as it has to be removed from the client's owes array
     // and the total owes amount has to be updated and the paid amount has to be deducted from the total spent amount
     // and the total revenue has to be updated
-    const client = await Client.findById(clientId).session(session);
-    if (!client) {
-      throw new Error("Client not found.");
+    if (!service.paid) {
+      // 1. Find relevant Payment docs referencing this service
+      //    (either by single `serviceId` or via allocations array)
+      const payments = await Payment.find({
+        reversed: false,
+        $or: [
+          { serviceId: service._id }, // single-service Payment
+          { "allocations.serviceId": service._id }, // multi-service
+        ],
+      }).session(session);
+
+      // We'll track how much money is effectively “undone”
+      let removedAmount = 0;
+
+      for (const payment of payments) {
+        // CASE A: Single-service payment (payment.serviceId === service._id)
+        if (
+          payment.serviceId &&
+          payment.serviceId.toString() === service._id.toString()
+        ) {
+          removedAmount += payment.amount;
+          // Option: delete the entire payment
+          await Payment.findByIdAndDelete(payment._id).session(session);
+        } else {
+          // CASE B: Multi-service payment using allocations
+          const newAllocations = [];
+          let removedFromThisPayment = 0;
+
+          for (const alloc of payment.allocations || []) {
+            if (alloc.serviceId.toString() === service._id.toString()) {
+              removedFromThisPayment += alloc.amount;
+            } else {
+              newAllocations.push(alloc);
+            }
+          }
+
+          if (removedFromThisPayment > 0) {
+            removedAmount += removedFromThisPayment;
+            payment.amount -= removedFromThisPayment;
+
+            if (payment.amount <= 0 || newAllocations.length === 0) {
+              // Payment is effectively empty now
+              await Payment.findByIdAndDelete(payment._id).session(session);
+            } else {
+              // Save the trimmed allocations
+              payment.allocations = newAllocations;
+              await payment.save({ session });
+            }
+          }
+        }
+      }
+
+      // 2. Update the client
+      const client = await Client.findById(clientId).session(session);
+      if (!client) {
+        throw new Error("Client not found.");
+      }
+
+      // Remove this service from client.owes
+      client.owes = client.owes.filter(
+        (owe: any) => owe.toString() !== service._id.toString()
+      );
+      // Subtract the service's remaining amount from client.owesTotal
+      client.owesTotal -= service.remainingAmount;
+      // Subtract the undone paid portion from the client's totalSpent
+      client.totalSpent -=
+        service.paidAmount > removedAmount ? removedAmount : service.paidAmount;
+      // ^ If you're confident that `service.paidAmount === removedAmount`, just do `-= removedAmount`
+
+      await client.save({ session });
+
+      // 3. Update FinancialSummary
+      //    Subtract the removed portion from totalRevenue
+      await FinancialSummary.findOneAndUpdate(
+        {},
+        { $inc: { totalRevenue: -removedAmount } },
+        { session }
+      );
+
+      // 4. Finally, delete the service
+      await Service.findByIdAndDelete(service._id).session(session);
+
+      // 5. Commit transaction, etc.
+      await session.commitTransaction();
+      session.endSession();
+      revalidatePath(path);
+
+      return { message: "success" };
     }
-    client.owes = client.owes.filter(
-      (owe: any) => owe.toString() !== service._id
-    );
-    client.owesTotal -= service.remainingAmount;
-    client.totalSpent -= service.paidAmount;
-    await client.save({ session });
-    await FinancialSummary.findOneAndUpdate(
-      {},
-      { $inc: { totalRevenue: -service.paidAmount } },
-      { session }
-    );
-    await Service.findByIdAndDelete(service._id).session(session);
-    await session.commitTransaction();
-    session.endSession();
-    revalidatePath(path);
-    return { message: "success" };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

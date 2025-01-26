@@ -21,122 +21,65 @@ const page = async ({ params }: { params: any }) => {
   const deadDogs = JSON.parse(
     JSON.stringify(client.dog.filter((dog: any) => dog.dead === true))
   );
-  const phonelist = [
-    [
-      {
-        key: "ΣΤΑΘΕΡΟ: ",
-        value: client?.phone?.telephone ? client?.phone.telephone : "N/A",
-      },
-      {
-        key: "ΚΙΝΗΤΟ: ",
-        value: client?.phone?.mobile ? client?.phone.mobile : "N/A",
-      },
-    ],
-    [
-      {
-        key: "ΤΗΛ.ΕΡΓΑΣΙΑΣ: ",
-        value: client?.phone?.work_phone ? client?.phone.work_phone : "N/A",
-      },
-      {
-        key: "ΕΚΤΑΚΤΗ ΕΠΑΦΗ: ",
-        value: client?.phone?.emergencyContact
-          ? client?.phone.emergencyContact
-          : "N/A",
-      },
-    ],
-  ];
-  const locationlist = [
-    [
-      {
-        key: "ΠΕΡΙΟΧΗ: ",
-        value: client?.location?.city ? client?.location.city : "N/A",
-      },
-      {
-        key: "ΔΙΕΥΘΥΝΣΗ: ",
-        value: client?.location?.address ? client?.location.address : "N/A",
-      },
-    ],
-    [
-      {
-        key: "ΤΚ: ",
-        value: client?.location?.postalCode
-          ? client?.location.postalCode
-          : "N/A",
-      },
-      {
-        key: "ΤΥΠΟΣ ΚΑΤΟΙΚΙΑΣ: ",
-        value: client?.location.residence ? client?.location.residence : "N/A",
-      },
-    ],
-  ];
-  const vetlist = [
-    [
-      { key: "ΟΝΟΜΑ: ", value: client?.vet.name ? client?.vet.name : "N/A" },
-      {
-        key: "ΤΗΛΕΦΩΝΟ: ",
-        value: client?.vet.phone ? client?.vet.phone : "N/A",
-      },
-    ],
-    [
-      {
-        key: "ΤΗΛ.ΕΡΓΑΣΙΑΣ: ",
-        value: client?.vet.work_phone ? client?.vet.work_phone : "N/A",
-      },
-      {
-        key: "ΔΙΕΥΘΥΝΣΗ: ",
-        value: `${
-          client?.vet?.location?.city ? client.vet.location.city : "N/A"
-        }, ${
-          client?.vet?.location?.address ? client.vet.location.address : "N/A"
-        }, ${
-          client?.vet?.location?.postalCode
-            ? client.vet.location.postalCode
-            : "N/A"
-        }`,
-      },
-    ],
-  ];
+  const dataList = [
+    // Client Information Section
+    {
+      sectionTitle: "ΣΤΟΙΧΕΙΑ ΠΕΛΑΤΗ",
+      iconRight: "/assets/icons/client.svg",
+      items: [
+        { key: "ΟΝΟΜΑ: ", value: client?.name },
+        { key: "EMAIL: ", value: client?.email },
+        { key: "ΕΠΑΓΓΕΛΜΑ: ", value: client?.profession },
+      ],
+    },
 
+    // Phone Information Section
+    {
+      sectionTitle: "ΣΤΟΙΧΕΙΑ ΤΗΛΕΦΩΝΟΥ",
+      iconRight: "/assets/icons/phone.svg",
+      items: [
+        { key: "ΣΤΑΘΕΡΟ: ", value: client?.phone?.telephone },
+        { key: "ΚΙΝΗΤΟ: ", value: client?.phone?.mobile },
+        { key: "ΤΗΛ.ΕΡΓΑΣΙΑΣ: ", value: client?.phone?.work_phone },
+        { key: "ΕΚΤΑΚΤΗ ΕΠΑΦΗ: ", value: client?.phone?.emergencyContact },
+      ],
+    },
+
+    // Location Information Section
+    {
+      sectionTitle: "ΣΤΟΙΧΕΙΑ ΔΙΕΥΘΥΝΣΗΣ",
+      iconRight: "/assets/icons/location.svg",
+      items: [
+        { key: "ΠΕΡΙΟΧΗ: ", value: client?.location?.city },
+        { key: "ΔΙΕΥΘΥΝΣΗ: ", value: client?.location?.address },
+        { key: "ΤΚ: ", value: client?.location?.postalCode },
+        { key: "ΤΥΠΟΣ ΚΑΤΟΙΚΙΑΣ: ", value: client?.location?.residence },
+      ],
+    },
+
+    // Veterinarian Information Section
+    {
+      sectionTitle: "ΣΤΟΙΧΕΙΑ ΚΤΗΝΙΑΤΡΟΥ",
+      iconRight: "/assets/icons/vet.svg",
+      items: [
+        { key: "ΟΝΟΜΑ: ", value: client?.vet?.name },
+        { key: "ΤΗΛΕΦΩΝΟ: ", value: client?.vet?.phone },
+        { key: "ΤΗΛ.ΕΡΓΑΣΙΑΣ: ", value: client?.vet?.work_phone },
+        {
+          key: "ΔΙΕΥΘΥΝΣΗ: ",
+          value: client?.vet?.location
+            ? `${client.vet.location.city}, ${client.vet.location.address}, ${client.vet.location.postalCode}`
+            : "N/A",
+        },
+      ],
+    },
+  ];
   return (
     <ScrollArea className=" mb-20 h-full w-full">
       <div className=" relative  flex h-full w-full flex-row justify-between gap-1 py-4 max-md:flex-col">
-        <div className="ml-4   flex w-full   flex-col items-start gap-4 ">
-          <ClientInfoCard
-            title="ΣΤΟΙΧΕΙΑ ΠΕΛΑΤΗ"
-            iconRight="/assets/icons/client.svg"
-            infolist={[
-              [
-                { key: "ΟΝΟΜΑ: ", value: client?.name ? client?.name : "N/A" },
-                {
-                  key: "EMAIL: ",
-                  value: client?.email ? client?.email : "N/A",
-                },
-              ],
-              [
-                {
-                  key: "ΕΠΑΓΓΕΛΜΑ: ",
-                  value: client?.profession ? client?.profession : "N/A",
-                },
-              ],
-            ]}
-          />
-          <ClientInfoCard
-            title="ΣΤΟΙΧΕΙΑ ΕΠΙΚΟΙΝΩΝΙΑΣ"
-            iconRight="/assets/icons/phone.svg"
-            infolist={phonelist}
-          />
-          <ClientInfoCard
-            title="ΣΤΟΙΧΕΙΑ ΚΑΤΟΙΚΙΑΣ"
-            iconRight="/assets/icons/location.svg"
-            infolist={locationlist}
-            iconStyle="dark:invert"
-          />
-          <ClientInfoCard
-            title="ΚΤΗΝΙΑΤΡΙΚΑ ΣΤΟΙΧΕΙΑ"
-            iconRight="/assets/icons/vet.svg"
-            infolist={vetlist}
-            isVet={true}
-          />
+        <div className="ml-4   flex h-full   w-full flex-col items-start gap-4 ">
+          <ClientInfoCard datalist={dataList} />
+
           <ClientNoteCard client={JSON.parse(JSON.stringify(client))} />
         </div>
         <div className="flex w-full flex-col gap-4 rounded-2xl bg-neutral-800 px-4 py-2">

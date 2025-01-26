@@ -12,6 +12,8 @@ import Appointment from "@/database/models/event.model";
 import Service from "@/database/models/service.model";
 
 import { calculateTotalPrice, setTimeOnDate } from "../utils";
+import Payment from "@/database/models/payment.model";
+import FinancialSummary from "@/database/models/financial.model";
 
 interface TNTPROPS {
   id: string;
@@ -738,78 +740,157 @@ export async function updateBookingDates({
   }
 }
 export async function deleteBooking({
-  id,
-  clientId,
-  path,
+  id, // The booking ID
+  clientId, // The client who owns the booking
+  path, // A path to revalidate in Next.js
 }: {
   id: string;
   clientId: string;
   path: string;
 }) {
   const session = await mongoose.startSession();
+
   try {
-    await connectToDatabase(); // Awaiting database connection
+    await connectToDatabase();
     session.startTransaction();
 
-    const deletedBooking = await Booking.findByIdAndDelete(id, { session });
+    // 1. Find the booking
+    const booking = await Booking.findById(id).session(session);
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
 
-    const servicesToDelete = await Service.find(
-      {
-        bookingId: id,
-        paid: false, // Only select unpaid services
-      },
-      { _id: 1 } // Only retrieve the `_id` field
-    ).session(session);
+    // 2. Collect ALL services (paid or unpaid) for this booking
+    const allServices = await Service.find({ bookingId: id }).session(session);
 
-    const deletedServices = await Service.deleteMany(
-      {
-        bookingId: id,
-        paid: false, // Only delete unpaid services
-      },
-      { session }
-    );
+    // If no services exist, you might still want to delete the booking
+    if (!allServices || allServices.length === 0) {
+      // We'll proceed, but no service cleanup is needed if there are truly none
+      console.log("No services found for this booking");
+    }
 
-    // Fetch unpaid services
-    const unpaidService = await Service.find({ bookingId: id, paid: false });
+    // Keep track of how much total paid we remove from these services.
+    let totalRemovedFromPayments = 0;
+    let totalRemainingOwes = 0; // sum of remaining amounts for all services
 
-    // Safely handle the amountToDelete logic
-    const amountToDelete =
-      unpaidService.length > 0 ? unpaidService[0].amount : 0;
+    // 3. For each service, we gather amounts and handle Payment docs
+    const serviceIds = allServices.map((svc) => svc._id.toString());
 
-    const serviceIds = servicesToDelete.map((service: any) => service._id);
+    for (const svc of allServices) {
+      // Tally up any amounts that affect the client
+      totalRemainingOwes += svc.remainingAmount || 0;
 
-    const updatedClient = await Client.findOneAndUpdate(
+      // We'll remove the portion from Payment docs that references this service
+      // whether it's single-service or multi-service allocations.
+
+      // 3A. Find all non-reversed payments referencing this service in EITHER:
+      //     - payment.serviceId == svc._id
+      //     - payment.allocations[].serviceId == svc._id
+      const payments = await Payment.find({
+        reversed: false,
+        $or: [
+          { serviceId: svc._id }, // dedicated single-service payment
+          { "allocations.serviceId": svc._id }, // multi-service allocations
+        ],
+      }).session(session);
+
+      // 3B. For each payment, remove or reduce the service's allocation
+      for (const payment of payments) {
+        let removedAmount = 0;
+
+        // Case 1: If payment.serviceId matches this service exactly,
+        //         remove or reverse the entire Payment amount
+        if (
+          payment.serviceId &&
+          payment.serviceId.toString() === svc._id.toString()
+        ) {
+          removedAmount = payment.amount;
+          // Either delete or mark reversed. Let's do a full delete for simplicity:
+          await Payment.findByIdAndDelete(payment._id).session(session);
+        } else {
+          // Case 2: We have allocations for multiple services
+          // Filter out the allocation for this specific service
+          const newAllocations = [];
+          for (const alloc of payment.allocations || []) {
+            if (alloc.serviceId.toString() === svc._id.toString()) {
+              removedAmount += alloc.amount;
+            } else {
+              newAllocations.push(alloc);
+            }
+          }
+          // Subtract the removed portion from the payment's total
+          payment.amount -= removedAmount;
+
+          // If there's nothing left, we can remove or reverse the Payment
+          if (payment.amount <= 0 || newAllocations.length === 0) {
+            await Payment.findByIdAndDelete(payment._id).session(session);
+          } else {
+            // Otherwise, save updated allocations
+            payment.allocations = newAllocations;
+            await payment.save({ session });
+          }
+        }
+        // Keep a grand total of how much we removed across all payments
+        totalRemovedFromPayments += removedAmount;
+      }
+    }
+
+    // 4. Update the Client
+    //    - Remove these service IDs from the owes array
+    //    - Subtract totalRemainingOwes from owesTotal
+    //    - Subtract totalRemovedFromPayments from totalSpent
+    const client = await Client.findOneAndUpdate(
       { _id: clientId },
       {
         $pull: { owes: { $in: serviceIds } },
-        $inc: { owesTotal: -amountToDelete },
+        $inc: {
+          owesTotal: -totalRemainingOwes,
+          totalSpent: -totalRemovedFromPayments,
+        },
       },
       { new: true, session }
     );
 
-    if (!deletedBooking || !deletedServices || !updatedClient) {
-      throw new Error("Failed to delete booking");
+    if (!client) {
+      throw new Error("Failed to update client or client not found.");
     }
 
-    const deleteAppointments = await Appointment.deleteMany(
-      { Id: id },
-      { session }
-    );
-
-    if (!deleteAppointments) {
-      throw new Error("Failed to delete appointments");
+    // 5. Update FinancialSummary
+    //    - Subtract whatever portion was removed from payments from totalRevenue
+    if (totalRemovedFromPayments > 0) {
+      await FinancialSummary.findOneAndUpdate(
+        {},
+        { $inc: { totalRevenue: -totalRemovedFromPayments } },
+        { session }
+      );
     }
 
+    // 6. Delete all services referencing this booking
+    //    (We want them gone, whether they were paid or unpaid)
+    if (allServices.length > 0) {
+      await Service.deleteMany({ bookingId: id }, { session });
+    }
+
+    // 7. Delete any appointments that reference this booking
+    await Appointment.deleteMany({ Id: id }, { session });
+
+    // 8. Delete the booking itself
+    await Booking.findByIdAndDelete(id, { session });
+
+    // 9. Commit the transaction
     await session.commitTransaction();
     session.endSession();
+
+    // 10. Revalidate paths in Next.js
     revalidatePath(path);
     revalidatePath("/calendar");
-    return JSON.stringify(deletedBooking);
+
+    return { message: "Booking deleted successfully." };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    console.log("Failed to delete booking", error);
-    throw error; // Ensure the error is thrown, so it can be handled correctly
+    console.error("Failed to delete booking", error);
+    throw error;
   }
 }
 async function updateAppointment({

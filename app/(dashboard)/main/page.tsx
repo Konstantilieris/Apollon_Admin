@@ -33,7 +33,7 @@ const page = async () => {
     getRegistrationsForPast6Months(),
     getPaidServicesIncomeLast6Months(),
   ]);
-  console.log(incomeResults);
+
   return (
     <div className="flex  h-full w-full flex-col  gap-4 overflow-x-hidden pb-2 pl-4 pr-2">
       <div className="flex w-full select-none flex-row">

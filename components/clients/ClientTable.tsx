@@ -12,9 +12,9 @@ import Link from "next/link";
 
 const ClientTable = ({ clients }: { clients: any }) => {
   return (
-    <Table className="text-dark400_light700 mt-12 w-full">
-      <TableHeader className="border-b-8 border-light-700 bg-white text-base font-semibold text-black dark:border-dark-400 dark:bg-slate-700 dark:text-light-700 xl:text-lg">
-        <TableRow>
+    <Table className=" w-full">
+      <TableHeader className="h-20 border-b  border-light-700 bg-white   py-4 font-normal text-black dark:border-yellow-500 dark:bg-neutral-950 dark:text-light-700 xl:text-lg">
+        <TableRow className={" border-none tracking-wider"}>
           <TableHead className="ml-2 text-start max-lg:hidden">
             Ημερομηνία
           </TableHead>
@@ -33,11 +33,11 @@ const ClientTable = ({ clients }: { clients: any }) => {
           </TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody className="mt-2">
+      <TableBody className="mt-2 ">
         {clients?.map((client: any) => (
           <TableRow
             key={client?._id?.toString()}
-            className="background-light800_dark300 text-dark100_light900 "
+            className="text-dark100_light900 dark:bg-neutral-950 "
           >
             <TableCell className="max-w-[250px] pl-4 pr-10 text-base font-normal max-lg:hidden">
               {client.createdAt ? formatDateString(client.createdAt) : "N/A"}

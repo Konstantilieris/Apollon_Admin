@@ -6,10 +6,10 @@ import IncomeForm from "../form/IncomeForm";
 const CreatePaymentTrigger = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="self-end">
+    <div className="self-center">
       <button
         onClick={() => setIsOpen(true)}
-        className=" rounded bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2  text-white transition-opacity hover:opacity-90"
+        className="h-14 w-60 rounded bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2 text-base  tracking-wide text-white transition-opacity hover:opacity-90"
       >
         ΔΗΜΙΟΥΡΓΙΑ ΕΣΟΔΟΥ
       </button>

@@ -13,8 +13,8 @@ import { TypesOfResidence } from "@/constants";
 import CustomFormField, { FormFieldType } from "./CustomFormField";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
-import ReferenceCommand from "../shared/reference/ReferenceCommand";
 import ConstantSwitcher from "../shared/constantManagement/ConstantSwitcher";
+import ReferenceCommand2 from "../shared/reference/ReferenceCommand2";
 
 const ClientForm = ({ setData, setStage, clients, professions }: any) => {
   const form = useForm<z.infer<typeof ClientValidation>>({
@@ -42,7 +42,7 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
       numberOfDogs: "1",
     },
   });
-  const [reference, setReference] = React.useState<any>();
+  const [reference, setReference] = React.useState<any>({});
   async function onSubmit(values: z.infer<typeof ClientValidation>) {
     setData({ ...values, reference });
     setStage(1);
@@ -67,7 +67,7 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
             iconSrc="/assets/icons/account.svg"
             iconAlt="user"
           />
-          <ReferenceCommand
+          <ReferenceCommand2
             clients={clients}
             value={reference}
             onChange={setReference}
