@@ -16,11 +16,8 @@ const DeleteBooking = ({ bookingId, clientId }: DeleteParams) => {
     console.log("delete booking");
     try {
       const res = await deleteBooking({ id: bookingId, clientId, path });
-      let deleted = null;
-      if (res) {
-        deleted = JSON.parse(res);
-      }
-      if (deleted) {
+
+      if (res.message === "success") {
         toast({
           className: cn(
             "bg-celtic-green border-none text-white  text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
