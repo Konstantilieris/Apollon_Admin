@@ -1374,7 +1374,16 @@ export async function updateBookingAllInclusive({
       calculateTotalAmount += booking.client.transportFee;
     }
     console.log("Total amount:", calculateTotalAmount);
+    const existingService = await Service.findOne({
+      bookingId: booking._id,
+      serviceType: "ΔΙΑΜΟΝΗ",
+    }).session(session);
 
+    if (!existingService) {
+      throw new Error("Boarding service (ΔΙΑΜΟΝΗ) not found for this booking.");
+    }
+    const paidAmount = existingService.amount - existingService.remainingAmount;
+    const newRemainingAmount = Math.max(calculateBoardingFee - paidAmount, 0);
     // Update booking and pass on client transport fee and booking fee
     const updatedBooking = await Booking.findOneAndUpdate(
       { _id: booking._id },
@@ -1403,14 +1412,14 @@ export async function updateBookingAllInclusive({
 
     // Update service
     const updatedService = await Service.findOneAndUpdate(
-      { bookingId: booking._id, serviceType: "ΔΙΑΜΟΝΗ" },
+      { _id: existingService._id },
       {
         amount: calculateBoardingFee,
-        remainingAmount: calculateBoardingFee,
+        remainingAmount: newRemainingAmount,
         date: rangeDate.from,
         endDate: rangeDate.to,
       },
-      { new: true, session } // Pass session
+      { new: true, session }
     );
 
     if (!updatedService) {
