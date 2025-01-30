@@ -15,15 +15,26 @@ export const FloatingSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const debounceTimer = useRef<any | null>(null);
-
+  const isThrottled = useRef(false);
   // 🔹 Open Search on Shortcut SHIFT + Z
   useEffect(() => {
+    // Prevent multiple triggers
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.shiftKey && ["Z", "z"].includes(event.key)) {
         event.preventDefault();
-        setIsOpen(true);
+
+        if (!isThrottled.current) {
+          setIsOpen((prev) => !prev); // Toggle state
+          isThrottled.current = true;
+
+          setTimeout(() => {
+            isThrottled.current = false; // Reset cooldown after 500ms
+          }, 30);
+        }
       }
     };
+
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
