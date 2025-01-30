@@ -75,7 +75,7 @@ export const FloatingSearch = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -50, scale: 0.9 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="fixed left-[26vw] top-[3vh] z-[9999] w-[40vw] -translate-x-1/2 rounded-xl bg-white p-4 shadow-lg dark:bg-neutral-900"
+              className="fixed left-[26vw] top-[3vh] z-[9999] max-h-[80vh] w-[40vw] -translate-x-1/2   rounded-xl bg-white p-4 shadow-lg dark:bg-neutral-900"
               ref={ref}
             >
               <div className="flex w-full items-center justify-center">

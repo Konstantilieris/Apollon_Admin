@@ -60,7 +60,7 @@ const GlobalResult = ({ setIsOpen }: Props) => {
   return (
     <motion.div
       ref={resultRef}
-      className="mt-3 max-h-[400px] min-h-[100px] w-full  overflow-hidden border-t border-gray-300  dark:border-gray-700 "
+      className="mt-3 h-full min-h-[100px] w-full  overflow-hidden border-t border-gray-300  dark:border-gray-700 "
     >
       {isLoading ? (
         <div className="flex h-full items-center justify-center p-4">
