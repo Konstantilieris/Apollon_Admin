@@ -41,6 +41,14 @@ const LocalSearch = ({
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, searchParams, query, pathname, router, route]);
+  // useEffect to remove the page number if the search term changes
+  useEffect(() => {
+    const newUrl = removeKeysFromQuery({
+      params: searchParams.toString(),
+      keysToRemove: ["page"],
+    });
+    router.push(newUrl, { scroll: false });
+  }, [searchTerm]);
 
   return (
     <div

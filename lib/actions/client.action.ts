@@ -89,17 +89,37 @@ export async function CreateClient({
       isReferenced: clientData.reference,
     },
   };
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     connectToDatabase();
 
-    const client = await Client.create({
-      ...clientPayload,
-      dog: dogs,
+    const client = await Client.create([{ ...clientPayload, dog: dogs }], {
+      session,
     });
+    if (clientData.reference?.client?.clientId) {
+      const referringClient = await Client.findById(
+        clientData.reference.client.clientId
+      ).session(session);
+
+      if (referringClient) {
+        referringClient.references?.hasReferenced?.push({
+          name: client[0].name, // client is an array due to create() with transaction
+          clientId: client[0]._id,
+        });
+
+        await referringClient.save({ session }); // Save updated referring client
+      }
+    }
+
+    await session.commitTransaction(); // Commit the transaction
+    session.endSession();
     revalidatePath(path);
-    if (client) return JSON.stringify(client);
+    return JSON.stringify(client[0]);
   } catch (error) {
-    console.log(error);
+    await session.abortTransaction(); // Rollback if any error occurs
+    session.endSession();
+    console.error("Transaction failed:", error);
     throw error;
   }
 }
@@ -306,21 +326,38 @@ export async function countClientsByMonth({
   return clientsByMonth;
 }
 
-export async function globalSearch({ query }: any) {
+export async function globalSearch({ query }: { query: string }) {
   try {
     connectToDatabase();
+
     const cleanQuery = sanitizeQuery(query);
-    const clients = await Client.find(
+
+    const clients = await Client.aggregate([
       {
-        $or: [
-          { name: { $regex: cleanQuery, $options: "i" } },
-          { profession: { $regex: cleanQuery, $options: "i" } },
-          { "dog.name": { $regex: cleanQuery, $options: "i" } },
-        ],
+        $match: {
+          $or: [
+            { name: { $regex: cleanQuery, $options: "i" } },
+            { profession: { $regex: cleanQuery, $options: "i" } },
+            { "dog.name": { $regex: cleanQuery, $options: "i" } },
+          ],
+        },
       },
-      { name: 1, profession: 1, dog: 1 },
-      { sort: { name: 1, dog: 1, profession: 1 } }
-    ).limit(5);
+      {
+        $project: {
+          name: 1,
+          profession: 1,
+          dog: {
+            $filter: {
+              input: "$dog",
+              as: "d",
+              cond: { $ne: ["$$d.dead", true] },
+            },
+          },
+        },
+      },
+      { $sort: { name: 1, "dog.name": 1, profession: 1 } },
+      { $limit: 5 },
+    ]); // ✅ Ensures returned objects are plain JSON
 
     return JSON.stringify(clients);
   } catch (error) {
@@ -449,6 +486,7 @@ export async function getAllClients({
       queryObject.$or = [
         { name: { $regex: query, $options: "i" } },
         { "phone.mobile": { $regex: query, $options: "i" } },
+        { "phone.telephone": { $regex: query, $options: "i" } },
         { profession: { $regex: query, $options: "i" } },
         { "dog.name": { $regex: query, $options: "i" } },
         { "location.city": { $regex: query, $options: "i" } },

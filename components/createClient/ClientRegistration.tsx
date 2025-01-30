@@ -3,6 +3,7 @@
 import React from "react";
 import ClientForm from "../form/ClientForm";
 import dynamic from "next/dynamic";
+import { IClient } from "@/database/models/client.model";
 
 const DynamicDogForm = dynamic(() => import("../form/DogForm"), { ssr: false });
 
@@ -20,8 +21,10 @@ const ClientRegistration = ({
   foods: any;
 }) => {
   const [stage, setStage] = React.useState(0);
-  const [data, setData] = React.useState();
-
+  const [data, setData] = React.useState<Partial<IClient>>({});
+  React.useEffect(() => {
+    console.log("data", data);
+  }, [data]);
   switch (stage) {
     case 0:
       return (

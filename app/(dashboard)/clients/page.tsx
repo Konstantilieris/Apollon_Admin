@@ -59,9 +59,6 @@ const Clients = async ({ searchParams }: any) => {
           )}
         </header>
       </div>
-      <aside className="no-scrollbar  text-dark100_light900 min-h-[120vh] w-[300px] flex-col items-center   border-l border-gray-400 px-2 py-4 dark:border-gray-200 max-lg:hidden xl:flex xl:overflow-y-scroll">
-        Ranking Table
-      </aside>
     </section>
   );
 };

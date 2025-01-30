@@ -44,7 +44,7 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
   });
   const [reference, setReference] = React.useState<any>({});
   async function onSubmit(values: z.infer<typeof ClientValidation>) {
-    setData({ ...values, reference });
+    setData({ ...values, reference: { ...reference } });
     setStage(1);
     setReference(null);
     form.reset();

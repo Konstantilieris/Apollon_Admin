@@ -24,6 +24,7 @@ const ClientTable = ({ clients }: { clients: any }) => {
             Επάγγελμα
           </TableHead>
           <TableHead className="text-center max-md:hidden">Τηλέφωνο</TableHead>
+          <TableHead className="text-center max-md:hidden">Σταθερό</TableHead>
 
           <TableHead className="px-2 text-center max-lg:hidden">
             Περιοχή
@@ -62,6 +63,9 @@ const ClientTable = ({ clients }: { clients: any }) => {
             </TableCell>
             <TableCell className="mr-4 text-center text-base font-normal max-md:hidden">
               {client?.phone?.mobile || "N/A"}
+            </TableCell>
+            <TableCell className="mr-4 text-center text-base font-normal max-md:hidden">
+              {client?.phone?.telephone || "N/A"}
             </TableCell>
 
             <TableCell className="text-center text-base font-normal max-lg:hidden">

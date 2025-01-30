@@ -12,6 +12,7 @@ import { Service } from "./OwesTab";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenuActionPaid } from "./ActionServices/PaidActionCommand";
+import moment from "moment";
 
 const PaidTab = ({ services }: any) => {
   const [selectedServices, setSelectedServices] = React.useState<Service[]>([]);
@@ -56,6 +57,10 @@ const PaidTab = ({ services }: any) => {
             <TableHead className="px-4 py-3 font-semibold text-light-900">
               Ημερομηνία
             </TableHead>
+            <TableHead className="px-4 py-3 font-semibold text-light-900">
+              Διάρκεια
+            </TableHead>
+
             <TableHead className="px-4 py-3 text-center font-semibold text-light-900">
               Ημερομηνία Πληρωμής
             </TableHead>
@@ -75,6 +80,8 @@ const PaidTab = ({ services }: any) => {
             } else if (serviceType === "Pet Taxi (Pick-Up)") {
               serviceType = "Pet Taxi (ΠΑΡΑΛΑΒΗ)";
             }
+            const start = moment(service.date);
+            const end = moment(service.endDate);
 
             return (
               <TableRow key={service._id} className="bg-dark-300 text-left">
@@ -88,6 +95,15 @@ const PaidTab = ({ services }: any) => {
                     month: "2-digit",
                     year: "numeric",
                   })}
+                  -{" "}
+                  {new Date(service.endDate).toLocaleDateString("el-GR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  {end.diff(start, "days")} ημέρες
                 </TableCell>
                 <TableCell className=" text-center">
                   {service.paymentDate

@@ -16,15 +16,13 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { ChevronsUpDown, Check } from "lucide-react";
-import React, { useEffect } from "react";
+import React from "react";
 
 const ReferenceCommand2 = ({ clients, value, onChange }: any) => {
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<any>();
   const [other, setOther] = React.useState<any>("");
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
+
   return (
     <div className="flex flex-col items-start gap-2">
       <span className="tracking-wide text-gray-400">Σύσταση</span>
@@ -52,6 +50,7 @@ const ReferenceCommand2 = ({ clients, value, onChange }: any) => {
                     setSelected("Google");
                     delete value.client;
                     delete value.other;
+                    setOther("");
                     onChange({ google: true });
                   }}
                 >
@@ -88,11 +87,12 @@ const ReferenceCommand2 = ({ clients, value, onChange }: any) => {
                 {clients.map((client: any) => (
                   <CommandItem
                     key={client._id}
-                    value={client._id}
+                    value={client.name}
                     onSelect={(currentValue) => {
                       setSelected(client.name);
                       delete value.google;
                       delete value.other;
+                      setOther("");
                       onChange({
                         client: { clientId: client._id, name: client.name },
                       });

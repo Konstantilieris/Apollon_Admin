@@ -6,7 +6,7 @@ import React from "react";
 import Image from "next/image";
 import ClientRegistration from "@/components/createClient/ClientRegistration";
 import { getConstant } from "@/lib/actions/constant.action";
-const page = async ({ searchParams }: any) => {
+const page = async () => {
   const clients = await getAllClientsByQuery();
   const [professions, breeds, behaviors, foods] = await Promise.all([
     getConstant("Professions"),

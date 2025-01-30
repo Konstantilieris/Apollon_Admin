@@ -14,6 +14,7 @@ import Service from "@/database/models/service.model";
 import { calculateTotalPrice, setTimeOnDate } from "../utils";
 import Payment from "@/database/models/payment.model";
 import FinancialSummary from "@/database/models/financial.model";
+import moment from "moment";
 
 interface TNTPROPS {
   id: string;
@@ -1306,6 +1307,9 @@ export async function updateBookingAllInclusive({
   const session = await mongoose.startSession(); // Start session
   await connectToDatabase(); // Ensure single connection
   console.log("$$$$booking", dogsData);
+  const isRangeReduced =
+    moment(rangeDate.from).isAfter(moment(booking.fromDate)) ||
+    moment(rangeDate.to).isBefore(moment(booking.toDate));
   // if booking.client.transportFee is null or booking.client.bookingFee is null fetch from client
   if (!booking.client.transportFee || !booking.client.bookingFee) {
     const client = await Client.findById(booking.client.clientId);
@@ -1382,6 +1386,9 @@ export async function updateBookingAllInclusive({
     if (!existingService) {
       throw new Error("Boarding service (ΔΙΑΜΟΝΗ) not found for this booking.");
     }
+    if (existingService.paid && isRangeReduced) {
+      throw new Error("Cannot update a paid service");
+    }
     const paidAmount = existingService.amount - existingService.remainingAmount;
     const newRemainingAmount = Math.max(calculateBoardingFee - paidAmount, 0);
     // Update booking and pass on client transport fee and booking fee
@@ -1410,12 +1417,13 @@ export async function updateBookingAllInclusive({
       throw new Error("Failed to update booking");
     }
 
-    // Update service
+    // Update service,reset paid status if its paid and update the remaining amount
     const updatedService = await Service.findOneAndUpdate(
       { _id: existingService._id },
       {
         amount: calculateBoardingFee,
         remainingAmount: newRemainingAmount,
+        paid: false,
         date: rangeDate.from,
         endDate: rangeDate.to,
       },

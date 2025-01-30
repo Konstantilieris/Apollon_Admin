@@ -326,7 +326,7 @@ export function PaymentsDataTable({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-
+  const [mount, setMount] = React.useState(false);
   const table = useReactTable<Payment>({
     data: payments,
     columns,
@@ -359,6 +359,12 @@ export function PaymentsDataTable({
     reversed: "ΑΝΑΚΛΗΘΗΚΕ",
     notes: "ΣΗΜΕΙΩΣΕΙΣ",
   };
+  React.useEffect(() => {
+    if (!mount) {
+      setMount(true);
+    }
+  }, [mount]);
+  if (!mount) return null;
 
   return (
     <Card className="h-full border-none">
