@@ -21,7 +21,7 @@ export const FloatingSearch = () => {
     // Prevent multiple triggers
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.shiftKey && ["Z", "z"].includes(event.key)) {
+      if (event.shiftKey && ["Z", "z", "ζ", "Ζ"].includes(event.key)) {
         event.preventDefault();
 
         if (!isThrottled.current) {
