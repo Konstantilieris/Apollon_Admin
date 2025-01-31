@@ -5,7 +5,7 @@ import React from "react";
 export const dynamic = "force-dynamic";
 const Page = async ({ searchParams }: any) => {
   const [payments, totalRevenue] = await Promise.all([
-    getAllPayments({ reverse: searchParams.reverse }),
+    getAllPayments({ reverse: searchParams.reverse ?? false }),
     getTotalRevenue(),
   ]);
 
