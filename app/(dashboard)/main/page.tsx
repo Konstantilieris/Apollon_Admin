@@ -11,7 +11,7 @@ import {
 import {
   getTotalRevenue,
   getPercentageIncrease,
-  getPaidServicesIncomeLast6Months,
+  getPaymentsIncomeLast6Months,
 } from "@/lib/actions/service.action";
 import { getAllTasks } from "@/lib/actions/task.action";
 
@@ -31,7 +31,7 @@ const page = async () => {
     getTotalRevenue(),
     getClientStatistics(),
     getRegistrationsForPast6Months(),
-    getPaidServicesIncomeLast6Months(),
+    getPaymentsIncomeLast6Months(),
   ]);
 
   return (

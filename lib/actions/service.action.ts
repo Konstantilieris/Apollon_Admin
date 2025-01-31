@@ -284,18 +284,18 @@ export async function getPercentageIncrease() {
     const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const endOfLastMonth = new Date(startOfCurrentMonth.getTime() - 1);
 
-    // Aggregate total revenue for paid services in the current and last month
-    const result = await Service.aggregate([
+    // Aggregate total revenue for payments in the current and last month
+    const result = await Payment.aggregate([
       {
         $match: {
-          paid: true,
-          paymentDate: { $gte: startOfLastMonth }, // Services from the start of last month onwards
+          reversed: false, // Exclude reversed payments
+          date: { $gte: startOfLastMonth }, // Payments from the start of last month onwards
         },
       },
       {
         $addFields: {
-          month: { $month: "$paymentDate" },
-          year: { $year: "$paymentDate" },
+          month: { $month: "$date" },
+          year: { $year: "$date" },
         },
       },
       {
@@ -479,24 +479,24 @@ export async function createIncome({
     throw error;
   }
 }
-export async function getPaidServicesIncomeLast6Months() {
+export async function getPaymentsIncomeLast6Months() {
   try {
     const sixMonthsAgo = moment()
       .subtract(6, "months")
       .startOf("month")
       .toDate(); // Start of the 6th month
 
-    const result = await Service.aggregate([
+    const result = await Payment.aggregate([
       {
         $match: {
-          paid: true, // Only include paid services
-          paymentDate: { $gte: sixMonthsAgo }, // Filter for the past 6 months
+          reversed: false, // Exclude reversed payments
+          date: { $gte: sixMonthsAgo }, // Filter for the past 6 months
         },
       },
       {
         $group: {
-          _id: { $month: "$paymentDate" }, // Group by the month of paymentDate
-          totalIncome: { $sum: "$paidAmount" }, // Sum the paidAmount for each month
+          _id: { $month: "$date" }, // Group by the month of payment date
+          totalIncome: { $sum: "$amount" }, // Sum the payment amounts for each month
         },
       },
       {
@@ -514,10 +514,11 @@ export async function getPaidServicesIncomeLast6Months() {
 
     return incomeByMonth;
   } catch (error) {
-    console.error(`Error fetching paid services income:`, error);
+    console.error(`Error fetching payments income:`, error);
     throw error;
   }
 }
+
 export async function discountSelectedServices({
   services,
   discount,

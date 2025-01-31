@@ -11,6 +11,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
+
 const WeatherRow = () => {
   const [weatherData, setWeatherData] = useState<any>();
 
@@ -19,41 +20,35 @@ const WeatherRow = () => {
       const params = {
         latitude: 37.9011,
         longitude: 23.8727,
-
         current: [
           "temperature_2m",
           "apparent_temperature",
           "is_day",
-
           "weather_code",
         ],
         daily: ["weather_code", "temperature_2m_max", "temperature_2m_min"],
-
         forecast_days: 7,
         timezone: "GMT",
-        // Fetch data for the next 3 hours
       };
+
       const url = "https://api.open-meteo.com/v1/forecast";
       const responses = await fetchWeatherApi(url, params);
-
-      // Process the response
       const response = responses[0];
       const utcOffsetSeconds = response.utcOffsetSeconds();
       const current = response.current()!;
-
       const daily = response.daily()!;
       const range = (start: number, stop: number, step: number) =>
         Array.from(
           { length: (stop - start) / step },
           (_, i) => start + i * step
         );
+
       setWeatherData({
         current: {
           time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
           temperature2m: current.variables(0)!.value(),
           apparentTemperature: current.variables(1)!.value(),
           isDay: current.variables(2)!.value(),
-
           weatherCode: current.variables(3)!.value(),
         },
         daily: {
@@ -73,12 +68,13 @@ const WeatherRow = () => {
   }, []);
 
   return (
-    <div className="background-light900_dark200 flex min-w-[50vw] flex-col gap-8 rounded-lg shadow-sm shadow-neutral-500">
-      <div className=" text-dark400_light700 flex flex-row items-center justify-between gap-2 rounded-lg p-4  text-lg font-semibold">
+    <div className="background-light900_dark200 flex w-full flex-col gap-8 rounded-lg shadow-sm shadow-neutral-500">
+      {/* Current Weather Info */}
+      <div className="text-dark400_light700 flex flex-row items-center justify-between gap-2 rounded-lg p-4 text-lg font-semibold">
         <span className="flex flex-row items-center gap-2">
           <Image
             src="/assets/icons/clock.svg"
-            alt="sun"
+            alt="clock"
             width={30}
             height={20}
             className="invert"
@@ -105,7 +101,6 @@ const WeatherRow = () => {
         </span>
         <span className="flex flex-row items-center gap-2">
           <h2>Θερμοκρασία τώρα</h2>
-
           <p className="flex flex-row items-center">
             {~~weatherData?.current.temperature2m}
           </p>
@@ -118,7 +113,6 @@ const WeatherRow = () => {
         </span>
         <span className="flex flex-row items-center gap-2">
           <h2>Αίσθηση Θερμοκρασίας</h2>
-
           <p className="flex flex-row items-center">
             {~~weatherData?.current.apparentTemperature}°C
           </p>
@@ -139,23 +133,26 @@ const WeatherRow = () => {
           />
         </span>
       </div>
+
+      {/* Weekly Forecast with 5 Cards per Slide */}
       <div className="background-light900_dark200 text-dark400_light700 flex w-full flex-col items-center justify-center gap-4 rounded-lg py-4">
-        <h1 className="text-xl font-bold"> Πρόβλεψη εβδομάδας</h1>
+        <h1 className="text-xl font-bold">Πρόβλεψη εβδομάδας</h1>
         <Carousel className="w-full max-w-2xl self-center">
-          <CarouselContent className="-ml-1 ">
+          <CarouselContent className="-ml-1 w-full">
             {Array.from({ length: 7 }).map((_, index) => (
               <CarouselItem
                 key={index}
-                className="pl-1 md:basis-1/2 lg:basis-1/3"
+                className="pl-1 md:basis-1/5 lg:basis-1/3"
               >
+                {" "}
+                {/* 5 Cards Per Slide */}
                 <div className="flex flex-col p-1">
                   <span className="text-center text-lg font-semibold">
-                    {" "}
                     {weatherData?.daily.time[index].toLocaleDateString("el", {
                       weekday: "short",
                     })}
                   </span>
-                  <Card>
+                  <Card className="w-full">
                     <CardContent className="flex aspect-square flex-col items-center justify-center gap-4 p-6">
                       <span className="flex flex-row items-center gap-2">
                         <Image

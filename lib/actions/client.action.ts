@@ -356,7 +356,7 @@ export async function globalSearch({ query }: { query: string }) {
         },
       },
       { $sort: { name: 1, "dog.name": 1, profession: 1 } },
-      { $limit: 5 },
+      { $limit: 7 },
     ]); // ✅ Ensures returned objects are plain JSON
 
     return JSON.stringify(clients);
