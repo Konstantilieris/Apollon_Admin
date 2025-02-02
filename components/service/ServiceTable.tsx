@@ -2,6 +2,8 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "../ui/checkbox";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,27 +16,22 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-
-import { Button } from "../ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { Checkbox } from "../ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from "../ui/dropdown-menu";
-import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+
+import { ArrowUpDown, ChevronDown } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../ui/card";
 import {
   Table,
   TableBody,
@@ -43,50 +40,24 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import Link from "next/link";
-import CreatePaymentTrigger from "../payments/PaymentSheet";
-import PaymentsTabReverse from "./PaymentsTabReverse";
-import { useSearchParams } from "next/navigation";
-import { cn } from "@/lib/utils";
-import {
-  removeReversedPayment,
-  reversePayment,
-} from "@/lib/actions/service.action";
-import { RevenueCard } from "./RevenueCard";
+import { Input } from "../ui/input";
+import ServiceTabPaid from "./ServiceTabPaid";
+import { DropdownMenuAction } from "./DropDownMenu";
 
-/**
- * Payment type definition
- */
-
-type Payment = {
+// Define Service Type
+interface Service {
   _id: string;
+  serviceType: string;
+  clientId: { _id: string; name: string };
   amount: number;
-  clientId: {
-    _id: string;
-    name: string;
-  };
-  serviceId?: {
-    _id: string;
-    serviceType: string;
-  };
-  date: string; // or Date, if you prefer
-  notes: string;
-  reversed: boolean;
-  __v: number;
-  allocations: Array<{
-    _id: string;
-    amount: number;
-    serviceId: {
-      _id: string;
-      serviceType: string;
-    };
-  }>;
-};
+  paid: boolean;
+  paidAmount: number;
+  remainingAmount: number;
+  date: string;
+}
 
-/**
- * Table columns for the Payment type
- */
-export const columns: ColumnDef<Payment>[] = [
+// Define Columns
+const columns: ColumnDef<Service>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -109,7 +80,10 @@ export const columns: ColumnDef<Payment>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  // 1) Client (via clientId.name)
+  {
+    accessorKey: "serviceType",
+    header: "Υπηρεσία",
+  },
   {
     id: "Όνομα Πελάτη",
     accessorFn: (row) => row.clientId.name,
@@ -128,39 +102,8 @@ export const columns: ColumnDef<Payment>[] = [
       return <div className="uppercase">{row.original.clientId.name}</div>;
     },
   },
-  // 2) Date
-  {
-    accessorKey: "date",
-    id: "date",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          ΗΜ. ΠΛΗΡΩΜΗΣ
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const dateString = row.getValue<string>("date");
-      const date = new Date(dateString);
-      return (
-        <div className="ml-8">
-          {date.toLocaleDateString("el-GR", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })}
-        </div>
-      );
-    },
-  },
-  // 3) Amount
   {
     accessorKey: "amount",
-    id: "amount",
     header: ({ column, table }) => {
       return (
         <div className="flex items-center gap-2">
@@ -168,7 +111,7 @@ export const columns: ColumnDef<Payment>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            ΠΟΣΟ
+            Σύνολο (€)
             <ArrowUpDown className="ml-2 h-4 w-4" />
             {/* Total Selected Amount */}
           </Button>
@@ -176,7 +119,7 @@ export const columns: ColumnDef<Payment>[] = [
             className={cn(
               "ml-2 w-32 rounded-lg  bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2 text-center text-sm text-light-900",
               {
-                "from-red-500 to-red-600": table?.options?.meta?.reverse,
+                "from-red-500 to-red-600": table?.options?.meta?.paid,
               }
             )}
           >
@@ -188,147 +131,104 @@ export const columns: ColumnDef<Payment>[] = [
         </div>
       );
     },
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "EUR",
-      }).format(amount);
-
-      return <div className="ml-6 text-start font-medium">{formatted}</div>;
-    },
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2 pl-6">
+        {row.original.amount.toFixed(2) + " €"}
+      </div>
+    ),
   },
-  // 4) Reversed
   {
-    accessorKey: "services",
-    header: ({ column }) => {
+    accessorKey: "paidAmount",
+    header: ({ column, table }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Υπηρεσίες
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Πλήρωθεν (€)
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+            {/* Total Selected Amount */}
+          </Button>
+          <span
+            className={cn(
+              "ml-2 w-32 rounded-lg  bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2 text-center text-sm text-light-900",
+              {
+                "from-red-500 to-red-600": table?.options?.meta?.paid,
+              }
+            )}
+          >
+            {table
+              .getFilteredSelectedRowModel()
+              .rows.reduce((acc, row) => acc + row.original.paidAmount, 0)}
+            €
+          </span>
+        </div>
       );
     },
-    cell: ({ row }) => {
-      const serviceName =
-        row.original.serviceId?.serviceType ?? "Πολλαπλές υπηρεσίες";
-      return <div className="ml-6 text-start">{serviceName}</div>;
-    },
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2 pl-6">
+        {row.original.paidAmount.toFixed(2) + " €"}
+      </div>
+    ),
   },
-  // 5) Notes
   {
-    accessorKey: "notes",
-    header: ({ column }) => {
+    accessorKey: "remainingAmount",
+    header: ({ column, table }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          ΣΗΜΕΙΩΣΕΙΣ
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Υπόλοιπο (€)
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+            {/* Total Selected Amount */}
+          </Button>
+          <span
+            className={cn(
+              "ml-2 w-32 rounded-lg  bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2 text-center text-sm text-light-900",
+              {
+                "from-red-500 to-red-600": table?.options?.meta?.paid,
+              }
+            )}
+          >
+            {table
+              .getFilteredSelectedRowModel()
+              .rows.reduce((acc, row) => acc + row.original.remainingAmount, 0)}
+            €
+          </span>
+        </div>
       );
     },
-    cell: ({ row }) => {
-      const notes = row.getValue<string>("notes");
-      return <div className="whitespace-pre-wrap">{notes}</div>;
-    },
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2 pl-6">
+        {row.original.remainingAmount.toFixed(2) + " €"}
+      </div>
+    ),
   },
-  // 6) Actions
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      const service = row.original;
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className=" bg-neutral-900  font-sans text-light-900"
-          >
-            <DropdownMenuLabel className="text-lg">Ενέργειες</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                const handlePayment = async () => {
-                  if (!payment.reversed) {
-                    try {
-                      await reversePayment({
-                        paymentId: payment._id,
-                      });
-                    } catch (error) {
-                      console.error("Error reversing payment:", error);
-                    } finally {
-                      window.location.reload();
-                    }
-                  } else {
-                    try {
-                      await removeReversedPayment({
-                        paymentId: payment._id,
-                        path: "/payments",
-                      });
-                    } catch (error) {
-                      console.error("Error deleting payment:", error);
-                    } finally {
-                      window.location.reload();
-                    }
-                  }
-                };
-                handlePayment();
-              }}
-              className="text-lg transition-colors duration-300 hover:text-indigo-500"
-            >
-              {row.original.reversed ? "Διαγραφή" : "Ανάκληση"}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-lg transition-colors duration-300 hover:text-indigo-500">
-              <Link href={`/clients/${payment.clientId._id}`}>
-                Πήγαινε στον Πελάτη
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="text-lg transition-colors duration-300 hover:text-indigo-500">
-              Λεπτομέρειες πληρωμής
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      return <DropdownMenuAction service={service} />;
     },
   },
 ];
 
-/**
- * PaymentsDataTable
- * Re-usable table component for listing Payments
- */
-export function PaymentsDataTable({
-  payments,
-  revenue,
-}: {
-  payments: Payment[];
-  revenue: number;
-}) {
+export function ServicesTable({ services }: { services: Service[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const searchParams = useSearchParams();
-  const reverse = searchParams.get("reverse") === "true";
-
+  const [mount, setMount] = React.useState(false);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [mount, setMount] = React.useState(false);
-  const table = useReactTable<Payment>({
-    data: payments,
+  const table = useReactTable({
+    data: services,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -345,16 +245,14 @@ export function PaymentsDataTable({
       rowSelection,
     },
   });
-
-  // For the dropdown that shows/hides columns, we map the column id to a readable label
   const columnList: Record<string, string> = {
     select: "Επιλογή",
     "clientId.name": "ΠΕΛΑΤΗΣ",
-    date: "ΗΜ. ΠΛΗΡΩΜΗΣ",
+    paidDate: "ΗΜ. ΠΛΗΡΩΜΗΣ",
     amount: "ΠΟΣΟ",
-    services: "ΥΠΗΡΕΣΙΕΣ",
-    reversed: "ΑΝΑΚΛΗΘΗΚΕ",
-    notes: "ΣΗΜΕΙΩΣΕΙΣ",
+    serviceType: "ΥΠΗΡΕΣΙΕΣ",
+    paidAmount: "ΠΛΗΡΩΘΕΝ",
+    remainingAmount: "ΥΠΟΛΟΙΠΟ",
   };
   React.useEffect(() => {
     if (!mount) {
@@ -362,15 +260,13 @@ export function PaymentsDataTable({
     }
   }, [mount]);
   if (!mount) return null;
-
   return (
     <Card className="h-full border-none">
       <div className="flex w-full items-center justify-between">
         <CardHeader>
-          <CardTitle>ΕΣΟΔΑ</CardTitle>
-          <CardDescription>Διαχειρίσου τις πληρωμές</CardDescription>
+          <CardTitle>ΥΠΗΡΕΣΙΕΣ</CardTitle>
+          <CardDescription>Διαχειρίσου τις οφειλές</CardDescription>
         </CardHeader>
-        <RevenueCard revenue={revenue} className={"mb-4 mr-4"} />
       </div>
       <CardContent>
         <div className="mb-4 flex w-full items-center gap-4">
@@ -389,11 +285,10 @@ export function PaymentsDataTable({
               }
               className="h-14 w-60"
             />
-            <PaymentsTabReverse />
+            <ServiceTabPaid />
           </div>
 
           <div className="flex w-full flex-row items-center justify-end gap-2">
-            <CreatePaymentTrigger />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -454,30 +349,24 @@ export function PaymentsDataTable({
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                   >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className={cn(
-                          `[&:has([role=checkbox])]:pl-3`,
-                          {
-                            "text-red-500":
+                    {row.getVisibleCells().map((cell) => {
+                      const paid = row.original.paid;
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          className={cn(`[&:has([role=checkbox])]:pl-3`, {
+                            "text-green-500":
                               // Highlight the amount cell in red if the payment is reversed and the column is amount
-                              reverse && cell.column.id === "amount",
-                          },
-                          {
-                            "line-through":
-                              reverse &&
-                              cell.column.id !== "amount" &&
-                              cell.column.id !== "date",
-                          }
-                        )}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
+                              paid && cell.column.id === "paidAmount",
+                          })}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      );
+                    })}
                   </TableRow>
                 ))
               ) : (

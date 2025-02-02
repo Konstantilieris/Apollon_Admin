@@ -16,6 +16,7 @@ import {
   IconExposure,
   IconArrowLeft,
   IconCashRegister,
+  IconCashBanknote,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -128,6 +129,20 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
       href: "/payments",
       icon: (
         <IconCashRegister
+          className={cn(
+            "h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200",
+            {
+              "text-primary-500 dark:text-yellow-500 w-7": path === "/payments",
+            }
+          )}
+        />
+      ),
+    },
+    {
+      label: "Οφειλές",
+      href: "/services",
+      icon: (
+        <IconCashBanknote
           className={cn(
             "h-7 w-6 shrink-0 text-neutral-700 dark:text-neutral-200",
             {

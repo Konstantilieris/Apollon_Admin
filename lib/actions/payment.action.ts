@@ -32,7 +32,7 @@ export async function getPaymentsByClientId({
 }
 export async function getAllPayments({ reverse }: { reverse: boolean }) {
   connectToDatabase();
-  console.log(reverse);
+
   try {
     const payments = await Payment.find({ reversed: reverse })
       .sort({ date: -1 })

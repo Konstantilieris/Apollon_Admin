@@ -1077,3 +1077,15 @@ export async function removeReversedPayment({
     throw error;
   }
 }
+export async function getAllServices({ paid }: { paid: boolean }) {
+  connectToDatabase();
+  try {
+    const services = await Service.find({ paid })
+      .sort({ date: -1 })
+      .populate("clientId", "name");
+    return JSON.parse(JSON.stringify(services));
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    throw new Error("Failed to fetch services.");
+  }
+}
