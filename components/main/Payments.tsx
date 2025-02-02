@@ -17,13 +17,7 @@ import {
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
 import { Button } from "../ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 import {
   DropdownMenu,
@@ -365,11 +359,7 @@ export function PaymentsDataTable({
 
   return (
     <Card className="h-full border-none">
-      <div className="flex w-full items-center justify-between">
-        <CardHeader>
-          <CardTitle>ΕΣΟΔΑ</CardTitle>
-          <CardDescription>Διαχειρίσου τις πληρωμές</CardDescription>
-        </CardHeader>
+      <div className="flex w-full items-center px-4 py-2">
         <RevenueCard revenue={revenue} className={"mb-4 mr-4"} />
       </div>
       <CardContent>

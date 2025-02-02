@@ -43,6 +43,8 @@ import {
 import { Input } from "../ui/input";
 import ServiceTabPaid from "./ServiceTabPaid";
 import { DropdownMenuAction } from "./DropDownMenu";
+import { useSearchParams } from "next/navigation";
+import { OwesCard } from "./PaymentCard";
 
 // Define Service Type
 interface Service {
@@ -212,7 +214,9 @@ const columns: ColumnDef<Service>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const service = row.original;
-
+      if (service.paid) {
+        return null;
+      }
       return <DropdownMenuAction service={service} />;
     },
   },
@@ -220,6 +224,16 @@ const columns: ColumnDef<Service>[] = [
 
 export function ServicesTable({ services }: { services: Service[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const searchParams = useSearchParams();
+  const paid = searchParams.get("paid") === "true";
+  const totalAmount = services.reduce(
+    (acc, service) => acc + service.amount,
+    0
+  );
+  const owesTotal = services.reduce(
+    (acc, service) => acc + service.remainingAmount,
+    0
+  );
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -230,14 +244,18 @@ export function ServicesTable({ services }: { services: Service[] }) {
   const table = useReactTable({
     data: services,
     columns,
+
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel({
+      initialSync: true,
+    }),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+
     state: {
       sorting,
       columnFilters,
@@ -262,11 +280,11 @@ export function ServicesTable({ services }: { services: Service[] }) {
   if (!mount) return null;
   return (
     <Card className="h-full border-none">
-      <div className="flex w-full items-center justify-between">
-        <CardHeader>
-          <CardTitle>ΥΠΗΡΕΣΙΕΣ</CardTitle>
-          <CardDescription>Διαχειρίσου τις οφειλές</CardDescription>
-        </CardHeader>
+      <div className="flex w-full items-center px-4 py-2">
+        <OwesCard
+          revenue={paid ? totalAmount : owesTotal}
+          className={"mb-4 mr-4"}
+        />
       </div>
       <CardContent>
         <div className="mb-4 flex w-full items-center gap-4">
