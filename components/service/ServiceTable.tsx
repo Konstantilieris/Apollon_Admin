@@ -25,13 +25,7 @@ import {
 import { Button } from "../ui/button";
 
 import { ArrowUpDown, ChevronDown } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import {
   Table,
   TableBody,
