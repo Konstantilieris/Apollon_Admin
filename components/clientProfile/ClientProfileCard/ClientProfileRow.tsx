@@ -9,7 +9,7 @@ import React from "react";
 
 import { CardWrapperClientRow } from "../Layout/CardClientRow";
 
-export function ClientProfileRow({ client }: { client: any }) {
+function ClientProfileRow({ client }: { client: any }) {
   const loyaltyStyle =
     client.loyaltyLevel === "bronze"
       ? "text-bronze"
@@ -47,3 +47,4 @@ export function ClientProfileRow({ client }: { client: any }) {
     </div>
   );
 }
+export default ClientProfileRow;

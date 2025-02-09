@@ -1,4 +1,4 @@
-import { getClientById } from "@/lib/actions/client.action";
+import { getClientById2 } from "@/lib/actions/client.action";
 
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,14 +10,15 @@ import { formatDateString } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 const ClientRow = async ({ id }: { id: string }) => {
-  const client = await getClientById(id);
-
+  const client = await getClientById2(id);
+  const referencer = client?.references?.isReferenced?.client;
   const fullName = client?.name || ""; // Safely handle null or undefined
   const initials = fullName
     .split(" ") // Split the name into parts
     .map((part: string[]) => part[0]) // Get the first letter of each part
     .join("") // Combine the initials
     .toUpperCase(); // Ensure they are uppercase
+
   return (
     <section className="relative flex min-h-[200px] w-full flex-col overflow-y-hidden bg-neutral-950">
       <HeroSectionWithBeamsAndGrid />
@@ -30,15 +31,15 @@ const ClientRow = async ({ id }: { id: string }) => {
           <span className="text-sm tracking-widest sm:text-lg md:text-xl">
             {client?.name ?? ""}
           </span>
-          <span className="text-base tracking-widest text-gray-400">
+          <span className="text-base tracking-widest text-gray-400 ">
+            ΣΥΣΤΑΣΗ: {referencer?.name}
+          </span>
+          <span className="text-sm tracking-widest text-gray-400">
             {formatDateString(client.createdAt)}
           </span>
           <div className="flex flex-row justify-between">
             <div className="flex flex-col">
-              <span className="text-sm tracking-widest text-gray-400 md:text-lg">
-                Κατοικίδια
-              </span>
-              <span className="text-sm tracking-widest text-light-900 md:text-lg">
+              <span className="mt-2 flex items-center gap-2 text-sm uppercase tracking-widest text-yellow-300">
                 {client?.dog.map((dog: IDog) => dog?.name).join(", ")}
               </span>
             </div>

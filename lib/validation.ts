@@ -21,6 +21,14 @@ export const LogInValidation = z.object({
     .min(2, { message: "Πρέπει να είναι τουλάχιστον 2 χαρακτήρες" })
     .max(15),
 });
+export const EmailValidation = z.object({
+  email: z
+    .string()
+    .min(5, { message: "Το email πρέπει να έχει τουλάχιστον 5 χαρακτήρες." }) // Prevents very short emails
+    .max(254, { message: "Το email είναι πολύ μεγάλο." }) // RFC 5321 max length for emails
+    .email({ message: "Μη έγκυρη μορφή email." }) // Ensures valid email format
+    .trim(), // Trims whitespace
+});
 
 export const ExpensesValidation = z.object({
   description: z.string().optional(),

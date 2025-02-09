@@ -100,16 +100,15 @@ const WeatherRow = () => {
           )}
         </span>
         <span className="flex flex-row items-center gap-2">
-          <h2>Θερμοκρασία τώρα</h2>
-          <p className="flex flex-row items-center">
-            {~~weatherData?.current.temperature2m}
-          </p>
           <Image
             src="/assets/weather/celcius.svg"
             alt="thermometer"
             width={36}
             height={30}
           />
+          <p className="flex flex-row items-center">
+            {~~weatherData?.current.temperature2m}
+          </p>
         </span>
         <span className="flex flex-row items-center gap-2">
           <h2>Αίσθηση Θερμοκρασίας</h2>

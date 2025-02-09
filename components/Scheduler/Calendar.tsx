@@ -223,7 +223,6 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
   ];
 
   const eventTemplate = (props: any) => {
-    console.log("props", props.paid);
     return (
       <div
         style={{

@@ -145,6 +145,27 @@ export async function getClientById(id: string | undefined) {
     throw error;
   }
 }
+export async function getClientById2(id: string | undefined) {
+  try {
+    connectToDatabase();
+    const client = await Client.findById(id); // Use `lean()` for better performance
+
+    if (!client) {
+      return null; // Return null if no client is found
+    }
+
+    // Manually filter out dead dogs
+    if (client.dog && Array.isArray(client.dog)) {
+      client.dog = client.dog.filter((dog: any) => !dog.dead);
+    }
+
+    return client;
+  } catch (error) {
+    console.error("Error fetching client:", error);
+    throw error;
+  }
+}
+
 export async function getClientByIdForSuccess(id: string | undefined) {
   try {
     connectToDatabase();

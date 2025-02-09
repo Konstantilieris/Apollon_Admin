@@ -1,4 +1,5 @@
 import { NoteKanban } from "@/components/kanbanNotes/Notes";
+import { ActionsCard } from "@/components/main/ΑctionsCard";
 
 import RevenueCard from "@/components/shared/cards/RevenueCard";
 import SubscriptionCard from "@/components/shared/cards/SubscriptionCard";
@@ -36,9 +37,12 @@ const page = async () => {
 
   return (
     <div className="flex  h-full w-full flex-col  gap-4 overflow-x-hidden pb-2 pl-4 pr-2">
-      <div className="flex w-full select-none flex-row">
-        <WeatherRow />
-        <div className="flex w-full  flex-row gap-4 pl-8">
+      <div className="flex w-full select-none flex-row gap-2">
+        <div className="flex flex-row gap-1">
+          <WeatherRow />
+          <ActionsCard />
+        </div>
+        <div className="flex w-full  flex-row gap-4 ">
           <RevenueCard
             percentage={percentageIncrease}
             total={totalRevenue}

@@ -110,7 +110,7 @@ const CreateDogModal = ({
         <ModalFooter className="gap-2 bg-purple-400">
           <Button
             onClick={() => form.handleSubmit(onSubmit)()}
-            className="border border-dark-100 bg-purple-800  font-semibold transition-colors hover:scale-105 hover:bg-purple-900 "
+            className="border border-dark-100 bg-yellow-700  font-semibold transition-colors hover:scale-105 hover:bg-purple-900 "
             variant={null}
           >
             {loading ? (

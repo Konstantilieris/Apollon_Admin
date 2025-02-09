@@ -1,18 +1,18 @@
 "use client";
 import React from "react";
-import { IconDog, IconPlus } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import CreateDogModal from "./CreateDogModal";
+
 const AddDog = ({ clientId }: { clientId: string }) => {
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <span
-        className="absolute right-4 top-6 flex cursor-pointer flex-row items-center gap-4 rounded-lg border border-neutral-600 bg-neutral-950 p-2 text-light-900 transition-transform duration-200 ease-in-out hover:scale-125 hover:text-green-500 "
+      <button
         onClick={() => setOpen(true)}
+        className=" mx-auto flex  items-center gap-2 rounded-2xl border-2 border-dashed border-neutral-800 bg-neutral-950 px-6 py-3 font-semibold uppercase text-light-900 transition-all duration-300 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:rounded-md hover:shadow-[4px_4px_0px_black] active:translate-x-[0px] active:translate-y-[0px] active:rounded-2xl active:shadow-none"
       >
-        <IconPlus className=" h-6 w-6   " />
-        <IconDog className="h-6 w-6" />
-      </span>
+        <IconPlus size={20} /> Προσθηκη Κατοικιδιου
+      </button>
       {open && (
         <CreateDogModal isOpen={open} setOpen={setOpen} clientId={clientId} />
       )}

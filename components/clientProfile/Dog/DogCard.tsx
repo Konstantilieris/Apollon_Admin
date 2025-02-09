@@ -14,6 +14,7 @@ import AlertDeadDog from "./AlertDeadDog";
 import DogNormalView from "./DogNormalView";
 import DogEditView from "./DogEditView";
 import { calculateAge, formatDate } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface dogListProps {
   name: string;
@@ -161,13 +162,13 @@ export function DogCards({
         ) : null}
       </AnimatePresence>
 
-      <ul className="mx-auto w-full max-w-2xl flex-1 gap-4">
+      <ScrollArea className=" mx-auto w-full max-w-2xl flex-1 gap-4">
         {dogs.map((dog, index) => (
           <motion.div
             layoutId={`card-${dog.name}-${id}`}
             key={`card-${dog.name}-${id}`}
             onClick={() => setActive(dog)}
-            className="relative mt-3 flex min-h-[15vh] flex-col gap-4 rounded-lg border border-gray-600 p-4 shadow-sm shadow-gray-500 dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8"
+            className="relative mt-3 flex min-h-[15vh]  flex-col gap-4 rounded-lg border border-gray-600 p-4 shadow-sm shadow-gray-500 dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8"
           >
             <motion.div
               className="absolute right-2 top-2"
@@ -227,7 +228,7 @@ export function DogCards({
             </div>
           </motion.div>
         ))}
-      </ul>
+      </ScrollArea>
     </>
   );
 }

@@ -28,6 +28,8 @@ export interface Service {
   paid: boolean;
   paymentDate?: Date;
   remainingAmount?: number;
+  taxRate?: number;
+  taxAmount?: number;
   discount?: number;
   paidAmount?: number;
   _id: string; // Assuming you have a unique ID for each service
@@ -109,7 +111,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
       setSortOrder({ ...sortOrder, [key]: newOrder });
     };
   };
-
+  console.log(services);
   return (
     <div className=" ml-8 min-h-[70vh] overflow-x-auto">
       <div className="mb-1 flex w-full flex-row text-lg">
@@ -147,7 +149,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
               Σημειώση
             </TableHead>
             <TableHead className=" font-semibold text-light-900">
-              <span className=" flex items-center">
+              <span className=" flex w-full items-center justify-center">
                 Σύνολο
                 <IconSelector
                   className="cursor-pointer"
@@ -157,6 +159,12 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                   {totalAmount.toFixed(2)} €
                 </span>
               </span>
+            </TableHead>
+            <TableHead className="px-4 py-3 font-semibold text-light-900">
+              Φόρος (%)
+            </TableHead>
+            <TableHead className="px-4 py-3 font-semibold text-light-900">
+              Φόρος (€)
             </TableHead>
 
             <TableHead className="text-center font-semibold text-light-900">
@@ -238,7 +246,15 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 <TableCell className="max-w-[7vw] truncate px-4 py-3 pl-8">
                   {service.notes || "N/A"}
                 </TableCell>
-                <TableCell className="pl-8">{service.amount} €</TableCell>
+                <TableCell className="pl-8 text-center">
+                  {service.amount} €
+                </TableCell>
+                <TableCell className="text-center">
+                  {service.taxRate ?? "N/A"} €
+                </TableCell>
+                <TableCell className="text-center">
+                  {service.taxAmount ?? "Ν/Α"} €
+                </TableCell>
                 <TableCell className="text-center">
                   {service.paidAmount ?? "Ν/Α"} €
                 </TableCell>

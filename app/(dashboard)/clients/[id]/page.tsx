@@ -1,13 +1,12 @@
-import AddDog from "@/components/clientProfile/Dog/AddDog";
 import ClientInfoCard from "@/components/clientProfile/ClientInfoCard";
 import { ClientNoteCard } from "@/components/clientProfile/ClientNoteCard";
 
-import { DogCards } from "@/components/clientProfile/Dog/DogCard";
-import { DeadDogTooltip } from "@/components/ui/deadDogTooltip";
 import { getClientById } from "@/lib/actions/client.action";
 
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import console from "console";
+import DogView from "@/components/clientProfile/ClientProfileCard/DogView";
 
 const page = async ({ params }: { params: any }) => {
   const { id } = params;
@@ -74,27 +73,38 @@ const page = async ({ params }: { params: any }) => {
       ],
     },
   ];
+  console.log("client", client.references.hasReferenced);
   return (
     <ScrollArea className=" mb-20 h-full w-full">
       <div className=" relative  flex h-full w-full flex-row justify-between gap-1 py-4 max-md:flex-col">
-        <div className="ml-4   flex h-full   w-full flex-col items-start gap-4 ">
+        <div className="ml-4   flex h-full max-w-[50vw] flex-col items-start gap-4 ">
           <ClientInfoCard datalist={dataList} />
 
           <ClientNoteCard client={JSON.parse(JSON.stringify(client))} />
         </div>
-        <div className="flex w-full flex-col gap-4 rounded-2xl bg-neutral-800 px-4 py-2">
-          <h1 className="text-2xl font-semibold text-yellow-500">
-            ΚΑΤΟΙΚΙΔΙΑ ΠΕΛΑΤΗ{" "}
-          </h1>
-          <AddDog clientId={JSON.parse(JSON.stringify(client._id))} />
-
-          <DogCards
-            dogs={JSON.parse(JSON.stringify(livingDogs))}
-            clientId={JSON.parse(JSON.stringify(client._id))}
+        <div className="flex min-h-[80vh] w-full flex-row gap-2">
+          <DogView
+            clientId={client._id}
+            livingDogs={livingDogs}
+            deadDogs={deadDogs}
           />
-          <div className="mb-8 flex min-h-[5rem] w-full  flex-row items-center justify-center gap-12  overflow-visible rounded-xl bg-neutral-900 px-4 py-2">
-            {deadDogs.length > 0 && <DeadDogTooltip items={deadDogs} />}
-          </div>
+          <div className="flex w-full flex-col gap-4 rounded-2xl bg-neutral-800 px-4 py-2">
+            <h1 className="text-2xl font-semibold text-yellow-500">
+              ΛΙΣΤΑ ΣΥΣΤΑΣΕΩΝ
+            </h1>
+            <ul className="list-disc pl-5 text-white">
+              {client.references.hasReferenced?.length > 0 ? (
+                client.references.hasReferenced.map(
+                  (reference: any, index: number) => (
+                    <li key={index}>{reference.name}</li>
+                  )
+                )
+              ) : (
+                <li>Δεν υπάρχουν συστάσεις</li>
+              )}
+            </ul>
+          </div>{" "}
+          {/* This is the component that was added */}
         </div>
       </div>
     </ScrollArea>

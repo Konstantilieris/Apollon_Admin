@@ -1,28 +1,34 @@
 "use client";
 import { STAGE_ENUM, useClientCard } from "@/hooks/use-client-card";
-import React, { Suspense } from "react";
+import React, { Suspense, lazy } from "react";
 
-import { ClientProfileRow } from "./ClientProfileRow";
-import ClientStatsRow from "./ClientStatsRow";
 import { AnimatePresence, motion } from "framer-motion";
 import BarLoader from "@/components/ui/shuffleLoader";
-import ClientFeesRow from "./ClientFeesRow";
-import ClientOverView from "./ClientOverView";
+
+// Lazy loading components
+const LazyClientProfileRow = lazy(() => import("./ClientProfileRow"));
+const LazyClientStatsRow = lazy(() => import("./ClientStatsRow"));
+const LazyClientFeesRow = lazy(() => import("./ClientFeesRow"));
+const LazyClientOverView = lazy(() => import("./ClientOverView"));
 
 const RowRenderer = ({ client }: { client: any }) => {
   const { stage } = useClientCard();
+
   const renderRow = () => {
     switch (stage) {
       case STAGE_ENUM.INITIAL:
-        return <ClientProfileRow client={client} />;
+        return <LazyClientProfileRow client={client} />;
       case STAGE_ENUM.STATS:
-        return <ClientStatsRow client={client} />;
+        return <LazyClientStatsRow client={client} />;
       case STAGE_ENUM.FEES:
-        return <ClientFeesRow client={client} />;
+        return <LazyClientFeesRow client={client} />;
       case STAGE_ENUM.OVERVIEW:
-        return <ClientOverView client={client} />;
+        return <LazyClientOverView client={client} />;
+      default:
+        return null;
     }
   };
+
   return (
     <AnimatePresence mode="wait" key={stage}>
       <Suspense
