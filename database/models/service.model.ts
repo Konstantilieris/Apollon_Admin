@@ -90,6 +90,7 @@ const ServiceSchema = new Schema<IService>({
 ServiceSchema.pre("save", function (next) {
   // Calculate tax and total amount
   this.taxAmount = (this.amount * (this.taxRate ?? 0)) / 100;
+  console.log(this.amount);
   this.totalAmount = this.amount + this.taxAmount;
 
   // Ensure remainingAmount is calculated correctly
@@ -110,27 +111,43 @@ ServiceSchema.pre("save", function (next) {
 });
 
 // If using findOneAndUpdate anywhere, this runs:
-ServiceSchema.pre("findOneAndUpdate", function (next) {
+ServiceSchema.pre("findOneAndUpdate", async function (next) {
+  // The partial update object
   const update = this.getUpdate() as Partial<IService>;
-
   if (
-    update.amount !== undefined ||
-    update.taxRate !== undefined ||
-    update.discount !== undefined ||
-    update.paidAmount !== undefined
+    update.amount === undefined &&
+    update.taxRate === undefined &&
+    update.discount === undefined &&
+    update.paidAmount === undefined
   ) {
-    update.taxAmount = (update.amount! * (update.taxRate ?? 0)) / 100;
-    update.totalAmount = Math.max(
-      update.amount! + update.taxAmount - (update.discount ?? 0),
-      0
-    );
-    update.remainingAmount = Math.max(
-      update.totalAmount - (update.paidAmount ?? 0),
-      0
-    );
-    update.paid = update.remainingAmount === 0;
-    update.paymentDate = update.paid ? new Date() : null;
+    // Nothing relevant changed, skip
+    return next();
   }
+
+  // 1) Fetch the existing doc
+  const docToUpdate = await this.model.findOne(this.getQuery());
+  if (!docToUpdate) return next();
+
+  // 2) Merge: if a field is not present in the update, use the doc’s old field
+  const newAmount = update.amount ?? docToUpdate.amount;
+  const newTaxRate = update.taxRate ?? docToUpdate.taxRate;
+  const newDiscount = update.discount ?? docToUpdate.discount;
+  const newPaidAmount = update.paidAmount ?? docToUpdate.paidAmount;
+
+  // 3) Recompute derived fields
+  const newTaxAmount = (newAmount * newTaxRate) / 100;
+  const newTotalAmount = Math.max(
+    newAmount + newTaxAmount - (newDiscount ?? 0),
+    0
+  );
+  const newRemainingAmount = Math.max(newTotalAmount - (newPaidAmount ?? 0), 0);
+
+  // 4) Set them in the update object
+  update.taxAmount = newTaxAmount;
+  update.totalAmount = newTotalAmount;
+  update.remainingAmount = newRemainingAmount;
+  update.paid = newRemainingAmount === 0;
+  update.paymentDate = update.paid ? new Date() : null;
 
   this.setUpdate(update);
   next();

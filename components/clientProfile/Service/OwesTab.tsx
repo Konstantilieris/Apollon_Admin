@@ -32,6 +32,7 @@ export interface Service {
   taxAmount?: number;
   discount?: number;
   paidAmount?: number;
+  totalAmount?: number;
   _id: string; // Assuming you have a unique ID for each service
 }
 
@@ -150,7 +151,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
             </TableHead>
             <TableHead className=" font-semibold text-light-900">
               <span className=" flex w-full items-center justify-center">
-                Σύνολο
+                Αρχικό Σύνολο
                 <IconSelector
                   className="cursor-pointer"
                   onClick={handleSort("amount")}
@@ -165,6 +166,18 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
             </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-light-900">
               Φόρος (€)
+            </TableHead>
+            <TableHead className=" font-semibold text-light-900">
+              <span className=" flex w-full items-center justify-center">
+                Τελικό Σύνολο
+                <IconSelector
+                  className="cursor-pointer"
+                  onClick={handleSort("amount")}
+                />
+                <span className="ml-2 rounded-lg border border-light-900 bg-dark-100 p-2 text-base text-light-900">
+                  {totalAmount.toFixed(2)} €
+                </span>
+              </span>
             </TableHead>
 
             <TableHead className="text-center font-semibold text-light-900">
@@ -249,11 +262,14 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 <TableCell className="pl-8 text-center">
                   {service.amount} €
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="pl-8 text-start">
                   {service.taxRate ?? "N/A"} €
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="pl-8 text-start">
                   {service.taxAmount ?? "Ν/Α"} €
+                </TableCell>
+                <TableCell className="text-center">
+                  {service.totalAmount ?? "Ν/Α"} €
                 </TableCell>
                 <TableCell className="text-center">
                   {service.paidAmount ?? "Ν/Α"} €

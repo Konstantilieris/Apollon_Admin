@@ -42,7 +42,7 @@ const FourthStage = ({
   useEffect(() => {
     const fetchData = async () => {
       const res = await getBookingById(JSON.parse(JSON.stringify(bookingId)));
-      console.log("$extraDay", extraDay);
+
       setBooking(JSON.parse(res));
     };
     fetchData();

@@ -140,75 +140,102 @@ export async function updateEventBookingOnlyTimeChange({ event }: any) {
   }
 }
 export async function updateBookingDateChange({ event, pairDate }: any) {
-  let dayDif;
-  let total;
-  let bookingFee;
   const session = await mongoose.startSession();
 
   try {
     await connectToDatabase();
-
     session.startTransaction();
 
+    // 1) Load the booking
     const booking = await Booking.findById(event.Id).session(session);
     if (!booking) {
       throw new Error(`Booking not found for ID ${event.Id}`);
     }
-    console.log("booking", booking);
-    bookingFee = booking.client.bookingFee || 0;
 
+    // 2) Calculate how many days difference => how much we add to "amount"
+    const bookingFee = booking.client.bookingFee || 0;
+    let dayDif;
     if (event.isArrival) {
+      // Shift fromDate
       dayDif = calculateDaysDifference(event.StartTime, booking.fromDate, true);
     } else {
+      // Shift toDate
       dayDif = calculateDaysDifference(event.StartTime, booking.toDate, false);
     }
+    const total = Math.round(dayDif * bookingFee);
 
-    total = Math.round(dayDif * bookingFee);
-
+    // 3) If event is a Pet Taxi, update the existing taxi Service doc-based
     if (event.isTransport) {
-      const updateService = await Service.findOneAndUpdate(
-        { bookingId: event.Id, serviceType: event.isTransport },
-        { date: event.StartTime },
-        { session }
-      );
-      if (!updateService) {
+      const taxiService = await Service.findOne({
+        bookingId: event.Id,
+        serviceType: event.isTransport, // e.g. "Pet Taxi (Pick-Up)"
+      }).session(session);
+
+      if (!taxiService) {
         throw new Error(
-          `Service update failed for booking ${event.Id} and service type ${event.isTransport}`
+          `Service update failed (not found) for booking ${event.Id}, service type ${event.isTransport}`
         );
       }
+
+      // doc-based approach => triggers pre("save")
+      taxiService.date = event.StartTime;
+      // If you also want to adjust amount or anything else, do so:
+      // taxiService.amount += ...
+      await taxiService.save({ session });
     }
 
+    // 4) Update the Client owesTotal with partial update if you want
+    // (unless you also have complicated client-based middleware)
     await Client.findByIdAndUpdate(
       booking.client.clientId,
       { $inc: { owesTotal: total } },
       { session }
     );
-    await Service.findOneAndUpdate(
-      { bookingId: event.Id, serviceType: "ΔΙΑΜΟΝΗ" },
-      { $inc: { amount: total, remainingAmount: total } },
-      { session }
-    );
 
+    // 5) Doc-based update the Boarding (ΔΙΑΜΟΝΗ) Service
+    //    So the `pre("save")` hook recalculates totalAmount, remainingAmount, etc.
+    const boardingService = await Service.findOne({
+      bookingId: event.Id,
+      serviceType: "ΔΙΑΜΟΝΗ",
+    }).session(session);
+
+    if (!boardingService) {
+      throw new Error(`Boarding service not found for booking ${event.Id}`);
+    }
+
+    // Increase the amount by "total" - Let the schema recalc tax, etc.
+    boardingService.amount += total;
+
+    // If you do NOT want leftover discount or partial payment messing it up:
+    // boardingService.discount = 0; // if you want no discount
+    // boardingService.paidAmount = 0; // if you want to reset partial payments
+
+    // doc-based save => triggers pre("save") => recalculates totalAmount, remainingAmount
+    await boardingService.save({ session });
+
+    // 6) Update the Booking
+    //    If you only want to shift fromDate or toDate, plus increment totalAmount:
     const updateData = event.isArrival
       ? { fromDate: event.StartTime, $inc: { totalAmount: total } }
       : { toDate: event.StartTime, $inc: { totalAmount: total } };
 
     await Booking.findByIdAndUpdate(event.Id, updateData, { session });
 
+    // 7) Update the Event times
     const updatedEvent = await Event.findByIdAndUpdate(
       event._id,
       { StartTime: event.StartTime, EndTime: event.EndTime },
       { session }
     );
-
     if (!updatedEvent) {
       throw new Error(`Event update failed for ID ${event._id}`);
     }
 
+    // 8) Commit + revalidate
     await session.commitTransaction();
+    session.endSession();
 
     revalidatePath("/booking");
-
     revalidatePath(`/clients/${booking.client.clientId}`);
     return true;
   } catch (error) {
@@ -216,9 +243,8 @@ export async function updateBookingDateChange({ event, pairDate }: any) {
     if (session.inTransaction()) {
       await session.abortTransaction();
     }
-    throw error;
-  } finally {
     session.endSession();
+    throw error;
   }
 }
 export async function updateAppointmentRoom({

@@ -1535,13 +1535,10 @@ export async function updateBookingAllInclusive({
 
     // 7) Add tax
     const taxRate = oldBoardingService.taxRate ?? 0;
-    const taxAmount = (calculateTotalAmount * taxRate) / 100;
-    calculateTotalAmount += taxAmount;
 
     // 8) Paid portion so far
     const paidAmount =
       oldBoardingService.amount - (oldBoardingService.remainingAmount ?? 0);
-    const newRemainingAmount = Math.max(calculateBoardingFee - paidAmount, 0);
 
     // 9) Update the main Booking doc
     const updatedBooking = await Booking.findOneAndUpdate(
@@ -1572,17 +1569,19 @@ export async function updateBookingAllInclusive({
     // 10) Update Boarding Service doc-based so date + endDate are definitely set
     oldBoardingService.amount = calculateBoardingFee;
     oldBoardingService.taxRate = taxRate;
-    oldBoardingService.taxAmount = taxAmount;
-    oldBoardingService.totalAmount = calculateTotalAmount;
-    oldBoardingService.remainingAmount = newRemainingAmount;
-    oldBoardingService.paid = false; // reset paid
+    oldBoardingService.paidAmount = paidAmount;
     oldBoardingService.date = fromDate;
-    console.log("oldBoardingService.date", oldBoardingService.date);
-
     oldBoardingService.endDate = toDate;
-    console.log("oldBoardingService.endDate", oldBoardingService.endDate);
-    await oldBoardingService.save({ session });
 
+    await oldBoardingService.save({ session });
+    console.log("AFTER SAVE =>", {
+      amount: oldBoardingService.amount,
+      discount: oldBoardingService.discount,
+      paidAmount: oldBoardingService.paidAmount,
+      taxRate: oldBoardingService.taxRate,
+      totalAmount: oldBoardingService.totalAmount,
+      remainingAmount: oldBoardingService.remainingAmount,
+    });
     // 11) Handle Pet Taxi (Pick-Up)
     const pickUpServiceChanged = await handlePetTaxiService({
       booking: updatedBooking,
