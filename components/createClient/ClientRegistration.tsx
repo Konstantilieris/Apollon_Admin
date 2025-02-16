@@ -22,9 +22,7 @@ const ClientRegistration = ({
 }) => {
   const [stage, setStage] = React.useState(0);
   const [data, setData] = React.useState<Partial<IClient>>({});
-  React.useEffect(() => {
-    console.log("data", data);
-  }, [data]);
+
   switch (stage) {
     case 0:
       return (

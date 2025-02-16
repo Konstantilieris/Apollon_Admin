@@ -146,7 +146,7 @@ export function ClientNoteCard({ client }: { client: any }) {
         layoutId={`card-${client?.name}-${id}`}
         key={`card-${client?.name}-${id}`}
         onClick={() => setActive(client)}
-        className="relative flex h-full min-h-[15vh] w-full flex-col gap-4 rounded-lg border border-lime-500 p-4  dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8 "
+        className="relative flex h-full min-h-[15vh] w-full flex-col gap-4 rounded-lg border border-yellow-500 p-4  dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8 "
       >
         <motion.div
           className="absolute right-2 top-2"

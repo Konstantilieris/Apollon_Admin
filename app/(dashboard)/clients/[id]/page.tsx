@@ -1,12 +1,10 @@
 import ClientInfoCard from "@/components/clientProfile/ClientInfoCard";
 import { ClientNoteCard } from "@/components/clientProfile/ClientNoteCard";
-
 import { getClientById } from "@/lib/actions/client.action";
-
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import console from "console";
 import DogView from "@/components/clientProfile/ClientProfileCard/DogView";
+import { Separator } from "@/components/ui/separator";
 
 const page = async ({ params }: { params: any }) => {
   const { id } = params;
@@ -73,7 +71,7 @@ const page = async ({ params }: { params: any }) => {
       ],
     },
   ];
-  console.log("client", client.references.hasReferenced);
+
   return (
     <ScrollArea className=" mb-20 h-full w-full">
       <div className=" relative  flex h-full w-full flex-row justify-between gap-1 py-4 max-md:flex-col">
@@ -88,15 +86,20 @@ const page = async ({ params }: { params: any }) => {
             livingDogs={livingDogs}
             deadDogs={deadDogs}
           />
-          <div className="flex w-full flex-col gap-4 rounded-2xl bg-neutral-800 px-4 py-2">
+          <div className="flex w-full flex-col gap-4 rounded-2xl bg-dark-100 px-4 py-2">
             <h1 className="text-2xl font-semibold text-yellow-500">
               ΛΙΣΤΑ ΣΥΣΤΑΣΕΩΝ
             </h1>
-            <ul className="list-disc pl-5 text-white">
+            <ul className="list-disc pl-4 tracking-widest text-white">
               {client.references.hasReferenced?.length > 0 ? (
                 client.references.hasReferenced.map(
                   (reference: any, index: number) => (
-                    <li key={index}>{reference.name}</li>
+                    <>
+                      <li key={index} className="max-w-[350px]">
+                        {reference.name}
+                        <Separator className="bg-gray-500" />
+                      </li>
+                    </>
                   )
                 )
               ) : (

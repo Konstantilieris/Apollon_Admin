@@ -20,7 +20,6 @@ const PrintServices = ({ client }: { client: any }) => {
       <button
         className="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
         onClick={() => {
-          console.log("Print");
           handlePrint();
         }}
       >

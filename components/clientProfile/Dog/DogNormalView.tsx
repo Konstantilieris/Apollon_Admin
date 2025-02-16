@@ -50,16 +50,16 @@ const DogNormalView = ({
     <motion.div
       layoutId={`card-${active.name}-${id}`}
       ref={theRef}
-      className="relative flex  h-full min-h-[80vh] w-full min-w-[50vw] max-w-[500px]  flex-col overflow-hidden border border-green-400 bg-white py-4 dark:bg-neutral-900 sm:rounded-3xl md:h-fit md:max-h-[90%]"
+      className="relative flex  h-full min-h-[80vh] w-full min-w-[50vw] max-w-[500px]  flex-col overflow-hidden border border-yellow-600 bg-white py-4 dark:bg-dark-100 sm:rounded-3xl md:h-fit md:max-h-[90%]"
     >
       <motion.div
         layoutId={`image-${active._id}-${id}`}
         className="absolute right-2 top-2"
       >
-        <IconEdit className="text-green-400" onClick={() => setEdit(true)} />
+        <IconEdit className="text-yellow-400" onClick={() => setEdit(true)} />
       </motion.div>
       <span className="absolute left-2 top-2 flex flex-row items-center gap-1">
-        <IconCpu className="text-green-500" /> {active?.microchip}
+        <IconCpu className="text-yellow-500" /> {active?.microchip}
       </span>
       <IconSkull
         className="absolute bottom-2 right-2 h-8 w-8 text-red-500 hover:scale-110"
@@ -117,14 +117,14 @@ const DogNormalView = ({
                       onClick={() => setActiveForm(false)}
                     />
                     <IconSquareCheckFilled
-                      className="text-green-500 hover:scale-110"
+                      className="text-yellow-500 hover:scale-110"
                       onClick={handleNoteDog}
                     />
                   </>
                 ) : (
                   <IconSquarePlus
                     onClick={() => setActiveForm(true)}
-                    className="text-green-500 hover:scale-110"
+                    className="text-yellow-500 hover:scale-110"
                   />
                 )}
               </p>

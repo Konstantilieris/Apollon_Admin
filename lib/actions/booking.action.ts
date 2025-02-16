@@ -1450,7 +1450,7 @@ export async function updateBookingAllInclusive({
   roomPreference,
 }: any) {
   // Ensure DB connected
-  await mongoose.connect(process.env.MONGODB_URI!);
+  await connectToDatabase();
   const session = await mongoose.startSession();
   session.startTransaction();
   const fromDate = new Date(rangeDate.from);

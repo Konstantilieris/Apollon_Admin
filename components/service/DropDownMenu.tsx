@@ -23,7 +23,6 @@ export function DropdownMenuAction({ service }: { service: any }) {
   const { setOpen, setSelectedServices } = useServiceModal();
   const { setClientId } = useServiceClientStore();
   const handleOpen = (type: string) => {
-    console.log(service);
     setClientId(service.clientId._id);
     setSelectedServices([service], type);
     setOpen();

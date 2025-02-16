@@ -112,7 +112,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
       setSortOrder({ ...sortOrder, [key]: newOrder });
     };
   };
-  console.log(services);
+
   return (
     <div className=" ml-8 min-h-[70vh] overflow-x-auto">
       <div className="mb-1 flex w-full flex-row text-lg">

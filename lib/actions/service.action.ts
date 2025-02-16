@@ -1089,3 +1089,61 @@ export async function getAllServices({ paid }: { paid: boolean }) {
     throw new Error("Failed to fetch services.");
   }
 }
+export async function editNonBookingService({
+  serviceId,
+  amount,
+  date,
+}: {
+  serviceId: string;
+  amount: number;
+  date: Date | string;
+}) {
+  try {
+    // Validate inputs
+    if (!serviceId) {
+      throw new Error("serviceId is required");
+    }
+    if (amount === undefined || amount === null) {
+      throw new Error("amount is required");
+    }
+    if (!date) {
+      throw new Error("date is required");
+    }
+
+    // Connect to the database
+    await connectToDatabase();
+
+    // Ensure amount is a number
+    const newAmount = Number(amount);
+    if (isNaN(newAmount)) {
+      throw new Error("Invalid amount provided");
+    }
+
+    // Convert date to a Date object if necessary
+    const newDate = date instanceof Date ? date : new Date(date);
+
+    // Retrieve the service by its ID
+    const service = await Service.findById(serviceId);
+    if (!service) {
+      throw new Error("Service not found");
+    }
+
+    // Check if the service has an associated booking
+    if (service.bookingId) {
+      throw new Error("Cannot edit a service that has an associated booking.");
+    }
+
+    // Update the service using findOneAndUpdate to trigger pre hooks
+    const updatedService = await Service.findOneAndUpdate(
+      { _id: serviceId },
+      { amount: newAmount, date: newDate },
+      { new: true, runValidators: true }
+    );
+
+    return updatedService;
+  } catch (error) {
+    console.error("Error editing non-booking service:", error);
+    // Rethrow the error with a custom message (or handle it in another way as needed)
+    throw new Error("Failed to edit the non-booking service.");
+  }
+}
