@@ -1,8 +1,8 @@
+import ClientBookingPrice from "@/components/clientProfile/Fees/ClientBookingPrice";
+import ClientTransferFee from "@/components/clientProfile/Fees/ClientTransferFee";
 import { cn } from "@/lib/utils";
 import { IconCoins } from "@tabler/icons-react";
 import React from "react";
-import ClientTransferFee from "../Fees/ClientTransferFee";
-import ClientBookingPrice from "../Fees/ClientBookingPrice";
 
 const ClientFeesCard = ({ client }: any) => {
   return (

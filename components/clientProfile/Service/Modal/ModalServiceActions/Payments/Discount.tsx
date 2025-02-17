@@ -57,6 +57,7 @@ const Discount = ({ client }: any) => {
         className: "bg-celtic-green",
       });
       onClose();
+      window.location.reload();
     } catch (error) {
       toast({
         title: "Σφάλμα",

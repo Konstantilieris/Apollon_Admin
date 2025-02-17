@@ -6,7 +6,7 @@ import { useServiceModal } from "@/hooks/use-service-modal";
 import useServiceClientStore from "@/hooks/service-clientId";
 import { getClientByIdForProfile } from "@/lib/actions/client.action";
 const ServiceModal = dynamic(
-  () => import("../clientProfile/Service/PopoverActionService"),
+  () => import("../clientProfile/Service/Modal/PopoverActionService"),
   {
     ssr: false,
   }
@@ -36,7 +36,13 @@ const ServiceModalProvider = () => {
 
   if (!mount) return null;
 
-  return <>{isOpen && client && <ServiceModal client={client} />}</>;
+  return (
+    <>
+      {isOpen && client && (
+        <ServiceModal client={JSON.parse(JSON.stringify(client))} />
+      )}
+    </>
+  );
 };
 
 export default ServiceModalProvider;

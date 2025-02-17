@@ -1,4 +1,4 @@
-import { ServiceTabs } from "@/components/clientProfile/Service/ServiceTabs";
+import { ServiceTabs } from "@/components/clientProfile/Service/Tabs/ServiceTabs";
 import CustomerChargeSheet from "@/components/shared/sheet/CustomerChargeSheet";
 import { getClientsServicePreferences } from "@/lib/actions/client.action";
 import { getConstant } from "@/lib/actions/constant.action";

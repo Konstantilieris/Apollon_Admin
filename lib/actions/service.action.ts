@@ -5,12 +5,13 @@ import { startOfMonth, endOfMonth } from "date-fns";
 import Client from "@/database/models/client.model";
 import { revalidatePath } from "next/cache";
 import "moment/locale/el";
-import mongoose from "mongoose";
+
 import moment from "moment";
 import FinancialSummary from "@/database/models/financial.model";
 import Booking from "@/database/models/booking.model";
 import Payment from "@/database/models/payment.model";
 import { deleteBooking } from "./booking.action";
+import mongoose from "mongoose";
 
 export async function getMonthlyIncome() {
   const startDate = startOfMonth(new Date());
@@ -588,7 +589,7 @@ export async function discountSelectedServices({
       { $inc: { totalRevenue: -totalReduction } },
       { session }
     );
-
+    revalidatePath(path);
     // Commit the transaction
     await session.commitTransaction();
     session.endSession();
@@ -697,7 +698,120 @@ export async function payService({
     session.endSession();
   }
 }
+interface PartialPaymentParams {
+  selectedServiceIds: string[];
+  amount: number;
+  path: string;
+}
+export async function partialPaymentSelected({
+  selectedServiceIds,
+  amount,
+  path,
+}: PartialPaymentParams) {
+  if (amount <= 0) {
+    return {
+      success: false,
+      message: "Payment amount must be greater than zero.",
+    };
+  }
 
+  await connectToDatabase();
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    // Fetch only the selected services that are unpaid
+    const services = await Service.find(
+      { _id: { $in: selectedServiceIds }, paid: false },
+      {},
+      { sort: { remainingAmount: 1 } }
+    ).session(session);
+
+    if (services.length === 0) {
+      throw new Error("No unpaid services found for the selected items.");
+    }
+
+    let remainingPayment = amount;
+    let totalPaymentApplied = 0;
+    const allocations = [];
+
+    // Apply payment across the selected services
+    for (const service of services) {
+      if (!service.remainingAmount || service.remainingAmount < 0) {
+        throw new Error(`Service ${service._id} has invalid remainingAmount.`);
+      }
+
+      // Determine how much can be applied to this service
+      const servicePayment = Math.min(
+        remainingPayment,
+        service.remainingAmount
+      );
+
+      // Increase the paidAmount (pre-save hook will recalc remainingAmount, paid, etc.)
+      service.paidAmount = (service.paidAmount || 0) + servicePayment;
+
+      // Save service so that the pre-save hook recalculates derived fields
+      await service.save({ session });
+
+      allocations.push({
+        serviceId: service._id,
+        amount: servicePayment,
+      });
+
+      totalPaymentApplied += servicePayment;
+      remainingPayment -= servicePayment;
+      if (remainingPayment <= 0) break;
+    }
+
+    // Create a Payment record with the allocations
+    const payment = new Payment({
+      clientId: services[0].clientId, // assuming all services belong to the same client
+      amount: totalPaymentApplied,
+      notes: `Partial payment of ${amount} applied to selected services.`,
+      allocations,
+    });
+    await payment.save({ session });
+
+    // Update client details if needed
+    const client = await Client.findById(services[0].clientId).session(session);
+    if (!client) {
+      throw new Error("Client not found.");
+    }
+    client.owesTotal = Math.max(
+      (client.owesTotal || 0) - totalPaymentApplied,
+      0
+    );
+    client.totalSpent = (client.totalSpent || 0) + totalPaymentApplied;
+    await client.save({ session });
+
+    // Update financial summary
+    await FinancialSummary.findOneAndUpdate(
+      {},
+      { $inc: { totalRevenue: totalPaymentApplied } },
+      { session, upsert: true }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    // Revalidate the path if needed
+    revalidatePath(path);
+
+    return {
+      success: true,
+      message: `Partial payment of ${amount} applied successfully.`,
+    };
+  } catch (error: any) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error processing partial payment:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to process partial payment.",
+    };
+  }
+}
 export async function partialPayment({
   clientId,
   amount,
@@ -1077,7 +1191,7 @@ export async function removeReversedPayment({
     throw error;
   }
 }
-export async function getAllServices({ paid }: { paid: boolean }) {
+export async function getAllServices({ paid = false }: { paid: boolean }) {
   connectToDatabase();
   try {
     const services = await Service.find({ paid })
@@ -1091,15 +1205,16 @@ export async function getAllServices({ paid }: { paid: boolean }) {
 }
 export async function editNonBookingService({
   serviceId,
+  path,
   amount,
   date,
 }: {
   serviceId: string;
   amount: number;
   date: Date | string;
+  path: string;
 }) {
   try {
-    // Validate inputs
     if (!serviceId) {
       throw new Error("serviceId is required");
     }
@@ -1110,16 +1225,15 @@ export async function editNonBookingService({
       throw new Error("date is required");
     }
 
-    // Connect to the database
     await connectToDatabase();
 
-    // Ensure amount is a number
+    // Convert amount to a number and validate
     const newAmount = Number(amount);
     if (isNaN(newAmount)) {
       throw new Error("Invalid amount provided");
     }
 
-    // Convert date to a Date object if necessary
+    // Ensure date is a Date object
     const newDate = date instanceof Date ? date : new Date(date);
 
     // Retrieve the service by its ID
@@ -1133,17 +1247,82 @@ export async function editNonBookingService({
       throw new Error("Cannot edit a service that has an associated booking.");
     }
 
-    // Update the service using findOneAndUpdate to trigger pre hooks
+    // Update the service—pre hooks will recalc tax, totals, and remaining amounts.
     const updatedService = await Service.findOneAndUpdate(
       { _id: serviceId },
-      { amount: newAmount, date: newDate },
-      { new: true, runValidators: true }
+      { amount: newAmount, date: newDate, endDate: newDate },
+      { new: true, runValidators: true, context: "query" }
+    );
+    revalidatePath(path);
+    return JSON.parse(JSON.stringify(updatedService));
+  } catch (error: any) {
+    console.error("Error editing non-booking service:", error);
+    throw new Error("Failed to edit the non-booking service.");
+  }
+}
+interface UpdateTaxParams {
+  selectedServiceIds: string[];
+  taxRate: number;
+  path: string;
+}
+
+export async function updateTaxForSelectedServices({
+  selectedServiceIds,
+  taxRate,
+  path,
+}: UpdateTaxParams) {
+  await connectToDatabase();
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    // Fetch the services to update
+    const services = await Service.find(
+      { _id: { $in: selectedServiceIds } },
+      {},
+      { session }
     );
 
-    return updatedService;
-  } catch (error) {
-    console.error("Error editing non-booking service:", error);
-    // Rethrow the error with a custom message (or handle it in another way as needed)
-    throw new Error("Failed to edit the non-booking service.");
+    if (services.length === 0) {
+      throw new Error("No services found for the selected IDs.");
+    }
+
+    // We'll accumulate the difference between the new remaining amounts and the old ones.
+    let totalDifference = 0;
+
+    // Update taxRate on each service. The pre-save hook will recalc the derived fields.
+    for (const service of services) {
+      const oldRemaining = service.remainingAmount ?? 0;
+      service.taxRate = taxRate;
+      await service.save({ session });
+      const newRemaining = service.remainingAmount ?? 0;
+      totalDifference += newRemaining - oldRemaining;
+    }
+
+    // Update the client's owes total by adding the incremental difference.
+    // We assume all selected services belong to the same client.
+    const clientId = services[0].clientId;
+    const client = await Client.findById(clientId).session(session);
+    if (!client) {
+      throw new Error("Client not found.");
+    }
+    client.owesTotal = (client.owesTotal || 0) + totalDifference;
+    await client.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    revalidatePath(path);
+
+    return { success: true, message: "Tax updated successfully." };
+  } catch (error: any) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error updating tax:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to update tax.",
+    };
   }
 }

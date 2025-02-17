@@ -289,47 +289,54 @@ export function calculateTotalPrice({
   fromDate,
   toDate,
   dailyPrice,
+  extraDay = false,
 }: {
-  fromDate: Date;
-  toDate: Date;
+  fromDate: Date | string;
+  toDate: Date | string;
   dailyPrice: number;
+  extraDay?: boolean;
 }) {
-  // Ensure the dates are Date objects (this step is not necessary if fromDate and toDate are already Date objects)
-  fromDate = new Date(fromDate);
-  toDate = new Date(toDate);
+  // Convert possible strings to Date objects
+  const startDate = new Date(fromDate);
+  const endDate = new Date(toDate);
 
   // If toDate is before or same as fromDate, return 0
-  if (toDate <= fromDate) {
+  if (endDate <= startDate) {
     return 0;
   }
 
-  // Calculate the total number of days
-  const oneDay = 24 * 60 * 60 * 1000; // Milliseconds in one day
-
   // Set fromDate and toDate to midday of their respective days to avoid time discrepancies
   const checkInMidday = new Date(
-    fromDate.getFullYear(),
-    fromDate.getMonth(),
-    fromDate.getDate(),
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate(),
     12,
     0,
     0
   );
   const checkOutMidday = new Date(
-    toDate.getFullYear(),
-    toDate.getMonth(),
-    toDate.getDate(),
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate(),
     12,
     0,
     0
   );
 
   // Calculate the difference in days between checkOutMidday and checkInMidday
+  const oneDayInMs = 24 * 60 * 60 * 1000; // ms in one day
   const timeDiff = checkOutMidday.getTime() - checkInMidday.getTime();
-  const totalDays = Math.ceil(timeDiff / oneDay); // Use Math.ceil to ensure any partial day is counted as a full day
 
-  // Calculate the total price
-  const totalPrice = totalDays * dailyPrice;
+  // Use Math.ceil to ensure any partial day counts as a full day
+  const totalDays = Math.ceil(timeDiff / oneDayInMs);
+
+  // Base total
+  let totalPrice = totalDays * dailyPrice;
+
+  // If extraDay is true, we add one additional daily charge
+  if (extraDay) {
+    totalPrice += dailyPrice;
+  }
 
   return totalPrice;
 }

@@ -2,16 +2,21 @@
 
 import { cn } from "@/lib/utils";
 import { IconDatabaseDollar } from "@tabler/icons-react";
+import { useSearchParams } from "next/navigation";
 
 import React, { useId } from "react";
 
 export function OwesCard({ className, revenue }: any) {
+  const searchParams = useSearchParams();
+  const paid = searchParams.get("paid") === "true";
+
   return (
     <div
       className={cn(
         "group/card relative overflow-hidden  h-[105px]  w-[300px] ",
 
         "hover:border-b border-neutral-200 dark:border-purple-500 md:hover:border-b-0 md:hover:border-r",
+
         className
       )}
       onClick={() => {}}
@@ -20,7 +25,7 @@ export function OwesCard({ className, revenue }: any) {
       <EdgeElement />
 
       <div className="flex items-center gap-2">
-        <IconContainer>
+        <IconContainer paid={paid}>
           <IconDatabaseDollar className={cn("text-white")} />
         </IconContainer>
         <p className="text-3xl font-bold text-neutral-700 dark:text-neutral-200">
@@ -28,7 +33,7 @@ export function OwesCard({ className, revenue }: any) {
         </p>
       </div>
       <p className="mt-4 text-base tracking-widest text-neutral-600 dark:text-neutral-300">
-        Συνολικές Οφειλές
+        {paid ? "Πληρωμένο Σύνολο" : "Συνολικές Οφειλές"}
       </p>
     </div>
   );
@@ -40,9 +45,22 @@ const EdgeElement = () => {
     </div>
   );
 };
-const IconContainer = ({ children }: { children: React.ReactNode }) => {
+const IconContainer = ({
+  children,
+  paid,
+}: {
+  children: React.ReactNode;
+  paid: boolean;
+}) => {
   return (
-    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-r   from-violet-600 to-indigo-600  p-1 hover:animate-pulse">
+    <div
+      className={cn(
+        "flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-r   from-violet-600 to-indigo-600  p-1 hover:animate-pulse",
+        {
+          "dark:from-lime-500 dark:to-green-800": paid,
+        }
+      )}
+    >
       <div className="flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-b from-[#5D5D5D] to-black dark:to-neutral-900">
         {children}
       </div>
@@ -111,10 +129,10 @@ export function GridPattern({
       />
       {squares && (
         <svg x={x} y={y} className="overflow-visible">
-          {squares.map(([x, y]) => (
+          {squares.map(([x, y], index) => (
             <rect
               strokeWidth="0"
-              key={`${x}-${y}`}
+              key={`${x}-${y}-${index}-${patternId}-damian`}
               width={width + 1}
               height={height + 1}
               x={x * width}

@@ -11,7 +11,7 @@ import React from "react";
 import { Service } from "./OwesTab";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenuActionPaid } from "./ActionServices/PaidActionCommand";
+import { DropdownMenuActionPaid } from "../ActionServices/PaidActionCommand";
 import moment from "moment";
 
 const PaidTab = ({ services }: any) => {

@@ -14,10 +14,11 @@ import {
   IconCashRegister,
   IconMail,
   IconReceipt,
+  IconTaxEuro,
 } from "@tabler/icons-react";
 
 import { useServiceModal } from "@/hooks/use-service-modal";
-import { Service } from "./OwesTab";
+import { Service } from "../Tabs/OwesTab";
 
 export function DropdownMenuAction({
   selectedServices,
@@ -64,6 +65,20 @@ export function DropdownMenuAction({
             </DropdownMenuItem>
             <DropdownMenuItem
               className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
+              onClick={() => handleOpen("Tax")}
+            >
+              Φόρος
+              <IconTaxEuro size={20} className="text-green-500/70 " />
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
+              onClick={() => handleOpen("Discount")}
+            >
+              Έκπτωση
+              <IconCardsFilled size={20} className="text-green-500/70 " />
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
               onClick={() => handleOpen("Edit")}
             >
               Επεξεργασία
@@ -74,13 +89,6 @@ export function DropdownMenuAction({
               onClick={() => handleOpen("Delete")}
             >
               Διαγραφή
-              <IconCardsFilled size={20} className="text-green-500/70 " />
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="flex w-full cursor-pointer flex-row justify-between  hover:scale-105"
-              onClick={() => handleOpen("Discount")}
-            >
-              Έκπτωση
               <IconCardsFilled size={20} className="text-green-500/70 " />
             </DropdownMenuItem>
 

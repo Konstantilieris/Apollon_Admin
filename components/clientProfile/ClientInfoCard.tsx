@@ -29,7 +29,7 @@ const ClientInfoCard = ({
       )}
     >
       {datalist.map((data: any, index: number) => (
-        <div key={index} className="flex flex-col">
+        <div key={index + data.sectionTitle} className="flex flex-col">
           {/* Section Title with Icon */}
           <div className="flex flex-row items-center gap-2">
             <Image
@@ -60,7 +60,10 @@ const ClientInfoCard = ({
                 item.key === "ΟΝΟΜΑ: ";
 
               return (
-                <li key={index} className="flex flex-row items-center gap-2">
+                <li
+                  key={index + item.key}
+                  className="flex flex-row items-center gap-2"
+                >
                   <h4 className="text-lg font-normal tracking-wide">
                     {item.key}
                   </h4>

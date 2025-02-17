@@ -16,7 +16,7 @@ import {
   IconReceipt,
   IconTrash,
 } from "@tabler/icons-react";
-import { Service } from "../OwesTab";
+import { Service } from "../Tabs/OwesTab";
 export function DropdownMenuActionPaid({
   selectedServices,
 }: {

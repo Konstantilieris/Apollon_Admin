@@ -1513,16 +1513,12 @@ export async function updateBookingAllInclusive({
     }
 
     // 5) Calculate new boarding fee
-    let calculateBoardingFee = calculateTotalPrice({
+    const calculateBoardingFee = calculateTotalPrice({
       fromDate: rangeDate.from,
       toDate: rangeDate.to,
       dailyPrice: booking.client.bookingFee,
+      extraDay,
     });
-    if (extraDay && !booking.extraDay) {
-      calculateBoardingFee += booking.client.bookingFee;
-    } else if (!extraDay && booking.extraDay) {
-      calculateBoardingFee -= booking.client.bookingFee;
-    }
 
     // 6) Add transport fees
     let calculateTotalAmount = calculateBoardingFee;

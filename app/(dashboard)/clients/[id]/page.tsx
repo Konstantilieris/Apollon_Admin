@@ -3,7 +3,7 @@ import { ClientNoteCard } from "@/components/clientProfile/ClientNoteCard";
 import { getClientById } from "@/lib/actions/client.action";
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import DogView from "@/components/clientProfile/ClientProfileCard/DogView";
+import DogView from "@/components/clientProfile/ClientDog/DogView";
 import { Separator } from "@/components/ui/separator";
 
 const page = async ({ params }: { params: any }) => {
@@ -95,7 +95,7 @@ const page = async ({ params }: { params: any }) => {
                 client.references.hasReferenced.map(
                   (reference: any, index: number) => (
                     <>
-                      <li key={index} className="max-w-[350px]">
+                      <li key={reference._id} className="max-w-[350px]">
                         {reference.name}
                         <Separator className="bg-gray-500" />
                       </li>

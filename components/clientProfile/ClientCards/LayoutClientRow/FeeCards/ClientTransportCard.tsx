@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useMemo } from "react";
-import ClientTransferFee from "../Fees/ClientTransferFee";
-import ClientBookingPrice from "../Fees/ClientBookingPrice";
+import ClientTransferFee from "../../../Fees/ClientTransferFee";
+import ClientBookingPrice from "../../../Fees/ClientBookingPrice";
 
 const ClientTransportCard = ({ client }: any) => {
   const transportationFee = useMemo(() => {

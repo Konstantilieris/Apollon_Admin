@@ -1,6 +1,6 @@
 import React from "react";
 
-import { CardWrapperClientRow } from "../Layout/CardClientRow";
+import { CardWrapperClientRow } from "../../../Layout/CardClientRow";
 import { IconMoneybag } from "@tabler/icons-react";
 
 const ClientOverView = ({ client }: any) => {
@@ -9,7 +9,7 @@ const ClientOverView = ({ client }: any) => {
       <CardWrapperClientRow
         item={{
           icon: IconMoneybag,
-          value: client.totalSpent,
+          value: client.totalSpent.toFixed(2),
           description: "ΠΛΗΡΩΜΕΝΑ",
         }}
         hasEuro={true}
@@ -18,7 +18,7 @@ const ClientOverView = ({ client }: any) => {
       <CardWrapperClientRow
         item={{
           icon: IconMoneybag,
-          value: client.owesTotal,
+          value: client.owesTotal.toFixed(2),
           description: "ΟΦΕΙΛΟΜΕΝΑ",
         }}
         hasEuro={true}

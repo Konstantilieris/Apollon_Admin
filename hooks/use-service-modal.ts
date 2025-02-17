@@ -1,4 +1,4 @@
-import { Service } from "@/components/clientProfile/Service/OwesTab";
+import { Service } from "@/components/clientProfile/Service/Tabs/OwesTab";
 import { create } from "zustand";
 
 type ServiceModalState = {

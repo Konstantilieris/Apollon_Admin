@@ -4,13 +4,14 @@ import React from "react";
 import { motion } from "framer-motion";
 
 import { useServiceModal } from "@/hooks/use-service-modal";
-import EditServices from "./ActionServices/EditServices";
-import ServicePayments from "./ActionServices/ServicePayments";
+import EditServices from "./ModalServiceActions/Edit/EditServices";
+import ServicePayments from "./ModalServiceActions/Payments/ServicePayments";
 
-import PrintServices from "./ActionServices/PrintServices";
-import PartialPayment from "./ActionServices/PartialPayment";
-import DeleteServices from "./ActionServices/DeleteServices";
-import Discount from "./ActionServices/Discount";
+import PrintServices from "./ModalServiceActions/Print/PrintServices";
+import PartialPayment from "./ModalServiceActions/Payments/PartialPayment";
+import DeleteServices from "./ModalServiceActions/Payments/DeleteServices";
+import Discount from "./ModalServiceActions/Payments/Discount";
+import TaxService from "./ModalServiceActions/Payments/TaxService";
 
 const ServiceModal = (client: any) => {
   const { selectedServices, type, onClose } = useServiceModal();
@@ -25,6 +26,8 @@ const ServiceModal = (client: any) => {
         return <PrintServices client={client} />;
       case "PartialPayment":
         return <PartialPayment client={client} />;
+      case "Tax":
+        return <TaxService />;
       case "Delete":
         return <DeleteServices client={client} />;
       case "Discount":

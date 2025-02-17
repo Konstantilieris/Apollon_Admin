@@ -13,7 +13,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { cn } from "@/lib/utils";
-import { DropdownMenuAction } from "./OwesActionCommand";
+import { DropdownMenuAction } from "../ActionServices/OwesActionCommand";
 import { IconSelector } from "@tabler/icons-react";
 import moment from "moment";
 
@@ -123,7 +123,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
       </div>
       <Table className="min-w-full">
         <TableHeader>
-          <TableRow className=" bg-dark-400  text-left">
+          <TableRow className=" bg-neutral-900  text-left">
             <TableHead className="px-4 py-3 font-semibold text-light-900">
               <span className="flex items-center">
                 Ημερομηνία
@@ -156,7 +156,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                   className="cursor-pointer"
                   onClick={handleSort("amount")}
                 />
-                <span className="ml-2 rounded-lg border border-light-900 bg-dark-100 p-2 text-base text-light-900">
+                <span className="ml-2 rounded-lg border border-light-900 bg-neutral-900 p-2 text-base text-light-900">
                   {totalAmount.toFixed(2)} €
                 </span>
               </span>
@@ -174,7 +174,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                   className="cursor-pointer"
                   onClick={handleSort("amount")}
                 />
-                <span className="ml-2 rounded-lg border border-light-900 bg-dark-100 p-2 text-base text-light-900">
+                <span className="ml-2 rounded-lg border border-light-900 bg-neutral-900 p-2 text-base text-light-900">
                   {totalAmount.toFixed(2)} €
                 </span>
               </span>
@@ -182,7 +182,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
 
             <TableHead className="text-center font-semibold text-light-900">
               Έξοφλημένο
-              <span className="ml-2 rounded-lg border border-green-500 bg-dark-100 p-2 text-base text-light-900">
+              <span className="ml-2 rounded-lg border border-green-500 bg-neutral-900 p-2 text-base text-light-900">
                 {totalPayments.toFixed(2)} €
               </span>
             </TableHead>
@@ -263,7 +263,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                   {service.amount} €
                 </TableCell>
                 <TableCell className="pl-8 text-start">
-                  {service.taxRate ?? "N/A"} €
+                  {service.taxRate ?? "N/A"} %
                 </TableCell>
                 <TableCell className="pl-8 text-start">
                   {service.taxAmount ?? "Ν/Α"} €
@@ -279,7 +279,7 @@ const OwesTab = ({ services }: UnpaidServicesTableProps) => {
                 </TableCell>
 
                 <TableCell className="pl-12">
-                  {service.remainingAmount ?? "Ν/Α"} €
+                  {service?.remainingAmount?.toFixed(2) ?? "Ν/Α"} €
                 </TableCell>
 
                 <TableCell className=" mr-6 flex flex-row justify-end">

@@ -3,8 +3,8 @@ import { getClientById2 } from "@/lib/actions/client.action";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IDog } from "@/database/models/client.model";
-import RowRenderer from "@/components/clientProfile/ClientProfileCard/RowRenderer";
-import ChipTabs from "@/components/clientProfile/ClientProfileCard/ChipTabs";
+import RowRenderer from "@/components/clientProfile/ClientCards/LayoutClientRow/RowRenderer";
+import ChipTabs from "@/components/clientProfile/ClientCards/LayoutClientRow/ChipTabs";
 import { HeroSectionWithBeamsAndGrid } from "./BackgroundAnimation";
 import { formatDateString } from "@/lib/utils";
 

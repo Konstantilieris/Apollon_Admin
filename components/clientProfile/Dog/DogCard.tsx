@@ -163,71 +163,73 @@ export function DogCards({
       </AnimatePresence>
 
       <ScrollArea className=" mx-auto w-full max-w-2xl flex-1 gap-4">
-        {dogs.map((dog, index) => (
-          <motion.div
-            layoutId={`card-${dog.name}-${id}`}
-            key={`card-${dog.name}-${id}`}
-            onClick={() => setActive(dog)}
-            className="relative mt-3 flex min-h-[15vh]  flex-col gap-4 rounded-lg border border-gray-600 p-4 shadow-sm shadow-gray-500 dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8"
-          >
+        {dogs.map((dog, index) => {
+          return (
             <motion.div
-              className="absolute right-2 top-2"
-              layoutId={`image-${dog._id}-${id}`}
+              layoutId={`card-${dog.name}-${id}`}
+              key={`card-${dog.name}-${id}`}
+              onClick={() => setActive(dog)}
+              className="relative mt-3 flex min-h-[15vh]  flex-col gap-4 rounded-lg border border-gray-600 p-4 shadow-sm shadow-gray-500 dark:bg-neutral-900 max-md:min-w-[42vw] max-md:pt-8"
             >
-              <IconPawFilled className=" text-yellow-500" />
+              <motion.div
+                className="absolute right-2 top-2"
+                layoutId={`image-${dog._id}-${id}`}
+              >
+                <IconPawFilled className=" text-yellow-500" />
+              </motion.div>
+              <h1 className="text-xl font-semibold text-light-900 max-md:hidden">
+                ΣΤΟΙΧΕΙΑ ΣΚΥΛΟΥ
+              </h1>
+              <div className="flex w-full flex-col items-start gap-4 text-lg ">
+                <div className="flex w-full flex-row justify-between">
+                  <motion.p
+                    layoutId={`name-${dog?.name}-${id}`}
+                    className="flex flex-row text-center  text-neutral-800 dark:text-light-800"
+                  >
+                    ONOMA: {dog?.name}
+                  </motion.p>
+                  <motion.p
+                    layoutId={`behavior-${dog?.behavior}-${id}`}
+                    className="text-center uppercase text-neutral-600 dark:text-light-700 md:text-left"
+                  >
+                    ΣΥΜΠΕΡΙΦΟΡΑ: {dog?.behavior ? dog?.behavior : "N/A"}
+                  </motion.p>
+                </div>
+                <div className="flex w-full flex-row justify-between">
+                  <motion.p>
+                    ΗΛΙΚΙΑ:{" "}
+                    {dog.birthdate
+                      ? calculateAge(new Date(dog.birthdate))
+                      : "N/A"}{" "}
+                  </motion.p>
+                  <motion.p
+                    layoutId={`birthdate-${dog?.birthdate}-${id}`}
+                    className="text-center  text-neutral-800 dark:text-light-800 md:text-left"
+                  >
+                    ΓΕΝΝΗΣΗ:{" "}
+                    {dog.birthdate
+                      ? formatDate(new Date(dog.birthdate), "el")
+                      : "N/A"}
+                  </motion.p>
+                </div>
+                <div className="flex w-full flex-row justify-between">
+                  <motion.p
+                    layoutId={`breed-${dog?.breed}-${id}`}
+                    className="text-center  text-neutral-800 dark:text-light-800 md:text-left"
+                  >
+                    ΡΑΤΣΑ: {dog?.breed ? dog?.breed : "N/A"}
+                  </motion.p>
+                  <motion.p
+                    layoutId={`gender-${dog?.gender}-${id}`}
+                    className="text-center uppercase text-neutral-600 dark:text-light-700 md:text-left"
+                  >
+                    ΦΥΛΟ: {dog?.gender}
+                  </motion.p>
+                </div>
+              </div>
             </motion.div>
-            <h1 className="text-xl font-semibold text-light-900 max-md:hidden">
-              ΣΤΟΙΧΕΙΑ ΣΚΥΛΟΥ
-            </h1>
-            <div className="flex w-full flex-col items-start gap-4 text-lg ">
-              <div className="flex w-full flex-row justify-between">
-                <motion.p
-                  layoutId={`name-${dog?.name}-${id}`}
-                  className="flex flex-row text-center  text-neutral-800 dark:text-light-800"
-                >
-                  ONOMA: {dog?.name}
-                </motion.p>
-                <motion.p
-                  layoutId={`behavior-${dog?.behavior}-${id}`}
-                  className="text-center uppercase text-neutral-600 dark:text-light-700 md:text-left"
-                >
-                  ΣΥΜΠΕΡΙΦΟΡΑ: {dog?.behavior ? dog?.behavior : "N/A"}
-                </motion.p>
-              </div>
-              <div className="flex w-full flex-row justify-between">
-                <motion.p>
-                  ΗΛΙΚΙΑ:{" "}
-                  {dog.birthdate
-                    ? calculateAge(new Date(dog.birthdate))
-                    : "N/A"}{" "}
-                </motion.p>
-                <motion.p
-                  layoutId={`birthdate-${dog?.birthdate}-${id}`}
-                  className="text-center  text-neutral-800 dark:text-light-800 md:text-left"
-                >
-                  ΓΕΝΝΗΣΗ:{" "}
-                  {dog.birthdate
-                    ? formatDate(new Date(dog.birthdate), "el")
-                    : "N/A"}
-                </motion.p>
-              </div>
-              <div className="flex w-full flex-row justify-between">
-                <motion.p
-                  layoutId={`breed-${dog?.breed}-${id}`}
-                  className="text-center  text-neutral-800 dark:text-light-800 md:text-left"
-                >
-                  ΡΑΤΣΑ: {dog?.breed ? dog?.breed : "N/A"}
-                </motion.p>
-                <motion.p
-                  layoutId={`gender-${dog?.gender}-${id}`}
-                  className="text-center uppercase text-neutral-600 dark:text-light-700 md:text-left"
-                >
-                  ΦΥΛΟ: {dog?.gender}
-                </motion.p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
+          );
+        })}
       </ScrollArea>
     </>
   );

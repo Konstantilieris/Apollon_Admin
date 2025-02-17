@@ -1,6 +1,6 @@
 import { FloatingDockClient } from "@/components/clientProfile/FloatingDock";
 import ClientRow from "@/components/clientProfile/Layout/ClientRow";
-import ServiceModalProvider from "@/components/clientProfile/Service/ServiceModalProvider";
+import ServiceModalProvider from "@/components/clientProfile/Service/Modal/ServiceModalProvider";
 import { getClientByIdForProfile } from "@/lib/actions/client.action";
 import React from "react";
 export default async function Layout({
