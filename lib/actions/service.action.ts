@@ -1227,19 +1227,24 @@ export async function editNonBookingService({
 
     await connectToDatabase();
 
-    // Convert amount to a number and validate
+    // Validate amount
     const newAmount = Number(amount);
-    if (isNaN(newAmount)) {
-      throw new Error("Invalid amount provided");
+    if (isNaN(newAmount) || newAmount < 0) {
+      throw new Error(
+        "Invalid amount provided. Amount must be a positive number."
+      );
     }
 
-    // Ensure date is a Date object
-    const newDate = date instanceof Date ? date : new Date(date);
+    // Validate date
+    const newDate = new Date(date);
+    if (isNaN(newDate.getTime())) {
+      throw new Error("Invalid date format provided.");
+    }
 
-    // Retrieve the service by its ID
+    // Retrieve the existing service
     const service = await Service.findById(serviceId);
     if (!service) {
-      throw new Error("Service not found");
+      throw new Error("Service not found.");
     }
 
     // Check if the service has an associated booking
@@ -1247,17 +1252,47 @@ export async function editNonBookingService({
       throw new Error("Cannot edit a service that has an associated booking.");
     }
 
-    // Update the service—pre hooks will recalc tax, totals, and remaining amounts.
+    // Fetch the associated client
+    const client = await Client.findById(service.clientId);
+    if (!client) {
+      throw new Error("Associated client not found.");
+    }
+
+    // Store the old remainingAmount before update
+    const oldRemainingAmount = service.remainingAmount ?? 0;
+
+    // Update the service, triggering pre-hooks for recalculating fields
     const updatedService = await Service.findOneAndUpdate(
       { _id: serviceId },
       { amount: newAmount, date: newDate, endDate: newDate },
       { new: true, runValidators: true, context: "query" }
     );
-    revalidatePath(path);
+
+    if (!updatedService) {
+      throw new Error("Failed to update the service.");
+    }
+
+    // Get the new remainingAmount after update
+    const newRemainingAmount = updatedService.remainingAmount ?? 0;
+
+    // Adjust the client's owesTotal accordingly
+    const difference = newRemainingAmount - oldRemainingAmount;
+    client.owesTotal = Math.max((client.owesTotal ?? 0) + difference, 0);
+
+    // Save the updated client
+    await client.save();
+
+    // Revalidate the path to ensure UI updates correctly
+    try {
+      revalidatePath(path);
+    } catch (revalidationError) {
+      console.warn("Path revalidation failed:", revalidationError);
+    }
+
     return JSON.parse(JSON.stringify(updatedService));
   } catch (error: any) {
-    console.error("Error editing non-booking service:", error);
-    throw new Error("Failed to edit the non-booking service.");
+    console.error("Error editing non-booking service:", error.message);
+    throw new Error(error.message || "Failed to edit the non-booking service.");
   }
 }
 interface UpdateTaxParams {
