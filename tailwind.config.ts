@@ -1,3 +1,4 @@
+import {heroui} from '@heroui/theme';
 const {
   default: flattenColorPalette,
 } = require("tailwindcss/lib/util/flattenColorPalette");
@@ -10,9 +11,8 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
-
-    // Or if using `src` directory:
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "// Or if using `src` directory:\\n    \\\"./src/**/*.{js,ts,jsx,tsx}\\\"",
+    "./node_modules/@heroui/theme/dist/components/(chip|table|checkbox|form|spacer).js"
   ],
   theme: {
     container: {
@@ -112,11 +112,7 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    require("@tailwindcss/typography"),
-    addVariablesForColors,
-  ],
+  plugins: [require("tailwindcss-animate"),require("@tailwindcss/typography"),addVariablesForColors,heroui()],
 };
 function addVariablesForColors({ addBase, theme }: any) {
   const allColors = flattenColorPalette(theme("colors"));

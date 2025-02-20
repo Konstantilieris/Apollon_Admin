@@ -482,6 +482,18 @@ export async function updateClientTransportationFee({
     throw error;
   }
 }
+export async function getClients() {
+  try {
+    await connectToDatabase();
+
+    const clients = await Client.find({});
+
+    return JSON.stringify(clients);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 export async function getAllClients({
   page,
