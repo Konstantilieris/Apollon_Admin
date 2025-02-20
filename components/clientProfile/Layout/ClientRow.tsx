@@ -32,7 +32,7 @@ const ClientRow = async ({ id }: { id: string }) => {
             {client?.name ?? ""}
           </span>
           <span className="text-base tracking-widest text-gray-400 ">
-            ΣΥΣΤΑΣΗ: {referencer?.name}
+            ΣΥΣΤΑΣΗ ΑΠΟ: {referencer?.name}
           </span>
           <span className="text-sm tracking-widest text-gray-400">
             {formatDateString(client.createdAt)}

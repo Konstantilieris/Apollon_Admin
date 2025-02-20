@@ -438,6 +438,7 @@ export async function createIncome({
           paidAmount: amount,
           paymentDate: date,
           amount,
+          totalAmount: amount,
           date,
           clientId: ADMIN_ID,
         },
@@ -768,7 +769,7 @@ export async function partialPaymentSelected({
     const payment = new Payment({
       clientId: services[0].clientId, // assuming all services belong to the same client
       amount: totalPaymentApplied,
-      notes: `Partial payment of ${amount} applied to selected services.`,
+      notes: `Έναντι πληρωμή ${amount} εφαρμόζεται σε συγκεκριμένες υπηρεσίες`,
       allocations,
     });
     await payment.save({ session });

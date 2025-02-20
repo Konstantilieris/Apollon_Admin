@@ -282,7 +282,7 @@ export function ServicesTable({ services }: { services: Service[] }) {
                     .getColumn("Όνομα Πελάτη")
                     ?.setFilterValue(event.target.value)
                 }
-                className="h-14 w-60"
+                className="h-14 w-60 bg-neutral-800"
               />
               <ServiceTabPaid />
             </div>
@@ -325,6 +325,27 @@ export function ServicesTable({ services }: { services: Service[] }) {
           <div className="flex-1 overflow-auto rounded-md border bg-neutral-900 font-sans">
             <Table className="h-full">
               <TableHeader>
+                {selectedRows.length > 0 && (
+                  <TableRow>
+                    {/* We have 7 columns total in staticColumns */}
+                    <TableHead colSpan={3} className="text-center">
+                      <span className="font-semibold uppercase tracking-widest">
+                        Επιλεγμένα Στοιχεία
+                      </span>
+                    </TableHead>
+                    <TableHead colSpan={1} className="pl-12 text-start">
+                      {totalSelectedAmount.toFixed(2)}€
+                    </TableHead>
+                    <TableHead colSpan={1} className="pl-12  text-start">
+                      {totalSelectedPaid.toFixed(2)}€
+                    </TableHead>
+                    <TableHead colSpan={1} className="pl-12  text-start">
+                      {totalSelectedRemaining.toFixed(2)}€
+                    </TableHead>
+                    {/* 'actions' column has no sum */}
+                    <TableHead colSpan={1}></TableHead>
+                  </TableRow>
+                )}
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
@@ -343,27 +364,6 @@ export function ServicesTable({ services }: { services: Service[] }) {
                   </TableRow>
                 ))}
                 {/* Extra row to show sums of SELECTED rows */}
-                {selectedRows.length > 0 && (
-                  <TableRow>
-                    {/* We have 7 columns total in staticColumns */}
-                    <TableHead colSpan={2} className="text-center">
-                      <span className="font-semibold uppercase">
-                        Επιλεγμένα Στοιχεία
-                      </span>
-                    </TableHead>
-                    <TableHead colSpan={1} className="text-center">
-                      {totalSelectedAmount.toFixed(2)}€
-                    </TableHead>
-                    <TableHead colSpan={1} className="text-center">
-                      {totalSelectedPaid.toFixed(2)}€
-                    </TableHead>
-                    <TableHead colSpan={1} className="text-center">
-                      {totalSelectedRemaining.toFixed(2)}€
-                    </TableHead>
-                    {/* 'actions' column has no sum */}
-                    <TableHead colSpan={1}></TableHead>
-                  </TableRow>
-                )}
               </TableHeader>
 
               <TableBody>

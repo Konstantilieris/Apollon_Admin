@@ -88,7 +88,7 @@ const page = async ({ params }: { params: any }) => {
           />
           <div className="flex w-full flex-col gap-4 rounded-2xl bg-dark-100 px-4 py-2">
             <h1 className="text-2xl font-semibold text-yellow-500">
-              ΛΙΣΤΑ ΣΥΣΤΑΣΕΩΝ
+              Συστημένοι Πελάτες
             </h1>
             <ul className="list-disc pl-4 tracking-widest text-white">
               {client.references.hasReferenced?.length > 0 ? (

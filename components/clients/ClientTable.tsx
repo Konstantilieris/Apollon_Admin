@@ -21,10 +21,10 @@ import {
   Button,
   Input,
   Autocomplete,
-  AutocompleteSection,
   AutocompleteItem,
 } from "@heroui/react";
 import { ILocation } from "@/database/models/client.model";
+import { useRouter } from "next/navigation";
 
 export interface Client {
   name: string;
@@ -157,6 +157,7 @@ const ClientTable = ({
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
+  const router = useRouter();
   const [debtTotal, setDebtTotal] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [filterValue, setFilterValue] = React.useState("");
@@ -273,12 +274,25 @@ const ClientTable = ({
       case "name":
         return (
           <User
-            avatarProps={{ size: "sm", radius: "full" }}
-            className="text-lg"
+            avatarProps={{
+              size: "sm",
+              radius: "full",
+              className:
+                "transition-all duration-200 hover:scale-110 hover:ring-2 hover:ring-blue-500 cursor-pointer",
+              onClick: (event) => {
+                event.stopPropagation(); // Prevents row selection
+                router.push(`/clients/${user._id}`);
+              },
+            }}
+            className=" select-none text-lg"
             description={
-              <span className="text-sm text-gray-400">{user.email}</span>
+              <span className="pointer-events-none text-sm text-gray-400">
+                {user.email}
+              </span>
             }
-            name={<span className="text-base">{user.name}</span>}
+            name={
+              <span className="pointer-events-none text-base">{user.name}</span>
+            }
           >
             {user.email}
           </User>
@@ -344,18 +358,16 @@ const ClientTable = ({
             <Autocomplete
               className="min-w-[350px]"
               placeholder="Ψάξε Επάγγελμα"
-              value={filterProfession}
+              selectedKey={filterProfession}
               onSelectionChange={(profession) =>
                 setFilterProfession(profession)
               }
             >
-              <AutocompleteSection title="Επαγγέλματα">
-                {professions.map((profession: string, index: number) => (
-                  <AutocompleteItem key={profession} className="font-sans">
-                    {profession}
-                  </AutocompleteItem>
-                ))}
-              </AutocompleteSection>
+              {professions.map((profession: string, index: number) => (
+                <AutocompleteItem key={profession} className="font-sans">
+                  {profession}
+                </AutocompleteItem>
+              ))}
             </Autocomplete>
             <Button
               color="warning"
@@ -367,7 +379,7 @@ const ClientTable = ({
               }}
               disabled={!filterValue && !filterProfession}
             >
-              Clear
+              Καθαρισμός
             </Button>
           </div>
           <div className="flex items-center gap-3">
@@ -377,7 +389,7 @@ const ClientTable = ({
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Columns
+                  Στήλες
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -432,8 +444,8 @@ const ClientTable = ({
         <div>
           <span className="w-[30%] text-small text-default-400">
             {selectedKeys === "all"
-              ? "All items selected"
-              : `${selectedKeys.size} of ${filteredItems.length} selected`}
+              ? "Όλες οι σειρές είναι επιλεγμένες"
+              : `${selectedKeys.size} απο ${filteredItems.length} επιλέχθηκαν`}
           </span>
           <Chip
             className="ml-4 min-h-[26px] rounded-lg p-2 text-sm text-light-900"
