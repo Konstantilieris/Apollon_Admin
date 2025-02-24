@@ -1,5 +1,11 @@
 import { Schema } from "mongoose";
 import { ILocation, IReference } from "../database/models/client.model";
+import type { SVGProps } from "react";
+
+export type IconSvgProps = SVGProps<SVGSVGElement> & {
+  size?: number;
+};
+
 export interface SidebarLink {
   imgURL: string;
   route: string;

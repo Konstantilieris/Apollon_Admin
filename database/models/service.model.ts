@@ -19,72 +19,75 @@ export interface IService {
   totalAmount?: number; // Total amount including tax
 }
 
-const ServiceSchema = new Schema<IService>({
-  serviceType: {
-    type: String,
-    required: true,
+const ServiceSchema = new Schema<IService>(
+  {
+    serviceType: {
+      type: String,
+      required: true,
+    },
+    clientId: {
+      type: Schema.Types.ObjectId,
+      ref: "Client",
+      required: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    notes: {
+      type: String,
+    },
+    bookingId: {
+      type: Schema.Types.ObjectId,
+      ref: "Booking",
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+      required: true,
+    },
+    discount: {
+      type: Number,
+      default: 0,
+    },
+    endDate: {
+      type: Date,
+    },
+    paidAmount: {
+      type: Number,
+      default: 0,
+    },
+    payments: {
+      type: [Schema.Types.ObjectId],
+      ref: "Payment",
+      default: [],
+    },
+    taxRate: {
+      type: Number,
+      default: 0,
+    },
+    taxAmount: {
+      type: Number,
+      default: 0,
+    },
+    totalAmount: {
+      type: Number,
+      default: 0,
+    },
+    remainingAmount: {
+      type: Number,
+      default: 0,
+    },
+    paid: {
+      type: Boolean,
+      default: false,
+    },
+    paymentDate: {
+      type: Date,
+    },
   },
-  clientId: {
-    type: Schema.Types.ObjectId,
-    ref: "Client",
-    required: true,
-  },
-  amount: {
-    type: Number,
-    required: true,
-  },
-  notes: {
-    type: String,
-  },
-  bookingId: {
-    type: Schema.Types.ObjectId,
-    ref: "Booking",
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-    required: true,
-  },
-  discount: {
-    type: Number,
-    default: 0,
-  },
-  endDate: {
-    type: Date,
-  },
-  paidAmount: {
-    type: Number,
-    default: 0,
-  },
-  payments: {
-    type: [Schema.Types.ObjectId],
-    ref: "Payment",
-    default: [],
-  },
-  taxRate: {
-    type: Number,
-    default: 0,
-  },
-  taxAmount: {
-    type: Number,
-    default: 0,
-  },
-  totalAmount: {
-    type: Number,
-    default: 0,
-  },
-  remainingAmount: {
-    type: Number,
-    default: 0,
-  },
-  paid: {
-    type: Boolean,
-    default: false,
-  },
-  paymentDate: {
-    type: Date,
-  },
-});
+  { timestamps: true }
+);
 
 // Middleware to update tax, totalAmount, and remainingAmount before saving
 ServiceSchema.pre("save", function (next) {

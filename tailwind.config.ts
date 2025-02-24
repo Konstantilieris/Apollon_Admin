@@ -11,8 +11,8 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
-    "// Or if using `src` directory:\\n    \\\"./src/**/*.{js,ts,jsx,tsx}\\\"",
-    "./node_modules/@heroui/theme/dist/components/(chip|table|checkbox|form|spacer).js"
+    "// Or if using `src` directory:\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"./src/**/*.{js,ts,jsx,tsx}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"",
+    "./node_modules/@heroui/theme/dist/components/(chip|input|pagination|select|table|form|listbox|divider|popover|button|ripple|spinner|scroll-shadow|checkbox|spacer).js"
   ],
   theme: {
     container: {

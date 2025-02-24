@@ -8,7 +8,7 @@ import { useOutsideClick2 } from "@/hooks/use-outside-click2";
 import { pushTagOnClient } from "@/lib/actions/client.action";
 
 import TagSelector from "./TagSelector";
-import CustomArrow from "@/components/shared/expenses/CustomArrow";
+
 import { getConstant } from "@/lib/actions/constant.action";
 import "react-multi-carousel/lib/styles.css";
 export interface Constant {
@@ -121,8 +121,6 @@ const ClientTags = ({ clientTags, client }: any) => {
         responsive={responsive}
         infinite={false}
         dotListClass="flex justify-center mt-4"
-        customLeftArrow={<CustomArrow direction="left" />}
-        customRightArrow={<CustomArrow direction="right" />}
         renderDotsOutside
       >
         {clientTagsValue.map((tag: string, index: number) => (

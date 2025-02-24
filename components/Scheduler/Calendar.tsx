@@ -246,7 +246,14 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
               {props.dogsData.map((dog: any) => dog.dogName).join(", ")}
             </span>
           )}
-          {props.paid && <IconCheck size={24} className="text-green-500" />}
+          {props.paid && (
+            <IconCheck
+              size={24}
+              className={cn("text-green-500", {
+                "text-dark-100": props.categoryId === 3,
+              })}
+            />
+          )}
         </div>
       );
     },
