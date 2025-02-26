@@ -1,4 +1,4 @@
-import { Schema, models, model } from "mongoose";
+import { Schema, models, model, Model } from "mongoose";
 import FinancialSummary from "./financial.model";
 
 export interface ICategory {
@@ -105,24 +105,6 @@ export const ExpenseSchema = new Schema<IExpense>(
  * Automatically calculates totalAmount (amount + (taxAmount% of amount))
  * Updates financial summary if status is paid
  */
-ExpenseSchema.pre("save", async function (next) {
-  // If this is a new expense
-  if (this.isNew) {
-    // Calculate totalAmount
-    if (this.amount !== undefined && this.taxAmount !== undefined) {
-      this.totalAmount = this.amount * (1 + this.taxAmount / 100);
-    }
-    // If paid, update financial summary
-    if (this.status === "paid") {
-      const summary = await FinancialSummary.findOne();
-      if (summary) {
-        summary.totalExpenses += this.totalAmount;
-        await summary.save();
-      }
-    }
-  }
-  next();
-});
 
 /**
  * UPDATE HOOKS (findOneAndUpdate scenario)
@@ -130,40 +112,24 @@ ExpenseSchema.pre("save", async function (next) {
  * In post, adjust the financial summary based on the changes.
  */
 // 1) Pre hook: fetch old doc
-ExpenseSchema.pre("findOneAndUpdate", async function (next) {
+ExpenseSchema.pre("save", async function (next) {
   try {
-    const docToUpdate = await this.model.findOne(this.getQuery());
-    (this as any)._originalDoc = docToUpdate || null;
-
-    const update = this.getUpdate();
-
-    // 1. Check if it's an array (which would mean aggregation pipeline)
-    if (Array.isArray(update)) {
-      // It's a pipeline. You can't directly set $set on an aggregation pipeline.
-      // If needed, handle pipeline logic here or skip setting $set.
-      return next();
+    // If this isn't new, fetch the old doc for comparison
+    if (!this.isNew) {
+      // Cast `this.constructor` to the correct Mongoose model type
+      const ExpenseModel = this.constructor as unknown as Model<IExpense>;
+      const oldDoc = await ExpenseModel.findById(this._id);
+      (this as any)._originalDoc = oldDoc;
     }
 
-    // 2. Otherwise, it's an UpdateQuery object, so we can safely use $set
-    if (!update) {
-      return next(new Error("Update object is null"));
-    }
-    const newAmount = update.$set?.amount;
-    const newTaxAmount = update.$set?.taxAmount;
-
-    if (typeof newAmount === "number" || typeof newTaxAmount === "number") {
-      const finalAmount =
-        typeof newAmount === "number" ? newAmount : docToUpdate?.amount || 0;
-      const finalTax =
-        typeof newTaxAmount === "number"
-          ? newTaxAmount
-          : docToUpdate?.taxAmount || 0;
-
-      // Ensure $set exists before adding to it
-      if (!update.$set) {
-        update.$set = {};
-      }
-      update.$set.totalAmount = finalAmount * (1 + finalTax / 100);
+    // If new or amount/tax changed, recalc total
+    if (
+      this.isNew ||
+      this.isModified("amount") ||
+      this.isModified("taxAmount")
+    ) {
+      const tax = this.taxAmount ?? 0;
+      this.totalAmount = this.amount * (1 + tax / 100);
     }
 
     next();
@@ -172,42 +138,45 @@ ExpenseSchema.pre("findOneAndUpdate", async function (next) {
   }
 });
 
-// 2) Post hook: compare old doc vs. new doc
-ExpenseSchema.post("findOneAndUpdate", async function (doc, next) {
+/**
+ * POST-SAVE HOOK
+ * - Compare old doc vs new doc for status or totalAmount changes
+ * - Update the financial summary accordingly
+ */
+ExpenseSchema.post("save", async function (doc, next) {
   try {
-    const originalDoc = (this as any)._originalDoc;
-    // `doc` here is the *updated* document after changes
-
-    if (!originalDoc || !doc) {
-      return next();
-    }
-
-    // If the doc's status changed from paid to something else, subtract from summary
-    // If changed from something else to paid, add to summary
-    // If the amount/tax changed while still in paid status, adjust the difference, etc.
-
-    const oldStatus = originalDoc.status;
-    const newStatus = doc.status;
-
-    const oldTotal = originalDoc.totalAmount || 0;
-    const newTotal = doc.totalAmount || 0;
-
-    // 1) If old was paid and new is NOT paid => subtract oldTotal
-    // 2) If new is paid and old was NOT paid => add newTotal
-    // 3) If both old and new are paid => adjust difference
     const summary = await FinancialSummary.findOne();
     if (!summary) {
       return next();
     }
 
+    const oldDoc = (this as any)._originalDoc;
+
+    // If there's no oldDoc, it's a brand-new expense
+    if (!oldDoc) {
+      // If new doc is "paid," add to totalExpenses
+      if (doc.status === "paid") {
+        summary.totalExpenses += doc.totalAmount;
+        await summary.save();
+      }
+      return next();
+    }
+
+    // Otherwise, it's an update
+    const oldStatus = oldDoc.status;
+    const newStatus = doc.status;
+    const oldTotal = oldDoc.totalAmount ?? 0;
+    const newTotal = doc.totalAmount ?? 0;
+
     if (oldStatus === "paid" && newStatus !== "paid") {
+      // old was paid, new isn't => subtract oldTotal
       summary.totalExpenses -= oldTotal;
     } else if (oldStatus !== "paid" && newStatus === "paid") {
+      // old wasn't paid, new is => add newTotal
       summary.totalExpenses += newTotal;
     } else if (oldStatus === "paid" && newStatus === "paid") {
-      // If it stayed in paid, see if the total changed
-      const difference = newTotal - oldTotal;
-      summary.totalExpenses += difference;
+      // stayed "paid" => adjust difference
+      summary.totalExpenses += newTotal - oldTotal;
     }
 
     await summary.save();
@@ -217,31 +186,25 @@ ExpenseSchema.post("findOneAndUpdate", async function (doc, next) {
   }
 });
 
-/**
- * DELETE HOOK (findOneAndDelete scenario)
- * Subtract the amount from the summary if it was paid
- */
-ExpenseSchema.pre("findOneAndDelete", async function (next) {
-  try {
-    // The doc to be deleted
-    const docToDelete = await this.model.findOne(this.getQuery());
-    if (!docToDelete) {
-      return next();
-    }
-
-    // If the doc was paid, subtract from summary
-    if (docToDelete.status === "paid") {
-      const summary = await FinancialSummary.findOne();
-      if (summary) {
-        summary.totalExpenses -= docToDelete.totalAmount || 0;
-        await summary.save();
+ExpenseSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next: any) {
+    try {
+      const docToDelete = this; // doc itself
+      if (docToDelete.status === "paid") {
+        const summary = await FinancialSummary.findOne();
+        if (summary) {
+          summary.totalExpenses -= docToDelete.totalAmount || 0;
+          await summary.save();
+        }
       }
+      next();
+    } catch (err) {
+      next(err);
     }
-    next();
-  } catch (err: any) {
-    next(err);
   }
-});
+);
 
 const Expenses = models.Expenses || model<IExpense>("Expenses", ExpenseSchema);
 export const Categories =

@@ -34,6 +34,7 @@ export async function getExpenseById(id: Key) {
 export async function createExpense(expense: any) {
   await connectToDatabase();
   try {
+    console.log("Creating expense", expense);
     const newExpense = new Expenses(expense);
     await newExpense.save();
     revalidatePath("/expenses");
@@ -46,11 +47,26 @@ export async function createExpense(expense: any) {
 // ─────────────────────────────────────────────────────────────────────────────
 // UPDATE EXPENSE
 // ─────────────────────────────────────────────────────────────────────────────
-export async function updateExpense(id: Key, expense: any) {
+export async function updateExpense(id: Key, expenseData: any) {
   await connectToDatabase();
+
   try {
-    await Expenses.findByIdAndUpdate(id, expense);
+    // 1) Find the existing doc
+    const expense = await Expenses.findById(id);
+    if (!expense) {
+      throw new Error("Expense not found");
+    }
+
+    // 2) Update the fields
+    //    You can map field-by-field or just Object.assign
+    Object.assign(expense, expenseData);
+
+    // 3) Save the doc => triggers pre/post save hooks
+    await expense.save();
+
+    // Revalidate if needed
     revalidatePath("/expenses");
+
     return { success: true };
   } catch (error) {
     console.error(error);
@@ -63,7 +79,16 @@ export async function updateExpense(id: Key, expense: any) {
 export async function deleteExpense(id: Key) {
   await connectToDatabase();
   try {
-    await Expenses.findByIdAndDelete(id);
+    // 1. Load the doc
+    const expense = await Expenses.findById(id);
+    if (!expense) {
+      // No doc found, handle error or just return
+      throw new Error("Expense not found");
+    }
+
+    // 2. Delete on the doc => triggers doc-level `pre('deleteOne')`
+    await expense.deleteOne();
+
     revalidatePath("/expenses");
     return { success: true };
   } catch (error) {
@@ -81,7 +106,10 @@ export async function deleteMultipleExpenses(ids: Key[]) {
   try {
     // Delete each expense individually so each triggers the Mongoose middleware
     for (const id of ids) {
-      await Expenses.findByIdAndDelete(id);
+      const expense = await Expenses.findById(id);
+      if (expense) {
+        await expense.deleteOne(); // doc-level delete => triggers the hook
+      }
     }
     revalidatePath("/expenses");
     return { success: true };

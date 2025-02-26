@@ -1,7 +1,14 @@
 import React from "react";
-import { ModalFooter, Button, Input, Select, SelectItem } from "@heroui/react";
-
+import {
+  ModalFooter,
+  Button,
+  Input,
+  Select,
+  SelectItem,
+  DatePicker,
+} from "@heroui/react";
 import { Form, FormControl, FormField } from "@/components/ui/form";
+import { parseDate } from "@internationalized/date";
 
 import { Loader2 } from "lucide-react";
 
@@ -49,6 +56,44 @@ const FormExpense = ({
             </FormControl>
           )}
         />
+        <FormField
+          control={form.control}
+          name={"date"}
+          render={({ field }) => (
+            <FormControl>
+              <DatePicker
+                label="Ημερομηνία"
+                // Convert your stored value -> `DateValue`
+                description="Η ημερομηνία της δαπάνης"
+                hideTimeZone
+                showMonthAndYearPickers
+                value={
+                  // 1) If it's null/undefined, pass `undefined` or `null`
+                  !field.value
+                    ? undefined
+                    : // 2a) If your form is storing an ISO string
+                      typeof field.value === "string"
+                      ? parseDate(field.value.split("T")[0]) // e.g. "2025-02-26"
+                      : // 2b) If your form is storing a JS Date object
+                        parseDate(field.value.toISOString().split("T")[0])
+                }
+                // Convert `DateValue` back -> what your form state expects
+                onChange={(val) => {
+                  if (!val) {
+                    field.onChange(null);
+                    return;
+                  }
+                  // Make a JS Date at EXACT midnight UTC, ignoring local offsets
+                  const utcMidnight = new Date(
+                    Date.UTC(val.year, val.month - 1, val.day) // e.g. 2025-07-01T00:00:00.000Z
+                  );
+                  field.onChange(utcMidnight.toISOString());
+                }}
+              />
+            </FormControl>
+          )}
+        />
+
         <FormField
           control={form.control}
           name={"category"}
