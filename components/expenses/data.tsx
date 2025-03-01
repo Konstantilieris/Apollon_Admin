@@ -20,7 +20,7 @@ export const expenseStatusColorMap: Record<ExpenseStatus, React.JSX.Element> = {
 };
 export type Expense = {
   _id: string;
-  date: Date;
+  date: string;
   description: string;
   category: {
     name: string;
@@ -55,7 +55,7 @@ export type ExpenseColumnsKey =
 // Set the initial visible columns for an expenses table
 export const INITIAL_VISIBLE_EXPENSE_COLUMNS: ExpenseColumnsKey[] = [
   "date",
-
+  "notes",
   "category",
   "amount",
   "taxAmount",

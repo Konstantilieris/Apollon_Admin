@@ -145,3 +145,34 @@ export async function createCategory(category: any) {
     return { success: false };
   }
 }
+export async function updateCategory(id: Key, categoryData: any) {
+  await connectToDatabase();
+  try {
+    const category = await Categories.findById(id);
+    if (!category) {
+      throw new Error("Category not found");
+    }
+    Object.assign(category, categoryData);
+    await category.save();
+    revalidatePath("/expenses");
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false };
+  }
+}
+export async function deleteCategory(id: Key) {
+  await connectToDatabase();
+  try {
+    const category = await Categories.findById(id);
+    if (!category) {
+      throw new Error("Category not found");
+    }
+    await category.deleteOne();
+    revalidatePath("/expenses");
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false };
+  }
+}

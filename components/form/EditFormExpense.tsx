@@ -47,9 +47,7 @@ const EditFormExpense = () => {
   const form = useForm<Expense>({
     resolver: zodResolver(ExpenseSchema),
     defaultValues: {
-      date: expense?.date
-        ? expense.date.toISOString()
-        : new Date().toISOString(),
+      date: expense?.date,
       category: expense?.category?._id,
       amount: expense?.amount,
       taxAmount: expense?.taxAmount,

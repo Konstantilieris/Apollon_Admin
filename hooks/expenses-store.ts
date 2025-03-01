@@ -2,7 +2,7 @@ import { ExpenseStatus } from "@/components/expenses/data";
 import { create } from "zustand";
 type Expense = {
   _id: string;
-  date: Date;
+  date: string;
   description: string;
   category: {
     name: string;

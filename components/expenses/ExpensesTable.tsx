@@ -168,8 +168,8 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
       }
       // For date: convert to Date objects for comparison.
       else if (col === "date") {
-        first = new Date(a.date);
-        second = new Date(b.date);
+        first = new Date(a.date).toISOString();
+        second = new Date(b.date).toISOString();
       }
 
       // Standard comparison for numbers, dates, or strings.
@@ -217,6 +217,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
       | "paymentMethod"
       | "vendor"
       | "status"
+      | "notes"
       | "actions";
 
     switch (expenseKey) {
@@ -274,6 +275,13 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
           </div>
         );
       }
+      case "notes": {
+        return (
+          <div className="text-small font-semibold text-default-foreground">
+            {expense?.notes}
+          </div>
+        );
+      }
       case "paymentMethod": {
         return (
           <div className="text-small text-default-foreground">
@@ -312,12 +320,12 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
       }
       case "actions": {
         return (
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex items-center justify-end  pr-5">
             <EditLinearIcon
               {...getEditProps()}
-              className="cursor-pointer text-default-400"
-              height={18}
-              width={18}
+              className="cursor-pointer text-green-500"
+              height={24}
+              width={24}
               onClick={() => handleEditClick(expense)}
             />
           </div>

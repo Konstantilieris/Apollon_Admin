@@ -9,7 +9,7 @@ import DeleteExpenses from "./DeleteExpenses";
 import EditFormExpense from "../form/EditFormExpense";
 
 const ExpenseModal = () => {
-  const { isOpen, onClose, type, expense, resetStore } = useExpensesStore();
+  const { isOpen, onClose, type, resetStore } = useExpensesStore();
 
   // Update the onSubmit function to use console.log instead of making an API call
 
@@ -35,16 +35,24 @@ const ExpenseModal = () => {
   return (
     <Modal
       isOpen={isOpen}
-      size="2xl"
+      size="4xl"
       onClose={handleClose}
-      placement="center"
+      placement="top"
       backdrop="blur"
     >
       <ModalContent className="font-sans">
         {() => (
           <>
             <ModalHeader className="flex flex-col items-center gap-1 pl-8 tracking-widest">
-              {expense ? "ΕΠΕΞΕΡΓΑΣΙΑ" : "ΠΡΟΣΘΗΚΗ"} ΕΞΟΔΟΥ
+              <h2 className="text-2xl font-bold tracking-widest">
+                {type === "create"
+                  ? "Δημιουργία Εξόδου"
+                  : type === "edit"
+                    ? "Επεξεργασία Εξόδου"
+                    : type === "category"
+                      ? "Δημιουργία Κατηγορίας"
+                      : "Διαγραφή Εξόδων"}
+              </h2>
             </ModalHeader>
             <ModalBody>{renderContent()}</ModalBody>
           </>
