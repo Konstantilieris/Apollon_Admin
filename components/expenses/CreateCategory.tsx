@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { createCategory } from "@/lib/actions/expenses.action";
 import { useExpensesStore } from "@/hooks/expenses-store";
+import { useCategories } from "@/hooks/use-categories";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -29,6 +30,7 @@ const formSchema = z.object({
 
 export function CreateCategoryForm() {
   const router = useRouter();
+  const { refreshCategories } = useCategories();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const { resetStore, setIsOpen } = useExpensesStore();
@@ -61,6 +63,7 @@ export function CreateCategoryForm() {
         variant: "destructive",
       });
     } finally {
+      refreshCategories();
       setIsLoading(false);
       resetStore();
       setIsOpen(false);

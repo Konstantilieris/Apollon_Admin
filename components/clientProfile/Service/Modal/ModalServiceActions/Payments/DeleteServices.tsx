@@ -73,7 +73,7 @@ const DeleteServices = ({ client }: any) => {
               <p className="ml-4">Σημειώση: {service.notes || "Ν/Α"}</p>
               <p className="ml-4">
                 Ημερομηνία: {formatDate(new Date(service.date), "el")}-{" "}
-                {formatDate(new Date(service.endDate), "el")}
+                {service.endDate && formatDate(new Date(service.endDate), "el")}
               </p>
               <p className="ml-4">Ποσό: {service.amount}€</p>
             </div>

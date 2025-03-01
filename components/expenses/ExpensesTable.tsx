@@ -44,9 +44,8 @@ import { ArrowUpIcon } from "./arrow-up";
 import { Status } from "./Status";
 
 import { useMemoizedCallback } from "@/hooks/use-memoized-callback";
-import dynamic from "next/dynamic";
+
 import { useExpensesStore } from "@/hooks/expenses-store";
-const ExpenseModal = dynamic(() => import("./ExpenseModal"), { ssr: false });
 
 export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
   const [filterValue, setFilterValue] = useState("");
@@ -73,7 +72,8 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
     setExpense,
     setToDeleteExpenses,
     setType,
-
+    expense,
+    resetStore,
     setIsOpen,
   } = useExpensesStore();
   const [dateFilter, setDateFilter] = React.useState("all");
@@ -207,135 +207,134 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
   const getDescriptionProps = useMemoizedCallback(() => ({
     onClick: handleMemberClick,
   }));
-  const renderCell = useMemoizedCallback(
-    (expense: Expense, columnKey: React.Key) => {
-      const expenseKey = columnKey as
-        | "date"
-        | "description"
-        | "category"
-        | "amount"
-        | "taxAmount"
-        | "totalAmount"
-        | "paymentMethod"
-        | "vendor"
-        | "status"
-        | "actions";
+  const renderCell = (expense: Expense, columnKey: React.Key) => {
+    const expenseKey = columnKey as
+      | "date"
+      | "description"
+      | "category"
+      | "amount"
+      | "taxAmount"
+      | "totalAmount"
+      | "paymentMethod"
+      | "vendor"
+      | "status"
+      | "actions";
 
-      switch (expenseKey) {
-        case "date": {
-          const date = expense.date;
-          return (
-            <div className="flex items-center gap-1">
-              <Icon
-                className="h-[16px] w-[16px] text-default-300"
-                icon="solar:calendar-minimalistic-linear"
-              />
-              <p className="text-nowrap text-small capitalize text-default-foreground">
-                {new Intl.DateTimeFormat("el-GR", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                }).format(new Date(date))}
-              </p>
-            </div>
-          );
-        }
-        case "description": {
-          return (
-            <div className="text-small text-default-foreground">
-              {expense.description}
-            </div>
-          );
-        }
-        case "category": {
-          // Assuming expense.category might be populated (with a "name") or just an ObjectId
-          const categoryDisplay =
-            typeof expense.category === "object" &&
-            expense.category !== null &&
-            "name" in expense.category
-              ? (expense.category as { name: string }).name
-              : (expense.category as string).toString();
-          return (
-            <div className="text-small text-default-foreground">
-              {categoryDisplay}
-            </div>
-          );
-        }
-        case "amount": {
-          return (
-            <div className="text-small text-default-foreground">
-              {expense.amount}€
-            </div>
-          );
-        }
-        case "taxAmount": {
-          return (
-            <div className="text-small text-default-foreground">
-              {expense.taxAmount ?? 0} %
-            </div>
-          );
-        }
-        case "totalAmount": {
-          return (
-            <div className="text-small font-semibold text-default-foreground">
-              {expense.totalAmount.toFixed(2)} €
-            </div>
-          );
-        }
-        case "paymentMethod": {
-          return (
-            <div className="text-small text-default-foreground">
-              {expense.paymentMethod
-                ? paymentMethod[
-                    expense?.paymentMethod as keyof typeof paymentMethod
-                  ]
-                : ""}
-            </div>
-          );
-        }
-        case "vendor": {
-          const vendor = expense.vendor;
-          return vendor ? (
-            <div className="flex flex-col">
-              <span className="text-small text-default-foreground">
-                {vendor.name}
-              </span>
-              {vendor.contactInfo && (
-                <span className="text-xs text-default-500">
-                  {vendor.contactInfo}
-                </span>
-              )}
-              {vendor.serviceType && (
-                <span className="text-xs text-default-500">
-                  {vendor.serviceType}
-                </span>
-              )}
-            </div>
-          ) : (
-            <div className="text-small text-default-foreground">-</div>
-          );
-        }
-        case "status": {
-          return <Status status={expense.status} />;
-        }
-        case "actions": {
-          return (
-            <div className="flex items-center justify-end gap-2">
-              <EditLinearIcon
-                {...getEditProps()}
-                className="cursor-pointer text-default-400"
-                height={18}
-                width={18}
-                onClick={() => handleEditClick(expense)}
-              />
-            </div>
-          );
-        }
-        default:
-          return null;
+    switch (expenseKey) {
+      case "date": {
+        const date = expense.date;
+        return (
+          <div className="flex items-center gap-1">
+            <Icon
+              className="h-[16px] w-[16px] text-default-300"
+              icon="solar:calendar-minimalistic-linear"
+            />
+            <p className="text-nowrap text-small capitalize text-default-foreground">
+              {new Intl.DateTimeFormat("el-GR", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              }).format(new Date(date))}
+            </p>
+          </div>
+        );
       }
+      case "description": {
+        return (
+          <div className="text-small text-default-foreground">
+            {expense.description}
+          </div>
+        );
+      }
+      case "category": {
+        // Assuming expense.category might be populated (with a "name") or just an ObjectId
+        const categoryDisplay =
+          typeof expense.category === "object" &&
+          expense.category !== null &&
+          "name" in expense.category
+            ? (expense.category as { name: string }).name
+            : (expense.category as string).toString();
+        return (
+          <div className="text-small text-default-foreground">
+            {categoryDisplay}
+          </div>
+        );
+      }
+      case "amount": {
+        return (
+          <div className="text-small text-default-foreground">
+            {expense.amount}€
+          </div>
+        );
+      }
+      case "taxAmount": {
+        return (
+          <div className="text-small text-default-foreground">
+            {expense.taxAmount ?? 0} %
+          </div>
+        );
+      }
+      case "totalAmount": {
+        return (
+          <div className="text-small font-semibold text-default-foreground">
+            {expense.totalAmount.toFixed(2)} €
+          </div>
+        );
+      }
+      case "paymentMethod": {
+        return (
+          <div className="text-small text-default-foreground">
+            {expense.paymentMethod
+              ? paymentMethod[
+                  expense?.paymentMethod as keyof typeof paymentMethod
+                ]
+              : ""}
+          </div>
+        );
+      }
+      case "vendor": {
+        const vendor = expense.vendor;
+        return vendor ? (
+          <div className="flex flex-col">
+            <span className="text-small text-default-foreground">
+              {vendor.name}
+            </span>
+            {vendor.contactInfo && (
+              <span className="text-xs text-default-500">
+                {vendor.contactInfo}
+              </span>
+            )}
+            {vendor.serviceType && (
+              <span className="text-xs text-default-500">
+                {vendor.serviceType}
+              </span>
+            )}
+          </div>
+        ) : (
+          <div className="text-small text-default-foreground">-</div>
+        );
+      }
+      case "status": {
+        return <Status status={expense.status} />;
+      }
+      case "actions": {
+        return (
+          <div className="flex items-center justify-end gap-2">
+            <EditLinearIcon
+              {...getEditProps()}
+              className="cursor-pointer text-default-400"
+              height={18}
+              width={18}
+              onClick={() => handleEditClick(expense)}
+            />
+          </div>
+        );
+      }
+      default:
+        return null;
     }
-  );
+  };
+
   const onNextPage = useMemoizedCallback(() => {
     if (page < pages) {
       setPage(page + 1);
@@ -644,6 +643,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
             color="secondary"
             endContent={<Icon icon="solar:add-circle-bold" width={20} />}
             onPress={() => {
+              resetStore();
               setType("create");
               setIsOpen(true);
             }}
@@ -653,7 +653,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
         </div>
       </div>
     );
-  }, []);
+  }, [expense]);
 
   const bottomContent = useMemo(() => {
     return (
@@ -711,14 +711,13 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
     });
   });
   const handleEditClick = useMemoizedCallback((expense) => {
+    setExpense(expense);
     setType("edit");
     setIsOpen(true);
-    setExpense(expense);
   });
 
   return (
     <>
-      <ExpenseModal />
       <div className="h-full w-full p-6">
         {topBar}
         <Table

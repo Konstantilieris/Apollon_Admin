@@ -21,7 +21,7 @@ type Expense = {
   status: ExpenseStatus;
   notes: string;
 };
-type ModalType = "create" | "edit" | "delete" | "category";
+type ModalType = "create" | "edit" | "delete" | "category" | null;
 interface ExpensesStoreState {
   expense: Partial<Expense> | null;
   toDeleteExpenses: Partial<Expense>[] | [];
@@ -48,7 +48,7 @@ export const useExpensesStore = create<ExpensesStoreState>((set) => ({
   resetStore: () =>
     set({
       expense: null,
-      type: "create",
+      type: null,
       isOpen: false,
     }),
 }));

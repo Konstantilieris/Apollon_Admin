@@ -11,8 +11,8 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
-    "// Or if using `src` directory:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"./src/**/*.{js,ts,jsx,tsx}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"",
-    "./node_modules/@heroui/theme/dist/components/(chip|date-picker|input|pagination|select|table|button|ripple|spinner|calendar|date-input|form|popover|listbox|divider|scroll-shadow|checkbox|spacer).js"
+    "// Or if using `src` directory:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"./src/**/*.{js,ts,jsx,tsx}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"",
+    "./node_modules/@heroui/theme/dist/components/(chip|date-picker|input|modal|pagination|select|table|button|ripple|spinner|calendar|date-input|form|popover|listbox|divider|scroll-shadow|checkbox|spacer).js"
   ],
   theme: {
     container: {

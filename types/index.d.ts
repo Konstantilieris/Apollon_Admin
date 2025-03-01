@@ -18,6 +18,23 @@ export interface URLProps {
   params: { id: string };
   searchParams: { [key: string]: string | undefined };
 }
+export type Expense = {
+  id?: string;
+  amount: number;
+  taxAmount: number;
+  totalAmount?: number;
+  date: Date;
+  description: string;
+  category: string;
+  paymentMethod: string;
+  vendor?: {
+    name?: string;
+    contactInfo?: string;
+    serviceType?: string;
+  };
+  notes?: string;
+  status: "pending" | "paid" | "overdue";
+};
 export interface CreateClientParams {
   firstName: string;
   lastName: string;

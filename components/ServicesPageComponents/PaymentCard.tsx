@@ -29,7 +29,7 @@ export function OwesCard({ className, revenue }: any) {
           <IconDatabaseDollar className={cn("text-white")} />
         </IconContainer>
         <p className="text-3xl font-bold text-neutral-700 dark:text-neutral-200">
-          {revenue} {"€"}
+          {revenue.toFixed(2)} {"€"}
         </p>
       </div>
       <p className="mt-4 text-base tracking-widest text-neutral-600 dark:text-neutral-300">

@@ -13,22 +13,24 @@ import { parseDate } from "@internationalized/date";
 import { Loader2 } from "lucide-react";
 import { I18nProvider } from "@react-aria/i18n";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ExpenseSchema } from "@/lib/validation";
+
 import { Expense } from "@/types";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import { createExpense } from "@/lib/actions/expenses.action";
+import { updateExpense } from "@/lib/actions/expenses.action";
 import { useExpensesStore } from "@/hooks/expenses-store";
 import { cn } from "@/lib/utils";
 import { useCategories } from "@/hooks/use-categories";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ExpenseSchema } from "@/lib/validation";
 
-const FormExpense = () => {
+const EditFormExpense = () => {
   const router = useRouter();
   const { toast } = useToast();
   const { categories } = useCategories();
   const { onClose } = useExpensesStore();
   const [isLoading, setIsLoading] = useState(false);
+  const { expense } = useExpensesStore();
   const paymentMethods = [
     { _id: "cash", name: "Μετρητά" },
     { _id: "credit card", name: "Κάρτα" },
@@ -39,34 +41,37 @@ const FormExpense = () => {
     { _id: "paid", name: "Πληρωμένο" },
     { _id: "overdue", name: "Ληξιπρόθεσμο" },
   ] as const;
+
   const form = useForm<Expense>({
     resolver: zodResolver(ExpenseSchema),
     defaultValues: {
-      amount: 0,
-      taxAmount: 0,
-      date: new Date(),
-      description: "",
-      category: "",
-      paymentMethod: "cash",
+      description: expense?.description,
+      date: expense?.date,
+      category: expense?.category?._id,
+      amount: expense?.amount,
+      taxAmount: expense?.taxAmount,
+      paymentMethod: expense?.paymentMethod,
+      status: expense?.status,
+      notes: expense?.notes,
       vendor: {
-        name: "",
-        contactInfo: "",
-        serviceType: "",
+        name: expense?.vendor?.name,
+        serviceType: expense?.vendor?.serviceType,
+        contactInfo: expense?.vendor?.contactInfo,
       },
-      notes: "",
-      status: "paid",
     },
   });
+
   const onSubmit = useCallback(
     async (data: Expense) => {
       console.log("Expense data submitted:", data);
       setIsLoading(true);
       try {
-        const res = await createExpense(data);
+        if (!expense) return;
+        const res = await updateExpense(expense?._id!, data);
         if (res.success) {
           toast({
             title: "Επιτυχία",
-            description: "Η δαπάνη δημιουργήθηκε με επιτυχία",
+            description: "Η δαπάνη ενημερώθηκε με επιτυχία",
             className: cn(
               "bg-celtic-green border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
             ),
@@ -82,7 +87,7 @@ const FormExpense = () => {
         form.reset();
       }
     },
-    [toast, onClose, router, form]
+    [toast, onClose, router, form, expense]
   );
 
   return (
@@ -170,6 +175,7 @@ const FormExpense = () => {
                     field.onChange(selectedValue);
                   }}
                   value={field.value}
+                  defaultSelectedKeys={[field.value]}
                 >
                   {categories.map((category: any) => (
                     <SelectItem key={category._id} className="font-sans">
@@ -359,12 +365,15 @@ const FormExpense = () => {
         </div>
         <ModalFooter className="flex justify-center">
           <Button
-            type="submit"
+            onPress={() => {
+              console.log("hit");
+              form.handleSubmit(onSubmit)(); // Note the additional () to invoke the function.
+            }}
             disabled={isLoading}
             className="tracking-widest"
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Δημιουργία
+            Επεξεργασία
           </Button>
         </ModalFooter>
       </form>
@@ -372,4 +381,4 @@ const FormExpense = () => {
   );
 };
 
-export default FormExpense;
+export default EditFormExpense;
