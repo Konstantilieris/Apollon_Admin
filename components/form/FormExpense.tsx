@@ -7,6 +7,8 @@ import {
   Select,
   SelectItem,
   DatePicker,
+  Autocomplete,
+  AutocompleteItem,
 } from "@heroui/react";
 import { Form, FormControl, FormField } from "@/components/ui/form";
 import { parseDate } from "@internationalized/date";
@@ -44,7 +46,7 @@ const FormExpense = () => {
     defaultValues: {
       amount: 0,
       taxAmount: 0,
-      date: new Date(),
+      date: new Date().toISOString(),
       description: "",
       category: "",
       paymentMethod: "cash",
@@ -95,20 +97,26 @@ const FormExpense = () => {
           </h3>
           <FormField
             control={form.control}
-            name={"description"}
-            render={({ field, fieldState }) => (
+            name={"category"}
+            render={({ field }) => (
               <FormControl>
-                <Input
+                <Autocomplete
                   isRequired
+                  label="Κατηγορία"
                   variant="bordered"
-                  type="text"
-                  label="Περιγραφή"
-                  isInvalid={!!fieldState.error}
-                  errorMessage={fieldState.error?.message}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  description="Η περιγραφή της δαπάνης"
-                />
+                  errorMessage="Η κατηγορία είναι υποχρεωτική"
+                  description="Η κατηγορία της δαπάνης"
+                  selectedKey={field.value}
+                  onSelectionChange={(value) => {
+                    field.onChange(value);
+                  }}
+                >
+                  {categories.map((category: any) => (
+                    <AutocompleteItem key={category._id} className="font-sans">
+                      {category.name}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
               </FormControl>
             )}
           />
@@ -137,7 +145,9 @@ const FormExpense = () => {
                         ? undefined
                         : typeof field.value === "string"
                           ? parseDate((field.value as string).split("T")[0])
-                          : parseDate(field.value.toISOString().split("T")[0])
+                          : parseDate(
+                              (field.value as Date).toISOString().split("T")[0]
+                            )
                     }
                     onChange={(val) => {
                       if (!val) {
@@ -154,32 +164,7 @@ const FormExpense = () => {
               </FormControl>
             )}
           />
-          <FormField
-            control={form.control}
-            name={"category"}
-            render={({ field }) => (
-              <FormControl>
-                <Select
-                  isRequired
-                  label="Κατηγορία"
-                  variant="bordered"
-                  errorMessage="Η κατηγορία είναι υποχρεωτική"
-                  description="Η κατηγορία της δαπάνης"
-                  onSelectionChange={(value) => {
-                    const selectedValue = Array.from(value)[0];
-                    field.onChange(selectedValue);
-                  }}
-                  value={field.value}
-                >
-                  {categories.map((category: any) => (
-                    <SelectItem key={category._id} className="font-sans">
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-          />
+
           <FormField
             control={form.control}
             name={"amount"}

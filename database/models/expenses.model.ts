@@ -34,6 +34,11 @@ export const CategorySchema = new Schema<ICategory>({
 
 export const ExpenseSchema = new Schema<IExpense>(
   {
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Categories",
+      required: true,
+    },
     amount: {
       type: Number,
       required: true,
@@ -54,16 +59,7 @@ export const ExpenseSchema = new Schema<IExpense>(
       required: true,
       default: Date.now,
     },
-    description: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    category: {
-      type: Schema.Types.ObjectId,
-      ref: "Categories",
-      required: true,
-    },
+
     paymentMethod: {
       type: String,
     },

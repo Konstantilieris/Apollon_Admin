@@ -62,7 +62,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
   const [rowsPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "description",
+    column: "category",
     direction: "ascending",
   });
 
@@ -121,7 +121,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
     console.log("filtervalue", filterValue);
     if (filterValue) {
       filteredExpenses = filteredExpenses.filter((expense) =>
-        expense.description.toLowerCase().includes(filterValue.toLowerCase())
+        expense.category.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
@@ -210,7 +210,6 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
   const renderCell = (expense: Expense, columnKey: React.Key) => {
     const expenseKey = columnKey as
       | "date"
-      | "description"
       | "category"
       | "amount"
       | "taxAmount"
@@ -239,13 +238,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
           </div>
         );
       }
-      case "description": {
-        return (
-          <div className="text-small text-default-foreground">
-            {expense.description}
-          </div>
-        );
-      }
+
       case "category": {
         // Assuming expense.category might be populated (with a "name") or just an ObjectId
         const categoryDisplay =
@@ -705,7 +698,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
 
   const handleMemberClick = useMemoizedCallback(() => {
     setSortDescriptor({
-      column: "description",
+      column: "category",
       direction:
         sortDescriptor.direction === "ascending" ? "descending" : "ascending",
     });
@@ -748,7 +741,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
                     : "",
                 ])}
               >
-                {column.uid === "description" ? (
+                {column.uid === "category" ? (
                   <div
                     {...getDescriptionProps()}
                     className="flex w-full cursor-pointer items-center justify-start gap-2"

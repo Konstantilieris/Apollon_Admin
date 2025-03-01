@@ -15,9 +15,7 @@ export const ExpenseSchema = z.object({
   ),
   taxAmount: z.number(),
   date: z.string(),
-  description: z.string().min(1, {
-    message: "Το πεδίο δεν μπορεί να είναι κενό",
-  }),
+
   category: z.string(),
   paymentMethod: z.string(),
   vendor: z

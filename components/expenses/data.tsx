@@ -42,7 +42,6 @@ export type Expense = {
 // Define table column keys based on the expense model fields
 export type ExpenseColumnsKey =
   | "date"
-  | "description"
   | "category"
   | "amount"
   | "taxAmount"
@@ -56,7 +55,7 @@ export type ExpenseColumnsKey =
 // Set the initial visible columns for an expenses table
 export const INITIAL_VISIBLE_EXPENSE_COLUMNS: ExpenseColumnsKey[] = [
   "date",
-  "description",
+
   "category",
   "amount",
   "taxAmount",

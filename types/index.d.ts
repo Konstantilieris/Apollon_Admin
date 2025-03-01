@@ -23,7 +23,7 @@ export type Expense = {
   amount: number;
   taxAmount: number;
   totalAmount?: number;
-  date: Date;
+  date: string;
   description: string;
   category: string;
   paymentMethod: string;
