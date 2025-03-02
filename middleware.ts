@@ -20,7 +20,10 @@ export const config = {
 
     // Training Routes
     "/training/:path*",
-
+    // payments
+    "/payments/:path*",
+    // services
+    "/services/:path*",
     // Expense Routes
     "/expenses/:path*",
   ],

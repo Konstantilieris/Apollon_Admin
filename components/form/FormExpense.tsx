@@ -103,8 +103,14 @@ const FormExpense = () => {
                 <Autocomplete
                   isRequired
                   label="Κατηγορία"
+                  classNames={{
+                    popoverContent: "h-[800px] py-1",
+                    listboxWrapper: "min-h-[60vh]",
+                    listbox: "h-full",
+                  }}
                   variant="bordered"
                   errorMessage="Η κατηγορία είναι υποχρεωτική"
+                  isInvalid={!field.value}
                   description="Η κατηγορία της δαπάνης"
                   selectedKey={field.value}
                   onSelectionChange={(value) => {
@@ -305,6 +311,7 @@ const FormExpense = () => {
                   onValueChange={field.onChange}
                   description="Ο προμηθευτής της δαπάνης"
                   color="secondary"
+                  variant="bordered"
                 />
               </FormControl>
             )}
@@ -321,6 +328,7 @@ const FormExpense = () => {
                   onValueChange={field.onChange}
                   description="Ο τύπος υπηρεσίας του προμηθευτή"
                   color="secondary"
+                  variant="bordered"
                 />
               </FormControl>
             )}
@@ -337,6 +345,7 @@ const FormExpense = () => {
                   onValueChange={field.onChange}
                   description="Στοιχεία επικοινωνίας του προμηθευτή"
                   color="secondary"
+                  variant="bordered"
                 />
               </FormControl>
             )}
@@ -346,10 +355,10 @@ const FormExpense = () => {
           <Button
             type="submit"
             disabled={isLoading}
-            className="tracking-widest"
+            className="w-[200px] tracking-widest  "
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Δημιουργία
+            ΔΗΜΙΟΥΡΓΙΑ
           </Button>
         </ModalFooter>
       </form>

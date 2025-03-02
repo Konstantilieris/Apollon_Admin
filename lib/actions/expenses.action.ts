@@ -5,6 +5,7 @@ import { connectToDatabase } from "../mongoose";
 import { revalidatePath } from "next/cache";
 
 import { Key } from "react";
+import FinancialSummary from "@/database/models/financial.model";
 // ─────────────────────────────────────────────────────────────────────────────
 // GET ALL CATEGORIES
 // ─────────────────────────────────────────────────────────────────────────────
@@ -175,4 +176,14 @@ export async function deleteCategory(id: Key) {
     console.error(error);
     return { success: false };
   }
+}
+export async function getFinancialSummary() {
+  await connectToDatabase();
+  try {
+    const financial = await FinancialSummary.find();
+    if (!financial || !financial[0]?.totalExpenses) {
+      return 0;
+    }
+    return JSON.parse(JSON.stringify(financial[0].totalExpenses));
+  } catch (error) {}
 }

@@ -69,7 +69,6 @@ export const INITIAL_VISIBLE_EXPENSE_COLUMNS: ExpenseColumnsKey[] = [
 // Define the column configuration for rendering in a table UI
 export const expenseColumns = [
   { name: "Ημερομηνία", uid: "date" },
-  { name: "Περιγραφή", uid: "description", sortDirection: "ascending" },
   { name: "Κατηγορία", uid: "category", sortDirection: "ascending" },
   { name: "Σύνολο", uid: "amount" },
   { name: "Φόρος", uid: "taxAmount" },

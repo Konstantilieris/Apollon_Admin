@@ -107,8 +107,14 @@ const EditFormExpense = () => {
                 <Autocomplete
                   isRequired
                   label="Κατηγορία"
+                  classNames={{
+                    popoverContent: "h-[800px] py-1",
+                    listboxWrapper: "min-h-[60vh]",
+                    listbox: "h-full",
+                  }}
                   variant="bordered"
                   errorMessage="Η κατηγορία είναι υποχρεωτική"
+                  isInvalid={!field.value}
                   description="Η κατηγορία της δαπάνης"
                   selectedKey={field.value}
                   onSelectionChange={(value) => {

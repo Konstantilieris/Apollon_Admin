@@ -49,17 +49,18 @@ import { useExpensesStore } from "@/hooks/expenses-store";
 
 export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
   const [filterValue, setFilterValue] = useState("");
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const paymentMethod = {
-    creditcard: "Πιστωτική",
+    credit_card: "Πιστωτική",
     cash: "Μετρητά",
-    bank: "Τραπεζικό Έμβασμα",
+    bank_transfer: "Τραπεζικό Έμβασμα",
   };
 
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_EXPENSE_COLUMNS)
   );
-  const [rowsPerPage] = useState(10);
+
   const [page, setPage] = useState(1);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "category",
@@ -93,12 +94,19 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
       })
       .filter((column) => Array.from(visibleColumns).includes(column.uid));
   }, [visibleColumns, sortDescriptor]);
+  const onRowsPerPageChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setRowsPerPage(Number(e.target.value));
+      setPage(1);
+    },
+    []
+  );
 
   const itemFilter = useCallback(
     (expense: Expense) => {
       const allStatus = statusFilter === "all";
       const allDate = dateFilter === "all";
-      console.log("filters", paymentMethodFilter, statusFilter, dateFilter);
+
       return (
         (allStatus ||
           expense.status.toLowerCase() === statusFilter.toLowerCase()) &&
@@ -113,12 +121,12 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
           ) <= new Date(expense.date))
       );
     },
-    [dateFilter, statusFilter, paymentMethodFilter]
+    [dateFilter, statusFilter]
   );
 
   const filteredItems = useMemo(() => {
     let filteredExpenses = [...expenses];
-    console.log("filtervalue", filterValue);
+
     if (filterValue) {
       filteredExpenses = filteredExpenses.filter((expense) =>
         expense.category.name.toLowerCase().includes(filterValue.toLowerCase())
@@ -140,7 +148,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
-    return [...filteredItems].sort((a: Expense, b: Expense) => {
+    return [...items].sort((a: Expense, b: Expense) => {
       const col = sortDescriptor.column as keyof Expense;
 
       let first = a[col];
@@ -179,7 +187,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
-  }, [sortDescriptor, filteredItems]);
+  }, [sortDescriptor, items]);
 
   const filterSelectedKeys = useMemo(() => {
     if (selectedKeys === "all") return selectedKeys;
@@ -287,7 +295,10 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
           <div className="text-small text-default-foreground">
             {expense.paymentMethod
               ? paymentMethod[
-                  expense?.paymentMethod as keyof typeof paymentMethod
+                  expense?.paymentMethod.replace(
+                    " ",
+                    "_"
+                  ) as keyof typeof paymentMethod
                 ]
               : ""}
           </div>
@@ -400,205 +411,228 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
 
   const topContent = useMemo(() => {
     return (
-      <div className="flex items-center gap-4 overflow-auto px-[6px] py-[4px]">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-4">
-            <Input
-              className="min-w-[200px]"
-              endContent={
-                <SearchIcon className="text-default-400" width={16} />
-              }
-              placeholder="Search"
-              size="sm"
-              value={filterValue}
-              onValueChange={onSearchChange}
-            />
-            <div>
-              <Popover placement="bottom">
-                <PopoverTrigger>
-                  <Button
-                    className="bg-default-100 text-default-800"
-                    size="sm"
-                    startContent={
-                      <Icon
-                        className="text-default-400"
-                        icon="solar:tuning-2-linear"
-                        width={16}
-                      />
-                    }
+      <div className="flex flex-col  justify-between gap-4">
+        <div className="flex items-center gap-4 overflow-auto px-[6px] py-[4px]">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
+              <Input
+                className="min-w-[200px]"
+                endContent={
+                  <SearchIcon className="text-default-400" width={16} />
+                }
+                placeholder="Αναζήτηση.."
+                size="sm"
+                value={filterValue}
+                onValueChange={onSearchChange}
+              />
+              <div>
+                <Popover placement="bottom">
+                  <PopoverTrigger>
+                    <Button
+                      className="bg-default-100 text-default-800"
+                      size="sm"
+                      startContent={
+                        <Icon
+                          className="text-default-400"
+                          icon="solar:tuning-2-linear"
+                          width={16}
+                        />
+                      }
+                    >
+                      Φίλτρα
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80">
+                    <div className="flex w-full flex-col gap-6 px-2 py-4">
+                      <RadioGroup
+                        label="Payment Method"
+                        value={paymentMethodFilter}
+                        color={"secondary"}
+                        onValueChange={setPaymentMethodFilter}
+                        className="font-sans tracking-wide"
+                      >
+                        <Radio value="all">Όλα</Radio>
+                        <Radio value="creditcard"> Πιστωτική</Radio>
+                        <Radio value="cash">Μετρητά</Radio>
+                        <Radio value="bank">Τραπεζικό Έμβασμα</Radio>
+                      </RadioGroup>
+
+                      <RadioGroup
+                        label="Κατάσταση"
+                        value={statusFilter}
+                        onValueChange={setStatusFilter}
+                        color={"secondary"}
+                        className="font-sans tracking-wide"
+                      >
+                        <Radio value="all">Όλα</Radio>
+                        <Radio value="pending">Εκκρεμεί</Radio>
+                        <Radio value="paid">Πληρωμένο</Radio>
+                        <Radio value="overdue">Ληξιπρόθεσμο</Radio>
+                      </RadioGroup>
+
+                      <RadioGroup
+                        label="Ημερομηνία"
+                        value={dateFilter}
+                        onValueChange={setDateFilter}
+                        color={"secondary"}
+                        className="font-sans tracking-wide"
+                      >
+                        <Radio value="all">Όλα</Radio>
+                        <Radio value="last7Days">Τελευταίες 7 ημέρες</Radio>
+                        <Radio value="last30Days">Τελευταίες 30 ημέρες</Radio>
+                        <Radio value="last60Days">Τελευταίες 60 ημέρες</Radio>
+                      </RadioGroup>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div>
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button
+                      className="bg-default-100 text-default-800"
+                      size="sm"
+                      startContent={
+                        <Icon
+                          className="text-default-400"
+                          icon="solar:sort-linear"
+                          width={16}
+                        />
+                      }
+                    >
+                      Ταξινόμηση
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    aria-label="Sort"
+                    items={headerColumns.filter(
+                      (c) => !["actions"].includes(c.uid)
+                    )}
+                    className="font-sans tracking-wide"
                   >
-                    Φίλτρα
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="flex w-full flex-col gap-6 px-2 py-4">
-                    <RadioGroup
-                      label="Payment Method"
-                      value={paymentMethodFilter}
-                      color={"secondary"}
-                      onValueChange={setPaymentMethodFilter}
-                      className="font-sans tracking-wide"
+                    {(item) => (
+                      <DropdownItem
+                        key={item.uid}
+                        onPress={() => {
+                          setSortDescriptor({
+                            column: item.uid,
+                            direction:
+                              sortDescriptor.direction === "ascending"
+                                ? "descending"
+                                : "ascending",
+                          });
+                        }}
+                      >
+                        {item.name}
+                      </DropdownItem>
+                    )}
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+              <div>
+                <Dropdown closeOnSelect={false}>
+                  <DropdownTrigger>
+                    <Button
+                      className="bg-default-100 text-default-800"
+                      size="sm"
+                      startContent={
+                        <Icon
+                          className="text-default-400"
+                          icon="solar:sort-horizontal-linear"
+                          width={16}
+                        />
+                      }
                     >
-                      <Radio value="all">Όλα</Radio>
-                      <Radio value="creditcard"> Πιστωτική</Radio>
-                      <Radio value="cash">Μετρητά</Radio>
-                      <Radio value="bank">Τραπεζικό Έμβασμα</Radio>
-                    </RadioGroup>
-
-                    <RadioGroup
-                      label="Κατάσταση"
-                      value={statusFilter}
-                      onValueChange={setStatusFilter}
-                      color={"secondary"}
-                      className="font-sans tracking-wide"
-                    >
-                      <Radio value="all">Όλα</Radio>
-                      <Radio value="pending">Εκκρεμεί</Radio>
-                      <Radio value="paid">Πληρωμένο</Radio>
-                      <Radio value="overdue">Ληξιπρόθεσμο</Radio>
-                    </RadioGroup>
-
-                    <RadioGroup
-                      label="Ημερομηνία"
-                      value={dateFilter}
-                      onValueChange={setDateFilter}
-                      color={"secondary"}
-                      className="font-sans tracking-wide"
-                    >
-                      <Radio value="all">Όλα</Radio>
-                      <Radio value="last7Days">Τελευταίες 7 ημέρες</Radio>
-                      <Radio value="last30Days">Τελευταίες 30 ημέρες</Radio>
-                      <Radio value="last60Days">Τελευταίες 60 ημέρες</Radio>
-                    </RadioGroup>
-                  </div>
-                </PopoverContent>
-              </Popover>
+                      Στήλες
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    disallowEmptySelection
+                    aria-label="Columns"
+                    items={expenseColumns
+                      .filter((c) => !["actions"].includes(c.uid))
+                      .map((item) => ({ ...item, key: item.uid }))}
+                    selectedKeys={visibleColumns}
+                    selectionMode="multiple"
+                    onSelectionChange={setVisibleColumns}
+                    className="font-sans tracking-wide"
+                  >
+                    {(item) => (
+                      <DropdownItem key={item.uid}>{item.name}</DropdownItem>
+                    )}
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
             </div>
-            <div>
+
+            <Divider className="h-5" orientation="vertical" />
+
+            <div className="whitespace-nowrap text-sm text-default-800">
+              {filterSelectedKeys === "all"
+                ? "Όλα Επιλεγμένα"
+                : `${filterSelectedKeys.size} Επιλεγμένα`}
+            </div>
+
+            {(filterSelectedKeys === "all" || filterSelectedKeys.size > 0) && (
               <Dropdown>
                 <DropdownTrigger>
                   <Button
                     className="bg-default-100 text-default-800"
-                    size="sm"
-                    startContent={
+                    endContent={
                       <Icon
                         className="text-default-400"
-                        icon="solar:sort-linear"
-                        width={16}
+                        icon="solar:alt-arrow-down-linear"
                       />
                     }
+                    size="sm"
+                    variant="flat"
                   >
-                    Ταξινόμηση
+                    Επιλεγμένες Ενέργειες
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu
-                  aria-label="Sort"
-                  items={headerColumns.filter(
-                    (c) => !["actions"].includes(c.uid)
-                  )}
+                  aria-label="Selected Actions"
                   className="font-sans tracking-wide"
                 >
-                  {(item) => (
-                    <DropdownItem
-                      key={item.uid}
-                      onPress={() => {
-                        setSortDescriptor({
-                          column: item.uid,
-                          direction:
-                            sortDescriptor.direction === "ascending"
-                              ? "descending"
-                              : "ascending",
-                        });
-                      }}
-                    >
-                      {item.name}
-                    </DropdownItem>
-                  )}
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-            <div>
-              <Dropdown closeOnSelect={false}>
-                <DropdownTrigger>
-                  <Button
-                    className="bg-default-100 text-default-800"
-                    size="sm"
-                    startContent={
-                      <Icon
-                        className="text-default-400"
-                        icon="solar:sort-horizontal-linear"
-                        width={16}
-                      />
-                    }
+                  <DropdownItem
+                    key="delete-expense"
+                    onPress={() => {
+                      setType("delete");
+                      setIsOpen(true);
+                    }}
                   >
-                    Στήλες
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Columns"
-                  items={expenseColumns
-                    .filter((c) => !["actions"].includes(c.uid))
-                    .map((item) => ({ ...item, key: item.uid }))}
-                  selectedKeys={visibleColumns}
-                  selectionMode="multiple"
-                  onSelectionChange={setVisibleColumns}
-                  className="font-sans tracking-wide"
-                >
-                  {(item) => (
-                    <DropdownItem key={item.uid}>{item.name}</DropdownItem>
-                  )}
+                    ΔΙΑΓΡΑΦΗ ΕΞΟΔΩΝ
+                  </DropdownItem>
+                  <DropdownItem key="mark-paid">ΠΛΗΡΩΘΗΚΕ</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
-            </div>
+            )}
           </div>
-
-          <Divider className="h-5" orientation="vertical" />
-
-          <div className="whitespace-nowrap text-sm text-default-800">
-            {filterSelectedKeys === "all"
-              ? "Όλα Επιλεγμένα"
-              : `${filterSelectedKeys.size} Επιλεγμένα`}
-          </div>
-
-          {(filterSelectedKeys === "all" || filterSelectedKeys.size > 0) && (
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  className="bg-default-100 text-default-800"
-                  endContent={
-                    <Icon
-                      className="text-default-400"
-                      icon="solar:alt-arrow-down-linear"
-                    />
-                  }
-                  size="sm"
-                  variant="flat"
-                >
-                  Επιλεγμένες Ενέργειες
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Selected Actions"
-                className="font-sans tracking-wide"
-              >
-                <DropdownItem
-                  key="delete-expense"
-                  onPress={() => {
-                    setType("delete");
-                    setIsOpen(true);
-                  }}
-                >
-                  ΔΙΑΓΡΑΦΗ ΕΞΟΔΩΝ
-                </DropdownItem>
-                <DropdownItem key="mark-paid">ΠΛΗΡΩΘΗΚΕ</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          )}
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-small text-default-400">
+            Σύνολο {expenses.length} δαπανών
+          </span>
+          <label className="flex items-center text-small text-default-400">
+            Γραμμές ανά σελίδα
+            <select
+              className="bg-neutral-900 font-sans text-base text-default-400 outline-none"
+              onChange={onRowsPerPageChange}
+              value={rowsPerPage}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="20">25</option>
+            </select>
+          </label>
         </div>
       </div>
     );
   }, [
+    rowsPerPage,
+    expenses,
     filterValue,
     visibleColumns,
     filterSelectedKeys,
@@ -632,13 +666,20 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
         <div className="flex gap-2">
           <Button
             color="warning"
-            endContent={<Icon icon="solar:add-circle-bold" width={20} />}
+            className="flex items-center  text-dark-100 "
+            endContent={
+              <Icon
+                icon="solar:add-circle-bold"
+                width={20}
+                className={"text-dark-100"}
+              />
+            }
             onPress={() => {
               setType("category");
               setIsOpen(true);
             }}
           >
-            ΠΡΟΣΘΗΚΗ ΚΑΤΗΓΟΡΙΑΣ
+            ΔΙΑΧΕΙΡΗΣΗ ΚΑΤΗΓΟΡΙΑΣ
           </Button>
           <Button
             color="secondary"
@@ -663,7 +704,7 @@ export default function ExpensesTable({ expenses }: { expenses: Expense[] }) {
           isCompact
           showControls
           showShadow
-          color="primary"
+          color="secondary"
           page={page}
           total={pages}
           onChange={setPage}

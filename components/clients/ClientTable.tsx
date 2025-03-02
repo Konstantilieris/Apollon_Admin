@@ -409,24 +409,6 @@ const ClientTable = ({
             </Dropdown>
           </div>
         </div>
-        <div className="flex items-center justify-between">
-          <span className="text-small text-default-400">
-            Σύνολο {clients.length} πελατών
-          </span>
-          <label className="flex items-center text-small text-default-400">
-            Γραμμές ανά σελίδα
-            <select
-              className="bg-neutral-900 font-sans text-base text-default-400 outline-none"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="20">25</option>
-            </select>
-          </label>
-        </div>
       </div>
     );
   }, [
@@ -458,7 +440,7 @@ const ClientTable = ({
           isCompact
           showControls
           showShadow
-          color="primary"
+          color="warning"
           page={page}
           total={pages}
           onChange={setPage}
