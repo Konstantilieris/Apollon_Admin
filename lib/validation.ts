@@ -13,7 +13,15 @@ export const ExpenseSchema = z.object({
         message: "Το ποσό πρέπει να ειναι θετικό",
       })
   ),
-  taxAmount: z.number(),
+  taxAmount: z.preprocess(
+    (val) => {
+      if (typeof val === "string") {
+        return parseFloat(val);
+      }
+      return val;
+    },
+    z.number({ invalid_type_error: "το πεδιο πρέπει να είναι αριθμός" })
+  ),
   date: z.string(),
 
   category: z.string(),
