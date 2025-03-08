@@ -1511,6 +1511,14 @@ export async function updateBookingAllInclusive({
         "Cannot update a paid service with a reduced date range."
       );
     }
+    let oldRemainingAmount = oldBoardingService.remainingAmount ?? 0;
+    // oldRemainingAmount we need to see if there is pet taxi in there
+    if (booking.flag1) {
+      oldRemainingAmount += booking.client.transportFee;
+    }
+    if (booking.flag2) {
+      oldRemainingAmount += booking.client.transportFee;
+    }
 
     // 5) Calculate new boarding fee
     const calculateBoardingFee = calculateTotalPrice({
@@ -1521,12 +1529,12 @@ export async function updateBookingAllInclusive({
     });
 
     // 6) Add transport fees
-    let calculateTotalAmount = calculateBoardingFee;
+    let newTotalAmount = calculateBoardingFee;
     if (isTransport1) {
-      calculateTotalAmount += booking.client.transportFee;
+      newTotalAmount += booking.client.transportFee;
     }
     if (isTransport2) {
-      calculateTotalAmount += booking.client.transportFee;
+      newTotalAmount += booking.client.transportFee;
     }
 
     // 7) Add tax
@@ -1535,6 +1543,10 @@ export async function updateBookingAllInclusive({
     // 8) Paid portion so far
     const paidAmount =
       oldBoardingService.amount - (oldBoardingService.remainingAmount ?? 0);
+    const paidAmountSoFar = oldBoardingService.paidAmount ?? 0;
+    const newRemainingAmount = Math.max(newTotalAmount - paidAmountSoFar, 0);
+
+    const difference = newRemainingAmount - oldRemainingAmount;
 
     // 9) Update the main Booking doc
     const updatedBooking = await Booking.findOneAndUpdate(
@@ -1549,7 +1561,7 @@ export async function updateBookingAllInclusive({
           phone: booking.client.phone,
           location: booking.client.location,
         },
-        totalAmount: calculateTotalAmount,
+        totalAmount: newTotalAmount,
         fromDate: rangeDate.from,
         toDate: rangeDate.to,
         extraDay,
@@ -1670,20 +1682,19 @@ export async function updateBookingAllInclusive({
         { session }
       );
     }
-    const updatedClient = await Client.findByIdAndUpdate(
-      booking.client.clientId,
-      {
-        $push: {
-          owes: { $each: servicesToAdd.map((s) => s._id) },
+
+    if (difference !== 0) {
+      const updatedClient = await Client.findByIdAndUpdate(
+        booking.client.clientId,
+        {
+          $inc: { owesTotal: difference }, // explicitly handles negative & positive cases
+          $set: { lastActivity: new Date(), roomPreference },
         },
-        owesTotal: calculateTotalAmount,
-        lastActivity: new Date(),
-        roomPreference,
-      },
-      { new: true, session }
-    );
-    if (!updatedClient) {
-      throw new Error("Failed to update client with new transport fees");
+        { new: true, session }
+      );
+      if (!updatedClient) {
+        throw new Error("Failed to update client with new transport fees");
+      }
     }
 
     // 16) Commit transaction + revalidate
