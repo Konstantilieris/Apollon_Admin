@@ -117,9 +117,9 @@ export default function BookingFirstStage({ handleNext }: { handleNext: any }) {
   };
 
   return (
-    <section className="flex h-full w-full flex-col ">
+    <section className="flex  max-h-[calc(100vh_-_200px)] w-full flex-col overflow-y-auto rounded-lg bg-dark-100 p-8 pb-20 ">
       <I18nProvider locale="el-GR">
-        <div className="flex h-[70vh]   flex-row gap-4 self-center rounded-lg bg-neutral-900 p-2">
+        <div className="flex max-h-screen  flex-row gap-4 self-center rounded-lg bg-neutral-950 p-2">
           {/* Date Range Picker with Greek localization */}
           <div className="flex w-full flex-col  gap-4 rounded-xl bg-neutral-950 p-4">
             <DateRangePicker
@@ -211,7 +211,7 @@ export default function BookingFirstStage({ handleNext }: { handleNext: any }) {
             <DetailsAndAvailability />
             <div className="flex h-full items-end justify-end">
               <Button
-                className=" text-lg tracking-widest "
+                className=" text-lg tracking-widest"
                 variant="ghost"
                 onPress={handleNext}
                 isDisabled={!dateArrival || !dateDeparture}

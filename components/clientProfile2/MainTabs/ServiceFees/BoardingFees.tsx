@@ -24,8 +24,6 @@ export function BoardingFees({ dogCount }: BoardingFeesProps) {
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {Array.from({ length: dogCount }, (_, i) => i + 1).map((count) => {
-              const currentFee = boardingFees[count] ?? "";
-              console.log("count");
               return (
                 <div key={count} className="flex items-center gap-4">
                   <Input
@@ -35,10 +33,15 @@ export function BoardingFees({ dogCount }: BoardingFeesProps) {
                       label: "text-base",
                     }}
                     min={0}
-                    value={currentFee.toString()}
-                    onValueChange={(val) => {
-                      const num = parseFloat(val) || 0;
-                      setBoardingFee(count, num);
+                    value={boardingFees[count]?.toString() ?? ""}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const parsed = parseFloat(val);
+                      if (!isNaN(parsed)) {
+                        setBoardingFee(count, parsed);
+                      } else if (val === "") {
+                        setBoardingFee(count, 0); // Optional: or remove the fee instead?
+                      }
                     }}
                     startContent={
                       <div className="pointer-events-none flex items-center">

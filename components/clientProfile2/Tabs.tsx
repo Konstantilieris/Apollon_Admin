@@ -63,10 +63,10 @@ const ClientTabs = ({ client }: ClientTabsProps) => {
       onSelectionChange={handleTabChange}
       classNames={{
         panel: "mt-2",
-        tab: "w-full",
+        tab: "w-full ",
         tabContent: "w-full",
         tabList: "w-full",
-        tabWrapper: "w-full h-full",
+        tabWrapper: "w-full ",
       }}
     >
       <Tab key="Info" title="ΠΡΟΦΙΛ">

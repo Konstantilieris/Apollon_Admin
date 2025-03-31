@@ -11,7 +11,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="  relative flex h-full w-full font-sans">
+    <main className="  relative flex h-full w-full  font-sans">
       <FloatingSearch />
 
       <AnimatedSidebar>

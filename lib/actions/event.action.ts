@@ -205,7 +205,11 @@ export async function updateBookingDateChange({ event, pairDate }: any) {
 
     // Increase the amount by "total" - Let the schema recalc tax, etc.
     boardingService.amount += total;
-
+    if (event.isArrival) {
+      boardingService.date = event.StartTime;
+    } else {
+      boardingService.endDate = event.StartTime; // Update the date to the new one
+    } // Update the date to the new one
     // If you do NOT want leftover discount or partial payment messing it up:
     // boardingService.discount = 0; // if you want no discount
     // boardingService.paidAmount = 0; // if you want to reset partial payments
@@ -234,9 +238,9 @@ export async function updateBookingDateChange({ event, pairDate }: any) {
     // 8) Commit + revalidate
     await session.commitTransaction();
     session.endSession();
-
+    console.log("Booking date change updated successfully.");
     revalidatePath("/booking");
-    revalidatePath(`/clients/${booking.client.clientId}`);
+    revalidatePath(`/client/${booking.client.clientId}`);
     return true;
   } catch (error) {
     console.error("Error in updateBookingDateChange:", error);

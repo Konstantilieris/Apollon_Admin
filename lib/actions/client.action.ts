@@ -1361,62 +1361,58 @@ export async function updateClientServiceFee({
 }
 export async function updateClientServiceFeeBoarding({
   clientId,
-  feeType,
-  dogCount, // e.g. "boardingFee", "transportFee", "bookingFee", etc.
+  dogCount,
   price,
   path,
 }: {
   clientId: string;
-  feeType: string;
-  price: number;
   dogCount: number;
+  price: number;
   path: string;
 }) {
   try {
     await connectToDatabase();
 
-    if (!price) {
-      throw new Error("Price is required");
+    if (price === undefined || price === null || isNaN(price)) {
+      throw new Error("Valid price is required");
     }
 
-    // First try updating an existing serviceFees item matching feeType
-    const client = await Client.findOneAndUpdate(
-      {
-        _id: clientId,
-        "serviceFees.type": feeType,
-        "serviceFees.dogCount": dogCount,
-      },
-      {
-        $set: { "serviceFees.$.value": price, dogCount },
-      },
-      { new: true }
+    console.log("Updating booking fee manually:", {
+      clientId,
+      dogCount,
+      price,
+    });
+
+    // 1. Find the client by ID
+    const client = await Client.findById(clientId);
+    if (!client) throw new Error("Client not found");
+
+    // 2. Find index of the matching fee
+    const index = client.serviceFees.findIndex(
+      (fee: any) =>
+        fee.type === "bookingFee" && Number(fee.dogCount) === Number(dogCount)
     );
 
-    // If no existing fee was updated, push a new object
-    if (!client) {
-      const updatedClient = await Client.findByIdAndUpdate(
-        clientId,
-        {
-          $push: {
-            serviceFees: { type: feeType, value: price, dogCount },
-          },
-        },
-        { new: true }
-      );
-
-      if (!updatedClient) {
-        throw new Error("Client not found");
-      }
-
-      revalidatePath(path);
-      return true;
+    // 3. Update if exists
+    if (index > -1) {
+      console.log("Found existing fee, updating value");
+      client.serviceFees[index].value = price;
+    } else {
+      // 4. Otherwise, push new one
+      console.log("No matching fee found, pushing new one");
+      client.serviceFees.push({
+        type: "bookingFee",
+        dogCount,
+        value: price,
+      });
     }
-
-    // If we successfully updated the existing service fee
     revalidatePath(path);
+    await client.save();
+
+    console.log("Booking fee updated or added.");
     return true;
   } catch (error) {
-    console.error(`Error updating client fee for type "${feeType}":`, error);
+    console.error("Error in updateClientServiceFeeBoarding:", error);
     throw error;
   }
 }

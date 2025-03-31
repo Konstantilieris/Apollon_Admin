@@ -20,7 +20,7 @@ const ClientInfo = ({ client }: any) => {
   const aliveDogs = client.dog.filter((dog: any) => !dog.isDead);
 
   return (
-    <div className="flex w-full flex-row rounded-xl bg-dark-100 px-2 py-1">
+    <div className="flex max-h-[calc(100vh_-_360px)] w-full flex-row overflow-y-scroll rounded-xl bg-dark-100 px-2 py-1">
       <div className="flex  min-w-[30vw] flex-col">
         <div className="flex  w-full flex-col">
           <div className="flex flex-row items-center py-1">

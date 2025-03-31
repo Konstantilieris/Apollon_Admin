@@ -46,8 +46,16 @@ export const useServiceFeesStore = create<ServiceFeesState>((set, get) => ({
     client?.serviceFees
       ?.filter((fee: any) => fee.type.toLowerCase().includes("bookingfee"))
       .forEach((fee: any) => {
-        const dogCount = parseInt(fee.dogCount || "1"); // Default to 1 if dogCount is not provided
-        boardingFees[dogCount] = fee.value;
+        const dogCount =
+          typeof fee.dogCount === "number"
+            ? fee.dogCount
+            : parseInt(fee.dogCount || "1");
+
+        if (!isNaN(dogCount)) {
+          boardingFees[dogCount] = fee.value;
+        } else {
+          console.warn("Invalid dogCount in serviceFee:", fee);
+        }
       });
     console.log("Boarding Fees:", boardingFees);
 
@@ -84,14 +92,17 @@ export const useServiceFeesStore = create<ServiceFeesState>((set, get) => ({
   },
 
   setBoardingFee: (dogCount, newValue) => {
-    set((state) => ({
-      boardingFees: {
-        ...state.boardingFees,
-        [dogCount]: newValue,
-      },
-    }));
+    set((state) => {
+      const updated = { ...state.boardingFees };
+      if (!newValue) {
+        delete updated[dogCount];
+      } else {
+        updated[dogCount] = newValue;
+      }
+      console.log("Updated boarding fees:", updated);
+      return { boardingFees: updated };
+    });
   },
-
   setTransportationFee: (type, newValue) => {
     set((state) => ({
       transportationFees: {
@@ -122,29 +133,29 @@ export const useServiceFeesStore = create<ServiceFeesState>((set, get) => ({
       const pathToRevalidate = `/client/${clientId}`;
 
       // A) Boardings => each dogCount => call updateClientServiceFee
-      const boardingPromises = Object.entries(boardingFees).map(
-        async ([countAsString, price]) => {
-          // e.g. "2 Dog Boarding"
-          const dogCount = parseInt(countAsString, 10);
-          const feeType = `bookingFee`;
-          console.log(
-            `Updating boarding fee for ${dogCount} dog(s) with price ${price}`
+      const boardingPromises: Promise<any>[] = [];
+      for (const [countAsString, price] of Object.entries(boardingFees)) {
+        const dogCount = parseInt(countAsString, 10);
+
+        console.log(
+          `Updating boarding fee for ${dogCount} dog(s) with price ${price}`
+        );
+        if (price === undefined || price === null || isNaN(price)) {
+          console.warn(
+            `Skipping boarding fee for ${dogCount} dog(s) due to missing price.`
           );
-          if (price === undefined || price === null || isNaN(price)) {
-            console.warn(
-              `Skipping boarding fee for ${dogCount} dog(s) due to missing price.`
-            );
-            return;
-          }
-          return updateClientServiceFeeBoarding({
+          continue;
+        }
+
+        boardingPromises.push(
+          updateClientServiceFeeBoarding({
             clientId,
-            feeType,
             dogCount,
             price,
             path: pathToRevalidate,
-          });
-        }
-      );
+          })
+        );
+      }
 
       // B) Transportation fees
       const transportationPromises = async () => {

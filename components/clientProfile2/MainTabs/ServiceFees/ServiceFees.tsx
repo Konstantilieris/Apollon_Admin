@@ -68,7 +68,7 @@ export function ServiceFeesTab({ client }: { client: any }) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-h-[calc(100vh_-_360px)] space-y-6 overflow-y-auto px-4 py-6">
       <FinancialSummary client={client} />
 
       {/* 

@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 const page = async ({ params }: any) => {
   const client = await getClientById2(params.id);
   return (
-    <section>
+    <section className="h-full w-full overflow-hidden">
       <ClientTabs client={JSON.parse(JSON.stringify(client))} />
     </section>
   );

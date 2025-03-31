@@ -4,7 +4,7 @@ import React from "react";
 import { domAnimation, LazyMotion, m } from "framer-motion";
 
 import MultistepSidebar from "./MultiBookingSidebar";
-import dynamic from "next/dynamic";
+
 import BookingFirstStage from "./BookingFirstStage";
 import BookingSecondStage from "./BookingSecondStage";
 import ConfirmationStage from "./ConfirmationStage";
@@ -88,7 +88,7 @@ export default function CreateBookingMulti({ client }: { client: any }) {
         <m.div
           key={page}
           animate="center"
-          className="col-span-12"
+          className="col-span-12 h-full"
           custom={direction}
           exit="exit"
           initial="exit"

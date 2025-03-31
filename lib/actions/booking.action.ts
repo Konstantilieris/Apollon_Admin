@@ -1573,9 +1573,9 @@ export async function updateBookingAllInclusive({
     // 10) Update Boarding Service doc-based so date + endDate are definitely set
     oldBoardingService.amount = calculateBoardingFee;
 
-    oldBoardingService.date = fromDate;
-    oldBoardingService.endDate = toDate;
-
+    oldBoardingService.date = rangeDate.from;
+    oldBoardingService.endDate = rangeDate.to;
+    console.log("BEFORE SAVE =>", oldBoardingService.date);
     await oldBoardingService.save({ session });
     console.log("AFTER SAVE =>", {
       amount: oldBoardingService.amount,

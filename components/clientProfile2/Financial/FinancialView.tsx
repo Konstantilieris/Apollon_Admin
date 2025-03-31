@@ -36,7 +36,7 @@ const FinancialView = ({ client }: any) => {
         className="h-full w-full"
         classNames={{
           base: " min-h-[70vh] max-w-[10vw] min-w-[8vw]",
-          panel: "flex-1 min-w-[83vw]",
+          panel: "flex-1 min-w-[83vw] ",
           tabList: "absolute top-1/2 transform -translate-y-1/2",
           tab: "",
           tabContent: "w-full h-full text-base",
@@ -45,14 +45,10 @@ const FinancialView = ({ client }: any) => {
         onSelectionChange={handleTabChange}
       >
         <Tab key="Owes" title="Οφειλές">
-          <div className="h-full w-full">
-            <ServicesList client={client} />
-          </div>
+          <ServicesList client={client} />
         </Tab>
         <Tab key="Paid" title="Πληρώθηκε">
-          <div className="h-full w-full">
-            <PaymentList client={client} />
-          </div>
+          <PaymentList client={client} />
         </Tab>
         <Tab key="History" title="Ιστορικό">
           <PaidServicesList client={client} />

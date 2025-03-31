@@ -20,10 +20,10 @@ export default async function Layout({
   }
 
   return (
-    <>
+    <div className="h-full w-full ">
       <ModalClientProvider />
-      <main className=" relative flex  h-full  w-full flex-col  items-center ">
-        <div className="flex h-full  w-full items-start justify-center overflow-scroll">
+      <main className=" relative flex  h-full  w-full flex-col  items-center">
+        <div className="flex h-full  w-full items-start justify-center">
           <Card className=" w-full ">
             <CardHeader className="relative flex h-[100px] flex-col justify-end overflow-visible bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400">
               <Badge
@@ -88,6 +88,6 @@ export default async function Layout({
           </Card>
         </div>
       </main>
-    </>
+    </div>
   );
 }
