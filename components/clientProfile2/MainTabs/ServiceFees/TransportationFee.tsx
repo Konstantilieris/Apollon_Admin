@@ -21,7 +21,7 @@ export function TransportationFees() {
       setTransportationFee: state.setTransportationFee,
     })
   );
-
+  console.log("TransportationFees", transportationFees);
   return (
     <Card>
       <CardHeader>
@@ -34,28 +34,29 @@ export function TransportationFees() {
             <TableColumn align="end">ΧΡΕΩΣΗ</TableColumn>
           </TableHeader>
           <TableBody>
-            {transportationFees?.map((fee, index) => (
-              <TableRow key={index}>
-                <TableCell>PET TAXI</TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={fee.value.toString()}
-                    onValueChange={(val) => {
-                      const num = parseFloat(val) || 0;
-                      setTransportationFee(fee.type, num);
-                    }}
-                    startContent={
-                      <div className="pointer-events-none flex items-center">
-                        <span className="text-small text-default-400">€</span>
-                      </div>
-                    }
-                    className="ml-auto max-w-[150px]"
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
+            <TableRow>
+              <TableCell>PET TAXI</TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  min={0}
+                  value={transportationFees?.value?.toString()}
+                  onValueChange={(val) => {
+                    const num = parseFloat(val) || 0;
+                    setTransportationFee(
+                      transportationFees?.type ?? "transportFee",
+                      num
+                    );
+                  }}
+                  startContent={
+                    <div className="pointer-events-none flex items-center">
+                      <span className="text-small text-default-400">€</span>
+                    </div>
+                  }
+                  className="ml-auto max-w-[150px]"
+                />
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </CardBody>

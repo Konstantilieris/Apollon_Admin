@@ -13,7 +13,7 @@ export interface ServiceFee {
 interface ServiceFeesState {
   clientId: string | null; // store the clientId
   boardingFees: Record<number, number>;
-  transportationFees: ServiceFee[];
+  transportationFees: ServiceFee; // this is always one object with type "transportfee"
   otherServiceFees: ServiceFee[];
 
   // Initialize
@@ -31,7 +31,10 @@ interface ServiceFeesState {
 export const useServiceFeesStore = create<ServiceFeesState>((set, get) => ({
   clientId: null,
   boardingFees: {},
-  transportationFees: [],
+  transportationFees: {
+    type: "transportFee",
+    value: 0,
+  },
   otherServiceFees: [],
 
   initializeFromClient: (client) => {
@@ -49,10 +52,10 @@ export const useServiceFeesStore = create<ServiceFeesState>((set, get) => ({
     console.log("Boarding Fees:", boardingFees);
 
     // 3) Transportation fees
-    const transportationFees =
-      client?.serviceFees?.filter((f: any) =>
-        f.type.toLowerCase().includes("transportfee")
-      ) || [];
+    // this is always one object with type "transportfee"
+    const transportationFees = client?.serviceFees?.find((fee: any) =>
+      fee.type.toLowerCase().includes("transportfee")
+    );
 
     // 4) Other fees (anything else not matching bookingFee or transportFee)
     const otherServiceFees =
@@ -81,9 +84,11 @@ export const useServiceFeesStore = create<ServiceFeesState>((set, get) => ({
 
   setTransportationFee: (type, newValue) => {
     set((state) => ({
-      transportationFees: state.transportationFees.map((fee) =>
-        fee.type === type ? { ...fee, value: newValue } : fee
-      ),
+      transportationFees: {
+        ...state.transportationFees,
+        type, // keep the type as is
+        value: newValue,
+      },
     }));
   },
 
@@ -125,14 +130,14 @@ export const useServiceFeesStore = create<ServiceFeesState>((set, get) => ({
       );
 
       // B) Transportation fees
-      const transportationPromises = transportationFees.map(async (fee) => {
+      const transportationPromises = async () => {
         return updateClientServiceFee({
           clientId,
-          feeType: fee.type,
-          price: fee.value,
+          feeType: transportationFees.type,
+          price: transportationFees.value,
           path: pathToRevalidate,
         });
-      });
+      };
 
       // C) Other fees
       const otherPromises = otherServiceFees.map(async (fee) => {
@@ -147,7 +152,7 @@ export const useServiceFeesStore = create<ServiceFeesState>((set, get) => ({
       // Wait for all updates in parallel
       await Promise.all([
         ...boardingPromises,
-        ...transportationPromises,
+        transportationPromises(),
         ...otherPromises,
       ]);
 
