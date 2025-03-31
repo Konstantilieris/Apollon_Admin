@@ -37,7 +37,7 @@ const CreateBooking = ({
     dateDeparture,
     taxiArrival,
     taxiDeparture,
-    data,
+    dogsData: data,
     roomPreference,
     extraDay,
     resetStore,
