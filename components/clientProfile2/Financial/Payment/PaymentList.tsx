@@ -334,7 +334,14 @@ export default function PaymentList({ client }: { client: any }) {
             <h1 className="text-2xl font-bold">Πληρωμές Πελάτη</h1>
             <Select
               label="Φίλτρο Πληρωμών"
-              className="w-48"
+              className="w-48 "
+              classNames={{
+                base: "font-sans text-base",
+                label: "font-sans text-base",
+                trigger: "font-sans text-base",
+                value: "font-sans text-base",
+                listbox: "font-sans text-base",
+              }}
               defaultSelectedKeys={["όλες"]}
               onChange={(e) =>
                 setFilter(e.target.value as "όλες" | "έγκυρες" | "ακυρωμένες")
@@ -388,6 +395,10 @@ export default function PaymentList({ client }: { client: any }) {
         <Table
           aria-label="Payments table"
           className="mt-4"
+          classNames={{
+            th: "font-sans text-base font-semibold tracking-wide",
+            td: "font-sans text-base",
+          }}
           bottomContent={
             totalPages > 1 ? (
               <div className="flex w-full justify-center">
@@ -445,7 +456,8 @@ export default function PaymentList({ client }: { client: any }) {
                   <Chip
                     color={payment.reversed ? "danger" : "success"}
                     variant="flat"
-                    size="sm"
+                    size="md"
+                    className="text-base tracking-wide"
                   >
                     {payment.reversed ? "Ακυρωμένη" : "Ενεργή"}
                   </Chip>
@@ -456,6 +468,7 @@ export default function PaymentList({ client }: { client: any }) {
                     color={payment.reversed ? "success" : "danger"}
                     variant="flat"
                     onPress={() => handleReversePayment(payment._id)}
+                    className="text-base tracking-wide"
                   >
                     <Icon
                       icon={
@@ -463,7 +476,7 @@ export default function PaymentList({ client }: { client: any }) {
                           ? "lucide:rotate-ccw"
                           : "lucide:rotate-cw"
                       }
-                      className="mr-1 h-4 w-4"
+                      className="mr-1 h-4 w-4 text-base"
                     />
                     {payment.reversed ? "Διαγραφή" : "Ακύρωση"}
                   </Button>

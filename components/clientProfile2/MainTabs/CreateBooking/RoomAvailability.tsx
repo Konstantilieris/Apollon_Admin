@@ -158,6 +158,12 @@ const DetailsAndAvailability = () => {
           topContentPlacement="outside"
           sortDescriptor={sortDescriptor}
           onSortChange={setSortDescriptor}
+          classNames={{
+            table: "h-full",
+            th: "text-base",
+            td: "text-base",
+            emptyWrapper: "text-lg animate-pulse tracking-widest ",
+          }}
         >
           <TableHeader>
             <TableColumn allowsSorting key="name">

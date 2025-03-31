@@ -4,71 +4,92 @@ import { Chip, Tooltip, Card, CardBody } from "@heroui/react";
 import moment from "moment";
 
 const renderServiceTypeChip = (service: any) => {
-  let displayText = "";
-  let tooltipContent: React.ReactNode = "";
+  const isStay = service.serviceType === "ΔΙΑΜΟΝΗ";
+  const displayText = moment(service.date).format("DD/MM/YYYY");
+  let tooltipContent: React.ReactNode = null;
 
-  if (service.serviceType === "ΔΙΑΜΟΝΗ") {
-    // For "ΔΙΑΜΟΝΗ": show start date in chip; tooltip shows start and end dates.
-    displayText = moment(service.date).format("DD/MM/YYYY");
+  if (isStay && service.bookingId) {
+    const booking = service.bookingId;
+
     tooltipContent = (
-      <Card className="w-72 p-0 font-sans" shadow="none">
+      <Card className="w-80 p-0 font-sans" shadow="none">
         <CardBody className="gap-2">
+          {/* Dates */}
           <div className="flex items-center justify-between border-b border-divider py-1">
-            <span className="text-sm font-medium">Από:</span>
-            <span className="text-sm">
-              {moment(service.date).format("DD/MM/YYYY")}
+            <span className="text-base font-medium">Από:</span>
+            <span className="text-base">
+              {moment(booking.fromDate).format("DD/MM/YYYY")}
             </span>
           </div>
           <div className="flex items-center justify-between border-t border-divider pt-2">
-            <span className="text-sm font-medium">Έως:</span>
-            <span className="text-sm">
-              {moment(service.endDate).format("DD/MM/YYYY")}
+            <span className="text-base font-medium">Έως:</span>
+            <span className="text-base">
+              {moment(booking.toDate).format("DD/MM/YYYY")}
             </span>
           </div>
+
+          {/* Client Info */}
+          <div className="flex items-center justify-between border-t border-divider pt-2">
+            <span className="text-base font-medium">Πελάτης:</span>
+            <span className="text-base">{booking.client?.clientName}</span>
+          </div>
+          <div className="flex items-center justify-between border-t border-divider pt-2">
+            <span className="text-base font-medium">Ημερ. Χρέωση </span>
+            <span className="text-base">{booking.client?.bookingFee} € </span>
+          </div>
+
+          {/* Dogs */}
+          <div className="flex flex-col gap-1 border-t border-divider pt-2">
+            <span className="text-base font-medium">Κατοικίδια:</span>
+            <ul className="list-inside list-disc text-base">
+              {booking.dogs?.map((dog: any) => (
+                <li key={dog.dogId}>
+                  {dog.dogName} — {dog.roomName}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Notes */}
+          {booking.notes && (
+            <div className="pt-2 text-sm text-default-500">
+              <strong>Σημειώσεις:</strong> {booking.notes}
+            </div>
+          )}
         </CardBody>
       </Card>
     );
-  } else if (service.serviceType.toLowerCase().includes("pettaxi")) {
-    // For Pet Taxi: show date with time in chip, but no tooltip.
-    displayText = moment(service.date).format("DD/MM/YYYY, HH:mm");
-  } else {
-    // Default: simply display the date.
-    displayText = moment(service.date).format("DD/MM/YYYY");
   }
 
-  // Only add tooltip for "ΔΙΑΜΟΝΗ".
-  if (service.serviceType === "ΔΙΑΜΟΝΗ") {
-    return (
-      <Tooltip
-        content={tooltipContent}
-        placement="top"
-        delay={1}
-        closeDelay={1}
-        classNames={{ content: "p-0 font-sans tracking-widest" }}
-      >
-        <Chip
-          variant="flat"
-          size="sm"
-          className="border-1 border-content2 font-sans tracking-widest"
-          classNames={{ content: "px-2" }}
-        >
-          {displayText}
-        </Chip>
-      </Tooltip>
-    );
-  } else {
-    // Render only the chip with no tooltip for all other service types.
-    return (
+  return isStay ? (
+    <Tooltip
+      content={tooltipContent}
+      placement="top"
+      delay={1}
+      closeDelay={1}
+      classNames={{ content: "p-0 font-sans tracking-widest" }}
+    >
       <Chip
         variant="flat"
         size="sm"
-        className="border-1 border-content2 font-sans tracking-widest"
+        className="border-1 border-content2 font-sans text-base tracking-widest"
         classNames={{ content: "px-2" }}
       >
         {displayText}
       </Chip>
-    );
-  }
+    </Tooltip>
+  ) : (
+    <Chip
+      variant="flat"
+      size="sm"
+      className="border-1 border-content2 font-sans text-base tracking-widest"
+      classNames={{ content: "px-2" }}
+    >
+      {service.serviceType.toLowerCase().includes("pettaxi")
+        ? moment(service.date).format("DD/MM/YYYY, HH:mm")
+        : displayText}
+    </Chip>
+  );
 };
 
 export default renderServiceTypeChip;

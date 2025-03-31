@@ -87,7 +87,8 @@ export async function getUnpaidClientServices({ clientId }: any) {
       },
       {},
       { sort: { date: -1 } }
-    );
+    ).populate("bookingId"); // Populating the bookingId reference
+
     return JSON.parse(JSON.stringify(services));
   } catch (error) {
     console.error("Error getting unpaid client services:", error);

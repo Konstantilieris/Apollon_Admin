@@ -19,7 +19,15 @@ export function FinancialSummary({ client }: { client: any }) {
         <h3 className="text-lg font-semibold">Οικονομική Σύνοψη</h3>
       </CardHeader>
       <CardBody>
-        <Table aria-label="Financial summary" removeWrapper>
+        <Table
+          aria-label="Financial summary"
+          removeWrapper
+          className="max-w-4xl px-2"
+          classNames={{
+            td: "text-base",
+            th: "text-base",
+          }}
+        >
           <TableHeader>
             <TableColumn>ΜΕΤΡΙΚΟ</TableColumn>
             <TableColumn align="end">ΑΞΙΑ</TableColumn>

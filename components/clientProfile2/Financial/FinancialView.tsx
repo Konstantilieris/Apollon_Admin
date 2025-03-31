@@ -39,7 +39,7 @@ const FinancialView = ({ client }: any) => {
           panel: "flex-1 min-w-[83vw]",
           tabList: "absolute top-1/2 transform -translate-y-1/2",
           tab: "",
-          tabContent: "w-full h-full",
+          tabContent: "w-full h-full text-base",
         }}
         selectedKey={activeKey}
         onSelectionChange={handleTabChange}

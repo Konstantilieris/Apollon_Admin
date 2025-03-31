@@ -28,7 +28,15 @@ export function OtherServiceFees() {
         <h3 className="text-lg font-semibold">Λοιπές Υπηρεσίες</h3>
       </CardHeader>
       <CardBody>
-        <Table aria-label="Other service fees" removeWrapper>
+        <Table
+          aria-label="Other service fees"
+          removeWrapper
+          className="max-w-4xl px-2"
+          classNames={{
+            td: "text-base",
+            th: "text-base",
+          }}
+        >
           <TableHeader>
             <TableColumn>ΥΠΗΡΕΣΙΑ</TableColumn>
             <TableColumn align="end">ΧΡΕΩΣΗ</TableColumn>

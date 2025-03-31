@@ -16,7 +16,7 @@ export function BoardingFees({ dogCount }: BoardingFeesProps) {
   }));
 
   return (
-    <Card>
+    <Card className="max-w-7xl px-2">
       <CardHeader>
         <h3 className="text-lg font-semibold">Ρύθμιση Τιμής Φιλοξενίας</h3>
       </CardHeader>
@@ -31,6 +31,9 @@ export function BoardingFees({ dogCount }: BoardingFeesProps) {
                   <Input
                     label={`${count} ${count === 1 ? "Σκύλος" : "Σκύλοι"}`}
                     type="number"
+                    classNames={{
+                      label: "text-base",
+                    }}
                     min={0}
                     value={currentFee.toString()}
                     onValueChange={(val) => {

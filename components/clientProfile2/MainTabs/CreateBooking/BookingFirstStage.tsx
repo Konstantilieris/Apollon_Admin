@@ -207,16 +207,18 @@ export default function BookingFirstStage({ handleNext }: { handleNext: any }) {
               </Checkbox>
             </div>
           </div>
-          <div className="relative flex flex-col">
+          <div className="relative flex h-full flex-col gap-8">
             <DetailsAndAvailability />
-            <Button
-              className="absolute bottom-0 right-2 text-base tracking-wide "
-              variant="ghost"
-              onPress={handleNext}
-              isDisabled={!dateArrival || !dateDeparture}
-            >
-              Επόμενο
-            </Button>
+            <div className="flex h-full items-end justify-end">
+              <Button
+                className=" text-lg tracking-widest "
+                variant="ghost"
+                onPress={handleNext}
+                isDisabled={!dateArrival || !dateDeparture}
+              >
+                Επόμενο
+              </Button>
+            </div>
           </div>
         </div>
       </I18nProvider>

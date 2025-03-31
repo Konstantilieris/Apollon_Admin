@@ -227,6 +227,7 @@ export default function ServicesList({ client }: ServicesListProps) {
         return serviceType;
     }
   };
+  console.log("filteredServices", filteredServices);
   return (
     <Card className="m-0 h-full w-full">
       <CardBody className="h-full w-full overflow-auto p-6">
@@ -367,6 +368,10 @@ export default function ServicesList({ client }: ServicesListProps) {
             shadow="sm"
             isStriped
             className="mt-4 h-full min-w-full"
+            classNames={{
+              th: "text-base",
+              td: "text-base",
+            }}
             removeWrapper
             selectedKeys={selectedKeys}
             selectionMode="multiple"

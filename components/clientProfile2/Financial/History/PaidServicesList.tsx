@@ -290,6 +290,10 @@ function PaidServicesList({ client }: PaidServicesListProps) {
             shadow="sm"
             isStriped
             className="mt-4 h-full min-w-full"
+            classNames={{
+              th: "text-base",
+              td: "text-base",
+            }}
             removeWrapper
             selectedKeys={selectedKeys}
             selectionMode="multiple"

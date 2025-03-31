@@ -28,7 +28,15 @@ export function TransportationFees() {
         <h3 className="text-lg font-semibold">Χρέωση Μεταφοράς</h3>
       </CardHeader>
       <CardBody>
-        <Table aria-label="Transportation fees" removeWrapper>
+        <Table
+          aria-label="Transportation fees"
+          removeWrapper
+          className="max-w-4xl px-2"
+          classNames={{
+            td: "text-base",
+            th: "text-base",
+          }}
+        >
           <TableHeader>
             <TableColumn>ΥΠΗΡΕΣΙΑ</TableColumn>
             <TableColumn align="end">ΧΡΕΩΣΗ</TableColumn>
