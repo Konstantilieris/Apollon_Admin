@@ -16,7 +16,7 @@ import {
   Badge,
 } from "@heroui/react";
 import { ArrowLeft, MapPin, Phone } from "lucide-react";
-import { calculateTotalPrice } from "@/lib/utils";
+import { calculateTotalPrice, getDurationDays } from "@/lib/utils";
 
 import { useBookingStore } from "@/hooks/booking-store";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,7 +27,6 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
     dateArrival,
     dateDeparture,
     dogsData,
-    boardingPrice,
     setBoardingPrice,
     setTransportationPrice,
     extraDay,
@@ -36,6 +35,7 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
     setExtraDayPrice,
     setClient,
     createBooking,
+
     resetStore,
   } = useBookingStore();
   const { toast } = useToast();
@@ -72,7 +72,7 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
       clientName: client.name,
       phone: client.phone.mobile,
       location: client.location.address,
-      transportFee: transportFee,
+      transportFee,
       bookingFee: selectedBookingFee?.value || 0,
     };
     setClient(clientObject);
@@ -106,10 +106,13 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
               <Chip
                 onClick={() => {
                   setSelectedBookingFee(serviceFee);
-                  setExtraDayPrice(serviceFee?.value ?? 0);
+                  if (extraDay) {
+                    setExtraDayPrice(serviceFee?.value ?? 0);
+                  }
                 }}
                 color={isSelected ? "success" : "default"}
                 size="lg"
+                className="cursor-pointer"
               >
                 {serviceFee.value ? `€${serviceFee.value}` : "Μη ανατεθειμένο"}
               </Chip>
@@ -120,21 +123,18 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
     );
   }, [dogsData, clientBoardingFees, selectedBookingFee]);
 
-  if (!dateArrival || !dateDeparture) return null;
-
   useEffect(() => {
-    console.log(extraDay);
     const totalPrice = calculateTotalPrice({
-      fromDate: dateArrival,
-      toDate: dateDeparture,
+      fromDate: dateArrival ?? new Date(),
+      toDate: dateDeparture ?? new Date(),
       dailyPrice: selectedBookingFee.value ?? clientBoardingFees[0]?.value,
-      extraDay,
     });
     setTotalBookingFee(totalPrice);
   }, [selectedBookingFee]);
   useEffect(() => {
     setBoardingPrice(totalBookingFee);
   }, [totalBookingFee]);
+  if (!dateArrival || !dateDeparture) return null;
 
   const location = client?.location?.address;
 
@@ -212,6 +212,12 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
               <TableRow>
                 <TableCell>Αναχώρηση</TableCell>
                 <TableCell>{formatDate(dateDeparture)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Διάρκεια</TableCell>
+                <TableCell>
+                  {getDurationDays(dateArrival, dateDeparture)} νύχτες
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Επιπλέον Ημέρα</TableCell>

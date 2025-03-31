@@ -2,6 +2,7 @@ import React from "react";
 
 import ClientTabs from "@/components/clientProfile2/Tabs";
 import { getClientById2 } from "@/lib/actions/client.action";
+export const dynamic = "force-dynamic";
 const page = async ({ params }: any) => {
   const client = await getClientById2(params.id);
   return (

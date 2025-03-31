@@ -673,10 +673,21 @@ export function getDurationDays(start: string | Date, end: string | Date) {
   const startDate = moment(start).startOf("day");
   const endDate = moment(end).startOf("day");
 
-  // Add +1 to include both the start and end date
-  return endDate.diff(startDate, "days") + 1;
+  // Subtract start from end to get the number of nights
+  return endDate.diff(startDate, "days");
 }
 export const getRoomPreference = (dogsData: Array<{ roomId: any }>) => {
   const uniqueRooms = new Set(dogsData.map((dog) => dog.roomId));
   return uniqueRooms.size === 1 ? RoomPreference.JOIN : RoomPreference.SEPARATE;
 };
+export function calculateTransportFee({
+  transportFee,
+  taxiArrival,
+  taxiDeparture,
+}: {
+  transportFee: number;
+  taxiArrival: boolean;
+  taxiDeparture: boolean;
+}) {
+  return (taxiArrival ? transportFee : 0) + (taxiDeparture ? transportFee : 0);
+}

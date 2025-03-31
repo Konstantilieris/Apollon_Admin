@@ -124,7 +124,7 @@ export const useBookingStore = create<BookingStoreState>((set, get) => ({
     }
 
     // Define path to revalidate (adjust as needed)
-    const pathToRevalidate = `/bookings`;
+    const pathToRevalidate = `/client/${client.clientId}`;
 
     // Build the booking payload to match the ICreateBooking interface
     const bookingPayload = {

@@ -73,7 +73,7 @@ export async function createBooking({
   // Begin retry loop
   while (attempt < maxRetries && !success) {
     const session = await mongoose.startSession();
-
+    console.log("boardingPrice");
     try {
       await connectToDatabase(); // Ensure the DB is connected
       session.startTransaction(); // Start the session transaction

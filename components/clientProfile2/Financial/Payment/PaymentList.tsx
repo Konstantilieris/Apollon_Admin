@@ -253,7 +253,7 @@ export default function PaymentList({ client }: { client: any }) {
         content={
           <Card className="w-72 p-0 font-sans" shadow="none">
             <CardBody className="gap-2">
-              {allocations.map((allocation, index) => (
+              {allocations?.map((allocation, index) => (
                 <div
                   key={index}
                   className="flex items-center justify-between border-b border-divider py-1 last:border-b-0"
@@ -264,11 +264,11 @@ export default function PaymentList({ client }: { client: any }) {
                       className="h-4 w-4 text-default-400"
                     />
                     <span className="text-sm text-default-600">
-                      {allocation.serviceId.serviceType}
+                      {allocation?.serviceId?.serviceType}
                     </span>
                   </div>
                   <span className="text-sm font-medium">
-                    €{allocation.amount.toFixed(2)}
+                    €{allocation?.amount?.toFixed(2)}
                   </span>
                 </div>
               ))}
