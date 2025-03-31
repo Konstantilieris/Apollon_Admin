@@ -10,25 +10,19 @@ import { Loader } from "lucide-react";
 import { CreateClient } from "@/lib/actions/client.action";
 import { cn } from "@/lib/utils";
 import { useToast } from "../ui/use-toast";
-import { usePathname, useRouter } from "next/navigation";
-const DogForm = ({
-  number,
-  setStage,
-  client,
-  breeds,
-  foods,
-  behaviors,
-}: any) => {
+import { usePathname } from "next/navigation";
+import { Button } from "@heroui/react";
+const DogForm = ({ number, setStage, client, setSuccessId }: any) => {
   const [isCreating, setIsCreating] = React.useState(false);
   const { toast } = useToast();
-  const router = useRouter();
+
   const path = usePathname();
   const form = useForm<z.infer<typeof DogValidation>>({
     resolver: zodResolver(DogValidation),
     defaultValues: {
       dogs: Array.from({ length: number }, () => ({
         name: "",
-        gender: "",
+        gender: "Αρσενικό",
         birthdate: new Date(),
         food: "",
         breed: "",
@@ -42,20 +36,15 @@ const DogForm = ({
   const renderDogFields = () => {
     const dogFields = [];
     for (let i = 0; i < number; i++) {
-      dogFields.push(
-        <DogField
-          key={i}
-          form={form}
-          index={i}
-          breeds={breeds}
-          behaviors={behaviors}
-          foods={foods}
-        />
-      );
+      dogFields.push(<DogField key={i} form={form} index={i} />);
     }
     return dogFields;
   };
-  const onSubmit = async (values: z.infer<typeof DogValidation>) => {
+  const onSubmit = async (
+    values: z.infer<typeof DogValidation>,
+    event?: React.BaseSyntheticEvent
+  ) => {
+    event?.preventDefault();
     setIsCreating(true);
     try {
       const newClient = await CreateClient({
@@ -65,14 +54,9 @@ const DogForm = ({
       });
       if (newClient) {
         const client = JSON.parse(newClient);
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: "Ο πελάτης καταχωρήθηκε",
-        });
-        router.push(`/form/${client?._id}`);
+
+        setSuccessId(client._id);
+        setStage([3, 3]);
       }
     } catch (error) {
       toast({
@@ -84,38 +68,39 @@ const DogForm = ({
       });
     } finally {
       setIsCreating(false);
-      setStage(0);
       form.reset();
     }
   };
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className=" flex w-full flex-col items-center overflow-y-auto  ">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-10 flex w-full flex-col items-start justify-start "
+          className=" flex h-full w-full flex-col items-start justify-start space-y-8"
           autoComplete="off"
         >
           {renderDogFields()}
+          <div className="mb-20 mt-12 flex h-full w-full flex-row items-center justify-center gap-8 self-end">
+            <Button
+              onPress={() => setStage(0)}
+              color="danger"
+              variant="ghost"
+              className="tracking-widest"
+              size="lg"
+            >
+              ΠΙΣΩ
+            </Button>
+            <Button
+              type="submit"
+              color="success"
+              size="lg"
+              className="font-semibold tracking-widest"
+            >
+              {isCreating ? <Loader className="h-6 w-6" /> : "ΑΠΟΘΗΚΕΥΣΗ"}
+            </Button>
+          </div>
         </form>
       </Form>
-      <div className="mb-20 mt-12 flex h-full w-full flex-row items-center justify-center gap-8 self-end">
-        <button className="relative p-[3px]" onClick={() => setStage(0)}>
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-500 to-orange-950" />
-          <div className="group relative  rounded-[6px] bg-light-700 px-8  py-2 font-semibold text-dark-300 transition duration-200 hover:bg-transparent dark:bg-black dark:text-white dark:hover:bg-transparent">
-            Πίσω
-          </div>
-        </button>
-        <button
-          className="relative p-[3px]"
-          onClick={form.handleSubmit(onSubmit)}
-        >
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500" />
-          <div className="group relative  rounded-[6px] bg-light-700 px-8  py-2 font-semibold text-dark-300 transition duration-200 hover:bg-transparent dark:bg-black dark:text-white dark:hover:bg-transparent">
-            {isCreating ? <Loader className="animate-spin" /> : "Καταχώρηση..."}
-          </div>
-        </button>
-      </div>
     </div>
   );
 };

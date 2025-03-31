@@ -15,7 +15,12 @@ export interface IBooking {
   services: Schema.Types.ObjectId[];
   totalAmount: number;
 
-  dogs: Object[];
+  dogs: {
+    dogId: Schema.Types.ObjectId;
+    dogName: string;
+    roomId: Schema.Types.ObjectId;
+    roomName: string;
+  }[];
   flag1: boolean;
   flag2: boolean;
 }

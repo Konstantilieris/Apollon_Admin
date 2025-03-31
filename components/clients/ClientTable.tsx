@@ -25,6 +25,7 @@ import {
 } from "@heroui/react";
 import { ILocation } from "@/database/models/client.model";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export interface Client {
   name: string;
@@ -273,29 +274,35 @@ const ClientTable = ({
     switch (columnKey) {
       case "name":
         return (
-          <User
-            avatarProps={{
-              size: "sm",
-              radius: "full",
-              className:
-                "transition-all duration-200 hover:scale-110 hover:ring-2 hover:ring-blue-500 cursor-pointer",
-              onClick: (event) => {
-                event.stopPropagation(); // Prevents row selection
-                router.push(`/clients/${user._id}`);
-              },
+          <Link
+            href={{
+              pathname: `/client/${user._id}`,
+              query: { tab: "Info" },
             }}
-            className=" select-none text-lg"
-            description={
-              <span className="pointer-events-none text-sm text-gray-400">
-                {user.email}
-              </span>
-            }
-            name={
-              <span className="pointer-events-none text-base">{user.name}</span>
-            }
+            passHref
           >
-            {user.email}
-          </User>
+            <User
+              avatarProps={{
+                size: "sm",
+                radius: "full",
+                className:
+                  "transition-all duration-200 hover:scale-110 hover:ring-2 hover:ring-blue-500 cursor-pointer",
+              }}
+              className=" select-none text-lg"
+              description={
+                <span className="pointer-events-none text-sm text-gray-400">
+                  {user.email}
+                </span>
+              }
+              name={
+                <span className="pointer-events-none text-base">
+                  {user.name}
+                </span>
+              }
+            >
+              {user.email}
+            </User>
+          </Link>
         );
       case "dog":
         return (

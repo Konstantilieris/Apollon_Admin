@@ -1,168 +1,198 @@
 "use client";
-import React, { useEffect } from "react";
-import { FormControl } from "../ui/form";
+import React from "react";
 
+import { Input, DatePicker, RadioGroup, Radio } from "@heroui/react";
+import { I18nProvider } from "@react-aria/i18n";
+import { FormControl, FormField } from "@/components/ui/form";
+import { parseDate } from "@internationalized/date";
+import CommandMenuProvider from "../shared/CommandMenu/CommandMenuProvider";
+import { CommandMenuType } from "@/hooks/command-menu-store";
 import { TypesOfGender, TypesOfSterilized } from "@/constants";
 
-import CustomFormField, { FormFieldType } from "./CustomFormField";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Label } from "../ui/label";
-import ConstantSwitcher from "../shared/constantManagement/ConstantSwitcher";
-
-import useStore from "@/hooks/use-store-constants";
-
-import LoadingSkeleton from "../shared/skeletons/LoadingSkeleton";
-
 const SingleDogForm = ({ form }: any) => {
-  const { foods, behaviors, breeds, loading, error, fetchConstants } =
-    useStore();
-
-  useEffect(() => {
-    // Invoke the function defined in the store
-    fetchConstants();
-  }, [fetchConstants]);
-
-  if (loading)
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <LoadingSkeleton size={200} animation="animate-spin" />
-      </div>
-    );
-  if (error) return <p>Error: {error}</p>;
-
   return (
-    <section className="mb-4 w-full space-y-8 ">
-      <CustomFormField
-        fieldType={FormFieldType.INPUT}
+    <section className="flex w-full flex-col items-center justify-center space-y-4">
+      <FormField
         control={form.control}
-        name={`name`}
-        placeholder="Σίφης "
-        iconSrc="/assets/icons/dog.svg"
-        iconAlt="user"
-      />{" "}
-      <CustomFormField
-        fieldType={FormFieldType.SKELETON}
+        name="name"
+        render={({ field }) => (
+          <FormControl>
+            <Input
+              {...field}
+              label="Όνομα"
+              variant="bordered"
+              errorMessage="Η κατηγορία είναι υποχρεωτική"
+              isInvalid={!field.value}
+              className="w-[30vw]"
+              isRequired
+              value={field.value}
+              onValueChange={field.onChange}
+            />
+          </FormControl>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="microchip"
+        render={({ field }) => (
+          <FormControl>
+            <Input
+              {...field}
+              label="Microchip"
+              variant="bordered"
+              className="w-[30vw]"
+              value={field.value}
+              onValueChange={field.onChange}
+            />
+          </FormControl>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="birthdate"
+        render={({ field }) => (
+          <FormControl>
+            <I18nProvider locale="el">
+              <DatePicker
+                {...field}
+                label="Ημερομηνία Γέννησης"
+                placeholder="Ημερομηνία Γέννησης"
+                variant="bordered"
+                color="secondary"
+                selectorButtonPlacement="start"
+                hideTimeZone
+                showMonthAndYearPickers
+                classNames={{
+                  popoverContent: " font-sans",
+                  input: "w-[200px]",
+                  base: "min-w-[30vw] max-w-[30vw]",
+                  calendar: "w-full h-full",
+                }}
+                value={
+                  !field.value
+                    ? undefined
+                    : typeof field.value === "string"
+                      ? parseDate((field.value as string).split("T")[0])
+                      : parseDate(
+                          (field.value as Date).toISOString().split("T")[0]
+                        )
+                }
+                onChange={(val) => {
+                  if (!val) {
+                    field.onChange(null);
+                    return;
+                  }
+                  const utcMidnight = new Date(
+                    Date.UTC(val.year, val.month - 1, val.day)
+                  );
+                  field.onChange(utcMidnight.toISOString());
+                }}
+              />
+            </I18nProvider>
+          </FormControl>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="breed"
+        render={({ field }) => (
+          <div className="flex w-[30vw] flex-col justify-center gap-2 px-1">
+            <h1 className="text-start text-sm tracking-wide text-gray-400">
+              Ράτσα
+            </h1>
+            <FormControl>
+              <CommandMenuProvider
+                isForm={true}
+                value={field.value}
+                onChange={field.onChange}
+                defaultMenuType={CommandMenuType.Breeds}
+                disabled={true}
+              />
+            </FormControl>
+          </div>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="behavior"
+        render={({ field }) => (
+          <div className="flex w-[30vw] flex-col justify-center gap-2 px-1">
+            <h1 className="text-start text-sm tracking-wide text-gray-400 ">
+              Συμπεριφορά
+            </h1>
+            <FormControl>
+              <CommandMenuProvider
+                isForm={true}
+                value={field.value}
+                onChange={field.onChange}
+                defaultMenuType={CommandMenuType.Behaviors}
+                disabled={true}
+              />
+            </FormControl>
+          </div>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="food"
+        render={({ field }) => (
+          <div className="flex w-[30vw] flex-col justify-center gap-2 px-1">
+            <h1 className="text-start text-sm tracking-wide text-gray-400">
+              Τύπος Τροφής
+            </h1>
+            <FormControl>
+              <CommandMenuProvider
+                value={field.value}
+                isForm={true}
+                onChange={field.onChange}
+                defaultMenuType={CommandMenuType.Foods}
+                disabled={true}
+              />
+            </FormControl>
+          </div>
+        )}
+      />
+      <FormField
         control={form.control}
         name={`gender`}
-        label="Φύλο"
-        renderSkeleton={(field) => (
+        render={({ field }) => (
           <FormControl>
             <RadioGroup
-              className="mb-8 flex w-80  flex-col gap-2 "
+              label="Στειρωμένο"
+              orientation="horizontal"
+              className="flex w-[30vw] flex-row gap-2  px-2 "
               onValueChange={field.onChange}
               defaultValue={field.value}
+              color="danger"
             >
               {TypesOfGender.map((option, i) => (
-                <div key={option + i} className="radio-group">
-                  <RadioGroupItem value={option} id={option} />
-                  <Label
-                    htmlFor={option}
-                    className="cursor-pointer text-dark-300 dark:text-light-700"
-                  >
-                    {option}
-                  </Label>
-                </div>
+                <Radio value={option} key={i + option}>
+                  {option}
+                </Radio>
               ))}
             </RadioGroup>
           </FormControl>
         )}
       />
-      <CustomFormField
-        fieldType={FormFieldType.SKELETON}
-        control={form.control}
-        name={`breed`}
-        label="Ράτσα"
-        renderSkeleton={(field) => (
-          <FormControl>
-            <ConstantSwitcher
-              items={breeds.value}
-              type="Breeds"
-              label="Ράτσα"
-              placeholder="Ράτσα"
-              heading="ΡΑΤΣΕΣ"
-              selectedItem={field.value}
-              setSelectedItem={field.onChange}
-            />
-          </FormControl>
-        )}
-      />
-      <CustomFormField
-        fieldType={FormFieldType.SKELETON}
-        control={form.control}
-        name={`behavior`}
-        label="Συμπεριφορά"
-        renderSkeleton={(field) => (
-          <FormControl>
-            <ConstantSwitcher
-              items={behaviors.value}
-              type="Behaviors"
-              label="Συμπεριφορά"
-              placeholder="Συμπεριφορά"
-              heading="ΣΥΜΠΕΡΙΦΟΡΕΣ"
-              selectedItem={field.value}
-              setSelectedItem={field.onChange}
-            />
-          </FormControl>
-        )}
-      />
-      <CustomFormField
-        fieldType={FormFieldType.SKELETON}
+      <FormField
         control={form.control}
         name={`sterilized`}
-        label="Στειρωμένο"
-        renderSkeleton={(field) => (
+        render={({ field }) => (
           <FormControl>
             <RadioGroup
-              className="flex w-80 flex-col  gap-2 "
+              label="Στειρωμένο"
+              orientation="horizontal"
+              className="flex w-[30vw] flex-row gap-2  px-2 "
               onValueChange={(value) => field.onChange(value === "Ναι")}
               defaultValue={field.value ? "Ναι" : "Όχι"} // Map boolean to "Ναι" or "Όχι"
+              color="secondary"
             >
               {TypesOfSterilized.map((option, i) => (
-                <div key={option.label + i} className="radio-group">
-                  <RadioGroupItem id={option.label} value={option.label} />
-                  <Label
-                    htmlFor={option.label}
-                    className="cursor-pointer text-dark-300 dark:text-light-700"
-                  >
-                    {option.label}
-                  </Label>
-                </div>
+                <Radio value={option.label} key={i + option.label}>
+                  {option.label}
+                </Radio>
               ))}
             </RadioGroup>
-          </FormControl>
-        )}
-      />
-      <CustomFormField
-        fieldType={FormFieldType.INPUT}
-        control={form.control}
-        name={`microchip`}
-        label="Μicrochip"
-        placeholder="12323434324234234"
-        iconSrc="/assets/icons/chip.svg"
-        iconAlt="chip"
-      />
-      <CustomFormField
-        fieldType={FormFieldType.DATE_PICKER}
-        control={form.control}
-        name={`birthdate`}
-        label="Ημ.Γέννησης"
-      />
-      <CustomFormField
-        fieldType={FormFieldType.SKELETON}
-        control={form.control}
-        name={`food`}
-        label="Τυπος Τροφής"
-        renderSkeleton={(field) => (
-          <FormControl>
-            <ConstantSwitcher
-              items={foods.value}
-              type="Foods"
-              label="Τροφή"
-              placeholder="Τροφές"
-              heading="ΤΡΟΦΕΣ"
-              selectedItem={field.value}
-              setSelectedItem={field.onChange}
-            />
           </FormControl>
         )}
       />

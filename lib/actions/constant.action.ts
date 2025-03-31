@@ -42,3 +42,36 @@ export async function getConstant(type: string) {
     console.log(error);
   }
 }
+export async function updateConstantsValue({ type, oldValue, newValue }: any) {
+  try {
+    await connectToDatabase();
+
+    // Step 1: Remove the old value
+    await Constant.updateOne({ type }, { $pull: { value: oldValue } });
+
+    // Step 2: Add the new value, ensuring no duplicates
+    const category = await Constant.findOneAndUpdate(
+      { type },
+      { $addToSet: { value: newValue } },
+      { new: true }
+    );
+
+    if (category) return JSON.stringify(category);
+  } catch (error) {
+    console.error(error);
+  }
+}
+export async function deleteConstantValue(type: string, value: string) {
+  try {
+    connectToDatabase();
+    const category = await Constant.findOneAndUpdate(
+      { type },
+      { $pull: { value } },
+      { new: true }
+    );
+    console.log("category", category);
+    if (category) return JSON.stringify(category);
+  } catch (error) {
+    console.log(error);
+  }
+}

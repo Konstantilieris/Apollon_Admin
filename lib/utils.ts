@@ -1,12 +1,19 @@
+/* eslint-disable no-unused-vars */
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import qs from "query-string";
 
 import moment from "moment-timezone";
+import { CommandMenuType } from "@/hooks/command-menu-store";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+export enum RoomPreference {
+  JOIN = "Join",
+  SEPARATE = "Separate",
+}
+
 export function sanitizeQuery(query: string | undefined | null): string {
   if (query === "" || !query) return "";
   if (typeof query !== "string") {
@@ -644,3 +651,32 @@ export function calculateDaysDifference(
   // If newDate is later than oldDate (range is reducing), return positive
   return diffInDays;
 }
+export const renderTitle = ({ menuType }: { menuType: CommandMenuType }) => {
+  switch (menuType) {
+    case CommandMenuType.Breeds:
+      return "Επιλογή Ράτσας";
+    case CommandMenuType.Behaviors:
+      return "Επιλογή Συμπεριφοράς";
+    case CommandMenuType.Foods:
+      return "Επιλογή Τροφής";
+    case CommandMenuType.Professions:
+      return "Επιλογή Επαγγέλματος";
+    case CommandMenuType.Tags:
+      return "Επιλογή Ετικέτας";
+    default:
+      return "";
+  }
+};
+export function getDurationDays(start: string | Date, end: string | Date) {
+  if (!start || !end) return "";
+
+  const startDate = moment(start).startOf("day");
+  const endDate = moment(end).startOf("day");
+
+  // Add +1 to include both the start and end date
+  return endDate.diff(startDate, "days") + 1;
+}
+export const getRoomPreference = (dogsData: Array<{ roomId: any }>) => {
+  const uniqueRooms = new Set(dogsData.map((dog) => dog.roomId));
+  return uniqueRooms.size === 1 ? RoomPreference.JOIN : RoomPreference.SEPARATE;
+};

@@ -109,7 +109,7 @@ const ConstantSwitcher = ({
       <PopoverTrigger asChild>
         <Button
           className={cn(
-            "w-full justify-between  bg-light-900 dark:border-dark-500 dark:bg-dark-400 flex flex-row items-center ",
+            "w-full justify-between z-[9999]  bg-light-900 dark:border-dark-500 dark:bg-dark-400 flex flex-row items-center ",
             className
           )}
           size="lg"
@@ -122,7 +122,7 @@ const ConstantSwitcher = ({
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[25vw] p-1  dark:bg-neutral-900">
+      <PopoverContent className="z-[9999] w-[25vw]  p-1 dark:bg-neutral-900">
         <Command>
           <CommandList className=" font-sans">
             <CommandInput placeholder={placeholder} className="h-14" />

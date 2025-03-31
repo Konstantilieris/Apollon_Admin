@@ -1538,11 +1538,7 @@ export async function updateBookingAllInclusive({
     }
 
     // 7) Add tax
-    const taxRate = oldBoardingService.taxRate ?? 0;
 
-    // 8) Paid portion so far
-    const paidAmount =
-      oldBoardingService.amount - (oldBoardingService.remainingAmount ?? 0);
     const paidAmountSoFar = oldBoardingService.paidAmount ?? 0;
     const newRemainingAmount = Math.max(newTotalAmount - paidAmountSoFar, 0);
 
@@ -1576,8 +1572,7 @@ export async function updateBookingAllInclusive({
 
     // 10) Update Boarding Service doc-based so date + endDate are definitely set
     oldBoardingService.amount = calculateBoardingFee;
-    oldBoardingService.taxRate = taxRate;
-    oldBoardingService.paidAmount = paidAmount;
+
     oldBoardingService.date = fromDate;
     oldBoardingService.endDate = toDate;
 
@@ -1709,6 +1704,69 @@ export async function updateBookingAllInclusive({
     await session.abortTransaction();
     session.endSession();
     console.error("Failed to update booking", error);
+    throw error;
+  }
+}
+export async function checkRoomAvailability({
+  bookingId,
+  rangeDate,
+}: {
+  bookingId: string;
+  rangeDate: { from: Date; to: Date };
+}) {
+  try {
+    // Ensure connection to your database is active
+    await connectToDatabase();
+
+    // Fetch the booking details by bookingId
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+
+    const { dogs } = booking;
+
+    // Query to find bookings overlapping the provided date range
+    const matchBookings = {
+      $or: [
+        {
+          $and: [
+            { fromDate: { $lte: rangeDate.to } },
+            { toDate: { $gte: rangeDate.to } },
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $lte: rangeDate.from } },
+            { toDate: { $gte: rangeDate.from } },
+          ],
+        },
+        {
+          $and: [
+            { fromDate: { $gte: rangeDate.from } },
+            { toDate: { $lte: rangeDate.to } },
+          ],
+        },
+      ],
+    };
+
+    // Fetch matching bookings
+    const bookings = await Booking.find(matchBookings);
+
+    // Extract room IDs from the current booking's dogs
+    const roomIds = dogs.map((dog: any) => dog.roomId.toString());
+
+    // Identify overlapping bookings that exclude the current booking
+    const overlappingBookings = bookings.filter(
+      (b: any) =>
+        b._id.toString() !== bookingId &&
+        b.dogs.some((dog: any) => roomIds.includes(dog.roomId.toString()))
+    );
+
+    // Return true if overlapping bookings exist, otherwise false
+    return overlappingBookings.length > 0;
+  } catch (error) {
+    console.error("Error in checkRoomAvailability:", error);
     throw error;
   }
 }

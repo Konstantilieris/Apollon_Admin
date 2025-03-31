@@ -9,7 +9,8 @@ import { Separator } from "@/components/ui/separator";
 const page = async ({ params }: { params: any }) => {
   const { id } = params;
 
-  const client = await getClientById(id);
+  const res = await getClientById(id);
+  const client = JSON.parse(res);
   if (!client) {
     return <div>No client Found</div>;
   }

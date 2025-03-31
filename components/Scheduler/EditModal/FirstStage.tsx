@@ -89,7 +89,10 @@ const FirstStage = ({
           </div>
           <Link
             className="group flex h-10 items-center gap-2 rounded-full bg-neutral-700 pl-3 pr-4 transition-all duration-300 ease-in-out hover:bg-black hover:pl-2 hover:text-white active:bg-neutral-700"
-            href={`/clients/${event.clientId}`}
+            href={{
+              pathname: `/client/${event.clientId}`,
+              query: { tab: "Info" },
+            }}
             passHref
           >
             <span className="rounded-full bg-black p-1 text-sm transition-colors duration-300 group-hover:bg-white">
@@ -99,7 +102,10 @@ const FirstStage = ({
           </Link>
           <Link
             className="group flex h-10 items-center gap-2 rounded-full bg-neutral-700 pl-3 pr-4 transition-all duration-300 ease-in-out hover:bg-black hover:pl-2 hover:text-white active:bg-neutral-700"
-            href={`/clients/${event.clientId}/service`}
+            href={{
+              pathname: `/client/${event.clientId}`,
+              query: { tab: "Financial" },
+            }}
             passHref
           >
             <span className="rounded-full bg-black p-1 text-sm transition-colors duration-300 group-hover:bg-white">

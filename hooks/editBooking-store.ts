@@ -1,10 +1,12 @@
 import { IBooking } from "@/database/models/booking.model";
 import { create } from "zustand";
-
+interface BookingState extends IBooking {
+  _id: string;
+}
 interface EditBookingStoreState {
   dateArrival: Date | undefined;
-  booking: IBooking;
-  setBooking: (booking: IBooking) => void;
+  booking: BookingState;
+  setBooking: (booking: BookingState) => void;
   dateDeparture: Date | undefined;
   extraDay: boolean;
   setExtraDay: (extraDay: boolean) => void;
@@ -27,7 +29,7 @@ export const useEditBookingStore = create<EditBookingStoreState>((set) => ({
   setExtraDay: (extraDay) => set({ extraDay }),
   setTaxiArrival: (taxiArrival) => set({ taxiArrival }),
   setTaxiDeparture: (taxiDeparture) => set({ taxiDeparture }),
-  booking: {} as IBooking,
+  booking: {} as BookingState,
   setBooking: (booking) => set({ booking }),
   resetStore: () =>
     set({

@@ -6,7 +6,7 @@ import { connectToDatabase } from "../mongoose";
 import Client, { IClient, IDog } from "@/database/models/client.model";
 
 import { sanitizeQuery } from "../utils";
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import Booking, { IBooking } from "@/database/models/booking.model";
 import { DateRange } from "react-day-picker";
 import moment from "moment";
@@ -52,11 +52,7 @@ export async function getDogsForClient(clientId: string) {
   }
 }
 
-export async function CreateClient({
-  clientData,
-  dogs,
-  path,
-}: CreateClientProps) {
+export async function CreateClient({ clientData, dogs }: CreateClientProps) {
   const clientPayload: IClient = {
     name: clientData.name,
     email: clientData.email,
@@ -114,7 +110,7 @@ export async function CreateClient({
 
     await session.commitTransaction(); // Commit the transaction
     session.endSession();
-    revalidatePath(path);
+
     return JSON.stringify(client[0]);
   } catch (error) {
     await session.abortTransaction(); // Rollback if any error occurs
@@ -129,7 +125,7 @@ export async function getAllClientsByQuery() {
     connectToDatabase();
 
     const clients = await Client.find({}, { name: 1 });
-    return JSON.parse(JSON.stringify(clients));
+    return JSON.stringify(clients);
   } catch (error) {
     console.log(error);
     throw error;
@@ -139,7 +135,7 @@ export async function getClientById(id: string | undefined) {
   try {
     connectToDatabase();
     const client = await Client.findById(id);
-    return client;
+    return JSON.stringify(client);
   } catch (error) {
     console.log(error);
     throw error;
@@ -159,7 +155,7 @@ export async function getClientById2(id: string | undefined) {
       client.dog = client.dog.filter((dog: any) => !dog.dead);
     }
 
-    return client;
+    return JSON.parse(JSON.stringify(client));
   } catch (error) {
     console.error("Error fetching client:", error);
     throw error;
@@ -704,7 +700,7 @@ export async function addClientDog({
   path,
 }: {
   clientId: string;
-  dog: IDog;
+  dog: any;
   path: string;
 }) {
   try {
@@ -867,7 +863,6 @@ export async function getClientByIdForProfile(id: string | undefined) {
       {
         $project: {
           name: 1,
-
           "phone.mobile": 1,
           location: 1,
           tags: 1,
@@ -881,6 +876,7 @@ export async function getClientByIdForProfile(id: string | undefined) {
           loyaltyLevel: 1,
           owesTotal: 1,
           totalSpent: 1,
+          dog: 1, // <-- explicitly add this to include dog data
           bookingFee: {
             $arrayElemAt: [
               {
@@ -920,17 +916,13 @@ export async function getClientByIdForProfile(id: string | undefined) {
       },
       {
         $addFields: {
-          bookingFee: {
-            $ifNull: ["$bookingFee.value", null],
-          },
-          transportFee: {
-            $ifNull: ["$transportFee.value", null],
-          },
+          bookingFee: { $ifNull: ["$bookingFee.value", null] },
+          transportFee: { $ifNull: ["$transportFee.value", null] },
         },
       },
     ]);
 
-    return client.length ? client[0] : null;
+    return client.length ? JSON.parse(JSON.stringify(client[0])) : null;
   } catch (error) {
     console.error(error);
     throw error;
@@ -1183,6 +1175,248 @@ export async function getLastBooking(clientId: string) {
     return JSON.parse(JSON.stringify(lastBooking[0]));
   } catch (error) {
     console.error("Error fetching last booking:", error);
+    throw error;
+  }
+}
+export async function handleDeleteTag({
+  clientId,
+  tag,
+}: {
+  clientId: string;
+  tag: string;
+}) {
+  try {
+    connectToDatabase();
+    const client = await Client.findByIdAndUpdate(
+      clientId,
+      { $pull: { tags: tag } },
+      { new: true }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error deleting tag:", error);
+
+    throw error;
+  }
+}
+export async function handleAddClientTag({
+  clientId,
+  tag,
+}: {
+  clientId: string;
+  tag: string;
+}) {
+  try {
+    connectToDatabase();
+
+    // first check for duplicate tags
+    const client = await Client.findById(clientId);
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    if (client.tags.includes(tag)) {
+      return { success: true };
+    }
+    const updatedClient = await Client.findByIdAndUpdate(
+      clientId,
+      { $push: { tags: tag } },
+      { new: true }
+    );
+    if (!updatedClient) {
+      throw new Error("Client not found");
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error adding tag:", error);
+
+    throw error;
+  }
+}
+export async function updateClientServiceType(
+  clientId: string,
+  currentType: string,
+  newType: string
+) {
+  await connectToDatabase();
+  try {
+    const client = await Client.findById(clientId);
+    if (!client) throw new Error("Client not found");
+
+    console.log("hit here");
+    // Find and rename the service fee type without changing its value
+    const feeIndex = client.serviceFees.findIndex(
+      (fee: any) => fee.type === currentType
+    );
+    if (feeIndex !== -1) {
+      client.serviceFees[feeIndex].type = newType;
+    } else {
+      throw new Error("Service fee type not found");
+    }
+
+    // Rename the corresponding service preference if it exists
+    const preferenceIndex = client.servicePreferences.indexOf(currentType);
+    if (preferenceIndex !== -1) {
+      client.servicePreferences[preferenceIndex] = newType;
+    }
+
+    await client.save();
+    return {
+      success: true,
+      message: "Service fee type and preference updated successfully",
+    };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
+export async function deleteClientService(
+  clientId: Schema.Types.ObjectId,
+  serviceType: string
+) {
+  await connectToDatabase();
+  try {
+    const client = await Client.findById(clientId);
+    if (!client) throw new Error("Client not found");
+
+    // Remove the service fee by type
+    client.serviceFees = client.serviceFees.filter(
+      (fee: any) => fee.type !== serviceType
+    );
+
+    // Remove the corresponding service preference
+    client.servicePreferences = client.servicePreferences.filter(
+      (preference: any) => preference !== serviceType
+    );
+
+    await client.save();
+    return {
+      success: true,
+      message: "Service fee and preference deleted successfully",
+    };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+export async function updateClientServiceFee({
+  clientId,
+  feeType, // e.g. "boardingFee", "transportFee", "bookingFee", etc.
+  price,
+  path,
+}: {
+  clientId: string;
+  feeType: string;
+  price: number;
+  path: string;
+}) {
+  try {
+    await connectToDatabase();
+
+    if (!price) {
+      throw new Error("Price is required");
+    }
+
+    // First try updating an existing serviceFees item matching feeType
+    const client = await Client.findOneAndUpdate(
+      {
+        _id: clientId,
+        "serviceFees.type": feeType,
+      },
+      {
+        $set: { "serviceFees.$.value": price },
+      },
+      { new: true }
+    );
+
+    // If no existing fee was updated, push a new object
+    if (!client) {
+      const updatedClient = await Client.findByIdAndUpdate(
+        clientId,
+        {
+          $push: {
+            serviceFees: { type: feeType, value: price },
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedClient) {
+        throw new Error("Client not found");
+      }
+
+      revalidatePath(path);
+      return true;
+    }
+
+    // If we successfully updated the existing service fee
+    revalidatePath(path);
+    return true;
+  } catch (error) {
+    console.error(`Error updating client fee for type "${feeType}":`, error);
+    throw error;
+  }
+}
+export async function updateClientServiceFeeBoarding({
+  clientId,
+  feeType,
+  dogCount, // e.g. "boardingFee", "transportFee", "bookingFee", etc.
+  price,
+  path,
+}: {
+  clientId: string;
+  feeType: string;
+  price: number;
+  dogCount: number;
+  path: string;
+}) {
+  try {
+    await connectToDatabase();
+
+    if (!price) {
+      throw new Error("Price is required");
+    }
+
+    // First try updating an existing serviceFees item matching feeType
+    const client = await Client.findOneAndUpdate(
+      {
+        _id: clientId,
+        "serviceFees.type": feeType,
+        "serviceFees.dogCount": dogCount,
+      },
+      {
+        $set: { "serviceFees.$.value": price, dogCount },
+      },
+      { new: true }
+    );
+
+    // If no existing fee was updated, push a new object
+    if (!client) {
+      const updatedClient = await Client.findByIdAndUpdate(
+        clientId,
+        {
+          $push: {
+            serviceFees: { type: feeType, value: price, dogCount },
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedClient) {
+        throw new Error("Client not found");
+      }
+
+      revalidatePath(path);
+      return true;
+    }
+
+    // If we successfully updated the existing service fee
+    revalidatePath(path);
+    return true;
+  } catch (error) {
+    console.error(`Error updating client fee for type "${feeType}":`, error);
     throw error;
   }
 }

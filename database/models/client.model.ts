@@ -57,7 +57,8 @@ export interface IClient {
     work_phone?: string;
     emergencyContact?: string;
   };
-  serviceFees?: { type: String; value: Number }[];
+  serviceFees?: { type: String; value: Number; dogCount?: Number }[];
+  servicePreferences?: string[];
   createdAt?: Date;
   owes?: Schema.Types.ObjectId[];
 
@@ -93,7 +94,7 @@ export interface IClient {
   owesTotal?: number;
   totalSpent?: number;
   credit?: number;
-  servicePreferences?: string[];
+
   loyaltyLevel?: string;
 }
 
@@ -259,6 +260,7 @@ const ClientSchema = new Schema<IClient>({
     {
       type: { type: String },
       value: { type: Number },
+      dogCount: { type: Number },
     },
   ],
   roomPreference: {

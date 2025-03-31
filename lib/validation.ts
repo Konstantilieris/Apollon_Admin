@@ -173,12 +173,8 @@ export const SingleDogValidation = z.object({
       message: "Το όνομα πρέπει να είναι μικρότερο απο 20 χαρακτήρες",
     }),
   gender: z.string(),
-  birthdate: z
-    .date({
-      required_error: "Διάλεξε ημερομηνία",
-      invalid_type_error: "Δεν ειναι σωστή η ημερομηνία!",
-    })
-    .optional(),
+  birthdate: z.string(),
+
   food: z.string().optional(),
   breed: z.string().optional(),
   behavior: z.string().optional(),

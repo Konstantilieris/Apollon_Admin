@@ -11,7 +11,7 @@ import FinancialSummary from "@/database/models/financial.model";
 import Booking from "@/database/models/booking.model";
 import Payment from "@/database/models/payment.model";
 import { deleteBooking } from "./booking.action";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 export async function getMonthlyIncome() {
   const startDate = startOfMonth(new Date());
@@ -264,8 +264,7 @@ export async function chargeClient({
     // Commit the transaction
     await session.commitTransaction();
     session.endSession();
-    revalidatePath(`/clients/${clientId}/service`);
-    revalidatePath(`/clients/${clientId}`);
+
     return JSON.stringify(service[0]); // Return the created service
   } catch (error) {
     // If any error occurs, abort the transaction
@@ -962,7 +961,7 @@ export async function partialPayment({
     session.endSession();
   }
 }
-export async function reversePayment({ paymentId }: any) {
+export async function reversePayment({ paymentId, path }: any) {
   connectToDatabase();
   const session = await mongoose.startSession();
 
@@ -1008,6 +1007,7 @@ export async function reversePayment({ paymentId }: any) {
 
     payment.reversed = true;
     await payment.save({ session });
+    revalidatePath(path);
 
     await session.commitTransaction();
 
@@ -1360,5 +1360,95 @@ export async function updateTaxForSelectedServices({
       success: false,
       message: error.message || "Failed to update tax.",
     };
+  }
+}
+export async function FinancialOverviewStats({
+  clientId,
+}: {
+  clientId: string;
+}) {
+  try {
+    await connectToDatabase(); // Connect to your database
+
+    const [aggregationResult] = await Service.aggregate([
+      {
+        $match: {
+          clientId: new Types.ObjectId(clientId),
+          paid: false,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          services: { $push: "$$ROOT" },
+          totalPaid: { $sum: "$paidAmount" },
+          totalOwes: { $sum: "$remainingAmount" },
+        },
+      },
+    ]);
+
+    // If no results found, return defaults
+    if (!aggregationResult) {
+      return {
+        services: [],
+        totalPaid: 0,
+        totalOwes: 0,
+        progress: 0,
+      };
+    }
+
+    const { services, totalPaid, totalOwes } = aggregationResult;
+    const grandTotal = totalPaid + totalOwes;
+    const progress = grandTotal === 0 ? 0 : (totalPaid / grandTotal) * 100;
+
+    return {
+      services,
+      totalPaid,
+      totalOwes,
+      progress,
+    };
+  } catch (error) {
+    console.error("Error in FinancialOverview:", error);
+
+    // Return a safe fallback or rethrow
+    return {
+      services: [],
+      totalPaid: 0,
+      totalOwes: 0,
+      progress: 0,
+      error: (error as Error).message,
+    };
+  }
+}
+export async function updateService({
+  serviceId,
+  amount,
+  date,
+  serviceType,
+  notes,
+}: {
+  serviceId: string;
+  amount: number;
+  notes: string;
+  serviceType: string;
+  date: Date | string;
+}) {
+  try {
+    await connectToDatabase();
+    const service = await Service.findById(serviceId);
+    if (!service) {
+      throw new Error("Service not found.");
+    }
+    service.notes = notes;
+    service.amount = amount;
+    service.date = new Date(date);
+    service.serviceType = serviceType;
+
+    await service.save(); // Middleware triggers here
+
+    return JSON.parse(JSON.stringify(service));
+  } catch (error: any) {
+    console.error("Error updating service:", error.message);
+    throw new Error("Failed to update the service.");
   }
 }

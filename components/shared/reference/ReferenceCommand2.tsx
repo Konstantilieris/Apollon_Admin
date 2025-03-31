@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@heroui/react";
 import {
   Command,
   CommandEmpty,
@@ -24,15 +24,15 @@ const ReferenceCommand2 = ({ clients, value, onChange }: any) => {
   const [other, setOther] = React.useState<any>("");
 
   return (
-    <div className="flex flex-col items-start gap-2">
-      <span className="tracking-wide text-gray-400">Σύσταση</span>
+    <div className="flex w-[30vw]  flex-col items-start gap-2 max-lg:w-full">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
+            variant="bordered"
+            color="secondary"
             role="combobox"
             aria-expanded={open}
-            className="w-[300px] justify-between truncate tracking-widest"
+            className="min-h-[55px] w-full justify-between truncate bg-transparent tracking-widest max-lg:w-full"
           >
             {selected || "Επιλογή Συστάσεων"}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

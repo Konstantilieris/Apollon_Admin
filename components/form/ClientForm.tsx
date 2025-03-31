@@ -47,7 +47,6 @@ const ClientForm = ({ setData, setStage, clients, professions }: any) => {
     setData({ ...values, reference: { ...reference } });
     setStage(1);
     setReference(null);
-    form.reset();
   }
 
   return (
