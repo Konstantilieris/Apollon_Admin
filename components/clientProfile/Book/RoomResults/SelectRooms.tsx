@@ -18,14 +18,8 @@ const SelectRooms = ({
   setStages,
 }: SelectRoomProps) => {
   const [, setLoading] = React.useState(false);
-  const {
-    dateArrival,
-    dateDeparture,
-
-    setRoomPreference,
-
-    setData,
-  } = useBookingStore();
+  const { dateArrival, dateDeparture, setDogsData, setRoomPreference } =
+    useBookingStore();
   const [availableRooms, setAvailableRooms] = React.useState<any>([]);
   const [isNext, setIsNext] = React.useState(false);
 
@@ -116,7 +110,7 @@ const SelectRooms = ({
 
     // Update room preference and set data only with dogs that have assigned rooms
     setRoomPreference(roomPreference);
-    setData(filteredDogsInRooms); // Save only the dogs with assigned rooms
+    setDogsData(filteredDogsInRooms); // Save only the dogs with assigned rooms
     setStages(2); // Move to the next stage
   }, [dogsInRooms]);
 
