@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import type { Service } from "../types/service";
+import { Service } from "@/types";
 
 interface ServicesSummaryProps {
   services: Service[];
