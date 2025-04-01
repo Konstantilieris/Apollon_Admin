@@ -12,19 +12,22 @@ const renderServiceTypeChip = (service: any) => {
     const booking = service.bookingId;
 
     tooltipContent = (
-      <Card className="w-80 p-0 font-sans" shadow="none">
+      <Card
+        className="w-[40vw] max-w-[500px] rounded-lg p-4 font-sans"
+        shadow="none"
+      >
         <CardBody className="gap-2">
           {/* Dates */}
           <div className="flex items-center justify-between border-b border-divider py-1">
             <span className="text-base font-medium">Από:</span>
             <span className="text-base">
-              {moment(booking.fromDate).format("DD/MM/YYYY")}
+              {moment(booking.fromDate).format("DD/MM/YYYY/HH:mm")}
             </span>
           </div>
           <div className="flex items-center justify-between border-t border-divider pt-2">
             <span className="text-base font-medium">Έως:</span>
             <span className="text-base">
-              {moment(booking.toDate).format("DD/MM/YYYY")}
+              {moment(booking.toDate).format("DD/MM/YYYY/HH:mm")}
             </span>
           </div>
 
@@ -34,7 +37,7 @@ const renderServiceTypeChip = (service: any) => {
             <span className="text-base">{booking.client?.clientName}</span>
           </div>
           <div className="flex items-center justify-between border-t border-divider pt-2">
-            <span className="text-base font-medium">Ημερ. Χρέωση </span>
+            <span className="text-base font-medium">Ημερ. Χρέωση: </span>
             <span className="text-base">{booking.client?.bookingFee} € </span>
           </div>
 
@@ -49,13 +52,6 @@ const renderServiceTypeChip = (service: any) => {
               ))}
             </ul>
           </div>
-
-          {/* Notes */}
-          {booking.notes && (
-            <div className="pt-2 text-sm text-default-500">
-              <strong>Σημειώσεις:</strong> {booking.notes}
-            </div>
-          )}
         </CardBody>
       </Card>
     );

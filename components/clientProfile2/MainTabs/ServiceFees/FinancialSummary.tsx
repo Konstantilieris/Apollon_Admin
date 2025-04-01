@@ -34,7 +34,7 @@ export function FinancialSummary({ client }: { client: any }) {
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell>Σύνολο Δαπανών</TableCell>
+              <TableCell>Συνολικά Πληρωμένα</TableCell>
               <TableCell className="text-right">€{client.totalSpent}</TableCell>
             </TableRow>
             <TableRow>

@@ -105,7 +105,7 @@ export async function getAllPaidClientServices({ clientId }: any) {
       },
       {},
       { sort: { paid: 1, date: -1 } }
-    );
+    ).populate("bookingId"); // Populating the bookingId reference
     return JSON.parse(JSON.stringify(services));
   } catch (error) {
     console.error("Error getting all client services:", error);

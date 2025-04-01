@@ -28,6 +28,7 @@ import { getDurationDays } from "@/lib/utils";
 import { getAllPaidClientServices } from "@/lib/actions/service.action";
 import { ServicesSummary } from "../Owes/OwesSummary";
 import { ServicesFilters } from "../Owes/OwesFilters";
+import renderServiceTypeChip from "../Owes/ServiceType";
 
 interface PaidServicesListProps {
   client: any;
@@ -323,12 +324,24 @@ function PaidServicesList({ client }: PaidServicesListProps) {
                   <TableCell className="font-medium">
                     {renderServiceType(service.serviceType)}
                   </TableCell>
-                  <TableCell>
-                    {new Date(service.date).toLocaleDateString()}
-                  </TableCell>
+                  <TableCell>{renderServiceTypeChip(service)}</TableCell>
+
                   <TableCell className="pl-12 font-medium">
-                    {getDurationDays(service.date, service.endDate)}
+                    {service.serviceType === "ΔΙΑΜΟΝΗ" ? (
+                      <div className="flex flex-row ">
+                        {" "}
+                        {getDurationDays(service.date, service.endDate)}
+                        {service.bookingId.extraDay ? (
+                          <span className="text-green-900">+1</span>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    ) : (
+                      0
+                    )}
                   </TableCell>
+
                   <TableCell>{formatCurrency(service.amount)}</TableCell>
                   <TableCell>{formatCurrency(service.taxAmount)}</TableCell>
                   <TableCell className="font-semibold">

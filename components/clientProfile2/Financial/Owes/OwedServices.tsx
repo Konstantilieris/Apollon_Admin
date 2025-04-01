@@ -19,11 +19,10 @@ import {
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
-import type { RangeValue, SortDescriptor } from "@react-types/shared";
-import type { DateValue } from "@react-types/datepicker";
+import type { SortDescriptor } from "@react-types/shared";
+
 import { Service } from "@/types";
-import moment from "moment";
-import { ServicesFilters } from "./OwesFilters";
+
 import { ServicesSummary } from "./OwesSummary";
 import { getUnpaidClientServices } from "@/lib/actions/service.action";
 import { useModalStore } from "@/hooks/client-profile-store";
@@ -124,39 +123,6 @@ export default function ServicesList({ client }: ServicesListProps) {
     }
   }, [page]);
 
-  const handleDateRangeChange = (range: RangeValue<DateValue> | null) => {
-    if (!range?.start || !range?.end) return;
-
-    // Convert the start/end from your date picker to Moment objects.
-    // If you want to ignore time and only compare days, use .startOf("day") and .endOf("day").
-    const startDate = moment(range.start).startOf("day");
-    const endDate = moment(range.end).endOf("day");
-
-    // Filter services: check if serviceDate is between startDate and endDate (inclusive)
-    const filtered = services.filter((service) => {
-      const serviceDate = moment(service.date);
-      return (
-        serviceDate.isSameOrAfter(startDate) &&
-        serviceDate.isSameOrBefore(endDate)
-      );
-    });
-
-    setFilteredServices(filtered);
-    setPage(1);
-  };
-  const handleAmountFilterChange = (min: string, max: string) => {
-    const minAmount = min ? parseFloat(min) : 0;
-    const maxAmount = max ? parseFloat(max) : Infinity;
-
-    const filtered = services.filter(
-      (service) =>
-        service.totalAmount >= minAmount && service.totalAmount <= maxAmount
-    );
-
-    setFilteredServices(filtered);
-    setPage(1);
-  };
-
   const paginatedServices = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
@@ -227,7 +193,7 @@ export default function ServicesList({ client }: ServicesListProps) {
         return serviceType;
     }
   };
-  console.log("filteredServices", filteredServices);
+
   return (
     <Card className="m-0 h-full w-full">
       <CardBody className="h-full w-full overflow-auto p-6">
@@ -358,10 +324,6 @@ export default function ServicesList({ client }: ServicesListProps) {
         </div>
         <Skeleton isLoaded={!loading}>
           <ServicesSummary services={filteredServices} />
-          <ServicesFilters
-            onDateRangeChange={handleDateRangeChange}
-            onAmountFilterChange={handleAmountFilterChange}
-          />
 
           <Table
             aria-label="Services and payments table"
@@ -404,9 +366,19 @@ export default function ServicesList({ client }: ServicesListProps) {
                   </TableCell>
                   <TableCell>{renderServiceTypeChip(service)}</TableCell>
                   <TableCell className="pl-12 font-medium">
-                    {service.serviceType === "ΔΙΑΜΟΝΗ"
-                      ? getDurationDays(service.date, service.endDate)
-                      : 0}
+                    {service.serviceType === "ΔΙΑΜΟΝΗ" ? (
+                      <div className="flex flex-row ">
+                        {" "}
+                        {getDurationDays(service.date, service.endDate)}
+                        {service.bookingId.extraDay ? (
+                          <span className="text-green-900">+1</span>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    ) : (
+                      0
+                    )}
                   </TableCell>
                   <TableCell>{formatCurrency(service.amount)}</TableCell>
                   <TableCell>{formatCurrency(service.taxAmount)}</TableCell>
