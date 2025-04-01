@@ -126,7 +126,8 @@ export default function BookingFirstStage({ handleNext }: { handleNext: any }) {
               label="Διάρκεια Διαμονής"
               visibleMonths={2}
               showMonthAndYearPickers
-              color="default"
+              color="success"
+              variant="bordered"
               calendarWidth={400}
               value={rangeValue}
               onChange={handleDateRangeChange}
@@ -213,6 +214,7 @@ export default function BookingFirstStage({ handleNext }: { handleNext: any }) {
               <Button
                 className=" text-lg tracking-widest"
                 variant="ghost"
+                color="primary"
                 onPress={handleNext}
                 isDisabled={!dateArrival || !dateDeparture}
               >

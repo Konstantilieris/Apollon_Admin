@@ -176,7 +176,12 @@ export const RoomSelectionTable: React.FC<RoomSelectionTableProps> = ({
       </Table>
 
       <div className="mt-4 flex gap-4">
-        <Button onPress={handleBack} variant="ghost" color="danger">
+        <Button
+          onPress={handleBack}
+          variant="ghost"
+          color="danger"
+          className="tracking-wide"
+        >
           ΠΙΣΩ
         </Button>
         <Button
@@ -185,7 +190,9 @@ export const RoomSelectionTable: React.FC<RoomSelectionTableProps> = ({
             Array.isArray(dogsInRooms) &&
             dogsInRooms.every((dog) => !dog.roomId)
           }
-          className="rounded-lg border border-black px-6 py-2 font-bold transition hover:-translate-y-1 dark:border-white dark:text-yellow-500"
+          variant="ghost"
+          color="success"
+          className="tracking-wide"
         >
           ΣΥΝΕΧΕΙΑ
         </Button>

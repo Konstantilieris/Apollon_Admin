@@ -1,7 +1,7 @@
 "use client";
 
 import useEditBookingStore from "@/hooks/editBooking-store";
-import { Avatar, cn } from "@heroui/react";
+import { Avatar, cn, Divider } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { format } from "date-fns";
 
@@ -26,50 +26,33 @@ export default function BookingDetails({ className }: BookingDetailsProps) {
   return (
     <div
       className={cn(
-        "flex flex-col p-6 lg:w-[250px] lg:px-4 lg:pt-8 bg-dark-100 rounded-lg  h-full ",
+        "flex flex-col p-6 lg:w-[350px] lg:px-4 lg:pt-8 bg-dark-100 rounded-lg h-full space-y-4 ",
         className
       )}
     >
-      <Avatar
-        className="mb-3 shadow-md"
-        size="sm"
-        src="https://i.pravatar.cc/150?u=a042581f4e29026704k"
-      />
-      <p className="text-lg font-medium text-default-500">
-        {booking.client.clientName}
-      </p>
-      <p className="mb-2 text-lg font-semibold tracking-widest text-default-foreground">
-        Κράτηση
-      </p>
-      <p className="mb-4 text-sm text-default-500">{booking.client.location}</p>
+      <div className="space-y-2">
+        <Avatar
+          className="mb-3 shadow-md"
+          size="sm"
+          src="https://i.pravatar.cc/150?u=a042581f4e29026704k"
+        />
+        <p className="text-lg font-medium text-default-500">
+          {booking.client.clientName}
+        </p>
+        <p className="pl-2 text-base font-medium uppercase text-default-500">
+          {booking.dogs.map((dog) => dog?.dogName).join(", ")}
+        </p>
+        <p className=" pl-2 text-sm tracking-wide text-default-500">
+          {booking.client.location}
+        </p>
+
+        <p className="mb-4 pl-2 text-base font-medium text-default-500">
+          {booking.client.phone}
+        </p>
+        <Divider className="w-full" />
+      </div>
 
       <div className="mb-6 flex flex-col gap-3">
-        {/* Dates & Times */}
-        <div className="flex items-start gap-2">
-          <Icon
-            className="text-default-300"
-            icon="solar:calendar-minimalistic-bold"
-            width={20}
-          />
-          <div className="text-base font-medium text-default-600">
-            <p>Άφιξη: {format(dateArrival, "dd/MM/yyyy HH:mm")}</p>
-            <p>Αναχώρηση: {format(dateDeparture, "dd/MM/yyyy HH:mm")}</p>
-          </div>
-        </div>
-
-        {/* Client Phone */}
-        <div className="flex items-center gap-2">
-          <Icon
-            className="text-default-300"
-            icon="solar:phone-bold"
-            width={20}
-          />
-          <p className="text-base font-medium text-default-600">
-            {booking.client.phone}
-          </p>
-        </div>
-
-        {/* Booking Fee */}
         <div className="flex items-center gap-2">
           <Icon
             className="text-default-300"
@@ -77,7 +60,7 @@ export default function BookingDetails({ className }: BookingDetailsProps) {
             width={20}
           />
           <p className="text-base font-medium text-default-600">
-            Τέλος Κράτησης: €{booking?.client?.bookingFee?.toFixed(2)}
+            Ημερήσια Χρέωση: €{booking?.client?.bookingFee?.toFixed(2)}
           </p>
         </div>
 
@@ -86,12 +69,32 @@ export default function BookingDetails({ className }: BookingDetailsProps) {
           <div className="flex items-center gap-2">
             <Icon className="text-default-300" icon="mdi:car" width={20} />
             <p className="text-base font-medium text-default-600">
-              Μεταφορικά: €{booking?.client?.transportFee?.toFixed(2)}
+              Χρέωση Μεταφοράς: €{booking?.client?.transportFee?.toFixed(2)}
             </p>
           </div>
         )}
+        <Divider className="w-full" />
+        {/* Dates & Times */}
+        <div className="flex flex-col items-start gap-2">
+          <div className="flex items-center gap-2">
+            <Icon
+              className="text-default-300"
+              icon="solar:calendar-minimalistic-bold"
+              width={20}
+            />
+            <p>Άφιξη: {format(dateArrival, "dd/MM/yyyy HH:mm")}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Icon
+              className="text-default-300"
+              icon="solar:calendar-minimalistic-bold"
+              width={20}
+            />{" "}
+            <p>Αναχώρηση: {format(dateDeparture, "dd/MM/yyyy HH:mm")}</p>
+          </div>
+        </div>
+        <Divider className="w-full" />
 
-        {/* Extra Day */}
         {extraDay && (
           <div className="flex items-center gap-2">
             <Icon

@@ -174,7 +174,7 @@ const DetailsAndAvailability = () => {
           </TableHeader>
           <TableBody
             isLoading={loading}
-            loadingContent={<div className="p-4">Loading rooms...</div>}
+            loadingContent={<div className="p-4"> Φορτώνει</div>}
             emptyContent={
               !dateArrival || !dateDeparture
                 ? "Διαλέξτε ημερομηνίες"
@@ -186,8 +186,11 @@ const DetailsAndAvailability = () => {
                 <TableCell className="pl-4">{room.name}</TableCell>
 
                 <TableCell className="pl-12">
-                  <Chip color="success" size="lg">
-                    <Icon icon="solar:room-outline" className="mr-2" />
+                  <Chip color="success" size="lg" variant="dot">
+                    <Icon
+                      icon="solar:room-outline"
+                      className="mr-2 text-dark-100"
+                    />
                   </Chip>
                 </TableCell>
               </TableRow>

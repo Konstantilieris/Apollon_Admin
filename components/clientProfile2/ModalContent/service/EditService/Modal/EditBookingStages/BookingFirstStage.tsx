@@ -142,18 +142,19 @@ export default function BookingFirstStage({
     }
   };
   return (
-    <section className="flex h-full w-full flex-col items-center justify-center gap-12 p-8">
+    <section className="flex h-full w-full flex-col items-center justify-center gap-20 p-20">
       <h1 className="text-2xl font-bold tracking-widest">
         Επεξεργασία Κράτησης
       </h1>
 
       <I18nProvider locale="el-GR">
-        <div className="flex h-[50vh]   flex-row gap-12 self-center rounded-lg bg-neutral-950 p-2 ">
+        <div className="flex   h-full flex-row gap-12 rounded-lg bg-neutral-950 p-8">
           <BookingDetails />
 
           {/* Date Range Picker with Greek localization */}
           <div className="flex flex-col gap-4 ">
             <DateRangePicker
+              variant="bordered"
               label="Διάρκεια Διαμονής"
               visibleMonths={2}
               showMonthAndYearPickers

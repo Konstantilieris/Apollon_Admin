@@ -294,7 +294,7 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
       </Card>
 
       {/* Action Buttons */}
-      <div className="flex justify-end gap-4">
+      <div className="flex justify-end gap-4 pb-8">
         <Button variant="ghost" color="danger" onPress={onBack}>
           <ArrowLeft size={16} /> ΕΠΙΣΤΡΟΦΗ
         </Button>
