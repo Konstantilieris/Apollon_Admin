@@ -88,7 +88,7 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
     (taxiArrival ? transportFee : 0) + (taxiDeparture ? transportFee : 0);
   const topContent = useMemo(() => {
     return (
-      <div className="mb-4 flex flex-wrap items-center gap-4">
+      <div className="mb-4 flex flex-wrap items-center gap-4 p-4">
         <h1 className="text-lg font-semibold tracking-wide">
           Επιλογή Ημερήσιας Χρέωσης:
         </h1>
@@ -162,7 +162,7 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
     }
   };
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-4">
+    <div className="mx-auto max-h-[calc(100vh_-_400px)] max-w-4xl space-y-6 overflow-y-auto rounded-lg bg-neutral-950 p-4">
       {/* Client Info */}
       <Card>
         <CardHeader className="pb-4">

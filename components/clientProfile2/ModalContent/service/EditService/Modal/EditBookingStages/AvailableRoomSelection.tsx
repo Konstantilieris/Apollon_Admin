@@ -73,7 +73,7 @@ export const RoomSelectionTable: React.FC<RoomSelectionTableProps> = ({
   if (availableRooms.length === 0 || !client) return null;
 
   return (
-    <div className="flex flex-col items-center gap-4 p-4">
+    <div className="flex max-h-[calc(100vh_-_400px)] flex-col items-center gap-4 overflow-y-auto p-4">
       <div className="flex w-full items-center justify-between rounded-lg bg-neutral-950 p-4">
         <span className="mx-auto text-xl tracking-widest text-gray-300">
           ΕΠΙΛΟΓΗ ΔΩΜΑΤΙΩΝ
@@ -89,6 +89,18 @@ export const RoomSelectionTable: React.FC<RoomSelectionTableProps> = ({
           thead: "text-lg",
           th: "text-base tracking-widest",
         }}
+        bottomContentPlacement="outside"
+        bottomContent={
+          <Pagination
+            total={Math.ceil(availableRooms.length / rowsPerPage)}
+            page={page}
+            onChange={setPage}
+            color="danger"
+            className="mx-auto"
+            showControls
+            size="sm"
+          />
+        }
       >
         <TableHeader>
           <TableColumn>ΟΝΟΜΑ ΔΩΜΑΤΙΟΥ</TableColumn>
@@ -162,15 +174,6 @@ export const RoomSelectionTable: React.FC<RoomSelectionTableProps> = ({
           })}
         </TableBody>
       </Table>
-
-      <Pagination
-        total={Math.ceil(availableRooms.length / rowsPerPage)}
-        page={page}
-        onChange={setPage}
-        color="danger"
-        showControls
-        size="sm"
-      />
 
       <div className="mt-4 flex gap-4">
         <Button onPress={handleBack} variant="ghost" color="danger">

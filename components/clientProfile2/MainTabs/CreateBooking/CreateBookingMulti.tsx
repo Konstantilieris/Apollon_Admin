@@ -88,7 +88,7 @@ export default function CreateBookingMulti({ client }: { client: any }) {
         <m.div
           key={page}
           animate="center"
-          className="col-span-12 h-full"
+          className="col-span-12 "
           custom={direction}
           exit="exit"
           initial="exit"

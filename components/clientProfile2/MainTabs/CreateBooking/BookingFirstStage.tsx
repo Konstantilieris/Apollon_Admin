@@ -117,7 +117,7 @@ export default function BookingFirstStage({ handleNext }: { handleNext: any }) {
   };
 
   return (
-    <section className="flex  max-h-[calc(100vh_-_200px)] w-full flex-col overflow-y-auto rounded-lg bg-dark-100 p-8 pb-20 ">
+    <section className="flex  max-h-[calc(100vh_-_400px)] w-full flex-col overflow-y-auto rounded-lg bg-dark-100 p-8 pb-20 ">
       <I18nProvider locale="el-GR">
         <div className="flex max-h-screen  flex-row gap-4 self-center rounded-lg bg-neutral-950 p-2">
           {/* Date Range Picker with Greek localization */}
