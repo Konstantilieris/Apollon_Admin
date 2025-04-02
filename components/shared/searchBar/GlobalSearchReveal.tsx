@@ -20,7 +20,7 @@ export const FloatingSearch = () => {
   useEffect(() => {
     // Prevent multiple triggers
 
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
       if (event.shiftKey && ["Z", "z", "ζ", "Ζ"].includes(event.key)) {
         event.preventDefault();
 
@@ -74,7 +74,7 @@ export const FloatingSearch = () => {
           <>
             {/* Overlay */}
             <motion.div
-              className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm"
+              className="fixed inset-0 z-[9998] bg-black/60 font-sans backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -98,7 +98,7 @@ export const FloatingSearch = () => {
                     autoFocus={isOpen}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="min-w-[20vw] grow border-none bg-transparent text-lg outline-none outline-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="min-w-[20vw] grow border-none bg-transparent font-sans text-lg outline-none outline-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                   <IconSquareLetterXFilled
                     onClick={() => {

@@ -11,7 +11,7 @@ const ResultButton = ({ item, result, setIsOpen }: any) => {
     const routes: any = {
       clients: `${basePath}?tab=Info`,
       booking: `${basePath}?tab=booking`,
-      service: `${basePath}?tab=serviceFees`,
+      service: `${basePath}?tab=Financial`,
     };
 
     router.push(routes[item.value] || basePath);

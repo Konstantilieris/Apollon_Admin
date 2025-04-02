@@ -1,14 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
-
 import Image from "next/image";
-
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-
 import {
   Sidebar,
   SidebarBody,
@@ -16,7 +13,6 @@ import {
   SidebarLink,
 } from "@/components/ui/Sidebar";
 import Toggle from "./Toggle";
-
 import {
   IconBrandTabler,
   IconChartBar,
@@ -44,15 +40,9 @@ const NAV_LINKS = [
 ];
 
 const animateVariants = {
-  initialState: {
-    opacity: 0,
-  },
-  animateState: {
-    opacity: 1,
-  },
-  exitState: {
-    opacity: 0,
-  },
+  initialState: { opacity: 0 },
+  animateState: { opacity: 1 },
+  exitState: { opacity: 0 },
 };
 
 function getIconClass(isActive: boolean) {
@@ -67,13 +57,37 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
 
-  const handleSignOut = async () => {
+  // Memoize a "base path" to use as the key for AnimatePresence
+  const basePath = useMemo(() => {
+    // Adjust this slice as needed based on your routing structure.
+    return path.split("/").slice(0, 3).join("/");
+  }, [path]);
+
+  // Memoize the navigation links so they don't re-render unnecessarily.
+  const navLinks = useMemo(() => {
+    return NAV_LINKS.map(({ label, href, Icon }, idx) => {
+      const isActive = path === href;
+      return (
+        <SidebarLink
+          key={idx}
+          link={{
+            label,
+            href,
+            icon: <Icon className={getIconClass(isActive)} />,
+          }}
+        />
+      );
+    });
+  }, [path]);
+
+  // Memoize the sign-out function.
+  const handleSignOut = useCallback(async () => {
     sessionStorage.clear();
     await signOut({ redirect: false });
     router.replace("./");
     router.refresh();
-  };
-  const basePath = path.split("/").slice(0, 3).join("/");
+  }, [router]);
+
   return (
     <div
       className={cn(
@@ -83,6 +97,7 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
         "h-screen"
       )}
     >
+      {/* Sidebar Navigation (static, outside of animated container) */}
       <Sidebar open={open} setOpen={setOpen} animate>
         <SidebarBody className="w-full">
           <div className="flex flex-1 flex-col overflow-hidden">
@@ -97,19 +112,7 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
               Apollon
             </div>
             <div className="ml-1 mt-8 flex flex-col items-start gap-2">
-              {NAV_LINKS.map(({ label, href, Icon }, idx) => {
-                const isActive = path === href;
-                return (
-                  <SidebarLink
-                    key={idx}
-                    link={{
-                      label,
-                      href,
-                      icon: <Icon className={getIconClass(isActive)} />,
-                    }}
-                  />
-                );
-              })}
+              {navLinks}
             </div>
           </div>
 
@@ -126,8 +129,10 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
         </SidebarBody>
       </Sidebar>
 
-      <AnimatePresence mode="wait" key={basePath}>
+      {/* Animated content area */}
+      <AnimatePresence mode="popLayout">
         <motion.div
+          key={basePath}
           className={cn(
             "flex-1 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700",
             "bg-white dark:bg-neutral-900 flex flex-col gap-2 h-full ml-12 w-full"

@@ -133,6 +133,9 @@ const CommandValueList = ({
     }
   };
   const handleCreate = async () => {
+    // optimistic update
+    const newValues = [...values, inputValue];
+    setValues(newValues);
     if (inputValue.trim()) {
       try {
         const createVal = await pushValueOnConstant({
@@ -155,6 +158,9 @@ const CommandValueList = ({
           title: "Αποτυχία δημιουργίας",
           description: `${error}`,
         });
+        // revert optimistic update
+        const newValues = values.filter((val) => val !== inputValue);
+        setValues(newValues);
       } finally {
         setIsCreate(false);
         setInputValue("");

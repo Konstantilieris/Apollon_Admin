@@ -557,7 +557,7 @@ export function setTimeOnDate(date: Date, time: string) {
 export const GlobalSearchFilters = [
   { name: "Προφιλ ", value: "clients" },
   { name: "Κρατηση", value: "booking" },
-  { name: "Υπηρεσίες", value: "services" },
+  { name: "Υπηρεσίες", value: "service" },
 ];
 export function setLocalTime(date: Date, time: string): Date {
   if (!time) return date;
