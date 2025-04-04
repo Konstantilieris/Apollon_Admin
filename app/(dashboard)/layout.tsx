@@ -4,7 +4,8 @@ import React from "react";
 import { AnimatedSidebar } from "@/components/navbar/Sidebar";
 
 import { ModalProvider } from "@/providers/modal-provider";
-import { FloatingSearchPortal } from "@/components/shared/searchBar/FloatingSearchPortal";
+
+import { FloatingSearch } from "@/components/shared/searchBar/GlobalSearchReveal";
 
 export default async function Layout({
   children,
@@ -13,14 +14,12 @@ export default async function Layout({
 }) {
   return (
     <main className="  relative flex h-full w-full  overflow-x-hidden font-sans">
-      <FloatingSearchPortal />
-
+      <FloatingSearch />,
       <AnimatedSidebar>
         <ModalProvider />
 
         {children}
       </AnimatedSidebar>
-
       <Toaster />
     </main>
   );

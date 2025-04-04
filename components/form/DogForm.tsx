@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "../ui/use-toast";
 import { usePathname } from "next/navigation";
 import { Button } from "@heroui/react";
-const DogForm = ({ number, setStage, client, setSuccessId }: any) => {
+const DogForm = ({ number, onBack, client, setSuccessId, setStage }: any) => {
   const [isCreating, setIsCreating] = React.useState(false);
   const { toast } = useToast();
 
@@ -82,7 +82,7 @@ const DogForm = ({ number, setStage, client, setSuccessId }: any) => {
           {renderDogFields()}
           <div className="mb-20 mt-12 flex h-full w-full flex-row items-center justify-center gap-8 self-end">
             <Button
-              onPress={() => setStage(0)}
+              onPress={onBack}
               color="danger"
               variant="ghost"
               className="tracking-widest"

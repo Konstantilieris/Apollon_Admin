@@ -75,8 +75,9 @@ export default function CreateProfileMulti() {
           <DogForm
             client={data}
             number={data?.numberOfDogs ? parseInt(data?.numberOfDogs) : 1}
-            setStage={setPage}
+            onBack={onBack}
             setSuccessId={setSuccessId}
+            setStage={setPage}
           />
         );
         break;
