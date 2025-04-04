@@ -99,7 +99,7 @@ const BookingTable = ({ bookings }: { bookings: any }) => {
             </TableCell>
             <TableCell className="truncate p-4 text-center text-base font-normal uppercase">
               <Link
-                href={`/clients/${booking?.client?.clientId}`}
+                href={`/client/${booking?.client?.clientId}`}
                 className="hover:underline"
               >
                 {booking?.client?.clientName}

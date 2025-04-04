@@ -18,6 +18,7 @@ import CommandMenuProvider from "../shared/CommandMenu/CommandMenuProvider";
 import { CommandMenuType } from "@/hooks/command-menu-store";
 
 const DogField = ({ form, index, breeds, behaviors, foods }: any) => {
+  console.log("form errors", form.formState.errors);
   const namePrefix = `dogs[${index}]`;
   return (
     <section className="flex h-full w-full flex-col items-start  space-y-4 py-2">

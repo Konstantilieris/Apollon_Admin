@@ -150,11 +150,12 @@ export const DogValidation = z.object({
         }),
       gender: z.string(),
       birthdate: z
-        .date({
-          required_error: "Διάλεξε ημερομηνία",
-          invalid_type_error: "Δεν ειναι σωστή η ημερομηνία!",
-        })
-        .optional(),
+        .string()
+        .optional()
+        .refine(
+          (val) => !val || !isNaN(Date.parse(val)),
+          "Δεν ειναι σωστή η ημερομηνία!"
+        ),
       food: z.string().optional(),
       breed: z.string().optional(),
       behavior: z.string().optional(),

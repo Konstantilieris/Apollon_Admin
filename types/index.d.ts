@@ -330,3 +330,54 @@ export interface IService {
   taxAmount?: number;
   totalAmount?: number;
 }
+export interface Client {
+  _id: string;
+  name: string;
+  email?: string;
+}
+
+export interface ServiceAllocation {
+  serviceId: string;
+  amount: number;
+}
+
+export interface Payment {
+  _id: string;
+  clientId: string;
+  amount: number;
+  date: string;
+  notes?: string;
+  reversed?: boolean;
+  allocations?: ServiceAllocation[];
+}
+
+export interface ViewPayment {
+  id: string;
+  amount: number;
+  date: string;
+  notes?: string;
+}
+
+export interface ViewBooking {
+  id: string;
+  fromDate: string;
+  toDate: string;
+  location: string;
+  summary: string;
+}
+
+export interface ViewService {
+  id: string;
+  serviceType: string;
+  amount: number;
+  discount?: number;
+  totalAmount: number;
+  paidAmount?: number;
+  remainingAmount?: number;
+  paid: boolean;
+  paymentDate?: string;
+  bookingId?: string;
+  payments: string[]; // assuming it's an array of payment IDs
+  createdAt: string;
+  updatedAt: string;
+}

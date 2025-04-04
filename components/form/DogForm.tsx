@@ -23,7 +23,7 @@ const DogForm = ({ number, onBack, client, setSuccessId, setStage }: any) => {
       dogs: Array.from({ length: number }, () => ({
         name: "",
         gender: "Αρσενικό",
-        birthdate: new Date(),
+        birthdate: new Date().toISOString(),
         food: "",
         breed: "",
         behavior: "",
@@ -46,6 +46,7 @@ const DogForm = ({ number, onBack, client, setSuccessId, setStage }: any) => {
   ) => {
     event?.preventDefault();
     setIsCreating(true);
+
     try {
       const newClient = await CreateClient({
         clientData: { ...client },

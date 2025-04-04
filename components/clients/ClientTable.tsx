@@ -24,7 +24,7 @@ import {
   AutocompleteItem,
 } from "@heroui/react";
 import { ILocation } from "@/database/models/client.model";
-import { useRouter } from "next/navigation";
+
 import Link from "next/link";
 
 export interface Client {
@@ -158,7 +158,7 @@ const ClientTable = ({
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const router = useRouter();
+
   const [debtTotal, setDebtTotal] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [filterValue, setFilterValue] = React.useState("");

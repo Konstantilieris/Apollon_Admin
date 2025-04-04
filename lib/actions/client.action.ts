@@ -3,7 +3,7 @@
 
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../mongoose";
-import Client, { IClient, IDog } from "@/database/models/client.model";
+import Client, { IClient } from "@/database/models/client.model";
 
 import { sanitizeQuery } from "../utils";
 import mongoose, { Schema } from "mongoose";
@@ -35,7 +35,7 @@ interface CreateClientProps {
     isTraining: boolean;
     reference: any;
   };
-  dogs: IDog[];
+  dogs: any[];
   path: string;
 }
 export async function getDogsForClient(clientId: string) {

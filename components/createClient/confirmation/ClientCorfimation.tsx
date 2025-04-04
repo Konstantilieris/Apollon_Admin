@@ -36,7 +36,7 @@ export default function ClientConfirmation({ id }: ClientConfirmationProps) {
 
   return (
     <Skeleton isLoaded={!loading}>
-      <Card className="w-full bg-default-50">
+      <Card className="h-full w-full bg-default-50">
         <CardBody className="flex flex-col items-center gap-5 py-8">
           <div className="flex w-full flex-col items-center px-8">
             <Icon
@@ -143,7 +143,7 @@ export default function ClientConfirmation({ id }: ClientConfirmationProps) {
             <div className="flex items-center gap-2">
               <Button
                 as={Link}
-                href={`/clients/${id}`}
+                href={`/client/${id}`}
                 variant="flat"
                 color="primary"
                 size="sm"
