@@ -150,6 +150,7 @@ export interface ClientProfileProps {
   points?: number;
 }
 export interface Booking {
+  _id: string;
   client: {
     clientId: string;
     clientName: string;
