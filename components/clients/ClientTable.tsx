@@ -158,7 +158,9 @@ const ClientTable = ({
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-
+  const [loadingClientId, setLoadingClientId] = React.useState<string | null>(
+    null
+  );
   const [debtTotal, setDebtTotal] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [filterValue, setFilterValue] = React.useState("");
@@ -269,80 +271,122 @@ const ClientTable = ({
       );
     }
   }, [selectedKeys, clients, filteredItems]);
-  const renderCell = React.useCallback((user: Client, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof Client];
-    switch (columnKey) {
-      case "name":
-        return (
-          <Link
-            href={{
-              pathname: `/client/${user._id}`,
-              query: { tab: "Info" },
-            }}
-            passHref
-          >
-            <User
-              avatarProps={{
-                size: "sm",
-                radius: "full",
-                className:
-                  "transition-all duration-200 hover:scale-110 hover:ring-2 hover:ring-blue-500 cursor-pointer",
+  const renderCell = React.useCallback(
+    (user: Client, columnKey: React.Key) => {
+      const cellValue = user[columnKey as keyof Client];
+      const isLoadingRow = loadingClientId && user._id !== loadingClientId;
+      const isSelectedRow = user._id === loadingClientId;
+
+      switch (columnKey) {
+        case "name":
+          return (
+            <Link
+              href={{
+                pathname: `/client/${user._id}`,
+                query: { tab: "Info" },
               }}
-              className=" select-none text-lg"
-              description={
-                <span className="pointer-events-none text-sm text-gray-400">
-                  {user.email}
-                </span>
-              }
-              name={
-                <span className="pointer-events-none text-base">
-                  {user.name}
-                </span>
-              }
+              passHref
+              onClick={() => setLoadingClientId(user._id)}
             >
-              {user.email}
-            </User>
-          </Link>
-        );
-      case "dog":
-        return (
-          <div className="flex gap-2">
-            {user.dog.map((dog, index) => (
-              <Chip key={index} size="sm" className="text-sm">
-                {dog.name}
-              </Chip>
-            ))}
-          </div>
-        );
-      case "location": {
-        const location = `${user.location.address ?? ""} ${
-          user.location.city ?? ""
-        } ${user.location.postalCode ?? ""}`;
-        return <div className="flex gap-2">{location}</div>;
+              <User
+                avatarProps={{
+                  size: "sm",
+                  radius: "full",
+                  className: `transition-all duration-200 hover:scale-110 ${
+                    isSelectedRow ? "ring-2 ring-green-500" : ""
+                  }`,
+                }}
+                className={`select-none text-lg ${
+                  isSelectedRow ? "font-bold text-success" : ""
+                }`}
+                description={
+                  <span className="pointer-events-none text-sm text-gray-400">
+                    {user.email}
+                  </span>
+                }
+                name={
+                  isLoadingRow ? (
+                    <span className="h-4 w-24 animate-pulse rounded bg-default-200" />
+                  ) : (
+                    <span className="pointer-events-none text-base">
+                      {user.name}
+                    </span>
+                  )
+                }
+              />
+            </Link>
+          );
+
+        case "dog":
+          return isLoadingRow ? (
+            <div className="flex gap-2">
+              <span className="h-6 w-12 animate-pulse rounded bg-default-200" />
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              {user.dog.map((dog, index) => (
+                <Chip
+                  key={index}
+                  size="sm"
+                  className={`text-sm ${isSelectedRow ? "bg-success-100" : ""}`}
+                >
+                  {dog.name}
+                </Chip>
+              ))}
+            </div>
+          );
+
+        case "location": {
+          const location = `${user.location.address ?? ""} ${
+            user.location.city ?? ""
+          } ${user.location.postalCode ?? ""}`;
+          return isLoadingRow ? (
+            <span className="h-4 w-40 animate-pulse rounded bg-default-200" />
+          ) : (
+            <div className="flex gap-2">{location}</div>
+          );
+        }
+
+        case "profession":
+          return isLoadingRow ? (
+            <span className="h-4 w-28 animate-pulse rounded bg-default-200" />
+          ) : (
+            <div className="text-sm">{user.profession}</div>
+          );
+
+        case "phone":
+          return isLoadingRow ? (
+            <span className="h-4 w-32 animate-pulse rounded bg-default-200" />
+          ) : (
+            <div className="flex gap-2">
+              <span className="text-sm">{user.phone.telephone}</span>
+              <span className="text-sm">{user.phone.mobile}</span>
+            </div>
+          );
+
+        case "actions":
+          return isLoadingRow ? (
+            <span className="h-4 w-6 animate-pulse rounded bg-default-200" />
+          ) : (
+            <div className="relative flex items-center gap-2">
+              <Tooltip content="Details">
+                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                  -
+                </span>
+              </Tooltip>
+            </div>
+          );
+
+        default:
+          return isLoadingRow ? (
+            <span className="h-4 w-12 animate-pulse rounded bg-default-200" />
+          ) : (
+            <>{cellValue}</>
+          );
       }
-      case "profession":
-        return <div className="text-sm">{user.profession}</div>;
-      case "phone":
-        return (
-          <div className="flex gap-2">
-            <span className="text-sm">{user.phone.telephone}</span>
-            <span className="text-sm">{user.phone.mobile}</span>
-          </div>
-        );
-      case "actions":
-        return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                -
-              </span>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return <>{cellValue}</>;
-    }
-  }, []);
+    },
+    [loadingClientId]
+  );
 
   const topContent = React.useMemo(() => {
     return (
@@ -485,7 +529,7 @@ const ClientTable = ({
       }}
       selectedKeys={selectedKeys}
       selectionMode="multiple"
-      color="secondary"
+      color={loadingClientId ? "success" : "secondary"}
       sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement="outside"

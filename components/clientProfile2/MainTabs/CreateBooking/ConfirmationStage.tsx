@@ -22,7 +22,12 @@ import { useBookingStore } from "@/hooks/booking-store";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 
-export default function ConfirmationStage({ client, onBack, onNext }: any) {
+export default function ConfirmationStage({
+  client,
+  onBack,
+  onNext,
+  onReset,
+}: any) {
   const {
     dateArrival,
     dateDeparture,
@@ -148,7 +153,7 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
       toast({
         title: "Επιτυχία",
         description: "Η κράτηση ολοκληρώθηκε επιτυχώς.",
-        color: "success",
+        className: "bg-green-500",
       });
     } catch (error) {
       console.error(error);
@@ -160,8 +165,9 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
       });
     } finally {
       onNext();
-      router.refresh();
       resetStore();
+      onReset();
+      router.refresh();
     }
   };
   return (

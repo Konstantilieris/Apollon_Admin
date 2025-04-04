@@ -55,6 +55,9 @@ export default function CreateBookingMulti({ client }: { client: any }) {
   const onNext = React.useCallback(() => {
     paginate(1);
   }, [paginate]);
+  const onReset = React.useCallback(() => {
+    setPage([0, 0]);
+  }, []);
 
   const content = React.useMemo(() => {
     let component = null;
@@ -75,7 +78,12 @@ export default function CreateBookingMulti({ client }: { client: any }) {
         break;
       case 2:
         component = (
-          <ConfirmationStage client={client} onBack={onBack} onNext={onNext} />
+          <ConfirmationStage
+            client={client}
+            onBack={onBack}
+            onNext={onNext}
+            onReset={onReset}
+          />
         );
         break;
       default:

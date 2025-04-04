@@ -54,14 +54,10 @@ function getIconClass(isActive: boolean) {
 // 2) Define the component as a regular function
 export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const path = usePathname();
-  const [open, setOpen] = useState(false);
 
+  const [open, setOpen] = useState(false);
+  const path = usePathname(); // Get the current path
   // Memoize a "base path" to use as the key for AnimatePresence
-  const basePath = useMemo(() => {
-    // Adjust this slice as needed based on your routing structure.
-    return path.split("/").slice(0, 3).join("/");
-  }, [path]);
 
   // Memoize the navigation links so they don't re-render unnecessarily.
   const navLinks = useMemo(() => {
@@ -132,7 +128,7 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
       {/* Animated content area */}
       <AnimatePresence mode="popLayout">
         <motion.div
-          key={basePath}
+          key={path}
           className={cn(
             "flex-1 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700",
             "bg-white dark:bg-neutral-900 flex flex-col gap-2 h-full ml-12 w-full"

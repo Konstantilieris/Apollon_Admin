@@ -1,10 +1,10 @@
 import ClientTable from "@/components/clients/ClientTable";
 
-import LoadingSkeleton from "@/components/shared/skeletons/LoadingSkeleton";
 import { getClients } from "@/lib/actions/client.action";
 import { getConstant } from "@/lib/actions/constant.action";
+import { Skeleton } from "@heroui/react";
 
-import React, { Suspense } from "react";
+import React from "react";
 
 const Clients = async () => {
   const [clients, professions] = await Promise.all([
@@ -22,19 +22,13 @@ const Clients = async () => {
               ΔΙΑΧΕΙΡΙΣΗ
               <span className="text-yellow-500">&nbsp;ΠΕΛΑΤΩΝ</span>
             </h1>
-          </div>
-
-          <div className="mb-32">
-            <Suspense
-              fallback={<LoadingSkeleton size={20} animation="animate-spin" />}
-            >
-              {" "}
-              <ClientTable
-                clients={JSON.parse(clients)}
-                professions={professions.value}
-              />
-            </Suspense>
-          </div>
+          </div>{" "}
+          <Skeleton isLoaded={!!clients}>
+            <ClientTable
+              clients={JSON.parse(clients)}
+              professions={professions.value}
+            />
+          </Skeleton>
         </header>
       </div>
     </section>
