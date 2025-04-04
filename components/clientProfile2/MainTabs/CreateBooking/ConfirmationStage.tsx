@@ -70,8 +70,10 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
     const clientObject = {
       clientId: client._id,
       clientName: client.name,
-      phone: client.phone.mobile,
-      location: client.location.address,
+      phone: client?.phone?.mobile ?? "Δεν έχει οριστεί",
+      location: !client?.location?.address
+        ? "Δεν έχει οριστεί"
+        : client.location.address,
       transportFee,
       bookingFee: selectedBookingFee?.value || 0,
     };
@@ -114,7 +116,7 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
                 size="lg"
                 className="cursor-pointer"
               >
-                {serviceFee.value ? `€${serviceFee.value}` : "Μη ανατεθειμένο"}
+                {serviceFee?.value ? `€${serviceFee.value}` : "Μη ανατεθειμένο"}
               </Chip>
             </Badge>
           );
@@ -128,6 +130,7 @@ export default function ConfirmationStage({ client, onBack, onNext }: any) {
       fromDate: dateArrival ?? new Date(),
       toDate: dateDeparture ?? new Date(),
       dailyPrice: selectedBookingFee.value ?? clientBoardingFees[0]?.value,
+      extraDay,
     });
     setTotalBookingFee(totalPrice);
   }, [selectedBookingFee]);

@@ -86,7 +86,7 @@ export async function createBooking({
       const bookingId = new mongoose.Types.ObjectId();
       const servicesToAdd = [];
       // Calculate total amount
-      let totalAmount = extraDayPrice + boardingPrice;
+      let totalAmount = boardingPrice;
 
       // Create boarding service
       console.log("Creating boarding service...");
@@ -152,6 +152,7 @@ export async function createBooking({
 
       // Step 2: Create the booking
       console.log("Creating booking...");
+      console.log("CLIENT", client);
       const booking = await Booking.create(
         [
           {
@@ -184,7 +185,7 @@ export async function createBooking({
       if (!updatedClient) throw new Error("Client update failed");
 
       // Step 4: Create appointments
-      const location = `${updatedClient.location.city ?? ""}-${
+      const location = `${updatedClient?.location.city ?? ""}-${
         updatedClient.location.residence ?? ""
       }-${updatedClient.location.address ?? ""}-${
         updatedClient.location.postalCode ?? ""
