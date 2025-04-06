@@ -110,7 +110,7 @@ const staticColumns: ColumnDef<Service>[] = [
   },
   {
     id: "Όνομα Πελάτη",
-    accessorFn: (row) => row.clientId.name,
+    accessorFn: (row) => row?.clientId?.name,
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -121,7 +121,9 @@ const staticColumns: ColumnDef<Service>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      return <div className="uppercase">{row.original.clientId.name}</div>;
+      return (
+        <div className="uppercase">{row?.original?.clientId?.name ?? ""}</div>
+      );
     },
   },
   {
@@ -253,7 +255,7 @@ export function ServicesTable({ services }: { services: Service[] }) {
     (acc, row) => acc + row.original.remainingAmount,
     0
   );
-
+  console.log("SERVICES", selectedRows);
   return (
     <>
       {isOpen && <ServiceModalProvider />}

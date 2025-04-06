@@ -79,6 +79,16 @@ const DogList = ({ clientId, dogs }: { clientId: string; dogs: Dog[] }) => {
                 size="sm"
                 variant="flat"
                 onPress={() => {
+                  openModal("dogNotes", { clientId, dog });
+                }}
+              >
+                <Icon icon="lucide:clipboard" className="h-4 w-4" />
+              </Button>
+              <Button
+                isIconOnly
+                size="sm"
+                variant="flat"
+                onPress={() => {
                   openModal("editDog", { clientId, dog });
                 }}
               >
@@ -89,7 +99,9 @@ const DogList = ({ clientId, dogs }: { clientId: string; dogs: Dog[] }) => {
                 size="sm"
                 color="danger"
                 variant="flat"
-                onPress={() => {}}
+                onPress={() => {
+                  openModal("deleteDog", { clientId, dog });
+                }}
               >
                 <Icon icon="lucide:trash" className="h-4 w-4" />
               </Button>

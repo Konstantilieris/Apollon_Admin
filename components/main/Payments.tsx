@@ -285,7 +285,7 @@ export const columns: ColumnDef<Payment>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-lg transition-colors duration-300 hover:text-indigo-500">
-              <Link href={`/clients/${payment.clientId._id}`}>
+              <Link href={`/client/${payment.clientId._id}`}>
                 Πήγαινε στον Πελάτη
               </Link>
             </DropdownMenuItem>

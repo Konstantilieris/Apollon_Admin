@@ -367,11 +367,11 @@ export default function ServicesList({ client }: ServicesListProps) {
                   <TableCell>{renderServiceTypeChip(service)}</TableCell>
                   <TableCell className="pl-12 font-medium">
                     {service.serviceType === "ΔΙΑΜΟΝΗ" ? (
-                      <div className="flex flex-row ">
+                      <div className="flex flex-row items-center gap-2 ">
                         {" "}
                         {getDurationDays(service.date, service.endDate)}
                         {service.bookingId.extraDay ? (
-                          <span className="text-green-900">+1</span>
+                          <span className="text-green-400 ">+ 1</span>
                         ) : (
                           ""
                         )}
@@ -416,9 +416,14 @@ export default function ServicesList({ client }: ServicesListProps) {
                             title:
                               "flex flex-row items-center text-lg font-sans tracking-wide",
                           }}
+                          onPress={() => {
+                            openModal("serviceView", {
+                              serviceId: service._id,
+                            });
+                          }}
                         >
                           <Icon icon="lucide:eye" className="mr-2 h-8 w-8" />
-                          View Service
+                          Προβολή Λεπτομερειών
                         </DropdownItem>
                         <DropdownItem
                           key={"edit"}

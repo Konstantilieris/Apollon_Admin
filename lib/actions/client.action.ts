@@ -6,7 +6,7 @@ import { connectToDatabase } from "../mongoose";
 import Client, { IClient } from "@/database/models/client.model";
 
 import { sanitizeQuery } from "../utils";
-import mongoose, { Schema } from "mongoose";
+import mongoose, { ObjectId, Schema } from "mongoose";
 import Booking, { IBooking } from "@/database/models/booking.model";
 import { DateRange } from "react-day-picker";
 import moment from "moment";
@@ -568,12 +568,10 @@ export async function updateClientDogNote({
   clientId,
   dogId,
   note,
-  path,
 }: {
-  clientId: string;
+  clientId: string | ObjectId;
   dogId: string;
   note: string;
-  path: string;
 }) {
   try {
     connectToDatabase();
@@ -585,7 +583,7 @@ export async function updateClientDogNote({
     if (!client) {
       throw new Error("Client not found");
     }
-    revalidatePath(path);
+
     return JSON.stringify(client);
   } catch (error) {
     console.error("Error updating dog note:", error);
@@ -645,11 +643,9 @@ export async function updateClient({
 export async function updateClientNote({
   clientId,
   note,
-  path,
 }: {
-  clientId: string;
+  clientId: ObjectId | string;
   note: string;
-  path: string;
 }) {
   try {
     connectToDatabase();
@@ -661,7 +657,7 @@ export async function updateClientNote({
     if (!client) {
       throw new Error("Client not found");
     }
-    revalidatePath(path);
+
     return JSON.stringify(client);
   } catch (error) {
     console.error("Error updating client note:", error);
@@ -1413,6 +1409,29 @@ export async function updateClientServiceFeeBoarding({
     return true;
   } catch (error) {
     console.error("Error in updateClientServiceFeeBoarding:", error);
+    throw error;
+  }
+}
+export async function deleteClientsDog({
+  clientId,
+  dogId,
+}: {
+  clientId: string;
+  dogId: string;
+}) {
+  try {
+    connectToDatabase();
+    const client = await Client.findByIdAndUpdate(
+      clientId,
+      { $pull: { dog: { _id: dogId } } },
+      { new: true }
+    );
+    if (!client) {
+      throw new Error("Client not found");
+    }
+    return JSON.stringify(client);
+  } catch (error) {
+    console.error("Error deleting dog:", error);
     throw error;
   }
 }

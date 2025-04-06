@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardHeader, CardBody, Avatar, Badge, Chip } from "@heroui/react";
 import { getClientByIdForProfile } from "@/lib/actions/client.action";
 import { IClient } from "@/database/models/client.model";
-import ModalClientProvider from "@/components/clientProfile2/ModalContent/service/EditService/Modal/ModalClientProvider";
+import ModalClientProvider from "@/components/clientProfile2/ModalContent/ModalClientProvider";
 import TagManager from "@/components/clientProfile2/Tags/TagManager";
 type Client = IClient;
 export default async function Layout({

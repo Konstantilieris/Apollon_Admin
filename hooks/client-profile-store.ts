@@ -14,6 +14,10 @@ type ModalType =
   | "discountService"
   | "deleteServices"
   | "editService"
+  | "dogNotes"
+  | "clientNotes"
+  | "deleteDog"
+  | "serviceView"
   | null;
 
 interface ModalState {

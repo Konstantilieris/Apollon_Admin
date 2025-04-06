@@ -393,6 +393,14 @@ const ClientInfo = ({ client }: any) => {
               <div className="mt-2 rounded-lg bg-default-100 p-4 text-default-700">
                 {client?.notes}
               </div>
+              <Button
+                variant="bordered"
+                color="secondary"
+                className="ml-auto mt-4 tracking-widest"
+                onPress={() => openModal("clientNotes", { client })}
+              >
+                ΕΠΕΞΕΡΓΑΣΙΑ ΣΗΜΕΙΩΣΗΣ
+              </Button>
             </CardBody>
           </Card>
         </div>

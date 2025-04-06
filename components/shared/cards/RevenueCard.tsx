@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import React from "react";
 import { RevenueCardChart } from "./RevenueCardChart";
+import { formatCurrency } from "@/lib/utils";
 
 const RevenueCard = ({ total, percentage, chartData }: any) => {
   return (
@@ -15,7 +16,7 @@ const RevenueCard = ({ total, percentage, chartData }: any) => {
         <CardTitle className="text-sm font-medium">ΕΣΟΔΑ</CardTitle>€
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{total ?? 0} €</div>
+        <div className="text-2xl font-bold">{formatCurrency(total) ?? 0} </div>
         <p className=" text-xs ">
           {parseFloat(percentage.toFixed(2)) ?? 0}% από τον προηγούμενο μήνα
         </p>

@@ -1453,3 +1453,36 @@ export async function updateService({
     throw new Error("Failed to update the service.");
   }
 }
+
+export async function getServiceView({ serviceId }: any) {
+  try {
+    await connectToDatabase();
+
+    // 1) Find the service
+    const service = await Service.findById(serviceId).populate("bookingId");
+    if (!service) {
+      throw new Error("Service not found.");
+    }
+
+    // 2) Find all payments that relate to this service
+    //    - Either by direct reference: payment.serviceId
+    //    - Or within allocations: payment.allocations[].serviceId
+    const payments = await Payment.find({
+      $or: [
+        { serviceId: service._id },
+        { "allocations.serviceId": service._id },
+      ],
+    })
+      // Populate the allocated service(s) to see exactly which portion went where
+      .populate("allocations.serviceId");
+
+    // 3) Convert results to plain JSON (for Next.js or any API response)
+    return {
+      service: JSON.stringify(service),
+      payments: JSON.stringify(payments),
+    };
+  } catch (error: any) {
+    console.error("Error fetching service view:", error.message);
+    throw new Error("Failed to fetch the service view.");
+  }
+}
