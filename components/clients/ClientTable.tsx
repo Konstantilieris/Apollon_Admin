@@ -161,6 +161,7 @@ const ClientTable = ({
   const [loadingClientId, setLoadingClientId] = React.useState<string | null>(
     null
   );
+
   const [debtTotal, setDebtTotal] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [filterValue, setFilterValue] = React.useState("");
@@ -276,6 +277,7 @@ const ClientTable = ({
       const cellValue = user[columnKey as keyof Client];
       const isLoadingRow = loadingClientId && user._id !== loadingClientId;
       const isSelectedRow = user._id === loadingClientId;
+      console.log("SELECTED", isSelectedRow, user._id, loadingClientId);
 
       switch (columnKey) {
         case "name":
@@ -286,7 +288,9 @@ const ClientTable = ({
                 query: { tab: "Info" },
               }}
               passHref
-              onClick={() => setLoadingClientId(user._id)}
+              onClick={() => {
+                setLoadingClientId(user._id);
+              }}
             >
               <User
                 avatarProps={{

@@ -88,8 +88,9 @@ export default function DogNoteForm() {
         className="max-w-6xl uppercase tracking-widest"
         size="lg"
         isDisabled={isLoading || isInvalid}
+        isLoading={isLoading}
       >
-        {isLoading ? "Φορτωνει" : "Αποθηκευση"}
+        Αποθηκευση
       </Button>
     </div>
   );

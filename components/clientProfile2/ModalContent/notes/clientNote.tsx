@@ -9,8 +9,8 @@ import { useToast } from "@/components/ui/use-toast";
 
 export default function ClientNoteForm() {
   const { modalData, closeModal } = useModalStore();
-  const client = modalData.client as IClient;
-  const [note, setNote] = React.useState(client.notes || "");
+  const client = modalData?.client as IClient;
+  const [note, setNote] = React.useState(client?.notes || "");
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
   const [isInvalid, setIsInvalid] = React.useState(false);
@@ -24,7 +24,7 @@ export default function ClientNoteForm() {
     setIsLoading(true);
     if (!client._id) return;
     try {
-      const res = await updateClientNote({ clientId: client._id, note });
+      const res = await updateClientNote({ clientId: client?._id, note });
       const updatedClient = JSON.parse(res);
       if (updatedClient) {
         router.refresh();
@@ -49,9 +49,10 @@ export default function ClientNoteForm() {
       closeModal();
     }
   };
+  if (!client) return null;
 
   return (
-    <div className="flex h-full w-full max-w-md flex-col items-center justify-center space-y-4">
+    <div className="flex h-full w-full  flex-col items-center justify-center space-y-8">
       <h1 className="text-center text-2xl font-bold">
         Σημείωση πελάτη {client?.name}
       </h1>
@@ -59,6 +60,12 @@ export default function ClientNoteForm() {
         label="Σημείωση πελάτη"
         placeholder="Enter note content..."
         value={note}
+        className="max-w-6xl"
+        classNames={{
+          label: "text-lg font-semibold",
+          description: "text-lg text-gray-500",
+          errorMessage: "text-lg animate-pulse",
+        }}
         onValueChange={(value) => {
           setNote(value);
           setIsInvalid(false);
@@ -73,9 +80,10 @@ export default function ClientNoteForm() {
         color="success"
         variant="bordered"
         onPress={handleSubmit}
-        className="w-full"
+        className="max-w-6xl uppercase tracking-widest"
+        isLoading={isLoading}
       >
-        {isLoading ? "Φορτώνει" : "Αποθήκευση"}
+        ΑΠΟΘΗΚΕΥΣΗ
       </Button>
     </div>
   );
