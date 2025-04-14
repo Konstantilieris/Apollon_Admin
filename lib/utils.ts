@@ -697,3 +697,39 @@ export const formatCurrency = (amount: number): string => {
     currency: "EUR",
   }).format(amount);
 };
+export const handleDateFilter = (
+  key: string,
+  setRangeDate: (range: { from?: Date; to?: Date }) => void
+) => {
+  const today = moment();
+
+  switch (key) {
+    case "today":
+      setRangeDate({
+        from: today.startOf("day").toDate(),
+        to: today.endOf("day").toDate(),
+      });
+      break;
+
+    case "week":
+      setRangeDate({
+        from: today.clone().startOf("week").toDate(),
+        to: today.clone().endOf("week").toDate(),
+      });
+      break;
+
+    case "month":
+      setRangeDate({
+        from: today.clone().startOf("month").toDate(),
+        to: today.clone().endOf("month").toDate(),
+      });
+      break;
+
+    case "all":
+      setRangeDate({ from: undefined, to: undefined });
+      break;
+
+    default:
+      break;
+  }
+};

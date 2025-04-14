@@ -458,76 +458,94 @@ export async function countBookingsByMonth({
 export async function getAllBookings({
   fromDate,
   toDate,
-
   page = 1,
   query,
-}: any) {
+  flag1,
+  flag2,
+}: {
+  fromDate?: Date;
+  toDate?: Date;
+  page?: number;
+  query?: string;
+  flag1?: boolean;
+  flag2?: boolean;
+}) {
   try {
     await connectToDatabase();
-    const limit = 10;
+    const limit = 15;
     const skip = (page - 1) * limit;
-    const dateOptions: any = {};
+
+    const today = new Date();
+
+    const matchStage: any = {
+      toDate: { $gte: today }, // 👈 only future or current bookings
+    };
 
     if (fromDate) {
-      dateOptions.fromDate = { $gte: new Date(fromDate) };
-    }
-    if (toDate) {
-      dateOptions.toDate = { $lte: new Date(toDate) };
+      matchStage.fromDate = { $gte: new Date(fromDate) };
     }
 
-    const queryOptions: any = {};
+    if (toDate) {
+      matchStage.toDate = {
+        ...(matchStage.toDate || {}),
+        $lte: new Date(toDate),
+      };
+    }
 
     if (query) {
-      const sanitizeInput = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-      queryOptions.$or = [
-        { "client.clientName": { $regex: sanitizeInput, $options: "i" } },
-        { "client.phone": { $regex: sanitizeInput, $options: "i" } },
-        { "client.location": { $regex: sanitizeInput, $options: "i" } },
-        { "dogs.dogName": { $regex: sanitizeInput, $options: "i" } },
+      const safeQuery = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+      matchStage.$or = [
+        { "client.clientName": { $regex: safeQuery, $options: "i" } },
+        { "client.phone": { $regex: safeQuery, $options: "i" } },
+        { "client.location": { $regex: safeQuery, $options: "i" } },
+        { "dogs.dogName": { $regex: safeQuery, $options: "i" } },
       ];
     }
 
-    const pipeline: any = [
-      {
-        $match: { ...dateOptions, ...queryOptions },
-      },
+    if (flag1) matchStage.flag1 = true;
+    if (flag2) matchStage.flag2 = true;
+
+    const pipeline: any[] = [
+      { $match: matchStage },
       {
         $project: {
           _id: 1,
           fromDate: 1,
           toDate: 1,
           totalAmount: 1,
-          paidAmount: 1,
-          dogs: 1,
+          extraDay: 1,
+          dogs: "$dogs.dogName",
           flag1: 1,
           flag2: 1,
-          client: 1,
+          services: 1,
+          clientName: "$client.clientName",
+          clientPhone: "$client.phone",
+          clientLocation: "$client.location",
+          transportFee: "$client.transportFee",
+          bookingFee: "$client.bookingFee",
         },
       },
-      {
-        $sort: { fromDate: 1, toDate: 1 },
-      },
+      { $sort: { fromDate: 1, toDate: 1 } },
       {
         $facet: {
           data: [{ $skip: skip }, { $limit: limit }],
-          total: [{ $count: "total" }],
-          totalSum: [
-            { $group: { _id: null, total: { $sum: "$totalAmount" } } },
-          ],
+          totalCount: [{ $count: "count" }],
         },
       },
     ];
 
-    const bookings = await Booking.aggregate(pipeline);
-    const total = bookings[0].total[0]?.total || 0;
-    const isNext = total > page * limit;
-    return [
-      JSON.parse(JSON.stringify(bookings[0].data)),
-      isNext,
-      bookings[0].totalSum[0]?.total || 0,
-    ];
+    const result = await Booking.aggregate(pipeline);
+
+    const bookings = result[0].data;
+    const totalCount = result[0].totalCount[0]?.count || 0;
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+      bookings: JSON.parse(JSON.stringify(bookings)),
+      totalPages,
+    };
   } catch (error) {
-    console.error("Failed to retrieve bookings:", error);
+    console.error("Error in getAllBookings:", error);
     throw error;
   }
 }

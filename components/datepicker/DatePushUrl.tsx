@@ -1,82 +1,64 @@
 "use client";
-import {
-  dateToInt,
-  formCombinedParams,
-  intToDate,
-  removeKeysFromQuery,
-} from "@/lib/utils";
-import { addDays } from "date-fns";
-import React, { useEffect, useState } from "react";
-import { DateRange } from "react-day-picker";
-import { DatePickerWithRange } from "./DateRangePicker";
 
-import { useRouter, useSearchParams } from "next/navigation";
-interface DatePushProps {
-  nodate?: boolean;
+import React from "react";
+import { DateRangePicker, RangeValue } from "@heroui/react";
+import { parseDate, getLocalTimeZone } from "@internationalized/date";
+import { I18nProvider } from "@react-aria/i18n";
+import type { DateValue } from "@react-types/datepicker";
+
+import { useUrlDateRange } from "@/hooks/useUrlDateRange";
+
+export default function DatePushUrl({
+  disabled = false,
+}: {
   disabled?: boolean;
-}
-const DatePushUrl = ({ nodate, disabled }: DatePushProps) => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+}) {
+  const { rangeDate, setRangeDate } = useUrlDateRange();
 
-  const [rangeDate, setRangeDate] = useState<DateRange>({
-    from: searchParams.get("fr")
-      ? intToDate(+searchParams.get("fr")!)
-      : nodate
-        ? undefined
-        : new Date(),
-    to: searchParams.get("to")
-      ? intToDate(+searchParams.get("to")!)
-      : nodate
-        ? undefined
-        : addDays(new Date(), 1),
-  });
+  const toHeroDate = (date?: Date): DateValue | undefined =>
+    date ? parseDate(date.toISOString().slice(0, 10)) : undefined;
 
-  useEffect(() => {
-    const debounceUrl = setTimeout(() => {
-      const dateFrom = dateToInt(rangeDate?.from);
-      const dateTo = dateToInt(rangeDate?.to);
-      if (!rangeDate?.from && !rangeDate?.to) {
-        const newUrl = removeKeysFromQuery({
-          params: searchParams.toString(),
-          keysToRemove: ["fr", "to"],
-        });
-        router.push(newUrl, { scroll: false });
-        return;
-      } else if (!rangeDate?.from) {
-        const newUrl = removeKeysFromQuery({
-          params: searchParams.toString(),
-          keysToRemove: ["fr"],
-        });
-        router.push(newUrl, { scroll: false });
-        return;
-      } else if (!rangeDate?.to) {
-        const newUrl = removeKeysFromQuery({
-          params: searchParams.toString(),
-          keysToRemove: ["to"],
-        });
-        router.push(newUrl, { scroll: false });
-        return;
-      }
+  const fromHeroDate = (val?: DateValue): Date | undefined =>
+    val ? val.toDate(getLocalTimeZone()) : undefined;
 
-      const combinedUrl = formCombinedParams(searchParams.toString(), {
-        fr: dateFrom.toString(),
-        to: dateTo.toString(),
-      });
-      router.push(combinedUrl, { scroll: false });
-    }, 1000);
-    return () => clearTimeout(debounceUrl);
-  }, [rangeDate]);
+  const datePickerValue: RangeValue<DateValue> | null =
+    rangeDate.from && rangeDate.to
+      ? {
+          start: toHeroDate(rangeDate.from)!,
+          end: toHeroDate(rangeDate.to)!,
+        }
+      : null; // 👈 default to null if no range set
 
   return (
-    <div className="flex flex-row items-center gap-4">
-      <DatePickerWithRange
-        rangeDate={rangeDate}
-        setRangeDate={setRangeDate}
-        disabled={disabled}
-      />
+    <div className="flex flex-col gap-2">
+      <I18nProvider locale="el-GR">
+        <DateRangePicker
+          label="Εύρος Ημερομηνιών"
+          color="secondary"
+          variant="bordered"
+          value={datePickerValue}
+          onChange={(val: RangeValue<DateValue> | null) => {
+            setRangeDate({
+              from: fromHeroDate(val?.start),
+              to: fromHeroDate(val?.end),
+            });
+          }}
+          isDisabled={disabled}
+          classNames={{
+            calendar: "rounded-lg font-sans text-base",
+            label: "font-sans text-base",
+            input: "font-sans text-light-900",
+            inputWrapper: "font-sans text-lg ",
+            calendarContent: "font-sans text-base",
+            selectorButton: "font-sans  text-light-900",
+            selectorIcon: "font-sans text-light-900",
+            segment: "font-sans text-gray-400",
+            base: "font-sans text-light-900",
+            popoverContent: "font-sans text-light-900 text-base",
+            separator: "font-sans text-light-900",
+          }}
+        />
+      </I18nProvider>
     </div>
   );
-};
-
-export default DatePushUrl;
+}

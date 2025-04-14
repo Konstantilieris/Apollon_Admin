@@ -18,6 +18,8 @@ type ModalType =
   | "clientNotes"
   | "deleteDog"
   | "serviceView"
+  | "editBooking"
+  | "deleteBookings"
   | null;
 
 interface ModalState {
