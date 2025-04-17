@@ -301,7 +301,7 @@ export default function PaymentList({ client }: { client: any }) {
                   content: "px-2",
                 }}
               >
-                €{allocation.amount.toFixed(0)}
+                €{allocation.amount.toFixed(2)}
               </Chip>
             ))}
             {allocations.length > 3 && (
