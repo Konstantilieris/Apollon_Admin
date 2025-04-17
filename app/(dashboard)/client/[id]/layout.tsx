@@ -4,6 +4,7 @@ import { getClientByIdForProfile } from "@/lib/actions/client.action";
 import { IClient } from "@/database/models/client.model";
 import ModalClientProvider from "@/components/clientProfile2/ModalContent/ModalClientProvider";
 import TagManager from "@/components/clientProfile2/Tags/TagManager";
+
 type Client = IClient;
 export default async function Layout({
   children,

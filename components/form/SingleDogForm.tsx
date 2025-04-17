@@ -10,6 +10,7 @@ import { CommandMenuType } from "@/hooks/command-menu-store";
 import { TypesOfGender, TypesOfSterilized } from "@/constants";
 
 const SingleDogForm = ({ form }: any) => {
+  console.log("SingleDogForm", form.getValues());
   return (
     <section className="flex w-full flex-col items-center justify-center space-y-4">
       <FormField

@@ -41,9 +41,7 @@ const DogList = ({ clientId, dogs }: { clientId: string; dogs: Dog[] }) => {
               </span>
             </div>
             <p className="text-lg tracking-wide">Ράτσα: {dog.breed}</p>
-            <p className="text-lg tracking-wide">
-              Φύλο: {dog.gender === "male" ? "Αρσενικό" : "Θηλυκό"}
-            </p>
+            <p className="text-lg tracking-wide">Φύλο: {dog?.gender}</p>
             <p className="text-lg tracking-wide">
               Ηλικία:{" "}
               {new Date().getFullYear() - new Date(dog.birthdate).getFullYear()}{" "}

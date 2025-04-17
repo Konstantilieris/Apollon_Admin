@@ -18,7 +18,7 @@ import { el } from "date-fns/locale";
 const ClientInfo = ({ client }: any) => {
   const { openModal } = useModalStore();
   const aliveDogs = client.dog.filter((dog: any) => !dog.isDead);
-
+  console.log("aliveDogs", aliveDogs);
   return (
     <div className="flex max-h-[calc(100vh_-_360px)] w-full flex-row overflow-y-scroll rounded-xl bg-dark-100 px-2 py-1">
       <div className="flex  min-w-[30vw] flex-col">
