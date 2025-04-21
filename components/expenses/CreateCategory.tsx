@@ -90,11 +90,7 @@ export function CreateCategoryForm() {
     // TODO: Implement update API call here with the new name (editValue)
     const res = await updateCategory(category._id, { name: editValue });
     if (res.success) {
-      toast({
-        title: "Success",
-        description: "Category updated successfully.",
-        className: "bg-green-500 font-sans text-light-900",
-      });
+      toast.success("Category updated successfully.");
       refreshCategories();
     }
 
