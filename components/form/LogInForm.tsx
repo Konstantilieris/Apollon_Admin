@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { LogInValidation } from "@/lib/validation";
 import * as z from "zod";
 
@@ -15,7 +15,7 @@ import {
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+
 import Image from "next/image";
 import { MagicInput } from "../ui/magic-input";
 import { Label } from "../ui/magic-label";
