@@ -25,7 +25,7 @@ import {
 
 import { DatePicker } from "../datepicker/DatePicker";
 import { TimePicker } from "../shared/timepicker/TimePicker";
-import { cn, formatDate, formatDateUndefined, formatTime } from "@/lib/utils";
+import { formatDate, formatDateUndefined, formatTime } from "@/lib/utils";
 
 import {
   editTrainingArrival,
@@ -106,22 +106,12 @@ const EditTraining = ({ training }: any) => {
         timeArrival
       );
       if (updatedTraining) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: `το booking του πελάτη ${training.clientId.lastName} τροποποιήθηκε`,
-        });
+        toast.success(
+          `Η ώρα άφιξης για την κράτηση του πελάτη ${training.clientId.lastName} τροποποιήθηκε`
+        );
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία τροποποιήσης",
-        description: `${error}`,
-      });
+      toast.error(`${error}`);
     } finally {
       window.location.reload();
       setSubmitArrival(false);
@@ -166,22 +156,12 @@ const EditTraining = ({ training }: any) => {
     try {
       const updatedTraining = await editTrainingDate(training._id, date);
       if (updatedTraining) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: `το booking του πελάτη ${training.clientId.lastName} τροποποιήθηκε`,
-        });
+        toast.success(
+          `Η ημερομηνία για την εκπαίδευση του πελάτη ${training.clientId.lastName} τροποποιήθηκε`
+        );
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία τροποποιήσης",
-        description: `${error}`,
-      });
+      toast.error(`${error}`);
     } finally {
       window.location.reload();
       setSubmitEditDate(false);

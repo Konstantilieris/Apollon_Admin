@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/command";
 import { DatePicker } from "../datepicker/DatePicker";
 import { TimePicker } from "../shared/timepicker/TimePicker";
-import { cn, formatDate, formatDateUndefined, formatTime } from "@/lib/utils";
+import { formatDate, formatDateUndefined, formatTime } from "@/lib/utils";
 import {
   editTransportArrival,
   editTransportDate,
@@ -97,22 +97,12 @@ const EditTransport = ({ transport }: any) => {
     try {
       const updatedTransport = await editTransportDate(transport._id, date);
       if (updatedTransport) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: `το booking του πελάτη ${transport.clientId.lastName} τροποποιήθηκε`,
-        });
+        toast.success(
+          `Η ημερομηνία για την μεταφορά του ${transport.clientId.lastName} τροποποιήθηκε`
+        );
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία τροποποιήσης",
-        description: `${error}`,
-      });
+      toast.error(`Η τροποποίηση της ημερομηνίας απέτυχε. ${error}`);
     } finally {
       window.location.reload();
       setSubmitEditDate(false);
