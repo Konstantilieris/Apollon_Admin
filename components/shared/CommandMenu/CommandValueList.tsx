@@ -134,20 +134,10 @@ const CommandValueList = ({
           path: pathname, // Add the appropriate path value here
         });
         if (createVal) {
-          toast({
-            className:
-              "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-            title: "Επιτυχία",
-            description: "Η τιμή δημιουργήθηκε",
-          });
+          toast.success("Η τιμή δημιουργήθηκε επιτυχώς.");
         }
       } catch (error) {
-        toast({
-          className:
-            "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-          title: "Αποτυχία δημιουργίας",
-          description: `${error}`,
-        });
+        toast.error("Η δημιουργία της τιμής απέτυχε.");
         // revert optimistic update
         const newValues = values.filter((val) => val !== inputValue);
         setValues(newValues);
