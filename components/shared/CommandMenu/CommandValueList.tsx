@@ -31,6 +31,7 @@ const CommandValueList = ({
     setEditValue,
     setLoading,
     loading,
+    deleteValue,
     setDeleteValue,
     isCreate,
     setIsCreate,
@@ -156,22 +157,15 @@ const CommandValueList = ({
     try {
       const deleteVal = await deleteConstantValue(defaultMenuType, value);
       if (deleteVal) {
-        toast({
-          className:
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-          title: "Επιτυχία",
-          description: "Η τιμή διαγράφηκε",
-        });
+        toast.success("Η τιμή διαγράφηκε επιτυχώς.");
       }
       const newValues = values.filter((val) => val !== value);
       setValues(newValues);
     } catch (error) {
-      toast({
-        className:
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-        title: "Αποτυχία διαγραφής",
-        description: `${error}`,
-      });
+      toast.error("Η διαγραφή της τιμής απέτυχε.");
+      // revert optimistic update
+      const newValues: any = [...values, deleteValue];
+      setValues(newValues);
     } finally {
       setDeleteValue("");
     }
