@@ -7,8 +7,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
   createCategory,
   deleteCategory,
@@ -34,7 +33,6 @@ export function CreateCategoryForm() {
   const [editError, setEditError] = useState("");
   const { categories, refreshCategories } = useCategories();
 
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [editValue, setEditValue] = useState("");
   const { resetStore, setIsOpen } = useExpensesStore();
@@ -53,20 +51,13 @@ export function CreateCategoryForm() {
         throw new Error("Failed to create category");
       }
 
-      toast({
-        title: "Success",
-        description: "Category created successfully.",
-        className: "bg-green-500 font-sans text-light-900",
-      });
+      toast.success("Category created successfully.");
 
       router.refresh();
       form.reset();
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create category. Please try again.",
-        className: "bg-red-500 font-sans text-light-900",
-      });
+      console.error("Error creating category:", error);
+      toast.error("Failed to create category. Please try again.");
     } finally {
       refreshCategories();
       setIsLoading(false);

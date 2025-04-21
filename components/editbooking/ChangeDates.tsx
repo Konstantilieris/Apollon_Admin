@@ -5,9 +5,9 @@ import Slider from "rc-slider";
 import moment from "moment"; // For date manipulation
 import "./slider.module.css";
 import { calculateTotalPrice, cn } from "@/lib/utils";
-
+import { toast } from "sonner";
 import { updateBookingDates } from "@/lib/actions/booking.action";
-import { useToast } from "../ui/use-toast";
+
 import { usePathname } from "next/navigation";
 
 interface UpdateDateProps {
@@ -62,7 +62,7 @@ const ChangeDates = ({
   const handleSliderChange = (newRange: any) => {
     setRange(newRange);
   };
-  const { toast } = useToast();
+
   // Generate marks for each day
   const generateMarks = () => {
     const marks: any = {};
@@ -125,22 +125,11 @@ const ChangeDates = ({
       });
       const booking = JSON.parse(res);
       if (booking) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: "Η κράτηση ενημερώθηκε",
-        });
+        toast.success('"Η κράτηση ενημερώθηκε επιτυχώς!"');
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία ενημέρωσης",
-        description: `${error}`,
-      });
+      console.error("Error updating booking dates:", error);
+      toast.error('"Σφάλμα", "Η ενημέρωση της κράτησης απέτυχε!"');
     } finally {
       window.location.reload();
     }

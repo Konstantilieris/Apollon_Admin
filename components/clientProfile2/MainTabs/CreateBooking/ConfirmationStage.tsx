@@ -17,9 +17,9 @@ import {
 } from "@heroui/react";
 import { ArrowLeft, MapPin, Phone } from "lucide-react";
 import { calculateTotalPrice, getDurationDays } from "@/lib/utils";
-
+import { toast } from "sonner";
 import { useBookingStore } from "@/hooks/booking-store";
-import { useToast } from "@/components/ui/use-toast";
+
 import { useRouter } from "next/navigation";
 
 export default function ConfirmationStage({
@@ -43,7 +43,7 @@ export default function ConfirmationStage({
 
     resetStore,
   } = useBookingStore();
-  const { toast } = useToast();
+
   const router = useRouter();
   const [totalBookingFee, setTotalBookingFee] = React.useState(0);
   const transportFee =
@@ -150,19 +150,10 @@ export default function ConfirmationStage({
   const handleBooking = async () => {
     try {
       await createBooking();
-      toast({
-        title: "Επιτυχία",
-        description: "Η κράτηση ολοκληρώθηκε επιτυχώς.",
-        className: "bg-green-500",
-      });
+      toast.success("Η κράτηση ολοκληρώθηκε επιτυχώς.");
     } catch (error) {
       console.error(error);
-      toast({
-        title: "Σφάλμα",
-        description: "Η κράτηση απέτυχε. Παρακαλώ δοκιμάστε ξανά.",
-        variant: "destructive",
-        color: "danger",
-      });
+      toast.error("Η κράτηση δεν ολοκληρώθηκε επιτυχώς.");
     } finally {
       onNext();
       resetStore();

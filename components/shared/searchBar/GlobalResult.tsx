@@ -1,25 +1,44 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ReloadIcon } from "@radix-ui/react-icons";
-import { useSearchParams } from "next/navigation";
-import { globalSearch } from "@/lib/actions/client.action";
+import React, { useEffect, useRef } from "react";
+import { Card, CardBody, Button, Spinner, Divider } from "@heroui/react";
+import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { GlobalSearchFilters } from "@/lib/utils";
-import { Separator } from "@radix-ui/react-dropdown-menu";
-import ResultButton from "./ButtonResult";
-import { IconDog, IconTool } from "@tabler/icons-react";
-interface Props {
-  setIsOpen: (state: boolean) => void;
+import { globalSearch } from "@/lib/actions/client.action";
+import { useRouter } from "next/navigation";
+
+interface ResultButtonProps {
+  icon: string;
+  label: string;
+  onClick: () => void;
 }
 
-const GlobalResult = ({ setIsOpen }: Props) => {
-  const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<any[]>([]);
-  const global = searchParams.get("global");
-  const resultRef = useRef(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
+const ResultButton = ({ icon, label, onClick }: ResultButtonProps) => (
+  <Button
+    size="sm"
+    variant="flat"
+    color="primary"
+    onPress={onClick}
+    className="text-base hover:text-purple-700"
+    startContent={<Icon icon={icon} width={20} height={20} />}
+  >
+    {label}
+  </Button>
+);
 
+interface GlobalResultProps {
+  setIsOpen: (state: boolean) => void;
+  searchTerm: string;
+  clearSearchTerm: () => void;
+}
+
+export const GlobalResult = ({
+  setIsOpen,
+  searchTerm,
+  clearSearchTerm,
+}: GlobalResultProps) => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [results, setResults] = React.useState<any[]>([]);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const router = useRouter();
   useEffect(() => {
     // Abort previous request if a new search starts
     if (abortControllerRef.current) {
@@ -31,12 +50,12 @@ const GlobalResult = ({ setIsOpen }: Props) => {
     const controller = abortControllerRef.current; // Store in local variable
 
     const fetchResults = async () => {
-      if (!global) return;
+      if (!searchTerm) return;
 
       setIsLoading(true);
 
       try {
-        const res = await globalSearch({ query: global });
+        const res = await globalSearch({ query: searchTerm });
 
         if (!controller.signal.aborted) {
           setResults(JSON.parse(res)); // ✅ Only update state if request was NOT aborted
@@ -55,84 +74,80 @@ const GlobalResult = ({ setIsOpen }: Props) => {
     return () => {
       controller.abort(); // Abort request on cleanup
     };
-  }, [global]);
+  }, [searchTerm]);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8 font-sans">
+        <Spinner color="primary" />
+        <span className="ml-2 text-default-500">Searching...</span>
+      </div>
+    );
+  }
+
+  if (results.length === 0) {
+    return (
+      <div className="p-8 text-center font-sans tracking-widest text-default-500">
+        Κανένα αποτέλεσμα
+      </div>
+    );
+  }
 
   return (
-    <motion.div
-      ref={resultRef}
-      className="mt-3 h-full min-h-[100px] w-full  overflow-hidden border-t border-gray-300  font-sans dark:border-gray-700 "
-    >
-      {isLoading ? (
-        <div className="flex h-full items-center justify-center p-4">
-          <ReloadIcon className="h-6 w-6 animate-spin text-yellow-600" />
-          <p className="text-dark200_light800 body-regular">
-            Browsing the entire database
-          </p>
-        </div>
-      ) : results.length > 0 ? (
-        results.map((result, index) => (
-          <>
-            <motion.div
-              key={index}
-              className="   rounded-lg border-b border-gray-200 px-4 py-3  hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-slate-900/40 "
-              whileHover={{ scale: 1.02 }}
-              variants={{
-                hidden: { opacity: 0 },
-                visible: { opacity: 1 },
-              }}
-              transition={{
-                duration: 0.3,
-                delay: index * 0.1,
-                ease: "easeInOut",
-              }}
-              initial="hidden"
-              animate="visible"
-            >
-              <div className="flex w-full flex-row items-center gap-2  ">
-                <div className="flex w-full flex-row items-center justify-between ">
-                  <div className="body-medium flex flex-col gap-2">
-                    <p className=" text-dark200_light800 flex items-center gap-2 text-lg">
-                      <Image
-                        src="/assets/icons/client.svg"
-                        alt="tags"
-                        width={24}
-                        height={24}
-                        className=" object-contain invert dark:invert-0"
-                      />
-                      {result?.name}
-                    </p>
-
-                    <span className="flex flex-row items-center gap-2  text-sm text-gray-400 ">
-                      <IconTool /> {result?.profession ?? "μη διαθέσιμο"}
-                    </span>
-                    <span className="flex min-w-[8vw] flex-row gap-2  text-sm text-gray-400">
-                      <IconDog />{" "}
-                      {result?.dog.map((dog: any) => dog?.name).join(", ")}
-                    </span>
-                  </div>
-                  <div className="flex flex-row items-center gap-2">
-                    {GlobalSearchFilters.map((item) => (
-                      <ResultButton
-                        setIsOpen={setIsOpen}
-                        key={item.value}
-                        item={item}
-                        result={result}
-                      />
-                    ))}
-                  </div>
+    <div className="mt-4 space-y-2 font-sans">
+      {results.map((result, index) => (
+        <motion.div
+          key={result._id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 }}
+        >
+          <Card className="w-full ">
+            <CardBody className="flex flex-row items-center justify-between p-4">
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium">{result.name}</h3>
+                <div className="flex items-center gap-2 text-default-500">
+                  <Icon icon="lucide:briefcase" width={16} height={16} />
+                  <span>{result.profession}</span>
+                </div>
+                <div className="flex items-center gap-2 text-default-500">
+                  <Icon icon="lucide:dog" width={16} height={16} />
+                  {result?.dog.map((dog: any) => dog?.name).join(", ")}
                 </div>
               </div>
-            </motion.div>
-            {index !== result.length - 1 && (
-              <Separator className="w-full bg-gray-900" />
-            )}
-          </>
-        ))
-      ) : (
-        <div className="p-4 text-center text-gray-500">No results found.</div>
-      )}
-    </motion.div>
+              <div className="flex gap-2">
+                <ResultButton
+                  icon="lucide:user"
+                  label="Προφίλ"
+                  onClick={() => {
+                    router.push(`/client/${result._id}?tab=Info`);
+                    setIsOpen(false);
+                    clearSearchTerm();
+                  }}
+                />
+                <ResultButton
+                  icon="lucide:calendar"
+                  label="Κράτηση"
+                  onClick={() => {
+                    router.push(`/client/${result._id}?tab=booking`);
+                    setIsOpen(false);
+                    clearSearchTerm();
+                  }}
+                />
+                <ResultButton
+                  icon="lucide:credit-card"
+                  label="Υπηρεσίες"
+                  onClick={() => {
+                    router.push(`/client/${result._id}?tab=Financial`, {});
+                    setIsOpen(false);
+                    clearSearchTerm();
+                  }}
+                />
+              </div>
+            </CardBody>
+          </Card>
+          {index < results.length - 1 && <Divider className="my-2" />}
+        </motion.div>
+      ))}
+    </div>
   );
 };
-
-export default GlobalResult;

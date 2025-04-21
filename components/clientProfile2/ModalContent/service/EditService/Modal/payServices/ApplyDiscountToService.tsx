@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
   Button,
   Card,
@@ -26,7 +26,7 @@ const ApplyDiscountToService = () => {
   const [discountValue, setDiscountValue] = React.useState("");
   const path = usePathname();
   const router = useRouter();
-  const { toast } = useToast();
+
   const { modalData, closeModal } = useModalStore();
 
   const selectedServices = modalData?.selectedServices || [];
@@ -54,24 +54,15 @@ const ApplyDiscountToService = () => {
     const value = Number(discountValue);
 
     if (!value || value <= 0) {
-      toast({
-        title: "Σφάλμα",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-        description: "Εισάγετε μια έγκυρη τιμή έκπτωσης.",
-      });
+      toast.error('"Σφάλμα", "Η έκπτωση πρέπει να είναι μεγαλύτερη από 0."');
+
       return;
     }
 
     if (discountType === "percentage" && value > 100) {
-      toast({
-        title: "Σφάλμα",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-        description: "Το ποσοστό έκπτωσης δεν μπορεί να υπερβαίνει το 100%.",
-      });
+      toast.error(
+        '"Σφάλμα", "Η ποσοστιαία έκπτωση δεν μπορεί να είναι μεγαλύτερη από 100%."'
+      );
       return;
     }
 
@@ -85,23 +76,13 @@ const ApplyDiscountToService = () => {
         path,
       });
 
-      toast({
-        title: "Επιτυχία",
-        className: cn(
-          "bg-celtic-green border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-        description: `Η έκπτωση ${value}${
-          discountType === "percentage" ? "%" : "€"
-        } εφαρμόστηκε επιτυχώς.`,
-      });
+      toast.success(
+        '"Επιτυχία", "Η έκπτωση εφαρμόστηκε επιτυχώς στις υπηρεσίες."'
+      );
     } catch (error) {
-      toast({
-        title: "Σφάλμα",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-        description: "Η εφαρμογή της έκπτωσης απέτυχε. Δοκιμάστε ξανά.",
-      });
+      toast.error(
+        '"Σφάλμα", "Η εφαρμογή της έκπτωσης απέτυχε. Παρακαλώ δοκιμάστε ξανά."'
+      );
     } finally {
       setLoading(false);
       closeModal();

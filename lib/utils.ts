@@ -733,3 +733,18 @@ export const handleDateFilter = (
       break;
   }
 };
+export function getAgeYandM(dateISO: string | Date) {
+  const birth = new Date(dateISO);
+  const today = new Date();
+
+  let years = today.getFullYear() - birth.getFullYear();
+  let months = today.getMonth() - birth.getMonth();
+
+  // If we haven’t reached the birthday month yet this year, adjust
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return { years, months };
+}

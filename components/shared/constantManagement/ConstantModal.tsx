@@ -23,12 +23,12 @@ import { useState } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { pushValueOnConstant } from "@/lib/actions/constant.action";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const ConstantModal = () => {
   const [loading, setLoading] = useState(false);
   const path = usePathname();
-  const { toast } = useToast();
+
   const formSchema = z.object({
     name: z
       .string()
@@ -54,20 +54,10 @@ const ConstantModal = () => {
       });
       if (res) {
         const category = JSON.parse(res);
-        toast({
-          className:
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-          title: "Επιτυχία",
-          description: `Η κατηγορία ${values.name} καταχωρήθηκε στο ${category.type}`,
-        });
+        toast.success(`Η κατηγορία ${category.name} προστέθηκε επιτυχώς!`);
       }
     } catch (error) {
-      toast({
-        className:
-          "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-        title: "Σφάλμα",
-        description: "Κάτι πήγε στραβά",
-      });
+      toast.error(`Σφάλμα κατά την προσθήκη της κατηγορίας ${values.name}.`);
     } finally {
       setLoading(false);
       constantModal.onClose();

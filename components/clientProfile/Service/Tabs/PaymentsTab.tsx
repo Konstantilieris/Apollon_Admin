@@ -13,35 +13,22 @@ import {
   removeReversedPayment,
   reversePayment,
 } from "@/lib/actions/service.action";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 const PaymentTab = ({ payments }: { payments: any[] }) => {
-  const { toast } = useToast();
   const path = usePathname();
   const handleReversePayment = async ({ payment }: any) => {
     if (payment.reversed || !payment) return;
     try {
       const res = await reversePayment({ paymentId: payment._id });
       if (res.success) {
-        toast({
-          title: "Επιτυχία",
-          description: "Η αντιστροφή ολοκληρώθηκε.",
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
-          ),
-        });
+        toast.success("Η αντιστροφή ολοκληρώθηκε επιτυχώς.");
       }
     } catch (error) {
       console.error("Error reversing payment:", error);
-      toast({
-        title: "Error",
-        className: cn(
-          "bg-red-500 border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
-        ),
-        description: "Η αντιστροφή απέτυχε.",
-      });
+      toast.error("Η αντιστροφή απέτυχε.");
     } finally {
       window.location.reload();
     }

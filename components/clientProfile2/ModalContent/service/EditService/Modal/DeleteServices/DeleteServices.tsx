@@ -4,7 +4,7 @@ import { deleteSelectedService } from "@/lib/actions/service.action";
 import { formatDate, cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Button, Card, CardBody, ScrollShadow } from "@heroui/react";
 import { useModalStore } from "@/hooks/client-profile-store";
 
@@ -12,7 +12,6 @@ const DeleteServices = () => {
   const [loading, setLoading] = React.useState(false);
   const path = usePathname();
   const router = useRouter();
-  const { toast } = useToast();
 
   const { modalData, closeModal } = useModalStore();
   const handleDelete = async () => {
@@ -28,21 +27,9 @@ const DeleteServices = () => {
           })
         )
       );
-      toast({
-        title: "Επιτυχία",
-        className: cn(
-          "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
-        ),
-        description: "Η διαγραφή ολοκληρώθηκε.",
-      });
+      toast.success(`Οι υπηρεσίες διαγράφηκαν επιτυχώς!`);
     } catch (error) {
-      toast({
-        title: "Error",
-        className: cn(
-          "bg-red-500 border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
-        ),
-        description: "Η διαγραφή απέτυχε.",
-      });
+      toast.error(`Η διαγραφή των υπηρεσιών απέτυχε!`);
     } finally {
       setLoading(false); // Set loading to false after completion
       closeModal();

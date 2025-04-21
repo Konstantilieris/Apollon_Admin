@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useForm } from "react-hook-form";
 import { LogInValidation } from "@/lib/validation";
 import * as z from "zod";
 
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { MagicInput } from "../ui/magic-input";
@@ -26,7 +26,7 @@ const LogInForm = () => {
   const router = useRouter();
   // eslint-disable-next-line no-unused-vars
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof LogInValidation>>({
     resolver: zodResolver(LogInValidation),
     defaultValues: {
@@ -43,21 +43,9 @@ const LogInForm = () => {
       redirect: false,
     });
     if (res?.error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  font-sans"
-        ),
-        title: "Αποτυχία σύνδεσης!",
-        description: `${res?.error}`,
-      });
+      toast.error("Λάθος όνομα χρήστη ή κωδικός πρόσβασης.");
     } else {
-      toast({
-        className: cn(
-          "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
-        ),
-        title: "Success",
-        description: "Καλώς ήρθατε!",
-      });
+      toast.success("Σύνδεση επιτυχής.");
 
       router.replace("./");
       router.refresh();

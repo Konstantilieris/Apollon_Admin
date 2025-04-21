@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useServiceModal } from "@/hooks/use-service-modal";
 import { formatDate, cn } from "@/lib/utils";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { usePathname } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import { updateTaxForSelectedServices } from "@/lib/actions/service.action";
 const TaxService: React.FC = () => {
   const { selectedServices } = useServiceModal();
   const path = usePathname();
-  const { toast } = useToast();
+
   const [globalTaxRate, setGlobalTaxRate] = useState<number>(24); // default value
   const [loading, setLoading] = useState(false);
 
@@ -37,31 +37,13 @@ const TaxService: React.FC = () => {
         path,
       });
       if (res.success) {
-        toast({
-          title: "Επιτυχία",
-          description: "Ο φόρος ενημερώθηκε επιτυχώς.",
-          className: cn(
-            "bg-celtic-green border-none text-white text-center flex items-center max-w-[300px] fixed bottom-0 left-0 font-sans"
-          ),
-        });
+        toast.success("Η ενημέρωση του φόρου ολοκληρώθηκε επιτυχώς.");
       } else {
-        toast({
-          title: "Σφάλμα",
-          description: res.message || "Απέτυχε η ενημέρωση του φόρου.",
-          className: cn(
-            "bg-red-500 border-none text-white text-center flex items-center max-w-[300px] fixed bottom-0 left-0 font-sans"
-          ),
-        });
+        toast.error("Η ενημέρωση του φόρου απέτυχε.");
       }
     } catch (error) {
       console.error("Error updating tax:", error);
-      toast({
-        title: "Σφάλμα",
-        description: "Παρουσιάστηκε σφάλμα κατά την ενημέρωση του φόρου.",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex items-center max-w-[300px] fixed bottom-0 left-0 font-sans"
-        ),
-      });
+      toast.error("Η ενημέρωση του φόρου απέτυχε.");
     } finally {
       setLoading(false);
       // Optionally trigger a client-side refresh via router.refresh() if needed.

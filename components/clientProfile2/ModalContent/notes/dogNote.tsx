@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { updateClientDogNote } from "@/lib/actions/client.action";
 
 import { useModalStore } from "@/hooks/client-profile-store";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export default function DogNoteForm() {
   const { modalData, closeModal } = useModalStore();
   const clientId = modalData?.clientId as string;
   const dog = modalData?.dog as any;
   const [note, setNote] = React.useState(dog?.note || "");
-  const { toast } = useToast();
+
   const [isLoading, setIsLoading] = React.useState(false);
   const [isInvalid, setIsInvalid] = React.useState(false);
   const router = useRouter();
@@ -34,20 +34,12 @@ export default function DogNoteForm() {
       if (updatedClient) {
         router.refresh();
         setIsLoading(false);
-        toast({
-          title: "Επιτυχία",
-          description: "Η σημείωση του κατοικιδίου ενημερώθηκε επιτυχώς.",
-          className: "bg-green-500 text-white",
-        });
+        toast.success("Η σημείωση ενημερώθηκε επιτυχώς!");
         closeModal();
       }
     } catch (error) {
       setIsLoading(false);
-      toast({
-        title: "Σφάλμα",
-        description: "Παρουσιάστηκε σφάλμα κατά την ενημέρωση της σημείωσης.",
-        className: "bg-red-500 text-white",
-      });
+      toast.error("Η ενημέρωση της σημείωσης απέτυχε!");
       closeModal();
     } finally {
       setIsLoading(false);

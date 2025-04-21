@@ -99,6 +99,7 @@
     "react-to-print": "^3.0.1",
     "react-use-measure": "^2.1.1",
     "recharts": "^2.13.3",
+    "sonner": "^2.0.3",
     "tailwind-merge": "^2.5.2",
     "twilio": "^5.4.3",
     "usehooks-ts": "^3.1.1",

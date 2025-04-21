@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useServiceModal } from "@/hooks/use-service-modal";
 import { partialPaymentSelected } from "@/lib/actions/service.action";
 import { cn, formatDate } from "@/lib/utils";
@@ -14,7 +14,7 @@ const PartialPayment = ({ client }: { client: any }) => {
   const [amount, setAmount] = React.useState<string>("0");
   const { selectedServices } = useServiceModal();
   const path = usePathname();
-  const { toast } = useToast();
+
   const [loading, setLoading] = React.useState(false);
 
   // Calculate the total remaining amount from the selected services.
@@ -37,15 +37,11 @@ const PartialPayment = ({ client }: { client: any }) => {
         path,
       });
       if (res.success) {
-        toast({
-          title: "Επιτυχία",
-          description: "Η εξόφληση ολοκληρώθηκε",
-          className:
-            "bg-celtic-green border-none text-white text-center flex items-center max-w-[300px] fixed bottom-0 left-0 font-sans",
-        });
+        toast.success("Η μερική εξόφληση ολοκληρώθηκε επιτυχώς.");
       }
     } catch (error) {
       console.error("Error processing partial payment:", error);
+      toast.error("Η μερική εξόφληση απέτυχε.");
     } finally {
       window.location.reload();
       setLoading(false);

@@ -1,16 +1,16 @@
 "use client";
 import { ChargeForm } from "@/components/form/ChargeForm";
-import { useToast } from "@/components/ui/use-toast";
+
 import { useModalStore } from "@/hooks/client-profile-store";
 import { getConstant } from "@/lib/actions/constant.action";
 import { chargeClient, updateService } from "@/lib/actions/service.action";
 import { Skeleton } from "@heroui/react";
 import React, { useEffect } from "react";
-
+import { toast } from "sonner";
 const EditService = () => {
   const [services, setServices] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const { toast } = useToast();
+
   const { modalData, closeModal } = useModalStore();
   useEffect(() => {
     const fetchServices = async () => {
@@ -35,19 +35,11 @@ const EditService = () => {
         ...data,
       });
       if (res) {
-        toast({
-          title: "Service Added",
-          description: "Service has been added successfully",
-          className: "bg-green-500 text-white",
-        });
+        toast.success("Service updated successfully!");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast({
-        title: "Error",
-        description: "Error submitting form",
-        className: "bg-red-500 text-white",
-      });
+      toast.error("Failed to update service. Please try again.");
     } finally {
       setLoading(false);
       closeModal();

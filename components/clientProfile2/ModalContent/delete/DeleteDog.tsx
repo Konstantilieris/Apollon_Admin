@@ -1,4 +1,4 @@
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useModalStore } from "@/hooks/client-profile-store";
 import { deleteClientsDog } from "@/lib/actions/client.action";
 import { Button } from "@heroui/react";
@@ -12,7 +12,7 @@ const DeleteDog: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState(false);
 
   const router = useRouter();
-  const { toast } = useToast();
+
   const handleDelete = async () => {
     setIsLoading(true);
     if (!clientId) return;
@@ -25,20 +25,12 @@ const DeleteDog: React.FC = () => {
       if (updatedClient) {
         router.refresh();
         setIsLoading(false);
-        toast({
-          title: "Επιτυχία",
-          description: "Το κατοικίδιο διαγράφηκε επιτυχώς.",
-          className: "bg-green-500 text-white",
-        });
+        toast.success(`Το κατοικίδιο ${dog.name} διαγράφηκε επιτυχώς!`);
         closeModal();
       }
     } catch (error) {
       setIsLoading(false);
-      toast({
-        title: "Σφάλμα",
-        description: "Παρουσιάστηκε σφάλμα κατά την διαγραφή του κατοικιδίου.",
-        className: "bg-red-500 text-white",
-      });
+      toast.error(`Η διαγραφή του κατοικίδιου ${dog.name} απέτυχε!`);
       closeModal();
     } finally {
       setIsLoading(false);

@@ -11,7 +11,7 @@ import { Skeleton } from "@heroui/skeleton";
 import React, { useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { usePathname } from "next/navigation";
 const CommandValueList = ({
   onChange,
@@ -37,7 +37,7 @@ const CommandValueList = ({
   } = useCommandMenuStore();
   const [filteredValues, setFilteredValues] = React.useState(values);
   const [inputValue, setInputValue] = React.useState("");
-  const { toast } = useToast();
+
   const pathname = usePathname();
 
   useEffect(() => {
@@ -78,12 +78,7 @@ const CommandValueList = ({
           oldValue: editValue,
         });
         if (updateVal) {
-          toast({
-            className:
-              "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-            title: "Επιτυχία",
-            description: "Η τιμή ενημερώθηκε",
-          });
+          toast.success("Η τιμή ενημερώθηκε επιτυχώς.");
         }
         // optimistic update
         const newValues = values.map((value) =>
@@ -91,12 +86,7 @@ const CommandValueList = ({
         );
         setValues(newValues);
       } catch (error) {
-        toast({
-          className:
-            "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-          title: "Αποτυχία ενημέρωσης",
-          description: `${error}`,
-        });
+        toast.error("Η ενημέρωση της τιμής απέτυχε.");
       } finally {
         setEditValue(null);
         setInputValue("");

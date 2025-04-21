@@ -7,11 +7,10 @@ import { TransportationFees } from "./TransportationFee";
 import { OtherServiceFees } from "./OtherServiceFees";
 import { BoardingFees } from "./BoardingFees";
 import { useServiceFeesStore } from "@/hooks/serviceFees.store";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
 export function ServiceFeesTab({ client }: { client: any }) {
-  const { toast } = useToast();
   const {
     // read from the store
     initializeFromClient,
@@ -41,29 +40,19 @@ export function ServiceFeesTab({ client }: { client: any }) {
     ).some((count) => boardingFees[count] === undefined);
     try {
       if (hasInvalidFees || hasMissingFees) {
-        toast({
-          title: "Σφάλμα Επικύρωσης",
-          description:
-            "Συμπληρώστε όλα τα ποσά και βεβαιωθείτε ότι είναι έγκυρα.",
-          color: "destructive",
-        });
+        toast.error(
+          "Παρακαλώ ελέγξτε τις τιμές των υπηρεσιών. Δεν επιτρέπονται αρνητικές τιμές ή κενές τιμές."
+        );
+
         return;
       }
 
       // If all valid, persist changes
       await saveAllFees();
-      toast({
-        title: "Επιτυχία",
-        description: "Οι τιμές ενημερώθηκαν με επιτυχία.",
-        color: "success",
-      });
+      toast.success("Οι τιμές αποθηκεύτηκαν επιτυχώς.");
     } catch (error) {
       console.error("Error saving fees:", error);
-      toast({
-        title: "Σφάλμα",
-        description: "Αποτυχία αποθήκευσης των τιμών.",
-        color: "destructive",
-      });
+      toast.error("Αποτυχία αποθήκευσης τιμών.");
     }
   };
 

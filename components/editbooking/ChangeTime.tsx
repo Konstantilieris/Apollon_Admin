@@ -7,7 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn, formUrlQuery } from "@/lib/utils";
 import moment from "moment";
 import { updateTnt } from "@/lib/actions/booking.action";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner";
 interface updateTNTProps {
   initialDate: Date;
   hasTransport: boolean;
@@ -26,7 +26,7 @@ const UpdateTNT = ({
   const searchParams = useSearchParams();
   const router = useRouter();
   const path = usePathname();
-  const { toast } = useToast();
+
   const extractTime = moment(initialDate).format("HH:mm");
   const [time, setTime] = useState<string>(extractTime);
   useEffect(() => {
@@ -53,22 +53,12 @@ const UpdateTNT = ({
       });
       const updated = JSON.parse(res);
       if (updated) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: "Η κράτηση τροποποιήθηκε",
-        });
+        toast.success("Η αλλαγή του χρόνου ολοκληρώθηκε επιτυχώς.");
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία τροποποίησης",
-        description: `${error}`,
-      });
+      toast.error(
+        "Η αλλαγή του χρόνου απέτυχε. Παρακαλώ δοκιμάστε ξανά αργότερα."
+      );
     }
   };
 

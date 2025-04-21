@@ -1,6 +1,6 @@
 "use client";
 import { ChargeForm } from "@/components/form/ChargeForm";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useModalStore } from "@/hooks/client-profile-store";
 import { getConstant } from "@/lib/actions/constant.action";
 import { chargeClient } from "@/lib/actions/service.action";
@@ -10,7 +10,7 @@ import React, { useEffect } from "react";
 const CreateServiceView = () => {
   const [services, setServices] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const { toast } = useToast();
+
   const { modalData, closeModal } = useModalStore();
   useEffect(() => {
     const fetchServices = async () => {
@@ -38,19 +38,11 @@ const CreateServiceView = () => {
         notes: data.notes,
       });
       if (response) {
-        toast({
-          title: "Service Added",
-          description: "Service has been added successfully",
-          className: "bg-green-500 text-white",
-        });
+        toast.success("Service charged successfully!");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast({
-        title: "Error",
-        description: "Error submitting form",
-        className: "bg-red-500 text-white",
-      });
+      toast.error("Failed to charge service. Please try again.");
     } finally {
       setLoading(false);
       closeModal();

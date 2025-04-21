@@ -15,11 +15,11 @@ import { addClientDog } from "@/lib/actions/client.action";
 
 import { useModalStore } from "@/hooks/client-profile-store";
 import SingleDogForm from "@/components/form/SingleDogForm";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const DogCreateView = () => {
   const path = usePathname();
-  const { toast } = useToast();
+
   const [mounted, setMounted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const { modalData, closeModal } = useModalStore();
@@ -62,21 +62,11 @@ const DogCreateView = () => {
         path,
       });
       if (newClient) {
-        toast({
-          className:
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-          title: "Επιτυχία",
-          description: "Ο σκύλος καταχωρήθηκε",
-        });
+        toast.success(`Το κατοικίδιο ${values.name} προστέθηκε επιτυχώς!`);
         closeModal();
       }
     } catch (error) {
-      toast({
-        className:
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-        title: "Αποτυχία δημιουργίας",
-        description: `${error}`,
-      });
+      toast.error(`Η προσθήκη του κατοικίδιου ${values.name} απέτυχε!`);
     } finally {
       setLoading(false);
       form.reset();

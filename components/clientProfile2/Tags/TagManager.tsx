@@ -1,6 +1,6 @@
 "use client";
 import CommandMenuProvider from "@/components/shared/CommandMenu/CommandMenuProvider";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { CommandMenuType } from "@/hooks/command-menu-store";
 import {
   handleAddClientTag,
@@ -14,7 +14,7 @@ import React from "react";
 
 const TagManager = ({ tags, id }: any) => {
   const [newTag, setNewTag] = React.useState<string>("");
-  const { toast } = useToast();
+
   const [optimisticTags, setOptimisticTags] = React.useState<string[]>(tags);
   const handleDelete = async (tag: string) => {
     setOptimisticTags((prev) => prev.filter((t) => t !== tag));
@@ -24,18 +24,10 @@ const TagManager = ({ tags, id }: any) => {
         tag,
       });
       if (res.success) {
-        toast({
-          className: "bg-green-500",
-          content: "Επιτυχής διαγραφή",
-          description: `Η ετικέτα ${tag} διαγράφηκε επιτυχώς`,
-        });
+        toast.success(`Η ετικέτα ${tag} διαγράφηκε επιτυχώς`);
       }
     } catch (error) {
-      toast({
-        className: "bg-red-500",
-        content: "Σφάλμα",
-        description: "Η διαγραφή απέτυχε",
-      });
+      toast.error(`Η διαγραφή της ετικέτας ${tag} απέτυχε`);
       setOptimisticTags((prev) => [...prev, tag]);
     }
   };
@@ -48,18 +40,10 @@ const TagManager = ({ tags, id }: any) => {
         tag,
       });
       if (res.success) {
-        toast({
-          className: "bg-green-500",
-          content: "Επιτυχής προσθήκη",
-          description: `Η ετικέτα ${tag} προστέθηκε επιτυχώς`,
-        });
+        toast.success(`Η ετικέτα ${tag} προστέθηκε επιτυχώς`);
       }
     } catch (error) {
-      toast({
-        className: "bg-red-500",
-        content: "Σφάλμα",
-        description: "Η προσθήκη απέτυχε",
-      });
+      toast.error(`Η προσθήκη της ετικέτας ${tag} απέτυχε`);
       setOptimisticTags((prev) => prev.filter((t) => t !== tag));
     }
   };

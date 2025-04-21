@@ -23,7 +23,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createExpense } from "@/lib/actions/expenses.action";
 import { cn } from "@/lib/utils";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner";
 
 import { Input } from "../ui/input";
 import { DateInput } from "../datepicker/DateInput";
@@ -39,7 +39,6 @@ import {
 import { Textarea } from "../ui/textarea";
 const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
   const [stage, setStage] = useState(0);
-  const { toast } = useToast();
 
   const [open, setOpen] = useState(false);
 
@@ -67,13 +66,7 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
           description,
         });
         if (expense) {
-          toast({
-            className: cn(
-              "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-            ),
-            title: "Επιτυχία",
-            description: `η δαπάνη δημιουργήθηκε με επιτυχία`,
-          });
+          toast.success("Η δαπάνη δημιουργήθηκε επιτυχώς.");
           setStage(0);
           setOpen(false);
           form.reset();
@@ -81,13 +74,8 @@ const CreateExpenseDialog = ({ parentCategory }: { parentCategory: any }) => {
           setSubCategory("");
         }
       } catch (error) {
-        toast({
-          className: cn(
-            "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Αποτυχία",
-          description: `${error}`,
-        });
+        console.error("Error creating expense:", error);
+        toast.error("Η δαπάνη απέτυχε.");
         form.reset();
 
         setSubCategory("");

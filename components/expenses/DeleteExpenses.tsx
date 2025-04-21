@@ -1,13 +1,12 @@
 "use client";
 
 import { useExpensesStore } from "@/hooks/expenses-store";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { deleteMultipleExpenses } from "@/lib/actions/expenses.action";
 
 const DeleteExpenses = () => {
-  const { toast } = useToast();
   const { toDeleteExpenses, resetStore, onClose } = useExpensesStore();
 
   const handleDelete = async () => {
@@ -20,27 +19,16 @@ const DeleteExpenses = () => {
       const res = await deleteMultipleExpenses(ids);
       // 3) Check result
       if (res.success) {
-        toast({
-          title: "Έξοδα διαγράφηκαν",
-          description: `${toDeleteExpenses.length} έξοδα διαγράφηκαν.`,
-        });
+        toast.success("Η διαγραφή ολοκληρώθηκε επιτυχώς.");
         // 4) Reset store and close modal
         resetStore();
         onClose();
       } else {
-        toast({
-          title: "Σφάλμα",
-          description: "Η διαγραφή απέτυχε. Παρακαλώ δοκιμάστε ξανά.",
-          variant: "destructive",
-        });
+        toast.error("Η διαγραφή απέτυχε. Παρακαλώ δοκιμάστε ξανά.");
       }
     } catch (error) {
       console.error("Error deleting expenses:", error);
-      toast({
-        title: "Σφάλμα",
-        description: "Η διαγραφή απέτυχε. Παρακαλώ δοκιμάστε ξανά.",
-        variant: "destructive",
-      });
+      toast.error("Η διαγραφή απέτυχε. Παρακαλώ δοκιμάστε ξανά.");
     }
   };
 

@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Button, Card, CardBody, Input, Spinner, Chip } from "@heroui/react";
 import { useModalStore } from "@/hooks/client-profile-store";
 import { updateTaxForSelectedServices } from "@/lib/actions/service.action";
@@ -12,7 +12,7 @@ const ApplyTaxToService = () => {
   const [taxPercentage, setTaxPercentage] = React.useState("");
   const path = usePathname();
   const router = useRouter();
-  const { toast } = useToast();
+
   const { modalData, closeModal } = useModalStore();
 
   const selectedService = modalData?.service;
@@ -27,13 +27,7 @@ const ApplyTaxToService = () => {
     const percentage = Number(taxPercentage);
 
     if (!percentage || percentage <= 0) {
-      toast({
-        title: "Σφάλμα",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-        description: "Εισάγετε ένα έγκυρο ποσοστό φόρου.",
-      });
+      toast.error('"Σφάλμα", "Ο φόρος πρέπει να είναι μεγαλύτερος από 0."');
       return;
     }
 
@@ -47,21 +41,11 @@ const ApplyTaxToService = () => {
         path,
       });
       if (res.message === "success")
-        toast({
-          title: "Επιτυχία",
-          className: cn(
-            "bg-celtic-green border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-          ),
-          description: `Ο φόρος ${percentage}% εφαρμόστηκε επιτυχώς.`,
-        });
+        toast.success("Η εφαρμογή του φόρου ήταν επιτυχής!");
     } catch (error) {
-      toast({
-        title: "Σφάλμα",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-        description: "Η εφαρμογή του φόρου απέτυχε. Δοκιμάστε ξανά.",
-      });
+      toast.error(
+        '"Σφάλμα", "Η εφαρμογή του φόρου απέτυχε. Παρακαλώ δοκιμάστε ξανά."'
+      );
     } finally {
       setLoading(false);
       closeModal();

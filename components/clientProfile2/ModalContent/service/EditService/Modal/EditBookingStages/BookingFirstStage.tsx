@@ -14,7 +14,7 @@ import { DurationEnum } from "@/components/shared/timepicker/timeSelect/calendar
 import BookingDetails from "./BookingDetails";
 import { checkRoomAvailability } from "@/lib/actions/booking.action";
 
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 // Helper function to combine date + "HH:mm" into JS Date
 function combineDateTime(baseDate: Date, hhmm: string): Date {
@@ -50,7 +50,6 @@ export default function BookingFirstStage({
     setExtraDay,
     booking,
   } = useEditBookingStore();
-  const { toast } = useToast();
 
   const [timeArrival, setTimeArrival] = useState("12:00");
   const [timeDeparture, setTimeDeparture] = useState("12:00");
@@ -134,11 +133,7 @@ export default function BookingFirstStage({
       handleNextOverlap(hasOverlap);
     } catch (error) {
       console.error(error);
-      toast({
-        title: "Σφάλμα",
-        description: "Κάτι πήγε στραβά, παρακαλώ δοκιμάστε ξανά.",
-        className: "bg-red-400 text-light-900",
-      });
+      toast.error("Σφάλμα κατά την επεξεργασία της κράτησης.");
     }
   };
   return (

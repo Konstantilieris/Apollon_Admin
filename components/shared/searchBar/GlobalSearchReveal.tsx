@@ -1,35 +1,27 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { IconSearch, IconSquareLetterXFilled } from "@tabler/icons-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import GlobalResult from "./GlobalResult";
-import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
+import React from "react";
+
+import { Input, Modal, ModalContent, ModalBody } from "@heroui/react";
+
+import { GlobalResult } from "./GlobalResult";
 
 export const FloatingSearch = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const debounceTimer = useRef<any | null>(null);
-  const isThrottled = useRef(false);
-  // 🔹 Open Search on Shortcut SHIFT + Z
-  useEffect(() => {
-    // Prevent multiple triggers
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [isOpen, setIsOpen] = React.useState(false);
+  const debounceTimer = React.useRef<any | null>(null);
+  const isThrottled = React.useRef(false);
 
+  React.useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
-      if (event.shiftKey && ["Z", "z", "ζ", "Ζ"].includes(event.key)) {
+      if (event.shiftKey && ["Z", "z"].includes(event.key)) {
         event.preventDefault();
 
         if (!isThrottled.current) {
-          setIsOpen((prev) => !prev); // Toggle state
+          setIsOpen((prev) => !prev);
           isThrottled.current = true;
 
           setTimeout(() => {
-            isThrottled.current = false; // Reset cooldown after 500ms
+            isThrottled.current = false;
           }, 30);
         }
       }
@@ -38,83 +30,60 @@ export const FloatingSearch = () => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
-  // useEffect to reset search term when search bar is closed
-  useEffect(() => {
-    setSearchTerm("");
-  }, [pathname]);
 
-  // 🔹 Debounce API call for better performance
-  useEffect(() => {
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
 
     debounceTimer.current = setTimeout(() => {
-      if (searchTerm) {
-        const newUrl = formUrlQuery({
-          params: searchParams.toString(),
-          key: "global",
-          value: searchTerm,
-        });
-        router.push(newUrl, { scroll: false });
-      } else {
-        const newUrl = removeKeysFromQuery({
-          params: searchParams.toString(),
-          keysToRemove: ["global"],
-        });
-        router.push(newUrl, { scroll: false });
-      }
+      // Implement your search logic here
+      console.log("Searching for:", value);
     }, 300);
-
-    return () => debounceTimer.current && clearTimeout(debounceTimer.current);
-  }, [searchTerm, searchParams, pathname, router]);
+  };
 
   return (
-    <>
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Overlay */}
-            <motion.div
-              className="fixed inset-0 z-[9998] bg-black/60 font-sans backdrop-blur-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) {
+          setSearchTerm("");
+        }
+      }}
+      size="4xl"
+      backdrop="blur"
+      placement="top"
+      className="mt-8"
+    >
+      <ModalContent>
+        {(onClose) => (
+          <ModalBody className="p-4">
+            <div className="flex w-full items-center gap-2 px-4 py-2">
+              <Input
+                label="Αναζήτηση"
+                value={searchTerm}
+                onValueChange={handleSearch}
+                variant="bordered"
+                color="secondary"
+                size="lg"
+                autoFocus
+                classNames={{
+                  label: "font-sans tracking-widest",
+                  input: "font-sans",
+                }}
+              />
+            </div>
+            <GlobalResult
+              setIsOpen={setIsOpen}
+              searchTerm={searchTerm}
+              clearSearchTerm={() => setSearchTerm("")}
             />
-            {/* Floating Search Modal */}
-            <motion.div
-              initial={{ opacity: 0, y: -50, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -50, scale: 0.9 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="fixed left-[26vw] top-[3vh] z-[9999] max-h-[80vh] w-[40vw] -translate-x-1/2   rounded-xl bg-white p-4 shadow-lg dark:bg-neutral-900"
-              ref={ref}
-            >
-              <div className="flex w-full items-center justify-center">
-                <div className="flex  grow items-center gap-2 self-center">
-                  <IconSearch className="h-5 w-5 text-gray-500" />
-                  <Input
-                    type="text"
-                    placeholder="Search..."
-                    autoFocus={isOpen}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="min-w-[20vw] grow border-none bg-transparent font-sans text-lg outline-none outline-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
-                  <IconSquareLetterXFilled
-                    onClick={() => {
-                      setSearchTerm("");
-                      setIsOpen(false);
-                    }}
-                    className="h-5 w-5 cursor-pointer text-gray-500 hover:scale-110"
-                  />
-                </div>
-              </div>
-              {/* Search Results */}
-              <GlobalResult setIsOpen={setIsOpen} />
-            </motion.div>
-          </>
+          </ModalBody>
         )}
-      </AnimatePresence>
-    </>
+      </ModalContent>
+    </Modal>
   );
 };

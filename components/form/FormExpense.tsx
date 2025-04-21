@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ExpenseSchema } from "@/lib/validation";
 import { Expense } from "@/types";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { createExpense } from "@/lib/actions/expenses.action";
 import { useExpensesStore } from "@/hooks/expenses-store";
 import { cn } from "@/lib/utils";
@@ -27,7 +27,7 @@ import { useCategories } from "@/hooks/use-categories";
 
 const FormExpense = () => {
   const router = useRouter();
-  const { toast } = useToast();
+
   const { categories } = useCategories();
   const { onClose } = useExpensesStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -66,13 +66,7 @@ const FormExpense = () => {
       try {
         const res = await createExpense(data);
         if (res.success) {
-          toast({
-            title: "Επιτυχία",
-            description: "Η δαπάνη δημιουργήθηκε με επιτυχία",
-            className: cn(
-              "bg-celtic-green border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-            ),
-          });
+          toast.success("Η δαπάνη δημιουργήθηκε επιτυχώς.");
           onClose();
         }
         console.log("Expense data submitted:", data);

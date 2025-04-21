@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useServiceModal } from "@/hooks/use-service-modal";
 import { payService } from "@/lib/actions/service.action";
 import { cn, formatDate } from "@/lib/utils";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePathname } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 const ServicePayments = () => {
   const { selectedServices, onClose } = useServiceModal();
   const path = usePathname();
-  const { toast } = useToast();
+
   const [loading, setLoading] = useState(false);
 
   const handleAction = async () => {
@@ -23,22 +23,11 @@ const ServicePayments = () => {
           payService({ serviceId: service._id, path })
         )
       );
-      toast({
-        title: "Επιτυχία",
-        description: "Η εξόφληση ολοκληρώθηκε.",
-        className: cn(
-          "bg-celtic-green border-none text-white text-center flex items-center max-w-[300px] fixed bottom-0 left-0 font-sans"
-        ),
-      });
+
+      toast.success("Η εξόφληση ολοκληρώθηκε επιτυχώς.");
     } catch (error) {
       console.error("Error paying off client:", error);
-      toast({
-        title: "Error",
-        description: "Η εξόφληση απέτυχε.",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex items-center max-w-[300px] fixed bottom-0 left-0 font-sans"
-        ),
-      });
+      toast.error("Η εξόφληση απέτυχε.");
     } finally {
       setLoading(false);
       onClose();

@@ -3,7 +3,7 @@ import { useServiceModal } from "@/hooks/use-service-modal";
 import { formatDate } from "@/lib/utils";
 import React from "react";
 import { usePathname } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { discountSelectedServices } from "@/lib/actions/service.action";
 
@@ -14,7 +14,6 @@ const Discount = ({ client }: any) => {
   const [finalAmount, setFinalAmount] = React.useState<number[]>([]);
 
   const path = usePathname();
-  const { toast } = useToast();
 
   // Initialize discount and finalAmount when selectedServices changes
   React.useEffect(() => {
@@ -51,19 +50,12 @@ const Discount = ({ client }: any) => {
         path,
       });
 
-      toast({
-        title: "Επιτυχής Επεξεργασία",
-        description: "Οι εκπτώσεις αποθηκεύτηκαν.",
-        className: "bg-celtic-green",
-      });
+      toast.success("Η εκπτωση αποθηκεύτηκε επιτυχώς");
       onClose();
       window.location.reload();
     } catch (error) {
-      toast({
-        title: "Σφάλμα",
-        description: "Κάτι πήγε στραβά. Προσπαθήστε ξανά.",
-        className: "bg-red-500",
-      });
+      console.error("Error applying discount:", error);
+      toast.error("Η εκπτωση δεν αποθηκεύτηκε επιτυχώς");
     } finally {
       setLoading(false);
     }

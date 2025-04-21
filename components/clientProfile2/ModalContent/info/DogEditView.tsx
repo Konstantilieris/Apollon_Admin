@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { usePathname, useRouter } from "next/navigation";
-import { useToast } from "../../../ui/use-toast";
+import { toast } from "sonner";
 import { SingleDogValidation } from "@/lib/validation";
 
 import SingleDogForm from "@/components/form/SingleDogForm";
@@ -15,7 +15,6 @@ import { useModalStore } from "@/hooks/client-profile-store";
 import { Button } from "@heroui/react";
 
 const DogEditView = () => {
-  const { toast } = useToast();
   const path = usePathname();
   const { modalData, closeModal } = useModalStore();
   const router = useRouter();
@@ -48,20 +47,10 @@ const DogEditView = () => {
         path,
       });
       if (client) {
-        toast({
-          className:
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-          title: "Επιτυχία",
-          description: "Επιτυχής ενημέρωση",
-        });
+        toast.success(`Το κατοικίδιο ${values.name} ενημερώθηκε επιτυχώς!`);
       }
     } catch (error) {
-      toast({
-        className:
-          "bg-red-500 border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  ",
-        title: "Σφάλμα",
-        description: "Κάτι πήγε στραβά",
-      });
+      toast.error(`Η ενημέρωση του κατοικίδιου ${values.name} απέτυχε!`);
     } finally {
       closeModal();
       router.refresh();

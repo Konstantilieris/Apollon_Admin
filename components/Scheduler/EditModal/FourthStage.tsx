@@ -1,5 +1,5 @@
 "use client";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { IBooking } from "@/database/models/booking.model";
 import {
   getBookingById,
@@ -35,7 +35,7 @@ const FourthStage = ({
   stage,
 }: props) => {
   const [booking, setBooking] = useState<IBooking>();
-  const { toast } = useToast();
+
   const { dateArrival, dateDeparture, taxiArrival, taxiDeparture, extraDay } =
     useEditBookingStore();
 
@@ -63,24 +63,15 @@ const FourthStage = ({
       });
       const newBooking = JSON.parse(res);
       if (newBooking) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: `η κράτηση ενημερώθηκε με επιτυχία`,
-        });
+        toast.success(
+          `Η κράτηση ενημερώθηκε επιτυχώς! ${newBooking.clientName} ${newBooking.clientSurname} ${newBooking.clientPhone}`
+        );
         setStage(0);
         onClose();
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-celtic-red border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Σφάλμα",
-        description: `Υπήρξε ένα σφάλμα κατά την ενημέρωση της κράτησης`,
-      });
+      toast.error("Η ενημέρωση της κράτησης απέτυχε.");
+      console.error("Error updating booking:", error);
     }
   };
 

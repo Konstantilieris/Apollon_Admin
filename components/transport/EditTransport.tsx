@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import {
   AlertDialog,
@@ -30,7 +30,6 @@ import {
   editTransportDate,
 } from "@/lib/actions/transportation.action";
 const EditTransport = ({ transport }: any) => {
-  const { toast } = useToast();
   const [edit, setEdit] = useState(false);
   const [timeArrival, setTimeArrival] = useState<Date>();
 
@@ -48,22 +47,12 @@ const EditTransport = ({ transport }: any) => {
         timeArrival
       );
       if (updatedTransport) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: `η μεταφορά του πελάτη ${transport.clientId.lastName} τροποποιήθηκε`,
-        });
+        toast.success(
+          `Η ώρα άφιξης για την μεταφορά του ${transport.clientId.lastName} τροποποιήθηκε`
+        );
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία τροποποιήσης",
-        description: `${error}`,
-      });
+      toast.error(`Η τροποποίηση της ώρας άφιξης απέτυχε. ${error}`);
     } finally {
       window.location.reload();
       setSubmitArrival(false);

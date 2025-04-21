@@ -7,7 +7,7 @@ import {
   getBookingById,
   updateBookingAllInclusive,
 } from "@/lib/actions/booking.action";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useModalStore } from "@/hooks/client-profile-store";
 import { Skeleton } from "@heroui/react";
@@ -55,7 +55,6 @@ const EditBookingContent = ({ bookingId }: { bookingId: string }) => {
     setExtraDay,
   } = useEditBookingStore();
 
-  const { toast } = useToast();
   const router = useRouter();
   const { closeModal } = useModalStore();
 
@@ -120,20 +119,12 @@ const EditBookingContent = ({ bookingId }: { bookingId: string }) => {
 
       const result = JSON.parse(res);
       if (result) {
-        toast({
-          title: "Επιτυχία",
-          description: "Η κράτηση ενημερώθηκε επιτυχώς.",
-          className: "bg-green-500 text-light-900",
-        });
+        toast.success("Η κράτηση ενημερώθηκε επιτυχώς!");
         closeModal();
         router.refresh();
       }
     } catch (error) {
-      toast({
-        title: "Σφάλμα",
-        description: "Κάτι πήγε στραβά, παρακαλώ δοκιμάστε ξανά.",
-        className: "bg-red-400 text-light-900",
-      });
+      toast.error("Η ενημέρωση της κράτησης απέτυχε!");
     }
   };
 

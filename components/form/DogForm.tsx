@@ -9,12 +9,11 @@ import DogField from "./DogField";
 import { Loader } from "lucide-react";
 import { CreateClient } from "@/lib/actions/client.action";
 import { cn } from "@/lib/utils";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner";
 import { usePathname } from "next/navigation";
 import { Button } from "@heroui/react";
 const DogForm = ({ number, onBack, client, setSuccessId, setStage }: any) => {
   const [isCreating, setIsCreating] = React.useState(false);
-  const { toast } = useToast();
 
   const path = usePathname();
   const form = useForm<z.infer<typeof DogValidation>>({
@@ -60,13 +59,9 @@ const DogForm = ({ number, onBack, client, setSuccessId, setStage }: any) => {
         setStage([3, 3]);
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία δημιουργίας",
-        description: `${error}`,
-      });
+      toast.error(
+        "Η δημιουργία του πελάτη απέτυχε. Παρακαλώ δοκιμάστε ξανά αργότερα."
+      );
     } finally {
       setIsCreating(false);
       form.reset();

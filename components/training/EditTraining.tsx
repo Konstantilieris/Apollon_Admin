@@ -32,10 +32,9 @@ import {
   editTrainingDate,
   editTrainingDeparture,
 } from "@/lib/actions/training.action";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner";
 
 const EditTraining = ({ training }: any) => {
-  const { toast } = useToast();
   const [edit, setEdit] = useState(false);
   const [timeArrival, setTimeArrival] = useState<Date>();
   const [timeDeparture, setTimeDeparture] = useState<Date>();
@@ -54,22 +53,12 @@ const EditTraining = ({ training }: any) => {
         timeDeparture
       );
       if (updatedBooking) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: `η εκπαίδευση του πελάτη ${training.clientId.lastName} τροποποιήθηκε`,
-        });
+        toast.success(
+          `Η ώρα αναχώρησης για την κράτηση του πελάτη ${training.clientId.lastName} τροποποιήθηκε`
+        );
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία τροποποιήσης",
-        description: `${error}`,
-      });
+      toast.error(`${error}`);
     } finally {
       window.location.reload();
       setSubmitDeparture(false);

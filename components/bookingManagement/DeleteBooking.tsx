@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import { useToast } from "../ui/use-toast";
-import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+
 import { deleteBooking } from "@/lib/actions/booking.action";
 import { usePathname, useRouter } from "next/navigation";
 interface DeleteParams {
@@ -9,7 +9,6 @@ interface DeleteParams {
   clientId: string;
 }
 const DeleteBooking = ({ bookingId, clientId }: DeleteParams) => {
-  const { toast } = useToast();
   const path = usePathname();
   const router = useRouter();
   const handleDelete = async () => {
@@ -18,22 +17,10 @@ const DeleteBooking = ({ bookingId, clientId }: DeleteParams) => {
       const res = await deleteBooking({ id: bookingId, clientId, path });
 
       if (res.message === "success") {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white  text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: "Η κράτηση διαγράφηκε",
-        });
+        toast.success("Η κράτηση διαγράφηκε επιτυχώς");
       }
     } catch (err) {
-      toast({
-        className: cn(
-          "bg-celtic-green border-none text-white  text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Σφάλμα",
-        description: "Η κράτηση δεν διαγράφηκε",
-      });
+      toast.error("Η κράτηση δεν διαγράφηκε επιτυχώς");
     } finally {
       router.push("/booking");
     }

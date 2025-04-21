@@ -12,7 +12,7 @@ import { TypesOfResidence } from "@/constants";
 
 import { Button, Input } from "@heroui/react";
 import { updateClient } from "@/lib/actions/client.action";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -21,7 +21,6 @@ import { CommandMenuType } from "@/hooks/command-menu-store";
 import { useModalStore } from "@/hooks/client-profile-store";
 
 const UpdateClientForm = ({ client }: any) => {
-  const { toast } = useToast();
   const { closeModal } = useModalStore();
   const path = usePathname();
   const router = useRouter();
@@ -57,23 +56,10 @@ const UpdateClientForm = ({ client }: any) => {
       const res = await updateClient({ id: client._id, data: values, path });
 
       if (res) {
-        const newClient = JSON.parse(res);
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: `Ο πελάτης ${newClient.name} ενημερώθηκε`,
-        });
+        toast.success("Επιτυχής ενημέρωση πελάτη.");
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία δημιουργίας",
-        description: `${error}`,
-      });
+      toast.error("Αποτυχία ενημέρωσης πελάτη.");
     } finally {
       form.reset();
       router.refresh();

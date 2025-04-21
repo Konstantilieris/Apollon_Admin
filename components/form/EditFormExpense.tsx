@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 
 import { Expense } from "@/types";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { updateExpense } from "@/lib/actions/expenses.action";
 import { useExpensesStore } from "@/hooks/expenses-store";
 import { cn } from "@/lib/utils";
@@ -28,7 +28,7 @@ import { ExpenseSchema } from "@/lib/validation";
 
 const EditFormExpense = () => {
   const router = useRouter();
-  const { toast } = useToast();
+
   const { categories } = useCategories();
   const { onClose } = useExpensesStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -70,13 +70,7 @@ const EditFormExpense = () => {
         if (!expense) return;
         const res = await updateExpense(expense?._id!, data);
         if (res.success) {
-          toast({
-            title: "Επιτυχία",
-            description: "Η δαπάνη ενημερώθηκε με επιτυχία",
-            className: cn(
-              "bg-celtic-green border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-            ),
-          });
+          toast.success("Expense updated successfully.");
           onClose();
         }
         console.log("Expense data submitted:", data);

@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import * as z from "zod";
 
-import { Switch } from "@/components/ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import CustomFormField, {
@@ -21,12 +20,11 @@ import { cn } from "@/lib/utils";
 import { EmailValidation } from "@/lib/validation";
 import { sendEmail } from "@/lib/actions/messages.action";
 import { IconMapPin } from "@tabler/icons-react";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 type CardProps = React.ComponentProps<typeof Card>;
 
 export function ActionsCard({ className, ...props }: CardProps) {
-  const { toast } = useToast();
   const form = useForm<z.infer<typeof EmailValidation>>({
     resolver: zodResolver(EmailValidation),
     defaultValues: {
@@ -36,23 +34,10 @@ export function ActionsCard({ className, ...props }: CardProps) {
   async function onSubmit(values: z.infer<typeof EmailValidation>) {
     try {
       const res = await sendEmail(values.email);
-      if (res.success)
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white  text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: "Το email στάλθηκε",
-        });
+      if (res.success) toast.success("Το email στάλθηκε επιτυχώς.");
     } catch (error) {
       console.log(error);
-      toast({
-        className: cn(
-          "bg-celtic-green border-none text-white  text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Σφάλμα",
-        description: "Το email δεν στάλθηκε",
-      });
+      toast.error("Σφάλμα κατά την αποστολή του email.");
     } finally {
       form.reset();
     }
@@ -93,7 +78,6 @@ export function ActionsCard({ className, ...props }: CardProps) {
                   Στείλε τοποθεσία στον πελάτη
                 </p>
               </div>
-              <Switch />
             </Button>
           </form>
         </Form>

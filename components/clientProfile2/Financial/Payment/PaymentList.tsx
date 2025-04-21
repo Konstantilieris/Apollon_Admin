@@ -28,7 +28,7 @@ import {
   removeReversedPayment,
   reversePayment,
 } from "@/lib/actions/service.action";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 interface ServiceAllocation {
@@ -58,7 +58,6 @@ interface SortConfig {
 const ROWS_PER_PAGE = 10;
 
 export default function PaymentList({ client }: { client: any }) {
-  const { toast } = useToast();
   const [payments, setPayments] = React.useState<Payment[]>([]);
   const path = usePathname();
   const [loading, setLoading] = React.useState(false);
@@ -182,13 +181,7 @@ export default function PaymentList({ client }: { client: any }) {
         // Reverse the payment
         const res = await reversePayment({ paymentId, path });
         if (res.success) {
-          toast({
-            title: "Επιτυχία",
-            description: "Η αντιστροφή ολοκληρώθηκε.",
-            className: cn(
-              "bg-celtic-green border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-            ),
-          });
+          toast.success("Η αντιστροφή ολοκληρώθηκε επιτυχώς.");
         } else {
           throw new Error("Reverse failed");
         }
@@ -197,13 +190,7 @@ export default function PaymentList({ client }: { client: any }) {
         const res = await removeReversedPayment({ paymentId, path });
         if (res.message === "success") {
           setPayments((prev) => prev.filter((p) => p._id !== paymentId)); // remove from UI
-          toast({
-            title: "Επιτυχία",
-            description: "Η διαγραφή ολοκληρώθηκε.",
-            className: cn(
-              "bg-celtic-green border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-            ),
-          });
+          toast.success("Η διαγραφή ολοκληρώθηκε επιτυχώς.");
         } else {
           throw new Error("Delete failed");
         }
@@ -218,15 +205,9 @@ export default function PaymentList({ client }: { client: any }) {
         )
       );
 
-      toast({
-        title: "Σφάλμα",
-        description: wasReversed
-          ? "Η διαγραφή απέτυχε."
-          : "Η αντιστροφή απέτυχε.",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-      });
+      toast.error(
+        wasReversed ? "Η διαγραφή απέτυχε." : "Η αντιστροφή απέτυχε."
+      );
     }
   };
 

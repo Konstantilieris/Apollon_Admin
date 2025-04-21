@@ -2,7 +2,7 @@ import React from "react";
 import { formatDate, cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
   Badge,
   Button,
@@ -19,7 +19,7 @@ const FullPayServices = () => {
   const [loading, setLoading] = React.useState(false);
   const path = usePathname();
   const router = useRouter();
-  const { toast } = useToast();
+
   const { modalData, closeModal } = useModalStore();
   const totalAmount = React.useMemo(() => {
     return modalData?.selectedServices?.reduce(
@@ -52,21 +52,10 @@ const FullPayServices = () => {
         )
       );
 
-      toast({
-        title: "Επιτυχία",
-        className: cn(
-          "bg-celtic-green border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-        description: "Η πληρωμή ολοκληρώθηκε επιτυχώς.",
-      });
+      toast.success("Η εξόφληση ολοκληρώθηκε επιτυχώς.");
     } catch (error) {
-      toast({
-        title: "Σφάλμα",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-        description: "Η πληρωμή απέτυχε. Παρακαλώ δοκιμάστε ξανά.",
-      });
+      console.error("Error paying off client:", error);
+      toast.error("Η εξόφληση απέτυχε.");
     } finally {
       setLoading(false);
       closeModal();

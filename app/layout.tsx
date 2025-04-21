@@ -7,7 +7,8 @@ import React from "react";
 import "./globals.css";
 
 import AuthProvider from "@/context/AuthProvider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
+
 import { ThemeProvider } from "@/components/shared/theme-provider";
 
 const fontSans = Plus_Jakarta_Sans({
@@ -39,7 +40,7 @@ export default function RootLayout({
           >
             {children}
 
-            <Toaster />
+            <Toaster richColors />
           </ThemeProvider>
         </AuthProvider>
       </body>

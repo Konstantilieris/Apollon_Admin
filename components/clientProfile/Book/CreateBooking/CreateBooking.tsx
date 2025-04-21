@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 
 import { usePathname } from "next/navigation";
 
-import { calculateTotalPrice, cn } from "@/lib/utils";
+import { calculateTotalPrice } from "@/lib/utils";
 import { createBooking } from "@/lib/actions/booking.action";
 import { Loader } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { IconArrowRight } from "@tabler/icons-react";
 
@@ -57,7 +57,6 @@ const CreateBooking = ({
   const [totalAmount, setTotalAmount] = React.useState(
     amount + transportFeeArrival + transportFeeDeparture + extraDayPrice
   );
-  const { toast } = useToast();
 
   useEffect(() => {
     setTotalAmount(
@@ -89,22 +88,11 @@ const CreateBooking = ({
       });
 
       if (res) {
-        toast({
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχία",
-          description: "Η κράτηση δημιουργήθηκε",
-        });
+        toast.success("Η κράτηση δημιουργήθηκε επιτυχώς");
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-dark border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Failed to create Booking",
-        description: `${error}`,
-      });
+      console.error("Error creating booking:", error);
+      toast.error("Η κράτηση δεν δημιουργήθηκε επιτυχώς");
     } finally {
       setLoading(false);
       resetStore();

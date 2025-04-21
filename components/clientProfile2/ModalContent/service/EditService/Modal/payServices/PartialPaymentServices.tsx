@@ -2,7 +2,7 @@ import React from "react";
 import { formatDate, cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
   Button,
   Card,
@@ -22,7 +22,7 @@ const PartialPayServices = () => {
 
   const path = usePathname();
   const router = useRouter();
-  const { toast } = useToast();
+
   const { modalData, closeModal } = useModalStore();
 
   const totalAmount = React.useMemo(() => {
@@ -50,13 +50,9 @@ const PartialPayServices = () => {
     const amount = Number(partialAmount);
 
     if (!amount || amount <= 0 || amount > totalAmount) {
-      toast({
-        title: "Σφάλμα",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-        description: "Εισάγετε ένα έγκυρο ποσό που δεν υπερβαίνει το σύνολο.",
-      });
+      toast.error(
+        '"Σφάλμα", "Η μερική πληρωμή πρέπει να είναι μεγαλύτερη από 0 και μικρότερη από το συνολικό ποσό."'
+      );
       return;
     }
 
@@ -72,23 +68,12 @@ const PartialPayServices = () => {
         path,
       });
       if (res.message === "success")
-        toast({
-          title: "Επιτυχία",
-          className: cn(
-            "bg-celtic-green border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-          ),
-          description: `Η μερική πληρωμή των €${amount.toFixed(
-            2
-          )} ολοκληρώθηκε.`,
-        });
+        toast.success("Η μερική πληρωμή ήταν επιτυχής!");
     } catch (error) {
-      toast({
-        title: "Σφάλμα",
-        className: cn(
-          "bg-red-500 border-none text-white text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans"
-        ),
-        description: "Η πληρωμή απέτυχε, δοκιμάστε ξανά.",
-      });
+      console.error("Error applying partial payment:", error);
+      toast.error(
+        '"Σφάλμα", "Η μερική πληρωμή απέτυχε. Παρακαλώ δοκιμάστε ξανά."'
+      );
     } finally {
       setLoading(false);
       closeModal();

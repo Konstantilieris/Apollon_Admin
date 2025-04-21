@@ -14,7 +14,7 @@ import {
 import React, { Suspense, useRef, useState } from "react";
 import Link from "next/link";
 import { deleteBooking } from "@/lib/actions/booking.action";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import BottomGradient from "@/components/ui/bottom-gradient";
 import { FiArrowRight } from "react-icons/fi";
@@ -36,7 +36,7 @@ const FirstStage = ({
   price,
 }: Props) => {
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+
   const ref = useRef(null);
 
   const handleDelete = async () => {
@@ -48,22 +48,10 @@ const FirstStage = ({
         path: "/calendar",
       });
       if (booking) {
-        toast({
-          className: cn(
-            "bg-green-800 border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-          ),
-          title: "Επιτυχής Διαγραφή",
-          description: `Η κράτηση διαγράφηκε με επιτυχία`,
-        });
+        toast.success("Η κράτηση διαγράφηκε επιτυχώς.");
       }
     } catch (error) {
-      toast({
-        className: cn(
-          "bg-red-800 border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed  "
-        ),
-        title: "Αποτυχία Διαγραφής",
-        description: `Η κράτηση δεν διαγράφηκε`,
-      });
+      toast.error("Η διαγραφή της κράτησης απέτυχε.");
     } finally {
       setLoading(false);
       onClose();
