@@ -75,18 +75,10 @@ export function CreateCategoryForm() {
   const onDelete = async (category: any) => {
     const res = await deleteCategory(category._id);
     if (res.success) {
-      toast({
-        title: "Success",
-        description: "Category deleted successfully.",
-        className: "bg-green-500 font-sans text-light-900",
-      });
+      toast.success("Category deleted successfully.");
       refreshCategories();
     } else {
-      toast({
-        title: "Error",
-        description: "Failed to delete category. Please try again.",
-        className: "bg-red-500 font-sans text-light-900",
-      });
+      toast.error("Failed to delete category. Please try again.");
     }
   };
   const handleSaveEdit = async (category: any) => {
