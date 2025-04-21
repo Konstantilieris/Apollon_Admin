@@ -38,23 +38,11 @@ const PaymentTab = ({ payments }: { payments: any[] }) => {
     try {
       const res = await removeReversedPayment({ paymentId: payment._id, path });
       if (res.message === "success") {
-        toast({
-          title: "Επιτυχία",
-          description: "Η διαγραφή ολοκληρώθηκε.",
-          className: cn(
-            "bg-celtic-green border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
-          ),
-        });
+        toast.success("Η διαγραφή ολοκληρώθηκε επιτυχώς.");
       }
     } catch (error) {
       console.error("Error deleting payment:", error);
-      toast({
-        title: "Error",
-        className: cn(
-          "bg-red-500 border-none text-white   text-center flex flex-center max-w-[300px] bottom-0 left-0 fixed font-sans "
-        ),
-        description: "Η διαγραφή απέτυχε.",
-      });
+      toast.error("Η διαγραφή απέτυχε.");
     } finally {
       window.location.reload();
     }
