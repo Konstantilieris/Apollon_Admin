@@ -35,6 +35,7 @@ interface Booking {
   dogs: string[];
   flag1: boolean;
   flag2: boolean;
+  duration: number;
 }
 
 const columns = [
@@ -46,6 +47,7 @@ const columns = [
   { key: "fromDate", label: "Από Ημερομηνία" },
   { key: "toDate", label: "Έως Ημερομηνία" },
   { key: "extraDay", label: "Επιπλέον Ημέρα" },
+  { key: "duration", label: "Διάρκεια" },
   { key: "totalAmount", label: "Συνολικό Ποσό" },
   { key: "dogs", label: "Σκύλοι" },
   { key: "flag1", label: "PetTaxi Άφιξη" },
@@ -61,12 +63,18 @@ const BookingsTable = ({
   totalPages: number;
 }) => {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [selectedKeys, setSelectedKeys] = React.useState<Set<string>>(
-    new Set([])
-  );
+  const [selectedKeys, setSelectedKeys] = React.useState<any>(new Set([]));
   const rowsPerPage = 15;
   const { openModal } = useModalStore();
-  const hasSelection = selectedKeys.size > 0;
+  const hasSelection = selectedKeys.size > 0 || selectedKeys === "all";
+  // totalSelectedAmount when selectedKeys is a string ALL then totalSelectedAmount is all bookings total amount
+  const totalSelectedAmount =
+    selectedKeys === "all"
+      ? bookings.reduce((sum: any, b) => sum + b.totalAmount, 0)
+      : Array.from(selectedKeys).reduce((sum: any, id) => {
+          const booking = bookings.find((b) => b._id === id);
+          return booking ? sum + booking.totalAmount : sum;
+        }, 0);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -76,7 +84,7 @@ const BookingsTable = ({
   }, []);
 
   const handleView = (id: string) => {
-    console.log("Viewing booking:", id);
+    openModal("viewBooking", { bookingId: id });
     // Implement your view logic here
   };
 
@@ -130,6 +138,24 @@ const BookingsTable = ({
             {cellValue ? "Ναι" : "Όχι"}
           </Chip>
         );
+      case "duration": {
+        // normalise dates to midnight to avoid off‑by‑one headaches
+        const from = new Date(booking.fromDate);
+        const to = new Date(booking.toDate);
+
+        // milliseconds in a day
+        const MS_DAY = 1000 * 60 * 60 * 24;
+
+        const diffDays = Math.max(
+          0,
+          Math.ceil(
+            (to.setHours(0, 0, 0, 0) - from.setHours(0, 0, 0, 0)) / MS_DAY
+          )
+        );
+
+        return `${diffDays}`; // e.g. “2”
+      }
+
       case "dogs":
         return (cellValue as string[])?.join(", ");
       case "fromDate":
@@ -159,6 +185,7 @@ const BookingsTable = ({
 
   return (
     <div className="w-full space-y-4">
+      <h1 className="font-semibold tracking-widest">ΔΙΑΧΕΙΡΗΣΗ ΚΡΑΤΗΣΕΩΝ</h1>
       <Table
         aria-label="Πίνακας Κρατήσεων"
         isStriped
@@ -166,7 +193,11 @@ const BookingsTable = ({
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys as any}
         topContent={
-          <TopContent hasSelection={hasSelection} selectedKeys={selectedKeys} />
+          <TopContent
+            hasSelection={hasSelection}
+            selectedKeys={selectedKeys}
+            totalSelectedAmount={totalSelectedAmount}
+          />
         }
         bottomContent={<Pagination totalPages={totalPages} />}
         removeWrapper

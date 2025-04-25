@@ -34,6 +34,8 @@ export default function DatePushUrl({
       <I18nProvider locale="el-GR">
         <DateRangePicker
           label="Εύρος Ημερομηνιών"
+          visibleMonths={2}
+          showMonthAndYearPickers
           color="secondary"
           variant="bordered"
           value={datePickerValue}

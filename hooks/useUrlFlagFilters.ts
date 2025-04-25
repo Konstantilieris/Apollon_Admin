@@ -9,29 +9,35 @@ export const useUrlFlagFilters = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const initialFlag1 = searchParams.get("flg1") === "true";
-  const initialFlag2 = searchParams.get("flg2") === "true";
+  const initialFlag1 = searchParams.get("flag1") === "true";
+  const initialFlag2 = searchParams.get("flag2") === "true";
 
   const [flag1, setFlag1] = useState(initialFlag1);
   const [flag2, setFlag2] = useState(initialFlag2);
-
+  //flag1 useEffect
   useEffect(() => {
     let newUrl = searchParams.toString();
 
     if (flag1) {
-      newUrl = formUrlQuery({ params: newUrl, key: "flg1", value: "true" });
+      newUrl = formUrlQuery({ params: newUrl, key: "flag1", value: "true" });
     } else {
-      newUrl = removeKeysFromQuery({ params: newUrl, keysToRemove: ["flg1"] });
-    }
-
-    if (flag2) {
-      newUrl = formUrlQuery({ params: newUrl, key: "flg2", value: "true" });
-    } else {
-      newUrl = removeKeysFromQuery({ params: newUrl, keysToRemove: ["flg2"] });
+      newUrl = removeKeysFromQuery({ params: newUrl, keysToRemove: ["flag1"] });
     }
 
     router.push(newUrl, { scroll: false });
-  }, [flag1, flag2]);
+  }, [flag1]);
+  //flag2 useEffect
+  useEffect(() => {
+    let newUrl = searchParams.toString();
+
+    if (flag2) {
+      newUrl = formUrlQuery({ params: newUrl, key: "flag2", value: "true" });
+    } else {
+      newUrl = removeKeysFromQuery({ params: newUrl, keysToRemove: ["flag2"] });
+    }
+
+    router.push(newUrl, { scroll: false });
+  }, [flag2]);
 
   return { flag1, setFlag1, flag2, setFlag2 };
 };

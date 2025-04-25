@@ -20,6 +20,7 @@ type ModalType =
   | "serviceView"
   | "editBooking"
   | "deleteBookings"
+  | "viewBooking"
   | null;
 
 interface ModalState {

@@ -13,7 +13,7 @@ export const FloatingSearch = () => {
 
   React.useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
-      if (event.shiftKey && ["Z", "z"].includes(event.key)) {
+      if (event.shiftKey && ["Z", "z", "Ζ", "ζ"].includes(event.key)) {
         event.preventDefault();
 
         if (!isThrottled.current) {

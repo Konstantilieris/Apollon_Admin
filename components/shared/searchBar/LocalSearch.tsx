@@ -15,6 +15,7 @@ const LocalSearch = ({ placeholder, otherClasses }: CustomInputProps) => {
   return (
     <Input
       type="text"
+      className="max-w-[30vw] md:max-w-[40vw] lg:max-w-[30vw]"
       label={placeholder}
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}

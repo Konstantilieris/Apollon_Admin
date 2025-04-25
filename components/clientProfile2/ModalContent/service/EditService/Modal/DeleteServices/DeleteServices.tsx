@@ -1,7 +1,7 @@
 import React from "react";
 
 import { deleteSelectedService } from "@/lib/actions/service.action";
-import { formatDate, cn } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { toast } from "sonner";

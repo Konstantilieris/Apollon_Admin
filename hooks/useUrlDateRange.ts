@@ -24,6 +24,8 @@ export const useUrlDateRange = () => {
   });
 
   useEffect(() => {
+    // 🛑 if no date range is set, do nothing
+    if (!rangeDate?.from && !rangeDate?.to) return;
     const debounce = setTimeout(() => {
       const dateFrom = dateToInt(rangeDate?.from);
       const dateTo = dateToInt(rangeDate?.to);

@@ -1486,3 +1486,20 @@ export async function getServiceView({ serviceId }: any) {
     throw new Error("Failed to fetch the service view.");
   }
 }
+
+export async function getBookingServices({ bookingId }: { bookingId: string }) {
+  try {
+    await connectToDatabase();
+    if (!bookingId) throw new Error("Booking ID is required.");
+
+    /* 1️⃣  Services that belong to the booking */
+    const services = await Service.find({ bookingId }).sort({ date: -1 });
+
+    /* 2️⃣  Payments whose serviceId is in that list of services */
+
+    return JSON.stringify(services);
+  } catch (error: any) {
+    console.error("Error fetching booking services and payments:", error);
+    throw new Error("Failed to fetch booking services and payments.");
+  }
+}
