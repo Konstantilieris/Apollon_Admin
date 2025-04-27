@@ -26,7 +26,7 @@ export const TableTopContent: React.FC<TableTopContentProps> = ({
         <span className="text-base tracking-widest text-default-500">
           Συνολικές Πληρωμές
         </span>
-        <span className="text-large font-semibold">
+        <span className=" text-large font-semibold">
           {formatCurrency(totalAmount)}
         </span>
       </div>

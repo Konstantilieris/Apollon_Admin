@@ -605,362 +605,6 @@ export async function discountSelectedServices({
   }
 }
 
-export async function payService({
-  serviceId,
-  path,
-}: {
-  serviceId: string;
-  path: string;
-}) {
-  const session = await mongoose.startSession();
-  try {
-    await session.withTransaction(async () => {
-      // Find the service by ID and ensure it’s unpaid
-      const service = await Service.findOne({
-        _id: serviceId,
-        paid: false,
-      }).session(session);
-
-      if (!service) {
-        throw new Error("Service not found or already paid.");
-      }
-
-      const remainingAmount = service.remainingAmount || 0;
-
-      if (remainingAmount <= 0) {
-        throw new Error("Service has no remaining amount to pay.");
-      }
-
-      // Create a new payment record for the remaining amount
-      const payment = new Payment({
-        clientId: service.clientId,
-        amount: remainingAmount,
-        serviceId: service._id,
-        notes: "Πλήρης πληρωμή για το υπόλοιπο ποσό",
-        allocations: [
-          {
-            serviceId: service._id,
-            amount: remainingAmount,
-          },
-        ], // Record allocation for the payment
-      });
-
-      await payment.save({ session });
-
-      // Update the service to mark it as paid
-      service.paid = true;
-      service.paymentDate = new Date();
-      service.paidAmount = (service.paidAmount || 0) + remainingAmount;
-      service.remainingAmount = 0;
-      service.payments.push(payment._id); // Link payment to the service
-
-      await service.save({ session });
-
-      // Update the client record
-      const client = await Client.findByIdAndUpdate(
-        service.clientId,
-        {
-          $pull: { owes: service._id },
-          $inc: {
-            owesTotal: -remainingAmount,
-            totalSpent: remainingAmount,
-            points: remainingAmount, // Assuming points are awarded based on payment
-          },
-        },
-        { new: true, session }
-      );
-
-      if (!client) {
-        throw new Error("Client not found or update failed.");
-      }
-
-      // Update the financial summary
-      await FinancialSummary.findOneAndUpdate(
-        {}, // Assuming a single financial summary document
-        { $inc: { totalRevenue: remainingAmount } },
-        { upsert: true, session } // Create if it doesn’t exist
-      );
-
-      // Log success
-      console.log("Service fully paid off:", service);
-
-      // Revalidate the page path
-      revalidatePath(path);
-    });
-
-    return { success: true, message: "Η υπηρεσία εξοφλήθηκε" };
-  } catch (error) {
-    console.error("Error in payService:", error);
-    await session.abortTransaction();
-    throw error;
-  } finally {
-    session.endSession();
-  }
-}
-interface PartialPaymentParams {
-  selectedServiceIds: string[];
-  amount: number;
-  path: string;
-}
-export async function partialPaymentSelected({
-  selectedServiceIds,
-  amount,
-  path,
-}: PartialPaymentParams) {
-  if (amount <= 0) {
-    return {
-      success: false,
-      message: "Payment amount must be greater than zero.",
-    };
-  }
-
-  await connectToDatabase();
-  const session = await mongoose.startSession();
-
-  try {
-    session.startTransaction();
-
-    // Fetch only the selected services that are unpaid
-    const services = await Service.find(
-      { _id: { $in: selectedServiceIds }, paid: false },
-      {},
-      { sort: { remainingAmount: 1 } }
-    ).session(session);
-
-    if (services.length === 0) {
-      throw new Error("No unpaid services found for the selected items.");
-    }
-
-    let remainingPayment = amount;
-    let totalPaymentApplied = 0;
-    const allocations = [];
-
-    // Apply payment across the selected services
-    for (const service of services) {
-      if (!service.remainingAmount || service.remainingAmount < 0) {
-        throw new Error(`Service ${service._id} has invalid remainingAmount.`);
-      }
-
-      // Determine how much can be applied to this service
-      const servicePayment = Math.min(
-        remainingPayment,
-        service.remainingAmount
-      );
-
-      // Increase the paidAmount (pre-save hook will recalc remainingAmount, paid, etc.)
-      service.paidAmount = (service.paidAmount || 0) + servicePayment;
-
-      // Save service so that the pre-save hook recalculates derived fields
-      await service.save({ session });
-
-      allocations.push({
-        serviceId: service._id,
-        amount: servicePayment,
-      });
-
-      totalPaymentApplied += servicePayment;
-      remainingPayment -= servicePayment;
-      if (remainingPayment <= 0) break;
-    }
-
-    // Create a Payment record with the allocations
-    const payment = new Payment({
-      clientId: services[0].clientId, // assuming all services belong to the same client
-      amount: totalPaymentApplied,
-      notes: `Έναντι πληρωμή ${amount} εφαρμόζεται σε συγκεκριμένες υπηρεσίες`,
-      allocations,
-    });
-    await payment.save({ session });
-
-    // Update client details if needed
-    const client = await Client.findById(services[0].clientId).session(session);
-    if (!client) {
-      throw new Error("Client not found.");
-    }
-    client.owesTotal = Math.max(
-      (client.owesTotal || 0) - totalPaymentApplied,
-      0
-    );
-    client.totalSpent = (client.totalSpent || 0) + totalPaymentApplied;
-    await client.save({ session });
-
-    // Update financial summary
-    await FinancialSummary.findOneAndUpdate(
-      {},
-      { $inc: { totalRevenue: totalPaymentApplied } },
-      { session, upsert: true }
-    );
-
-    await session.commitTransaction();
-    session.endSession();
-
-    // Revalidate the path if needed
-    revalidatePath(path);
-
-    return {
-      success: true,
-      message: `Partial payment of ${amount} applied successfully.`,
-    };
-  } catch (error: any) {
-    await session.abortTransaction();
-    session.endSession();
-    console.error("Error processing partial payment:", error);
-    return {
-      success: false,
-      message: error.message || "Failed to process partial payment.",
-    };
-  }
-}
-export async function partialPayment({
-  clientId,
-  amount,
-  path,
-}: {
-  clientId: string;
-  amount: number;
-  path: string;
-}) {
-  if (amount <= 0) {
-    return {
-      success: false,
-      message: "Payment amount must be greater than zero.",
-    };
-  }
-
-  await connectToDatabase();
-  const session = await mongoose.startSession();
-
-  try {
-    session.startTransaction();
-
-    console.log(`Starting partial payment for client: ${clientId}`);
-
-    // Fetch unpaid services for the client, sorted by smallest remaining amount
-    const unpaidServices = await Service.find(
-      { clientId, paid: false },
-      {},
-      { sort: { remainingAmount: 1 } }
-    ).session(session);
-
-    if (unpaidServices.length === 0) {
-      throw new Error("No unpaid services found for the client.");
-    }
-
-    console.log(`Found ${unpaidServices.length} unpaid services.`);
-
-    let remainingPayment = amount;
-    let totalPaymentApplied = 0;
-
-    const allocations = []; // To track payment allocations to services
-
-    // Apply payment across services
-    for (const service of unpaidServices) {
-      if (!service.remainingAmount || service.remainingAmount < 0) {
-        throw new Error(`Service ${service._id} has invalid remainingAmount.`);
-      }
-
-      const servicePayment = Math.min(
-        remainingPayment,
-        service.remainingAmount
-      );
-
-      // Update service details
-      service.paidAmount = (service.paidAmount || 0) + servicePayment;
-      service.remainingAmount = Math.max(
-        (service.amount - service.discount || 0) - service.paidAmount,
-        0
-      );
-
-      if (service.remainingAmount === 0) {
-        service.paid = true;
-        service.paymentDate = new Date();
-        console.log(`Service ${service._id} fully paid.`);
-      }
-
-      // Track the allocation
-      allocations.push({
-        serviceId: service._id,
-        amount: servicePayment,
-      });
-
-      await service.save({ session });
-
-      totalPaymentApplied += servicePayment;
-      remainingPayment -= servicePayment;
-
-      // Break loop if payment is fully allocated
-      if (remainingPayment <= 0) break;
-    }
-
-    // Create a single Payment record with allocations
-    const payment = new Payment({
-      clientId,
-      amount: totalPaymentApplied,
-      notes: `Μερική πληρωμή ${amount}  εφαρμόζεται σε όλες τις υπηρεσίες`,
-      allocations,
-    });
-
-    await payment.save({ session });
-
-    // Update client details
-    const client = await Client.findById(clientId).session(session);
-    if (!client) {
-      throw new Error("Client not found.");
-    }
-
-    client.owesTotal = Math.max(
-      (client.owesTotal || 0) - totalPaymentApplied,
-      0
-    );
-    client.totalSpent = (client.totalSpent || 0) + totalPaymentApplied;
-
-    if (remainingPayment > 0) {
-      client.credit = (client.credit || 0) + remainingPayment;
-      console.log(
-        `Remaining payment added as client credit: ${remainingPayment}`
-      );
-    }
-
-    await client.save({ session });
-
-    // Update financial summary
-    await FinancialSummary.findOneAndUpdate(
-      {},
-      { $inc: { totalRevenue: totalPaymentApplied } },
-      { session, upsert: true }
-    );
-
-    console.log(
-      `Financial summary updated: TotalRevenue incremented by ${totalPaymentApplied}`
-    );
-
-    // Commit the transaction
-    await session.commitTransaction();
-
-    console.log("Partial payment transaction committed successfully.");
-
-    // Revalidate the path
-    revalidatePath(path);
-
-    return {
-      success: true,
-      message: `Partial payment of ${amount} applied successfully.`,
-    };
-  } catch (error: any) {
-    console.error("Error processing partial payment:", error);
-
-    // Abort the transaction in case of an error
-    await session.abortTransaction();
-
-    return {
-      success: false,
-      message: error.message || "Failed to process partial payment.",
-    };
-  } finally {
-    session.endSession();
-  }
-}
-
 export async function deleteSelectedService({ service, path, clientId }: any) {
   const session = await mongoose.startSession();
 
@@ -1569,5 +1213,387 @@ export async function removePaymentSafely({
     throw error;
   } finally {
     session.endSession();
+  }
+}
+
+interface PartialPaymentParams {
+  selectedServiceIds: string[];
+  amount: number;
+  path: string;
+}
+// --------------------------------------Payment for selected services-----------------------------------//
+export async function partialPaymentSelected({
+  selectedServiceIds,
+  amount,
+  path,
+}: PartialPaymentParams) {
+  if (amount <= 0) {
+    return {
+      success: false,
+      message: "Payment amount must be greater than zero.",
+    };
+  }
+
+  await connectToDatabase();
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    // Fetch only the selected services that are unpaid
+    const services = await Service.find(
+      { _id: { $in: selectedServiceIds }, paid: false },
+      {},
+      { sort: { remainingAmount: 1 } }
+    ).session(session);
+
+    if (services.length === 0) {
+      throw new Error("No unpaid services found for the selected items.");
+    }
+
+    let remainingPayment = amount;
+    let totalPaymentApplied = 0;
+    const allocations = [];
+
+    // Apply payment across the selected services
+    for (const service of services) {
+      if (!service.remainingAmount || service.remainingAmount < 0) {
+        throw new Error(`Service ${service._id} has invalid remainingAmount.`);
+      }
+
+      // Determine how much can be applied to this service
+      const servicePayment = Math.min(
+        remainingPayment,
+        service.remainingAmount
+      );
+
+      // Increase the paidAmount (pre-save hook will recalc remainingAmount, paid, etc.)
+      service.paidAmount = (service.paidAmount || 0) + servicePayment;
+
+      // Save service so that the pre-save hook recalculates derived fields
+      await service.save({ session });
+
+      allocations.push({
+        serviceId: service._id,
+        amount: servicePayment,
+      });
+
+      totalPaymentApplied += servicePayment;
+      remainingPayment -= servicePayment;
+      if (remainingPayment <= 0) break;
+    }
+
+    // Create a Payment record with the allocations
+    const payment = new Payment({
+      clientId: services[0].clientId, // assuming all services belong to the same client
+      amount: totalPaymentApplied,
+      notes: `Έναντι πληρωμή ${amount} εφαρμόζεται σε συγκεκριμένες υπηρεσίες`,
+      allocations,
+    });
+    await payment.save({ session });
+
+    // Update client details if needed
+    const client = await Client.findById(services[0].clientId).session(session);
+    if (!client) {
+      throw new Error("Client not found.");
+    }
+    client.owesTotal = Math.max(
+      (client.owesTotal || 0) - totalPaymentApplied,
+      0
+    );
+    client.totalSpent = (client.totalSpent || 0) + totalPaymentApplied;
+    await client.save({ session });
+
+    // Update financial summary
+    await FinancialSummary.findOneAndUpdate(
+      {},
+      { $inc: { totalRevenue: totalPaymentApplied } },
+      { session, upsert: true }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    // Revalidate the path if needed
+    revalidatePath(path);
+
+    return {
+      success: true,
+      message: `Partial payment of ${amount} applied successfully.`,
+    };
+  } catch (error: any) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error processing partial payment:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to process partial payment.",
+    };
+  }
+}
+export async function partialPayment({
+  clientId,
+  amount,
+  path,
+}: {
+  clientId: string;
+  amount: number;
+  path: string;
+}) {
+  if (amount <= 0) {
+    return {
+      success: false,
+      message: "Payment amount must be greater than zero.",
+    };
+  }
+
+  await connectToDatabase();
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    console.log(`Starting partial payment for client: ${clientId}`);
+
+    // Fetch unpaid services for the client, sorted by smallest remaining amount
+    const unpaidServices = await Service.find(
+      { clientId, paid: false },
+      {},
+      { sort: { remainingAmount: 1 } }
+    ).session(session);
+
+    if (unpaidServices.length === 0) {
+      throw new Error("No unpaid services found for the client.");
+    }
+
+    console.log(`Found ${unpaidServices.length} unpaid services.`);
+
+    let remainingPayment = amount;
+    let totalPaymentApplied = 0;
+
+    const allocations = []; // To track payment allocations to services
+
+    // Apply payment across services
+    for (const service of unpaidServices) {
+      if (!service.remainingAmount || service.remainingAmount < 0) {
+        throw new Error(`Service ${service._id} has invalid remainingAmount.`);
+      }
+
+      const servicePayment = Math.min(
+        remainingPayment,
+        service.remainingAmount
+      );
+
+      // Update service details
+      service.paidAmount = (service.paidAmount || 0) + servicePayment;
+      service.remainingAmount = Math.max(
+        (service.amount - service.discount || 0) - service.paidAmount,
+        0
+      );
+
+      if (service.remainingAmount === 0) {
+        service.paid = true;
+        service.paymentDate = new Date();
+        console.log(`Service ${service._id} fully paid.`);
+      }
+
+      // Track the allocation
+      allocations.push({
+        serviceId: service._id,
+        amount: servicePayment,
+      });
+
+      await service.save({ session });
+
+      totalPaymentApplied += servicePayment;
+      remainingPayment -= servicePayment;
+
+      // Break loop if payment is fully allocated
+      if (remainingPayment <= 0) break;
+    }
+
+    // Create a single Payment record with allocations
+    const payment = new Payment({
+      clientId,
+      amount: totalPaymentApplied,
+      notes: `Μερική πληρωμή ${amount}  εφαρμόζεται σε όλες τις υπηρεσίες`,
+      allocations,
+    });
+
+    await payment.save({ session });
+
+    // Update client details
+    const client = await Client.findById(clientId).session(session);
+    if (!client) {
+      throw new Error("Client not found.");
+    }
+
+    client.owesTotal = Math.max(
+      (client.owesTotal || 0) - totalPaymentApplied,
+      0
+    );
+    client.totalSpent = (client.totalSpent || 0) + totalPaymentApplied;
+
+    if (remainingPayment > 0) {
+      client.credit = (client.credit || 0) + remainingPayment;
+      console.log(
+        `Remaining payment added as client credit: ${remainingPayment}`
+      );
+    }
+
+    await client.save({ session });
+
+    // Update financial summary
+    await FinancialSummary.findOneAndUpdate(
+      {},
+      { $inc: { totalRevenue: totalPaymentApplied } },
+      { session, upsert: true }
+    );
+
+    console.log(
+      `Financial summary updated: TotalRevenue incremented by ${totalPaymentApplied}`
+    );
+
+    // Commit the transaction
+    await session.commitTransaction();
+
+    console.log("Partial payment transaction committed successfully.");
+
+    // Revalidate the path
+    revalidatePath(path);
+
+    return {
+      success: true,
+      message: `Partial payment of ${amount} applied successfully.`,
+    };
+  } catch (error: any) {
+    console.error("Error processing partial payment:", error);
+
+    // Abort the transaction in case of an error
+    await session.abortTransaction();
+
+    return {
+      success: false,
+      message: error.message || "Failed to process partial payment.",
+    };
+  } finally {
+    session.endSession();
+  }
+}
+export async function payService({
+  serviceId,
+  path,
+}: {
+  serviceId: string;
+  path: string;
+}) {
+  const session = await mongoose.startSession();
+  try {
+    await session.withTransaction(async () => {
+      // Find the service by ID and ensure it’s unpaid
+      const service = await Service.findOne({
+        _id: serviceId,
+        paid: false,
+      }).session(session);
+
+      if (!service) {
+        throw new Error("Service not found or already paid.");
+      }
+
+      const remainingAmount = service.remainingAmount || 0;
+
+      if (remainingAmount <= 0) {
+        throw new Error("Service has no remaining amount to pay.");
+      }
+
+      // Create a new payment record for the remaining amount
+      const payment = new Payment({
+        clientId: service.clientId,
+        amount: remainingAmount,
+        serviceId: service._id,
+        notes: "Πλήρης πληρωμή για το υπόλοιπο ποσό",
+        allocations: [
+          {
+            serviceId: service._id,
+            amount: remainingAmount,
+          },
+        ], // Record allocation for the payment
+      });
+
+      await payment.save({ session });
+
+      // Update the service to mark it as paid
+      service.paid = true;
+      service.paymentDate = new Date();
+      service.paidAmount = (service.paidAmount || 0) + remainingAmount;
+      service.remainingAmount = 0;
+      service.payments.push(payment._id); // Link payment to the service
+
+      await service.save({ session });
+
+      // Update the client record
+      const client = await Client.findByIdAndUpdate(
+        service.clientId,
+        {
+          $pull: { owes: service._id },
+          $inc: {
+            owesTotal: -remainingAmount,
+            totalSpent: remainingAmount,
+            points: remainingAmount, // Assuming points are awarded based on payment
+          },
+        },
+        { new: true, session }
+      );
+
+      if (!client) {
+        throw new Error("Client not found or update failed.");
+      }
+
+      // Update the financial summary
+      await FinancialSummary.findOneAndUpdate(
+        {}, // Assuming a single financial summary document
+        { $inc: { totalRevenue: remainingAmount } },
+        { upsert: true, session } // Create if it doesn’t exist
+      );
+
+      // Log success
+      console.log("Service fully paid off:", service);
+
+      // Revalidate the page path
+      revalidatePath(path);
+    });
+
+    return { success: true, message: "Η υπηρεσία εξοφλήθηκε" };
+  } catch (error) {
+    console.error("Error in payService:", error);
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+}
+export async function syncOwesTotal(clientId: string) {
+  await connectToDatabase();
+
+  try {
+    // Fetch all unpaid services for the client
+    const unpaidServices = await Service.find({
+      clientId,
+      paid: false,
+    }).select("remainingAmount");
+
+    const totalOwed = unpaidServices.reduce((sum, service) => {
+      return sum + (service.remainingAmount || 0);
+    }, 0);
+
+    // Update client owesTotal
+    await Client.findByIdAndUpdate(clientId, {
+      owesTotal: totalOwed,
+    });
+
+    return { success: true, totalOwed };
+  } catch (error) {
+    console.error("Error syncing owesTotal:", error);
+    throw new Error("Failed to sync owesTotal");
   }
 }

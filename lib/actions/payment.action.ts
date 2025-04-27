@@ -1,5 +1,7 @@
 "use server";
 import Payment from "@/database/models/payment.model";
+// eslint-disable-next-line no-unused-vars
+import Client from "@/database/models/client.model";
 import { connectToDatabase } from "../mongoose";
 import FinancialSummary from "@/database/models/financial.model";
 import { revalidatePath } from "next/cache";

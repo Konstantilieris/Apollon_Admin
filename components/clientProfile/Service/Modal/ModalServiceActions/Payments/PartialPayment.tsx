@@ -3,7 +3,10 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useServiceModal } from "@/hooks/use-service-modal";
-import { partialPaymentSelected } from "@/lib/actions/service.action";
+import {
+  partialPaymentSelected,
+  syncOwesTotal,
+} from "@/lib/actions/service.action";
 import { cn, formatDate } from "@/lib/utils";
 import { IconLoader } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
@@ -36,6 +39,10 @@ const PartialPayment = ({ client }: { client: any }) => {
         selectedServiceIds,
         path,
       });
+      if (selectedServices.length > 0) {
+        const clientId = selectedServices[0].clientId;
+        await syncOwesTotal(clientId);
+      }
       if (res.success) {
         toast.success("Η μερική εξόφληση ολοκληρώθηκε επιτυχώς.");
       }

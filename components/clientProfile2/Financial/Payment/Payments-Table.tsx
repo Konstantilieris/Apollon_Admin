@@ -88,7 +88,6 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
     } finally {
       setShowBulkAction(null);
       setSelectedKeys(new Set());
-      syncFinancialSummary();
     }
   };
   // Check if all visible rows are selected
@@ -116,7 +115,7 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
       .filter((p) => keysSet.has(p.id))
       .reduce((sum, p) => sum + p.amount, 0);
   }, [initialData, selectedKeys]);
-  console.log("initialData", initialData);
+
   return (
     <div className="rounded-lg bg-content1 shadow-md">
       {/* Payment summary section */}

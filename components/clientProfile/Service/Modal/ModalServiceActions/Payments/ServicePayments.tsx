@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { useServiceModal } from "@/hooks/use-service-modal";
-import { payService } from "@/lib/actions/service.action";
-import { cn, formatDate } from "@/lib/utils";
+import { payService, syncOwesTotal } from "@/lib/actions/service.action";
+import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePathname } from "next/navigation";
@@ -23,6 +23,10 @@ const ServicePayments = () => {
           payService({ serviceId: service._id, path })
         )
       );
+      if (selectedServices.length > 0) {
+        const clientId = selectedServices[0].clientId;
+        await syncOwesTotal(clientId);
+      }
 
       toast.success("Η εξόφληση ολοκληρώθηκε επιτυχώς.");
     } catch (error) {
