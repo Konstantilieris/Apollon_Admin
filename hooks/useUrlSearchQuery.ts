@@ -1,41 +1,45 @@
 // hooks/useUrlSearchQuery.ts
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 
 export const useUrlSearchQuery = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const query = searchParams.get("q") || "";
-
+  const query = searchParams.get("query") || "";
+  const pathname = usePathname();
   const [searchTerm, setSearchTerm] = useState(query);
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      let newUrl = "";
-
+    const delayDebounceFn = setTimeout(() => {
+      let newUrl;
       if (searchTerm) {
-        newUrl = formUrlQuery({
-          params: searchParams.toString(),
-          key: "q",
-          value: searchTerm,
-        });
-      } else {
+        if (searchTerm === query) return; // No change in search term
         newUrl = removeKeysFromQuery({
           params: searchParams.toString(),
-          keysToRemove: ["q"],
+          keysToRemove: ["page"],
         });
+
+        newUrl = formUrlQuery({
+          params: searchParams.toString(),
+          key: "query",
+          value: searchTerm,
+        });
+        router.push(newUrl, { scroll: false });
+      } else {
+        if (query) {
+          newUrl = removeKeysFromQuery({
+            params: searchParams.toString(),
+            keysToRemove: ["query"],
+          });
+          router.push(newUrl, { scroll: false });
+        }
       }
+    }, 300);
 
-      // Also remove "page" on search change
-      newUrl = removeKeysFromQuery({ params: newUrl, keysToRemove: ["page"] });
-
-      router.push(newUrl, { scroll: false });
-    }, 500);
-
-    return () => clearTimeout(delayDebounce);
-  }, [searchTerm]);
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, searchParams, query, pathname, router]);
 
   return { searchTerm, setSearchTerm };
 };

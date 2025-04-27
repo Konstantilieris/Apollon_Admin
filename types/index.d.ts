@@ -382,3 +382,57 @@ export interface ViewService {
   createdAt: string;
   updatedAt: string;
 }
+export interface AllocationInfo {
+  id: string; // _id of the service
+  serviceType: string; // type of service
+  startDate?: Date; // optional start date
+  endDate?: Date; // optional end date
+  amount: number; // amount allocated to this service
+}
+
+export interface PaymentRow {
+  id: string; // _id from the database
+  date: Date; // payment date
+  clientName: string; // populated from clientId
+  service?: {
+    id: string;
+    serviceType: string; // serviceType from Service
+    date?: Date;
+    endDate?: Date;
+  };
+  amount: number; // payment amount
+  notes?: string; // optional notes
+  reversed: boolean; // true if reversed/refunded
+  allocations: AllocationInfo[]; // breakdown of allocation per service
+}
+
+// Current filter state for the table
+export interface PaymentFilters {
+  search: string; // free-text search value
+  reversedFilter:
+    | "reversed" // only reversed=true
+    | "notReversed"; // only reversed=false
+  dateRange: [Date | null, Date | null]; // [start, end]
+}
+
+// Bulk action handlers passed in from parent
+export interface BulkActionHandlers {
+  onReverseSelected: (ids: string[]) => void;
+  onExportSelected: (ids: string[]) => void;
+  onDeleteSelected: (ids: string[]) => void;
+}
+
+// Single-row action handlers
+export interface RowActionHandlers {
+  onViewDetails: (id: string) => void;
+  onReverse: (id: string) => void;
+  onEditNotes: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+// Props for the PaymentsTable component
+export interface PaymentsTableProps {
+  initialData: PaymentRow[]; // page=1, limit=10
+  totalAmount: number;
+  totalPages: number; // sum of all matching payments
+}

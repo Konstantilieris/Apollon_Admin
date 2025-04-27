@@ -15,8 +15,13 @@ export default function DatePushUrl({
 }) {
   const { rangeDate, setRangeDate } = useUrlDateRange();
 
-  const toHeroDate = (date?: Date): DateValue | undefined =>
-    date ? parseDate(date.toISOString().slice(0, 10)) : undefined;
+  const toHeroDate = (date?: Date): DateValue | undefined => {
+    if (!date) return undefined;
+    // build a local YYYY-MM-DD string:
+    const isoLocal = new Intl.DateTimeFormat("en-CA").format(date);
+    // e.g. "2025-04-23"
+    return parseDate(isoLocal);
+  };
 
   const fromHeroDate = (val?: DateValue): Date | undefined =>
     val ? val.toDate(getLocalTimeZone()) : undefined;

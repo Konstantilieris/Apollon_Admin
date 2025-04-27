@@ -14,26 +14,40 @@ export const useUrlFlagFilters = () => {
 
   const [flag1, setFlag1] = useState(initialFlag1);
   const [flag2, setFlag2] = useState(initialFlag2);
-  //flag1 useEffect
+
   useEffect(() => {
-    let newUrl = searchParams.toString();
+    let newUrl;
 
     if (flag1) {
-      newUrl = formUrlQuery({ params: newUrl, key: "flag1", value: "true" });
+      newUrl = formUrlQuery({
+        params: searchParams.toString(),
+        key: "flag1",
+        value: "true",
+      });
     } else {
-      newUrl = removeKeysFromQuery({ params: newUrl, keysToRemove: ["flag1"] });
+      newUrl = removeKeysFromQuery({
+        params: searchParams.toString(),
+        keysToRemove: ["flag1"],
+      });
     }
 
     router.push(newUrl, { scroll: false });
   }, [flag1]);
-  //flag2 useEffect
+
   useEffect(() => {
-    let newUrl = searchParams.toString();
+    let newUrl;
 
     if (flag2) {
-      newUrl = formUrlQuery({ params: newUrl, key: "flag2", value: "true" });
+      newUrl = formUrlQuery({
+        params: searchParams.toString(),
+        key: "flag2",
+        value: "true",
+      });
     } else {
-      newUrl = removeKeysFromQuery({ params: newUrl, keysToRemove: ["flag2"] });
+      newUrl = removeKeysFromQuery({
+        params: searchParams.toString(),
+        keysToRemove: ["flag2"],
+      });
     }
 
     router.push(newUrl, { scroll: false });
