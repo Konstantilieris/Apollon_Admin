@@ -95,56 +95,107 @@ export async function getAllPayments(
     to,
     reversed,
     sortDir = "desc",
-    page = 1, // default if not passed
-    limit = 10, // always 10 per your spec
+    page = 1,
+    limit = 10,
   } = filters;
 
-  const query: any = {};
-  if (typeof reversed === "boolean") query.reversed = reversed;
+  const matchStage: any = {};
+  if (typeof reversed === "boolean") matchStage.reversed = reversed;
   if (from || to) {
-    query.date = {};
-    if (from) query.date.$gte = from;
-    if (to) query.date.$lte = to;
+    matchStage.date = {};
+    if (from) matchStage.date.$gte = new Date(from);
+    if (to) matchStage.date.$lte = new Date(to);
   }
 
-  // count before pagination
-  const totalCount = await Payment.countDocuments(query);
+  const pipeline: any[] = [
+    { $match: matchStage },
 
-  let payments = await Payment.find(query)
-    .sort({ date: sortDir === "asc" ? 1 : -1 })
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .populate({ path: "clientId", select: "name" })
-    .populate({ path: "serviceId", select: "serviceType endDate date" })
-    .populate({ path: "allocations.serviceId", select: "serviceType" })
-    .lean();
+    // Join with Client
+    {
+      $lookup: {
+        from: "clients",
+        localField: "clientId",
+        foreignField: "_id",
+        as: "client",
+      },
+    },
+    { $unwind: { path: "$client", preserveNullAndEmptyArrays: true } },
 
-  if (clientName) {
-    const regex = new RegExp(clientName, "i");
-    payments = payments.filter((p: any) => p.clientId?.name?.match(regex));
-  }
+    // Filter by clientName if provided
+    ...(clientName
+      ? [
+          {
+            $match: {
+              "client.name": { $regex: new RegExp(clientName, "i") },
+            },
+          },
+        ]
+      : []),
 
-  const rows = payments.map((p: any) => ({
+    // Join with Service
+    {
+      $lookup: {
+        from: "services",
+        localField: "serviceId",
+        foreignField: "_id",
+        as: "service",
+      },
+    },
+    { $unwind: { path: "$service", preserveNullAndEmptyArrays: true } },
+
+    // Join allocations -> service
+    {
+      $lookup: {
+        from: "services",
+        localField: "allocations.serviceId",
+        foreignField: "_id",
+        as: "allocationServices",
+      },
+    },
+
+    // Pagination and count
+    {
+      $facet: {
+        rows: [
+          { $sort: { date: sortDir === "asc" ? 1 : -1 } },
+          { $skip: (page - 1) * limit },
+          { $limit: limit },
+        ],
+        totalCount: [{ $count: "count" }],
+      },
+    },
+  ];
+
+  const result = await Payment.aggregate(pipeline);
+
+  const rows = result[0].rows.map((p: any) => ({
     id: p._id.toString(),
     date: p.date,
-    clientName: p.clientId?.name ?? "",
-    service: p.serviceId
+    clientName: p.client?.name ?? "",
+    service: p.service
       ? {
-          id: p.serviceId._id.toString(),
-          serviceType: p.serviceId.serviceType,
-          date: p.serviceId.date,
-          endDate: p.serviceId.endDate,
+          id: p.service._id.toString(),
+          serviceType: p.service.serviceType,
+          date: p.service.date,
+          endDate: p.service.endDate,
         }
       : undefined,
     amount: p.amount,
     notes: p.notes,
     reversed: p.reversed,
-    allocations: p.allocations.map((a: any) => ({
-      id: a.serviceId._id.toString(),
-      serviceType: a.serviceId.serviceType,
-      amount: a.amount,
-    })),
+    allocations: (p.allocations || []).map((alloc: any) => {
+      const matchedService = (p.allocationServices || []).find(
+        (s: any) => s._id.toString() === alloc.serviceId.toString()
+      );
+      return {
+        id: alloc.serviceId.toString(),
+        serviceType: matchedService?.serviceType || "",
+        amount: alloc.amount,
+      };
+    }),
   }));
+
+  const totalCount = result[0].totalCount[0]?.count || 0;
 
   return { rows, totalCount };
 }

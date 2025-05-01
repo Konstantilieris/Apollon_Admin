@@ -15,7 +15,6 @@ export const useUrlSearchQuery = () => {
     const delayDebounceFn = setTimeout(() => {
       let newUrl;
       if (searchTerm) {
-        if (searchTerm === query) return; // No change in search term
         newUrl = removeKeysFromQuery({
           params: searchParams.toString(),
           keysToRemove: ["page"],

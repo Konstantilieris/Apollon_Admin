@@ -410,76 +410,6 @@ export async function getAllServicesWithClientNames() {
   }
 }
 
-export async function createIncome({
-  serviceType,
-  notes,
-  amount,
-  date,
-}: {
-  serviceType: string;
-  notes: string;
-  amount: number;
-  date: Date;
-}) {
-  const ADMIN_ID = "66c753da1234567800000014";
-  const session = await mongoose.startSession();
-  try {
-    connectToDatabase();
-    session.startTransaction();
-    console.log("Creating income...", serviceType, amount, date, ADMIN_ID);
-    const [service] = await Service.create(
-      [
-        {
-          serviceType,
-          notes,
-          paid: true,
-          remainingAmount: 0,
-          paidAmount: amount,
-          paymentDate: date,
-          amount,
-          totalAmount: amount,
-          date,
-          clientId: ADMIN_ID,
-        },
-      ],
-      { session }
-    );
-    if (!service) {
-      throw new Error("Service not created.");
-    }
-    const payment = await Payment.create(
-      [
-        {
-          serviceId: service._id, // or service[0]._id if create() returns array
-          clientId: ADMIN_ID,
-          notes: serviceType,
-          amount,
-          paymentDate: date,
-
-          // Any other payment-related fields you need
-        },
-      ],
-      { session }
-    );
-    if (!payment) {
-      throw new Error("Payment not created.");
-    }
-    await FinancialSummary.findOneAndUpdate(
-      {},
-      { $inc: { totalRevenue: amount } },
-      { session }
-    );
-    await session.commitTransaction();
-    session.endSession();
-
-    return JSON.parse(JSON.stringify(service));
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    console.error("Error creating income:", error);
-    throw error;
-  }
-}
 export async function getPaymentsIncomeLast6Months() {
   try {
     const sixMonthsAgo = moment()
@@ -1070,164 +1000,6 @@ export async function getBookingServices({ bookingId }: { bookingId: string }) {
   }
 }
 // --------------------------------------Reverse for selected services-----------------------------------//
-export async function reversePayment({ paymentId, path }: any) {
-  connectToDatabase();
-  const session = await mongoose.startSession();
-
-  try {
-    session.startTransaction();
-
-    const payment = await Payment.findById(paymentId).session(session);
-    if (!payment || payment.reversed) {
-      throw new Error("Η πληρωμή δεν βρέθηκε ή έχει ήδη αναιρεθεί.");
-    }
-
-    for (const allocation of payment.allocations) {
-      const service = await Service.findById(allocation.serviceId).session(
-        session
-      );
-
-      if (service) {
-        service.paidAmount -= allocation.amount;
-        service.remainingAmount += allocation.amount;
-
-        if (service.remainingAmount > 0) {
-          service.paid = false;
-          service.paymentDate = null;
-        }
-
-        await service.save({ session });
-      }
-    }
-
-    const client = await Client.findById(payment.clientId).session(session);
-    if (client) {
-      if (client._id.toString() !== ADMIN) {
-        /// if the client is not admin then update the owesTotal
-        client.owesTotal += payment.amount;
-      }
-      client.totalSpent -= payment.amount;
-
-      await client.save({ session });
-      // sync owes total
-      await syncOwesTotal(client._id.toString());
-    }
-    // update financial summary
-    await FinancialSummary.findOneAndUpdate(
-      {},
-      { $inc: { totalRevenue: -payment.amount } },
-      { session }
-    );
-
-    payment.reversed = true;
-    await payment.save({ session });
-    revalidatePath(path);
-
-    await session.commitTransaction();
-
-    return { success: true, message: "Payment reversed successfully." };
-  } catch (error) {
-    await session.abortTransaction();
-    console.error("Error reversing payment:", error);
-    throw error;
-  } finally {
-    session.endSession();
-  }
-}
-export async function removeReversedPayment({
-  paymentId,
-  path,
-}: {
-  paymentId: string;
-  path: string;
-}) {
-  connectToDatabase();
-  try {
-    const payment = await Payment.deleteOne({ _id: paymentId });
-    if (!payment) {
-      throw new Error("Payment not found.");
-    }
-    revalidatePath(path);
-    return { message: "success" };
-  } catch (error) {
-    console.error("Error removing reversed payments:", error);
-    throw error;
-  }
-}
-export async function removePaymentSafely({
-  paymentId,
-  path,
-}: {
-  paymentId: string;
-  path: string;
-}) {
-  connectToDatabase();
-  const session = await mongoose.startSession();
-
-  try {
-    session.startTransaction();
-
-    const payment = await Payment.findById(paymentId).session(session);
-    if (!payment) {
-      throw new Error("Payment not found.");
-    }
-
-    if (!payment.reversed) {
-      // Reverse it first
-      for (const allocation of payment.allocations) {
-        const service = await Service.findById(allocation.serviceId).session(
-          session
-        );
-
-        if (service) {
-          service.paidAmount -= allocation.amount;
-          service.remainingAmount += allocation.amount;
-
-          if (service.remainingAmount > 0) {
-            service.paid = false;
-            service.paymentDate = null;
-          }
-
-          await service.save({ session });
-        }
-      }
-
-      const client = await Client.findById(payment.clientId).session(session);
-      if (client) {
-        if (client._id.toString() !== ADMIN) {
-          /// if the client is not admin then update the owesTotal
-          client.owesTotal += payment.amount;
-        }
-
-        client.totalSpent -= payment.amount;
-
-        await client.save({ session });
-        // sync owes total
-        await syncOwesTotal(client._id.toString());
-      }
-
-      await FinancialSummary.findOneAndUpdate(
-        {},
-        { $inc: { totalRevenue: -payment.amount } },
-        { session }
-      );
-    }
-
-    // Now delete it
-    await Payment.deleteOne({ _id: paymentId }).session(session);
-
-    await session.commitTransaction();
-    revalidatePath(path);
-
-    return { success: true, message: "Payment safely removed." };
-  } catch (error) {
-    await session.abortTransaction();
-    console.error("Error safely removing payment:", error);
-    throw error;
-  } finally {
-    session.endSession();
-  }
-}
 
 interface PartialPaymentParams {
   selectedServiceIds: string[];
@@ -1608,5 +1380,302 @@ export async function syncOwesTotal(clientId: string) {
   } catch (error) {
     console.error("Error syncing owesTotal:", error);
     throw new Error("Failed to sync owesTotal");
+  }
+}
+// --------------------------------------income for admin -----------------------------------//
+export async function reversePayment({ paymentId, path }: any) {
+  connectToDatabase();
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const payment = await Payment.findById(paymentId).session(session);
+    if (!payment || payment.reversed) {
+      throw new Error("Η πληρωμή δεν βρέθηκε ή έχει ήδη αναιρεθεί.");
+    }
+
+    const isAdminPayment = payment.clientId?.toString() === ADMIN;
+
+    if (isAdminPayment) {
+      // Delete the service(s) in allocations
+      for (const allocation of payment.allocations) {
+        await Service.findByIdAndDelete(allocation.serviceId).session(session);
+      }
+
+      // Delete the payment itself
+      await Payment.deleteOne({ _id: paymentId }).session(session);
+
+      await FinancialSummary.findOneAndUpdate(
+        {},
+        { $inc: { totalRevenue: -payment.amount } },
+        { session }
+      );
+
+      await session.commitTransaction();
+      revalidatePath(path);
+
+      return {
+        success: true,
+        message: "Εισροή admin αναιρέθηκε και διαγράφηκε επιτυχώς.",
+      };
+    }
+
+    // Default logic for non-admin clients
+    for (const allocation of payment.allocations) {
+      const service = await Service.findById(allocation.serviceId).session(
+        session
+      );
+
+      if (service) {
+        service.paidAmount -= allocation.amount;
+        service.remainingAmount += allocation.amount;
+
+        if (service.remainingAmount > 0) {
+          service.paid = false;
+          service.paymentDate = null;
+        }
+
+        await service.save({ session });
+      }
+    }
+
+    const client = await Client.findById(payment.clientId).session(session);
+    if (client) {
+      client.owesTotal += payment.amount;
+
+      client.totalSpent -= payment.amount;
+
+      await client.save({ session });
+      await syncOwesTotal(client._id.toString());
+    }
+
+    await FinancialSummary.findOneAndUpdate(
+      {},
+      { $inc: { totalRevenue: -payment.amount } },
+      { session }
+    );
+
+    payment.reversed = true;
+    await payment.save({ session });
+    revalidatePath(path);
+
+    await session.commitTransaction();
+
+    return { success: true, message: "Η πληρωμή αναιρέθηκε επιτυχώς." };
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("Error reversing payment:", error);
+    throw error;
+  } finally {
+    session.endSession();
+  }
+}
+export async function removeReversedPayment({
+  paymentId,
+  path,
+}: {
+  paymentId: string;
+  path: string;
+}) {
+  connectToDatabase();
+  try {
+    const payment = await Payment.deleteOne({ _id: paymentId });
+    if (!payment) {
+      throw new Error("Payment not found.");
+    }
+    revalidatePath(path);
+    return { message: "success" };
+  } catch (error) {
+    console.error("Error removing reversed payments:", error);
+    throw error;
+  }
+}
+export async function removePaymentSafely({
+  paymentId,
+  path,
+}: {
+  paymentId: string;
+  path: string;
+}) {
+  connectToDatabase();
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const payment = await Payment.findById(paymentId).session(session);
+    if (!payment) {
+      throw new Error("Payment not found.");
+    }
+
+    const isAdminPayment = payment.clientId?.toString() === ADMIN;
+
+    if (isAdminPayment) {
+      for (const allocation of payment.allocations) {
+        await Service.findByIdAndDelete(allocation.serviceId).session(session);
+      }
+
+      await Payment.deleteOne({ _id: paymentId }).session(session);
+
+      await FinancialSummary.findOneAndUpdate(
+        {},
+        { $inc: { totalRevenue: -payment.amount } },
+        { session }
+      );
+
+      await session.commitTransaction();
+      revalidatePath(path);
+
+      return {
+        success: true,
+        message: "Η εισροή admin διαγράφηκε επιτυχώς.",
+      };
+    }
+
+    // Otherwise, reverse and delete
+    if (!payment.reversed) {
+      for (const allocation of payment.allocations) {
+        const service = await Service.findById(allocation.serviceId).session(
+          session
+        );
+
+        if (service) {
+          service.paidAmount -= allocation.amount;
+          service.remainingAmount += allocation.amount;
+
+          if (service.remainingAmount > 0) {
+            service.paid = false;
+            service.paymentDate = null;
+          }
+
+          await service.save({ session });
+        }
+      }
+
+      const client = await Client.findById(payment.clientId).session(session);
+      if (client) {
+        client.owesTotal += payment.amount;
+
+        client.totalSpent -= payment.amount;
+
+        await client.save({ session });
+        await syncOwesTotal(client._id.toString());
+      }
+
+      await FinancialSummary.findOneAndUpdate(
+        {},
+        { $inc: { totalRevenue: -payment.amount } },
+        { session }
+      );
+    }
+
+    await Payment.deleteOne({ _id: paymentId }).session(session);
+
+    await session.commitTransaction();
+    revalidatePath(path);
+
+    return {
+      success: true,
+      message: "Η πληρωμή διαγράφηκε με ασφάλεια.",
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("Error safely removing payment:", error);
+    throw error;
+  } finally {
+    session.endSession();
+  }
+}
+
+export async function createIncome({
+  serviceType,
+  notes,
+  amount,
+  date,
+}: {
+  serviceType: string;
+  notes: string;
+  amount: number;
+  date: Date;
+}) {
+  connectToDatabase();
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+    console.log(
+      "Creating income with service and payment...",
+      serviceType,
+      amount,
+      date
+    );
+
+    // 1. Create dummy service (acts as income record)
+    const service = await Service.create(
+      [
+        {
+          clientId: ADMIN,
+          serviceType,
+          date,
+          endDate: date,
+          totalCost: amount,
+          paidAmount: amount,
+          remainingAmount: 0,
+          paid: true,
+          paymentDate: date,
+          notes,
+        },
+      ],
+      { session }
+    );
+
+    if (!service || service.length === 0) {
+      throw new Error("Service creation failed.");
+    }
+
+    // 2. Create associated payment with allocation to the service
+    const payment = await Payment.create(
+      [
+        {
+          clientId: ADMIN,
+          notes,
+          amount,
+          paymentDate: date,
+          allocations: [
+            {
+              serviceId: service[0]._id,
+              amount,
+              serviceType,
+            },
+          ],
+        },
+      ],
+      { session }
+    );
+
+    if (!payment || payment.length === 0) {
+      throw new Error("Payment creation failed.");
+    }
+
+    // 3. Update financial summary
+    await FinancialSummary.findOneAndUpdate(
+      {},
+      { $inc: { totalRevenue: amount } },
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return {
+      success: true,
+      message: "Income (service + payment) created successfully.",
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error creating income:", error);
+    throw error;
   }
 }
