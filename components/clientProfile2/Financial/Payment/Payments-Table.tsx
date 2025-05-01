@@ -32,7 +32,6 @@ import {
   removePaymentSafely,
   reversePayment,
 } from "@/lib/actions/service.action";
-import { syncFinancialSummary } from "@/lib/actions/payment.action";
 
 export const PaymentsTable: React.FC<PaymentsTableProps> = ({
   initialData,

@@ -75,13 +75,18 @@ export default function ConfirmationStage({
     const clientObject = {
       clientId: client._id,
       clientName: client.name,
-      phone: client?.phone?.mobile ?? "Δεν έχει οριστεί",
-      location: !client?.location?.address
-        ? "Δεν έχει οριστεί"
-        : client.location.address,
+      phone: client?.phone?.mobile?.trim()
+        ? client.phone.mobile
+        : client.phone?.telephone?.trim()
+          ? client.phone.telephone
+          : "Δεν έχει οριστεί",
+      location: client?.location?.address?.trim()
+        ? client.location.address
+        : "Δεν έχει οριστεί",
       transportFee,
       bookingFee: selectedBookingFee?.value || 0,
     };
+
     setClient(clientObject);
   }, [client, selectedBookingFee]);
   const roomOccupancy: Record<string, number> = {};

@@ -6,6 +6,7 @@ import {
   getTotalRevenue,
 } from "@/lib/actions/payment.action";
 import { intToDate } from "@/lib/utils";
+import { Skeleton } from "@heroui/react";
 import React from "react";
 
 export const dynamic = "force-dynamic";
@@ -39,11 +40,13 @@ const Page = async ({
 
   return (
     <div className="h-full px-2 py-1">
-      <PaymentsTable
-        totalAmount={totalRevenue}
-        totalPages={totalPages}
-        initialData={payments}
-      />
+      <Skeleton isLoaded={!!payments || !!totalRevenue}>
+        <PaymentsTable
+          totalAmount={totalRevenue}
+          totalPages={totalPages}
+          initialData={payments}
+        />
+      </Skeleton>
     </div>
   );
 };
