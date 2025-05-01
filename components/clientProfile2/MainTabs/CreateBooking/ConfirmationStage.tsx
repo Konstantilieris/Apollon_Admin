@@ -187,7 +187,12 @@ export default function ConfirmationStage({
                 <MapPin size={16} /> {location}
               </div>
               <div className="flex items-center gap-2 text-gray-500">
-                <Phone size={16} /> {client?.phone.mobile}
+                <Phone size={16} />{" "}
+                {client?.phone.mobile
+                  ? client?.phone.mobile
+                  : client?.phone?.telephone
+                    ? client?.phone?.telephone
+                    : "Δεν έχει οριστεί"}
               </div>
             </div>
           </div>
@@ -204,6 +209,10 @@ export default function ConfirmationStage({
             shadow="md"
             topContent={topContent}
             topContentPlacement="outside"
+            classNames={{
+              td: "text-lg",
+              th: "text-lg",
+            }}
           >
             <TableHeader>
               <TableColumn>Περιγραφή</TableColumn>
@@ -235,7 +244,7 @@ export default function ConfirmationStage({
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Pet Taxi (Άφιξη)</TableCell>
+                <TableCell>Pet Taxi (Παραλαβή)</TableCell>
                 <TableCell>
                   {taxiArrival ? (
                     <Chip color="success">Ναι</Chip>
@@ -245,7 +254,7 @@ export default function ConfirmationStage({
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Pet Taxi (Αναχώρηση)</TableCell>
+                <TableCell>Pet Taxi (Παράδοση)</TableCell>
                 <TableCell>
                   {taxiDeparture ? (
                     <Chip color="success">Ναι</Chip>
@@ -279,7 +288,13 @@ export default function ConfirmationStage({
           <CardTitle>Ανάθεση Δωματίων</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table shadow="md" classNames={{ td: "text-base" }}>
+          <Table
+            shadow="md"
+            classNames={{
+              td: "text-lg",
+              th: "text-lg",
+            }}
+          >
             <TableHeader>
               <TableColumn>Σκύλος</TableColumn>
               <TableColumn>Δωμάτιο</TableColumn>

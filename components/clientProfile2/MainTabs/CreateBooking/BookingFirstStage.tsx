@@ -169,7 +169,7 @@ export default function BookingFirstStage({ handleNext }: { handleNext: any }) {
                     }}
                     size="lg"
                   >
-                    Pet Taxi (Άφιξη)
+                    Pet Taxi (Παραλαβή)
                   </Checkbox>
                 </div>
 
@@ -191,7 +191,7 @@ export default function BookingFirstStage({ handleNext }: { handleNext: any }) {
                       icon: "text-lime-400",
                     }}
                   >
-                    Pet Taxi (Αναχώρηση)
+                    Pet Taxi (Παράδοση)
                   </Checkbox>
                 </div>
               </div>
