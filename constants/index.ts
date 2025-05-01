@@ -4,7 +4,7 @@ export const HomePageFilters = [
   { name: "Καινούργια", value: "newest" },
   { name: "Παλιά", value: "oldest" },
 ];
-
+export const ADMIN = "66c753da1234567800000014";
 export const sidebarLinks: SidebarLink[] = [
   {
     imgURL: "/assets/icons/home.svg",

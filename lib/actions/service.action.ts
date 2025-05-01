@@ -12,6 +12,7 @@ import Booking from "@/database/models/booking.model";
 import Payment from "@/database/models/payment.model";
 import { deleteBooking } from "./booking.action";
 import mongoose, { Types } from "mongoose";
+import { ADMIN } from "@/constants";
 
 export async function getMonthlyIncome() {
   const startDate = startOfMonth(new Date());
@@ -1068,6 +1069,7 @@ export async function getBookingServices({ bookingId }: { bookingId: string }) {
     throw new Error("Failed to fetch booking services and payments.");
   }
 }
+// --------------------------------------Reverse for selected services-----------------------------------//
 export async function reversePayment({ paymentId, path }: any) {
   connectToDatabase();
   const session = await mongoose.startSession();
@@ -1100,10 +1102,15 @@ export async function reversePayment({ paymentId, path }: any) {
 
     const client = await Client.findById(payment.clientId).session(session);
     if (client) {
-      client.owesTotal += payment.amount;
+      if (client._id.toString() !== ADMIN) {
+        /// if the client is not admin then update the owesTotal
+        client.owesTotal += payment.amount;
+      }
       client.totalSpent -= payment.amount;
 
       await client.save({ session });
+      // sync owes total
+      await syncOwesTotal(client._id.toString());
     }
     // update financial summary
     await FinancialSummary.findOneAndUpdate(
@@ -1187,10 +1194,16 @@ export async function removePaymentSafely({
 
       const client = await Client.findById(payment.clientId).session(session);
       if (client) {
-        client.owesTotal += payment.amount;
+        if (client._id.toString() !== ADMIN) {
+          /// if the client is not admin then update the owesTotal
+          client.owesTotal += payment.amount;
+        }
+
         client.totalSpent -= payment.amount;
 
         await client.save({ session });
+        // sync owes total
+        await syncOwesTotal(client._id.toString());
       }
 
       await FinancialSummary.findOneAndUpdate(
