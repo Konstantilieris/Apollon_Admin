@@ -32,6 +32,7 @@ import {
   removePaymentSafely,
   reversePayment,
 } from "@/lib/actions/service.action";
+import { PaymentActionModal } from "./PaymentActionModal";
 
 export const PaymentsTable: React.FC<PaymentsTableProps> = ({
   initialData,
@@ -43,10 +44,19 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
     null
   );
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
-
+  const [selectedPayment, setSelectedPayment] = React.useState<any>(null);
+  const [currentAction, setCurrentAction] = React.useState<string | null>(null);
   const [selectedKeys, setSelectedKeys] = React.useState<any>(new Set([]));
   const hasSelection = selectedKeys.size > 0 || selectedKeys === "all";
 
+  const openActionModal = (payment: any, action: string) => {
+    setSelectedPayment(payment);
+    setCurrentAction(action);
+  };
+  const closeActionModal = () => {
+    setSelectedPayment(null);
+    setCurrentAction(null);
+  };
   const handleSortChange = () => {
     setSortDirection(sortDirection === "asc" ? "desc" : "asc");
   };
@@ -313,18 +323,25 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
                         <DropdownItem
                           key="view-details"
                           startContent={<Icon icon="lucide:eye" />}
+                          onPress={() =>
+                            openActionModal(payment, "view-details")
+                          }
                         >
                           Λεπτομέρειες
                         </DropdownItem>
                         <DropdownItem
                           key="reverse-payment"
                           startContent={<Icon icon="lucide:rotate-ccw" />}
+                          onPress={() =>
+                            openActionModal(payment, "reverse-payment")
+                          }
                         >
                           Ακύρωση
                         </DropdownItem>
                         <DropdownItem
                           key="edit-notes"
                           startContent={<Icon icon="lucide:edit-3" />}
+                          onPress={() => openActionModal(payment, "edit-notes")}
                         >
                           Επεξεργασία Σημειώσεων
                         </DropdownItem>
@@ -333,6 +350,9 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
                           startContent={<Icon icon="lucide:trash-2" />}
                           className="text-danger"
                           color="danger"
+                          onPress={() =>
+                            openActionModal(payment, "delete-payment")
+                          }
                         >
                           Διαγραφή
                         </DropdownItem>
@@ -359,6 +379,12 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
           count={selectedCount}
           onConfirm={executeBulkAction}
           onCancel={() => setShowBulkAction(null)}
+        />
+        <PaymentActionModal
+          isOpen={!!currentAction}
+          onClose={closeActionModal}
+          payment={selectedPayment}
+          action={currentAction}
         />
       </div>
     </div>
