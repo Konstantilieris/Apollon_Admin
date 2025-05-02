@@ -45,6 +45,7 @@ const ClientInfo = ({ client }: any) => {
               Προσωπικά Στοιχεία
             </h3>
             <Table
+              isStriped
               hideHeader
               className="w-full "
               classNames={{
@@ -112,6 +113,7 @@ const ClientInfo = ({ client }: any) => {
             </h3>
             <Table
               hideHeader
+              isStriped
               className="w-full"
               classNames={{
                 table: "w-1/2",
@@ -161,6 +163,7 @@ const ClientInfo = ({ client }: any) => {
             </h3>
             <Table
               hideHeader
+              isStriped
               className="w-full"
               classNames={{
                 table: "w-1/2",
@@ -199,6 +202,7 @@ const ClientInfo = ({ client }: any) => {
               Πιστότητα & Προτιμήσεις
             </h3>
             <Table
+              isStriped
               hideHeader
               className="w-full"
               classNames={{
@@ -269,6 +273,7 @@ const ClientInfo = ({ client }: any) => {
               Οικονομική Σύνοψη
             </h3>
             <Table
+              isStriped
               hideHeader
               className="w-full"
               classNames={{
@@ -283,19 +288,19 @@ const ClientInfo = ({ client }: any) => {
               <TableBody>
                 <TableRow>
                   <TableCell className="font-medium">Σύνολο Δαπανών</TableCell>
-                  <TableCell>{client?.totalSpent ?? 0}€</TableCell>
+                  <TableCell>{client?.totalSpent.toFixed(2) ?? 0}€</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-medium">
                     Υπόλοιπο Οφειλής
                   </TableCell>
-                  <TableCell>{client?.owesTotal ?? 0}€</TableCell>
+                  <TableCell>{client?.owesTotal.toFixed(2) ?? 0}€</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-medium">
                     Διαθέσιμη Πίστωση
                   </TableCell>
-                  <TableCell>{client?.credit ?? 0}€</TableCell>
+                  <TableCell>{client?.credit.toFixed(2) ?? 0}€</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -303,6 +308,7 @@ const ClientInfo = ({ client }: any) => {
           <div>
             <h3 className="mb-2 text-lg font-semibold">Κτηνίατρος</h3>
             <Table
+              isStriped
               hideHeader
               className="w-full"
               classNames={{

@@ -1619,11 +1619,13 @@ export async function createIncome({
           serviceType,
           date,
           endDate: date,
-          totalCost: amount,
+          amount,
+          totalAmount: amount,
           paidAmount: amount,
           remainingAmount: 0,
           paid: true,
           paymentDate: date,
+
           notes,
         },
       ],
@@ -1646,7 +1648,6 @@ export async function createIncome({
             {
               serviceId: service[0]._id,
               amount,
-              serviceType,
             },
           ],
         },

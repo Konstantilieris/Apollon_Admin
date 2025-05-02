@@ -4,6 +4,7 @@ import {
   getAllPayments,
   GetPaymentsFilters,
   getTotalRevenue,
+  getWeeklyRevenue,
 } from "@/lib/actions/payment.action";
 import { intToDate } from "@/lib/utils";
 import { Skeleton } from "@heroui/react";
@@ -31,10 +32,12 @@ const Page = async ({
     limit: 10,
   };
 
-  const [{ rows: payments, totalCount }, totalRevenue] = await Promise.all([
-    getAllPayments(filters),
-    getTotalRevenue(),
-  ]);
+  const [{ rows: payments, totalCount }, totalRevenue, weeklyRevenue] =
+    await Promise.all([
+      getAllPayments(filters),
+      getTotalRevenue(),
+      getWeeklyRevenue(),
+    ]);
 
   const totalPages = Math.ceil(totalCount / 10);
 
@@ -45,6 +48,7 @@ const Page = async ({
           totalAmount={totalRevenue}
           totalPages={totalPages}
           initialData={payments}
+          weeklyRevenue={weeklyRevenue}
         />
       </Skeleton>
     </div>

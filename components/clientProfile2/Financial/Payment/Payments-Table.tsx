@@ -38,6 +38,7 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
   initialData,
   totalAmount,
   totalPages,
+  weeklyRevenue,
 }) => {
   const { sortDirection, setSortDirection } = useUrlSortDirection("desc");
   const [showBulkAction, setShowBulkAction] = React.useState<string | null>(
@@ -135,6 +136,7 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
           openCreatePaymentModal={setIsCreateModalOpen}
           hasSelection={hasSelection}
           selectedCount={selectedCount}
+          weeklyRevenue={weeklyRevenue}
         />
         {/* Filters and controls */}
         <FiltersPayments />

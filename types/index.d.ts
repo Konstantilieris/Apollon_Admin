@@ -434,5 +434,6 @@ export interface RowActionHandlers {
 export interface PaymentsTableProps {
   initialData: PaymentRow[]; // page=1, limit=10
   totalAmount: number;
-  totalPages: number; // sum of all matching payments
+  totalPages: number;
+  weeklyRevenue: any; // sum of all matching payments
 }

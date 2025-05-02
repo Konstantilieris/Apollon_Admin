@@ -79,7 +79,7 @@ export default async function Layout({
                     </span>
                     &nbsp;
                     <span className="text-small tracking-widest text-default-400">
-                      Εξοφλημένα
+                      Δαπάνες
                     </span>
                   </p>
                 </div>

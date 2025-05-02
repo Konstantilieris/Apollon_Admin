@@ -6,6 +6,7 @@ import { connectToDatabase } from "../mongoose";
 import FinancialSummary from "@/database/models/financial.model";
 import { revalidatePath } from "next/cache";
 import { PaymentRow } from "@/types";
+import { endOfWeek, startOfWeek, subWeeks } from "date-fns";
 
 export async function getPaymentsByClientId({
   clientId,
@@ -36,19 +37,6 @@ export async function getPaymentsByClientId({
 
 // financial summary
 
-export async function getTotalRevenue() {
-  connectToDatabase();
-  try {
-    const financial: any = await FinancialSummary.find();
-    if (!financial) {
-      throw new Error("No payments found.");
-    }
-
-    return financial[0].totalRevenue;
-  } catch (error: any) {
-    throw new Error(error.message || "Failed to fetch payments.");
-  }
-}
 export async function syncFinancialSummary() {
   connectToDatabase();
   try {
@@ -198,4 +186,76 @@ export async function getAllPayments(
   const totalCount = result[0].totalCount[0]?.count || 0;
 
   return { rows, totalCount };
+}
+export async function getWeeklyRevenue() {
+  await connectToDatabase();
+
+  const today = new Date();
+
+  const startOfThisWeek = startOfWeek(today, { weekStartsOn: 1 }); // Monday
+  const endOfThisWeek = endOfWeek(today, { weekStartsOn: 1 });
+
+  const startOfLastWeek = subWeeks(startOfThisWeek, 1);
+  const endOfLastWeek = subWeeks(endOfThisWeek, 1);
+
+  const [thisWeekPayments, lastWeekPayments] = await Promise.all([
+    Payment.find({
+      date: { $gte: startOfThisWeek, $lte: endOfThisWeek },
+    }),
+    Payment.find({
+      date: { $gte: startOfLastWeek, $lte: endOfLastWeek },
+    }),
+  ]);
+
+  const weekdays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+
+  const getDailyTotals = (payments: any[]) => {
+    const totals: Record<string, number> = {
+      Mo: 0,
+      Tu: 0,
+      We: 0,
+      Th: 0,
+      Fr: 0,
+      Sa: 0,
+      Su: 0,
+    };
+
+    for (const payment of payments) {
+      const day = new Intl.DateTimeFormat("en-US", {
+        weekday: "short",
+      })
+        .format(new Date(payment.date))
+        .slice(0, 2);
+
+      const dayKey = weekdays.find((d) => d.startsWith(day)) ?? "Mo";
+      totals[dayKey] += payment.amount;
+    }
+
+    return totals;
+  };
+
+  const thisWeek = getDailyTotals(thisWeekPayments);
+  const lastWeek = getDailyTotals(lastWeekPayments);
+
+  const totalThisWeek = Object.values(thisWeek).reduce((a, b) => a + b, 0);
+  const totalLastWeek = Object.values(lastWeek).reduce((a, b) => a + b, 0);
+
+  const percentChange = totalLastWeek
+    ? (((totalThisWeek - totalLastWeek) / totalLastWeek) * 100).toFixed(0) + "%"
+    : "0%";
+
+  return { thisWeek, lastWeek, percentChange };
+}
+export async function getTotalRevenue() {
+  connectToDatabase();
+  try {
+    const financial: any = await FinancialSummary.find();
+    if (!financial) {
+      throw new Error("No payments found.");
+    }
+
+    return financial[0].totalRevenue;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to fetch payments.");
+  }
 }
