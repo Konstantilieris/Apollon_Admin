@@ -391,6 +391,7 @@ export interface AllocationInfo {
 }
 
 export interface PaymentRow {
+  clientId: any;
   id: string; // _id from the database
   date: Date; // payment date
   clientName: string; // populated from clientId

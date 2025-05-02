@@ -1643,7 +1643,7 @@ export async function createIncome({
           notes,
           amount,
           serviceId: service[0]._id,
-          paymentDate: date,
+          date,
           allocations: [
             {
               serviceId: service[0]._id,
