@@ -160,6 +160,7 @@ export async function getAllPayments(
     id: p._id.toString(),
     date: p.date,
     clientName: p.client?.name ?? "",
+    clientId: p.clientId.toString(),
     service: p.service
       ? {
           id: p.service._id.toString(),

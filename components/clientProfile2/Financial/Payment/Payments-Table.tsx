@@ -17,7 +17,7 @@ import {
   Spinner,
 } from "@heroui/react";
 import { toast } from "sonner";
-
+import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { PaymentsTableProps } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -214,7 +214,19 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
               {(payment) => (
                 <TableRow key={payment.id}>
                   <TableCell>{formatDate(payment.date, "el")}</TableCell>
-                  <TableCell>{payment.clientName}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      {payment.clientName}
+                      <Link
+                        href={`/client/${payment.clientId}`} // adjust if your route differs
+                        // eslint-disable-next-line no-irregular-whitespace
+
+                        className="text-default-500 hover:text-blue-500"
+                      >
+                        <Icon icon="lucide:link-2" width={16} />
+                      </Link>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     {payment.service ? (
                       <Tooltip
