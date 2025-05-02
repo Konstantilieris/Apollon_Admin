@@ -1625,7 +1625,6 @@ export async function createIncome({
           remainingAmount: 0,
           paid: true,
           paymentDate: date,
-
           notes,
         },
       ],
@@ -1643,6 +1642,7 @@ export async function createIncome({
           clientId: ADMIN,
           notes,
           amount,
+          serviceId: service[0]._id,
           paymentDate: date,
           allocations: [
             {

@@ -36,11 +36,11 @@ export const CreatePaymentModal: React.FC<CreatePaymentModalProps> = ({
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData({
-      ...formData,
+  const handleInputChange = (field: string, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
       [field]: value,
-    });
+    }));
   };
 
   const handleSubmit = async () => {
@@ -114,9 +114,7 @@ export const CreatePaymentModal: React.FC<CreatePaymentModalProps> = ({
                       }}
                       label="Ημερομηνία Πληρωμής"
                       value={formData.date}
-                      onChange={(date) =>
-                        handleInputChange("date", date?.toString() || "")
-                      }
+                      onChange={(date) => handleInputChange("date", date)}
                     />
                   </I18nProvider>
                 </div>
