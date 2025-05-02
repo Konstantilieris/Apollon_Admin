@@ -158,7 +158,7 @@ export const CreatePaymentModal: React.FC<CreatePaymentModalProps> = ({
                 onPress={handleSubmit}
                 isLoading={isSubmitting}
               >
-                Καταχώρηση Πληρωμής
+                Καταχώρηση Εσόδου
               </Button>
             </ModalFooter>
           </>
