@@ -23,18 +23,28 @@ const formatWeekday = (weekday: string) => {
       Su: 0,
     }[weekday] ?? 0;
 
-  return new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
+  return new Intl.DateTimeFormat("el-GR", { weekday: "long" }).format(
     new Date(2024, 0, day)
   );
 };
 
 const formatValue = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("el-GR", {
     style: "currency",
-    currency: "USD",
+    currency: "EUR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);
+};
+
+const weekdayGreekAbbr: Record<string, string> = {
+  Mo: "Δε",
+  Tu: "Τρ",
+  We: "Τε",
+  Th: "Πε",
+  Fr: "Πα",
+  Sa: "Σα",
+  Su: "Κυ",
 };
 
 export default function KPIStat7({ data }: { data: KPIStatProps }) {
@@ -183,6 +193,9 @@ export default function KPIStat7({ data }: { data: KPIStatProps }) {
               <XAxis
                 axisLine={false}
                 dataKey="weekday"
+                tickFormatter={(weekday) =>
+                  weekdayGreekAbbr[weekday] ?? weekday
+                }
                 style={{ fontSize: "var(--heroui-font-size-tiny)" }}
                 tickLine={false}
               />

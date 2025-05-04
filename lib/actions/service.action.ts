@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 "use server";
 import Service from "@/database/models/service.model";
 import { connectToDatabase } from "../mongoose";
@@ -13,6 +14,7 @@ import Payment from "@/database/models/payment.model";
 import { deleteBooking } from "./booking.action";
 import mongoose, { Types } from "mongoose";
 import { ADMIN } from "@/constants";
+import Appointment from "@/database/models/event.model";
 
 export async function getMonthlyIncome() {
   const startDate = startOfMonth(new Date());
@@ -532,159 +534,6 @@ export async function discountSelectedServices({
     await session.abortTransaction();
     session.endSession();
     console.error("Error discounting services:", error);
-    throw error;
-  }
-}
-
-export async function deleteSelectedService({ service, path, clientId }: any) {
-  const session = await mongoose.startSession();
-
-  try {
-    connectToDatabase();
-    session.startTransaction();
-
-    /// this snippet is for the unpaid services lets say the admin wants to delete a service that has been fully paid
-
-    // if the service has a booking ID call the deleteBooking function else delete the service
-    if (service.paid) {
-      // delete the payments that are related to the service and stand not reversed
-      const deletedPayments = await Payment.deleteMany({
-        serviceId: service._id,
-        reversed: false,
-      }).session(session);
-      if (deletedPayments) {
-        console.log("Payment deleted successfully");
-      }
-      const client = await Client.findByIdAndUpdate(
-        clientId,
-        {
-          $inc: {
-            totalSpent: -service.paidAmount,
-            points: -service.paidAmount,
-          },
-        },
-        { new: true, session }
-      );
-      if (client) {
-        console.log("Client updated successfully");
-      }
-      await FinancialSummary.findOneAndUpdate(
-        {},
-        { $inc: { totalRevenue: -service.paidAmount } },
-        { session }
-      );
-      await Service.findByIdAndDelete(service._id).session(session);
-      await session.commitTransaction();
-      session.endSession();
-      return { message: "success" };
-    }
-    if (service.bookingId) {
-      const booking = await deleteBooking({
-        id: service.bookingId,
-        clientId,
-        path,
-      });
-      if (booking) {
-        console.log("Booking deleted successfully");
-        return { message: "success" };
-      }
-    }
-    // deleting the service is not that simple as it has to be removed from the client's owes array
-    // and the total owes amount has to be updated and the paid amount has to be deducted from the total spent amount
-    // and the total revenue has to be updated
-    if (!service.paid) {
-      // 1. Find relevant Payment docs referencing this service
-      //    (either by single `serviceId` or via allocations array)
-      const payments = await Payment.find({
-        reversed: false,
-        $or: [
-          { serviceId: service._id }, // single-service Payment
-          { "allocations.serviceId": service._id }, // multi-service
-        ],
-      }).session(session);
-
-      // We'll track how much money is effectively “undone”
-      let removedAmount = 0;
-
-      for (const payment of payments) {
-        // CASE A: Single-service payment (payment.serviceId === service._id)
-        if (
-          payment.serviceId &&
-          payment.serviceId.toString() === service._id.toString()
-        ) {
-          removedAmount += payment.amount;
-          // Option: delete the entire payment
-          await Payment.findByIdAndDelete(payment._id).session(session);
-        } else {
-          // CASE B: Multi-service payment using allocations
-          const newAllocations = [];
-          let removedFromThisPayment = 0;
-
-          for (const alloc of payment.allocations || []) {
-            if (alloc.serviceId.toString() === service._id.toString()) {
-              removedFromThisPayment += alloc.amount;
-            } else {
-              newAllocations.push(alloc);
-            }
-          }
-
-          if (removedFromThisPayment > 0) {
-            removedAmount += removedFromThisPayment;
-            payment.amount -= removedFromThisPayment;
-
-            if (payment.amount <= 0 || newAllocations.length === 0) {
-              // Payment is effectively empty now
-              await Payment.findByIdAndDelete(payment._id).session(session);
-            } else {
-              // Save the trimmed allocations
-              payment.allocations = newAllocations;
-              await payment.save({ session });
-            }
-          }
-        }
-      }
-
-      // 2. Update the client
-      const client = await Client.findById(clientId).session(session);
-      if (!client) {
-        throw new Error("Client not found.");
-      }
-
-      // Remove this service from client.owes
-      client.owes = client.owes.filter(
-        (owe: any) => owe.toString() !== service._id.toString()
-      );
-      // Subtract the service's remaining amount from client.owesTotal
-      client.owesTotal -= service.remainingAmount;
-      // Subtract the undone paid portion from the client's totalSpent
-      client.totalSpent -=
-        service.paidAmount > removedAmount ? removedAmount : service.paidAmount;
-      // ^ If you're confident that `service.paidAmount === removedAmount`, just do `-= removedAmount`
-
-      await client.save({ session });
-
-      // 3. Update FinancialSummary
-      //    Subtract the removed portion from totalRevenue
-      await FinancialSummary.findOneAndUpdate(
-        {},
-        { $inc: { totalRevenue: -removedAmount } },
-        { session }
-      );
-
-      // 4. Finally, delete the service
-      await Service.findByIdAndDelete(service._id).session(session);
-
-      // 5. Commit transaction, etc.
-      await session.commitTransaction();
-      session.endSession();
-      revalidatePath(path);
-
-      return { message: "success" };
-    }
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    console.error("Error deleting service:", error);
     throw error;
   }
 }
@@ -1677,6 +1526,232 @@ export async function createIncome({
     await session.abortTransaction();
     session.endSession();
     console.error("Error creating income:", error);
+    throw error;
+  }
+}
+async function removePetTaxiService(
+  service: any,
+  clientId: string,
+  path: string,
+  session: mongoose.ClientSession
+) {
+  const booking = await Booking.findById(service.bookingId).session(session);
+  if (!booking) throw new Error("Booking not found");
+
+  const isPickup = service.serviceType === "Pet Taxi (Pick-Up)";
+  const taxiType = isPickup ? "Taxi_PickUp" : "Taxi_Delivery";
+  const fallbackType = isPickup ? "Arrival" : "Departure";
+  const fallbackSubject = isPickup ? "ΑΦΙΞΗ" : "ΑΝΑΧΩΡΗΣΗ";
+  const taxiFlag = isPickup ? "flag1" : "flag2";
+
+  // 1️⃣ Delete the Service itself
+  await Service.findByIdAndDelete(service._id).session(session);
+
+  // 2️⃣ Fix Booking
+  booking.services = booking.services.filter(
+    (id: any) => id.toString() !== service._id.toString()
+  );
+  booking.totalAmount -= service.amount;
+  booking[taxiFlag] = false;
+  await booking.save({ session });
+
+  // 3️⃣ Restore Appointment to normal arrival/departure
+  await Appointment.findOneAndUpdate(
+    { Id: booking._id, Type: taxiType },
+    {
+      Subject: fallbackSubject,
+      Type: fallbackType,
+      categoryId: 2, // «Arrival / Departure» category
+      $unset: { isTransport: "" },
+    },
+    { session }
+  );
+
+  // 4️⃣ Clean up client & finance exactly the same way
+  //     the generic "unpaid" branch does:
+  if (!service.paid) {
+    const client = await Client.findById(clientId).session(session);
+    client.owes = client.owes.filter(
+      (sId: any) => sId.toString() !== service._id.toString()
+    );
+    client.owesTotal -= service.remainingAmount;
+    await client.save({ session });
+  } else {
+    await FinancialSummary.findOneAndUpdate(
+      {},
+      { $inc: { totalRevenue: -service.paidAmount } },
+      { session }
+    );
+    await Payment.deleteMany({
+      serviceId: service._id,
+      reversed: false,
+    }).session(session);
+  }
+
+  revalidatePath(path);
+}
+
+export async function deleteSelectedService({ service, path, clientId }: any) {
+  const session = await mongoose.startSession();
+
+  try {
+    connectToDatabase();
+    session.startTransaction();
+    const isPetTaxi =
+      service.serviceType === "Pet Taxi (Pick-Up)" ||
+      service.serviceType === "Pet Taxi (Drop-Off)";
+    /// this snippet is for the unpaid services lets say the admin wants to delete a service that has been fully paid
+
+    // if the service has a booking ID call the deleteBooking function else delete the service
+    if (service.paid) {
+      // delete the payments that are related to the service and stand not reversed
+      const deletedPayments = await Payment.deleteMany({
+        serviceId: service._id,
+        reversed: false,
+      }).session(session);
+      if (deletedPayments) {
+        console.log("Payment deleted successfully");
+      }
+      const client = await Client.findByIdAndUpdate(
+        clientId,
+        {
+          $inc: {
+            totalSpent: -service.paidAmount,
+            points: -service.paidAmount,
+          },
+        },
+        { new: true, session }
+      );
+      if (client) {
+        console.log("Client updated successfully");
+      }
+      await FinancialSummary.findOneAndUpdate(
+        {},
+        { $inc: { totalRevenue: -service.paidAmount } },
+        { session }
+      );
+      await Service.findByIdAndDelete(service._id).session(session);
+      await session.commitTransaction();
+      session.endSession();
+      return { message: "success" };
+    }
+    if (service.bookingId && service.serviceType === "ΔΙΑΜΟΝΗ") {
+      const booking = await deleteBooking({
+        id: service.bookingId,
+        clientId,
+        path,
+      });
+      if (booking) {
+        console.log("Booking deleted successfully");
+        return { message: "success" };
+      }
+    }
+    /* -----------------------------------------------------------
+       SPECIAL‑CASE:  Pet‑Taxi services should NOT kill the booking
+    ----------------------------------------------------------- */
+    if (isPetTaxi && service.bookingId) {
+      await removePetTaxiService(service, clientId, path, session);
+      await session.commitTransaction();
+      session.endSession();
+      return { message: "success" };
+    }
+
+    // deleting the service is not that simple as it has to be removed from the client's owes array
+    // and the total owes amount has to be updated and the paid amount has to be deducted from the total spent amount
+    // and the total revenue has to be updated
+    if (!service.paid) {
+      // 1. Find relevant Payment docs referencing this service
+      //    (either by single `serviceId` or via allocations array)
+      const payments = await Payment.find({
+        reversed: false,
+        $or: [
+          { serviceId: service._id }, // single-service Payment
+          { "allocations.serviceId": service._id }, // multi-service
+        ],
+      }).session(session);
+
+      // We'll track how much money is effectively “undone”
+      let removedAmount = 0;
+
+      for (const payment of payments) {
+        // CASE A: Single-service payment (payment.serviceId === service._id)
+        if (
+          payment.serviceId &&
+          payment.serviceId.toString() === service._id.toString()
+        ) {
+          removedAmount += payment.amount;
+          // Option: delete the entire payment
+          await Payment.findByIdAndDelete(payment._id).session(session);
+        } else {
+          // CASE B: Multi-service payment using allocations
+          const newAllocations = [];
+          let removedFromThisPayment = 0;
+
+          for (const alloc of payment.allocations || []) {
+            if (alloc.serviceId.toString() === service._id.toString()) {
+              removedFromThisPayment += alloc.amount;
+            } else {
+              newAllocations.push(alloc);
+            }
+          }
+
+          if (removedFromThisPayment > 0) {
+            removedAmount += removedFromThisPayment;
+            payment.amount -= removedFromThisPayment;
+
+            if (payment.amount <= 0 || newAllocations.length === 0) {
+              // Payment is effectively empty now
+              await Payment.findByIdAndDelete(payment._id).session(session);
+            } else {
+              // Save the trimmed allocations
+              payment.allocations = newAllocations;
+              await payment.save({ session });
+            }
+          }
+        }
+      }
+
+      // 2. Update the client
+      const client = await Client.findById(clientId).session(session);
+      if (!client) {
+        throw new Error("Client not found.");
+      }
+
+      // Remove this service from client.owes
+      client.owes = client.owes.filter(
+        (owe: any) => owe.toString() !== service._id.toString()
+      );
+      // Subtract the service's remaining amount from client.owesTotal
+      client.owesTotal -= service.remainingAmount;
+      // Subtract the undone paid portion from the client's totalSpent
+      client.totalSpent -=
+        service.paidAmount > removedAmount ? removedAmount : service.paidAmount;
+      // ^ If you're confident that `service.paidAmount === removedAmount`, just do `-= removedAmount`
+
+      await client.save({ session });
+
+      // 3. Update FinancialSummary
+      //    Subtract the removed portion from totalRevenue
+      await FinancialSummary.findOneAndUpdate(
+        {},
+        { $inc: { totalRevenue: -removedAmount } },
+        { session }
+      );
+
+      // 4. Finally, delete the service
+      await Service.findByIdAndDelete(service._id).session(session);
+
+      // 5. Commit transaction, etc.
+      await session.commitTransaction();
+      session.endSession();
+      revalidatePath(path);
+
+      return { message: "success" };
+    }
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error deleting service:", error);
     throw error;
   }
 }
