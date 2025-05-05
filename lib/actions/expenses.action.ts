@@ -122,15 +122,7 @@ export async function deleteMultipleExpenses(ids: Key[]) {
 // ─────────────────────────────────────────────────────────────────────────────
 // GET ALL EXPENSES
 // ─────────────────────────────────────────────────────────────────────────────
-export async function getAllExpenses() {
-  await connectToDatabase();
-  try {
-    const expenses = await Expenses.find().populate("category", "name");
-    return JSON.parse(JSON.stringify(expenses));
-  } catch (error) {
-    console.error(error);
-  }
-}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // CREATE CATEGORY
 // ─────────────────────────────────────────────────────────────────────────────
@@ -186,4 +178,142 @@ export async function getFinancialSummary() {
     }
     return JSON.parse(JSON.stringify(financial[0].totalExpenses));
   } catch (error) {}
+}
+export interface ExpensesQuery {
+  page?: number; // 1‑based
+  limit?: number; // rows per page
+  query?: string; // search by category (you can enrich later)
+  status?: "all" | "pending" | "paid" | "overdue";
+  paymentMethod?: "all" | "creditcard" | "cash" | "bank";
+  date?: "all" | "last7Days" | "last30Days" | "last60Days";
+  sort?: string; // column uid
+  direction?: "asc" | "desc";
+}
+
+export async function getAllExpenses() {
+  await connectToDatabase();
+  try {
+    const expenses = await Expenses.find().populate("category", "name");
+    return JSON.parse(JSON.stringify(expenses));
+  } catch (error) {
+    console.error(error);
+  }
+}
+export async function getExpenses(params: ExpensesQuery) {
+  await connectToDatabase();
+  const {
+    query,
+    status = "all",
+    paymentMethod = "all",
+    date = "all",
+    sort = "date",
+    direction = "desc",
+  } = params;
+
+  /* coerce paging params – fall back to sane defaults */
+  const page = Number(params.page) || 1; // 1‑based
+  const limit = Number(params.limit) || 10; // rows per page
+
+  /* ---------------- base $match (cheap fields) ---------------- */
+  const match: any = {};
+  if (status !== "all") match.status = status;
+  if (paymentMethod !== "all") match.paymentMethod = paymentMethod;
+
+  if (date !== "all") {
+    const days = Number(date.match(/\d+/)?.[0] ?? 0);
+    match.date = { $gte: new Date(Date.now() - days * 86_400_000) };
+  }
+
+  /* --------------------- base pipeline ----------------------- */
+  const pipeline: any[] = [
+    { $match: match },
+
+    /* join category */
+    {
+      $lookup: {
+        from: "categories",
+        localField: "category",
+        foreignField: "_id",
+        as: "category",
+      },
+    },
+    { $unwind: "$category" },
+
+    /* join vendor (optional) */
+    {
+      $lookup: {
+        from: "vendors",
+        localField: "vendor",
+        foreignField: "_id",
+        as: "vendor",
+      },
+    },
+    { $unwind: { path: "$vendor", preserveNullAndEmptyArrays: true } },
+  ];
+
+  /* ------------------- text search filter -------------------- */
+  if (query) {
+    pipeline.push({
+      $match: { "category.name": { $regex: query, $options: "i" } },
+    });
+  }
+
+  /* ------------------------ sorting -------------------------- */
+  const sortMap: Record<string, string> = {
+    date: "date",
+    totalAmount: "totalAmount",
+    amount: "amount",
+    taxAmount: "taxAmount",
+    category: "category.name",
+    vendor: "vendor.name",
+  };
+  const sortKey = sortMap[sort] ?? "date";
+  pipeline.push({ $sort: { [sortKey]: direction === "asc" ? 1 : -1 } });
+
+  /* ---------------------- pagination ------------------------- */
+  const skip = (page - 1) * limit;
+  pipeline.push({ $skip: skip }, { $limit: limit });
+
+  /* ------------- project to UI‑friendly structure ------------ */
+  pipeline.push({
+    $project: {
+      _id: 1,
+      date: 1,
+      amount: 1,
+      taxAmount: 1,
+      totalAmount: 1,
+      paymentMethod: 1,
+      status: 1,
+      notes: 1,
+      "category.name": 1,
+      "vendor.name": 1,
+      "vendor.contactInfo": 1,
+      "vendor.serviceType": 1,
+    },
+  });
+
+  /* ------------------- execute & prepare --------------------- */
+  const docs = await Expenses.aggregate(pipeline);
+  const data = JSON.parse(JSON.stringify(docs));
+
+  /* total for THIS page only */
+  const pageTotal = data.reduce(
+    (sum: number, d: { totalAmount?: number }) => sum + (d.totalAmount ?? 0),
+    0
+  );
+
+  /* total row‑count (all pages) — cheap because it reuses the pre‑$skip pipeline */
+  const [{ count = 0 } = {}] = await Expenses.aggregate([
+    ...pipeline.slice(
+      0,
+      pipeline.findIndex((s) => "$skip" in s)
+    ),
+    { $count: "count" },
+  ]);
+
+  return {
+    data,
+    totalPages: Math.max(1, Math.ceil(count / limit)),
+    totalAmount: pageTotal, // sum of the limited rows on the current page
+  };
 }

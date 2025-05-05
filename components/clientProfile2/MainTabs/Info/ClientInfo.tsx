@@ -287,7 +287,7 @@ const ClientInfo = ({ client }: any) => {
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableCell className="font-medium">Σύνολο Δαπανών</TableCell>
+                  <TableCell className="font-medium">Πληρωμένα</TableCell>
                   <TableCell>{client?.totalSpent.toFixed(2) ?? 0}€</TableCell>
                 </TableRow>
                 <TableRow>
