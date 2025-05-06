@@ -7,7 +7,7 @@ import {
   DropdownItem,
   Button,
 } from "@heroui/react";
-import { Icon } from "@iconify/react";
+
 import { useUrlSortDescriptor } from "@/hooks/useUrlSortDescriptor";
 
 interface Props {
@@ -22,14 +22,7 @@ const SortingColumns: React.FC<Props> = ({ headerColumns }) => {
       <DropdownTrigger>
         <Button
           size="lg"
-          className="bg-default-100 text-base tracking-widest text-default-800"
-          startContent={
-            <Icon
-              icon="solar:sort-linear"
-              width={16}
-              className="text-default-400"
-            />
-          }
+          className="bg-default-100  text-base tracking-wide text-default-800"
         >
           Ταξινόμηση
         </Button>

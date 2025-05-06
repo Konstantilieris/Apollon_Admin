@@ -40,7 +40,15 @@ const TopContent: React.FC<TopContentProps> = ({
   totalAmount,
 }) => {
   const { setType, setIsOpen } = useExpensesStore();
+  const openCreateExpense = () => {
+    setType("create");
+    setIsOpen(true);
+  };
 
+  const openCreateCategory = () => {
+    setType("category");
+    setIsOpen(true);
+  };
   return (
     <div className="flex flex-col justify-between gap-4">
       {/* --- upper bar --- */}
@@ -56,13 +64,7 @@ const TopContent: React.FC<TopContentProps> = ({
                 <Button
                   className="bg-default-100 text-base tracking-widest text-default-800"
                   size="lg"
-                  startContent={
-                    <Icon
-                      icon="solar:tuning-2-linear"
-                      width={16}
-                      className="text-default-400"
-                    />
-                  }
+                  startContent
                 >
                   Φίλτρα
                 </Button>
@@ -85,13 +87,6 @@ const TopContent: React.FC<TopContentProps> = ({
                 <Button
                   className="bg-default-100 tracking-widest  text-default-800"
                   size="lg"
-                  startContent={
-                    <Icon
-                      icon="solar:sort-horizontal-linear"
-                      width={16}
-                      className="text-base text-default-400"
-                    />
-                  }
                 >
                   Στήλες
                 </Button>
@@ -128,14 +123,14 @@ const TopContent: React.FC<TopContentProps> = ({
             <Dropdown>
               <DropdownTrigger>
                 <Button
-                  className="bg-default-100 text-default-800"
+                  className="bg-default-100  text-default-800"
                   endContent={
                     <Icon
                       icon="solar:alt-arrow-down-linear"
                       className="text-default-400"
                     />
                   }
-                  size="sm"
+                  size="lg"
                   variant="flat"
                 >
                   Επιλεγμένες Ενέργειες
@@ -158,6 +153,20 @@ const TopContent: React.FC<TopContentProps> = ({
               </DropdownMenu>
             </Dropdown>
           )}
+        </div>
+        <div className="flex w-full items-center justify-end gap-2">
+          {/* NEW: create‑category button */}
+          <Button
+            className="bg-default-100 text-default-800"
+            size="lg"
+            variant="flat"
+            onPress={openCreateCategory}
+          >
+            Νέα Κατηγορία
+          </Button>
+          <Button color="secondary" size="lg" onPress={openCreateExpense}>
+            Δημιουργία Εξόδου
+          </Button>
         </div>
       </div>
 
