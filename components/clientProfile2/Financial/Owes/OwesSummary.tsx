@@ -39,7 +39,7 @@ export function ServicesSummary({ services }: ServicesSummaryProps) {
           <div>
             <p className="text-sm text-gray-500">Συνολικό Ποσό</p>
             <p className="text-center text-xl font-semibold">
-              {formatCurrency(totals.total)}
+              {formatCurrency(totals?.total)}
             </p>
           </div>
         </CardBody>
@@ -56,7 +56,7 @@ export function ServicesSummary({ services }: ServicesSummaryProps) {
           <div>
             <p className="text-sm text-gray-500">Συνολικά Πληρωμένα</p>
             <p className="text-center text-xl font-semibold text-success-600">
-              {formatCurrency(totals.paid)}
+              {formatCurrency(totals?.paid)}
             </p>
           </div>
         </CardBody>
@@ -70,7 +70,7 @@ export function ServicesSummary({ services }: ServicesSummaryProps) {
           <div>
             <p className=" text-sm text-gray-500">Συνολικό Υπόλοιπο</p>
             <p className="text-center text-xl font-semibold text-warning-600">
-              {formatCurrency(totals.remaining)}
+              {formatCurrency(totals?.remaining)}
             </p>
           </div>
         </CardBody>

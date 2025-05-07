@@ -150,7 +150,7 @@ export default function ServicesList({ client }: ServicesListProps) {
           <span className="w-[30%] text-base text-default-400">
             {selectedKeys === "all"
               ? "Όλες οι σειρές είναι επιλεγμένες"
-              : `${selectedKeys.size} απο ${filteredServices.length} επιλέχθηκαν`}
+              : `${selectedKeys?.size} απο ${filteredServices?.length} επιλέχθηκαν`}
           </span>
         </div>
         <Pagination
@@ -182,7 +182,7 @@ export default function ServicesList({ client }: ServicesListProps) {
         </div>
       </div>
     );
-  }, [selectedKeys, services.length, page, pages]);
+  }, [selectedKeys, services?.length, page, pages]);
   const renderServiceType = (serviceType: string) => {
     switch (serviceType) {
       case "Pet Taxi (Drop-Off)":
@@ -366,11 +366,11 @@ export default function ServicesList({ client }: ServicesListProps) {
                   </TableCell>
                   <TableCell>{renderServiceTypeChip(service)}</TableCell>
                   <TableCell className="pl-12 font-medium">
-                    {service.serviceType === "ΔΙΑΜΟΝΗ" ? (
+                    {service?.serviceType === "ΔΙΑΜΟΝΗ" ? (
                       <div className="flex flex-row items-center gap-2 ">
                         {" "}
                         {getDurationDays(service.date, service.endDate)}
-                        {service.bookingId.extraDay ? (
+                        {service?.bookingId?.extraDay ? (
                           <span className="text-green-400 ">+ 1</span>
                         ) : (
                           ""
@@ -380,19 +380,19 @@ export default function ServicesList({ client }: ServicesListProps) {
                       0
                     )}
                   </TableCell>
-                  <TableCell>{formatCurrency(service.amount)}</TableCell>
-                  <TableCell>{formatCurrency(service.taxAmount)}</TableCell>
+                  <TableCell>{formatCurrency(service?.amount)}</TableCell>
+                  <TableCell>{formatCurrency(service?.taxAmount)}</TableCell>
                   <TableCell className="font-semibold">
-                    {formatCurrency(service.totalAmount)}
+                    {formatCurrency(service?.totalAmount)}
                   </TableCell>
                   <TableCell className="text-success-600">
-                    {formatCurrency(service.paidAmount)}
+                    {formatCurrency(service?.paidAmount)}
                   </TableCell>
                   <TableCell className="text-warning-600">
-                    {formatCurrency(service.remainingAmount)}
+                    {formatCurrency(service?.remainingAmount)}
                   </TableCell>
-                  <TableCell>{formatCurrency(service.discount)}</TableCell>
-                  <TableCell>{service.notes}</TableCell>
+                  <TableCell>{formatCurrency(service?.discount)}</TableCell>
+                  <TableCell>{service?.notes}</TableCell>
                   <TableCell>
                     <Dropdown
                       backdrop="blur"
@@ -418,7 +418,7 @@ export default function ServicesList({ client }: ServicesListProps) {
                           }}
                           onPress={() => {
                             openModal("serviceView", {
-                              serviceId: service._id,
+                              serviceId: service?._id,
                             });
                           }}
                         >

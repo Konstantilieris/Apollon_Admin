@@ -22,7 +22,9 @@ const FinancialOverView = ({ client }: any) => {
     const fetchData = async () => {
       try {
         // Call your API route
-        const response = await FinancialOverviewStats({ clientId: client._id });
+        const response = await FinancialOverviewStats({
+          clientId: client?._id,
+        });
 
         setData(response);
       } catch (error) {
@@ -54,14 +56,14 @@ const FinancialOverView = ({ client }: any) => {
               <p className="text-base font-medium text-muted-foreground">
                 Συνολική Οφειλή
               </p>
-              <p className="text-2xl font-bold"> €{totalOwes.toFixed(2)}</p>
+              <p className="text-2xl font-bold"> €{totalOwes?.toFixed(2)}</p>
             </div>
             <div className="space-y-1">
               <p className="text-base font-medium text-muted-foreground">
                 Πληρωθέν Ποσό
               </p>
               <p className="text-2xl font-bold text-green-600">
-                €{totalPaid.toFixed(2)}
+                €{totalPaid?.toFixed(2)}
               </p>
             </div>
             <div className="space-y-1">
@@ -69,7 +71,7 @@ const FinancialOverView = ({ client }: any) => {
                 Υπόλοιπο
               </p>
               <p className="text-2xl font-bold text-amber-600">
-                €{totalOwes.toFixed(2)}
+                €{totalOwes?.toFixed(2)}
               </p>
             </div>
           </div>

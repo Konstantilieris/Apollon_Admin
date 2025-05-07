@@ -167,7 +167,7 @@ function PaidServicesList({ client }: PaidServicesListProps) {
           <span className="w-[30%] text-base text-default-400">
             {selectedKeys === "all"
               ? "Όλες οι σειρές είναι επιλεγμένες"
-              : `${selectedKeys.size} απο ${filteredServices.length} επιλέχθηκαν`}
+              : `${selectedKeys?.size} απο ${filteredServices?.length} επιλέχθηκαν`}
           </span>
         </div>
         <Pagination
@@ -199,7 +199,7 @@ function PaidServicesList({ client }: PaidServicesListProps) {
         </div>
       </div>
     );
-  }, [selectedKeys, services.length, page, pages]);
+  }, [selectedKeys, services?.length, page, pages]);
 
   const renderServiceType = (serviceType: string) => {
     switch (serviceType) {
@@ -320,18 +320,18 @@ function PaidServicesList({ client }: PaidServicesListProps) {
             </TableHeader>
             <TableBody emptyContent={"Δεν βρέθηκαν εξοφλημένες υπηρεσίες"}>
               {sortedServices.map((service: any) => (
-                <TableRow key={service._id}>
+                <TableRow key={service?._id}>
                   <TableCell className="font-medium">
-                    {renderServiceType(service.serviceType)}
+                    {renderServiceType(service?.serviceType)}
                   </TableCell>
                   <TableCell>{renderServiceTypeChip(service)}</TableCell>
 
                   <TableCell className="pl-12 font-medium">
-                    {service.serviceType === "ΔΙΑΜΟΝΗ" ? (
+                    {service?.serviceType === "ΔΙΑΜΟΝΗ" ? (
                       <div className="flex flex-row ">
                         {" "}
                         {getDurationDays(service.date, service.endDate)}
-                        {service.bookingId.extraDay ? (
+                        {service?.bookingId?.extraDay ? (
                           <span className="text-green-900">+1</span>
                         ) : (
                           ""
@@ -342,16 +342,16 @@ function PaidServicesList({ client }: PaidServicesListProps) {
                     )}
                   </TableCell>
 
-                  <TableCell>{formatCurrency(service.amount)}</TableCell>
-                  <TableCell>{formatCurrency(service.taxAmount)}</TableCell>
+                  <TableCell>{formatCurrency(service?.amount)}</TableCell>
+                  <TableCell>{formatCurrency(service?.taxAmount)}</TableCell>
                   <TableCell className="font-semibold">
-                    {formatCurrency(service.totalAmount)}
+                    {formatCurrency(service?.totalAmount)}
                   </TableCell>
                   <TableCell className="text-success-600">
-                    {formatCurrency(service.paidAmount)}
+                    {formatCurrency(service?.paidAmount)}
                   </TableCell>
-                  <TableCell>{formatCurrency(service.discount)}</TableCell>
-                  <TableCell>{service.notes}</TableCell>
+                  <TableCell>{formatCurrency(service?.discount)}</TableCell>
+                  <TableCell>{service?.notes}</TableCell>
                   <TableCell>
                     <Dropdown
                       backdrop="blur"
