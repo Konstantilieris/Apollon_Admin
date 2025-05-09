@@ -240,15 +240,7 @@ export async function getExpenses(params: ExpensesQuery) {
     { $unwind: "$category" },
 
     /* join vendor (optional) */
-    {
-      $lookup: {
-        from: "vendors",
-        localField: "vendor",
-        foreignField: "_id",
-        as: "vendor",
-      },
-    },
-    { $unwind: { path: "$vendor", preserveNullAndEmptyArrays: true } },
+   
   ];
 
   /* ------------------- text search filter -------------------- */
