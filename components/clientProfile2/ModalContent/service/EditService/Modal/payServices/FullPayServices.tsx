@@ -1,6 +1,6 @@
 import React from "react";
-import { formatDate, cn } from "@/lib/utils";
-import { usePathname, useRouter } from "next/navigation";
+import { formatDate } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import {
@@ -13,11 +13,11 @@ import {
   ScrollShadow,
 } from "@heroui/react";
 import { useModalStore } from "@/hooks/client-profile-store";
-import { payService } from "@/lib/actions/service.action";
+import { payMultipleServices } from "@/lib/actions/service.action";
 
 const FullPayServices = () => {
   const [loading, setLoading] = React.useState(false);
-  const path = usePathname();
+
   const router = useRouter();
 
   const { modalData, closeModal } = useModalStore();
@@ -46,16 +46,14 @@ const FullPayServices = () => {
     setLoading(true);
 
     try {
-      await Promise.all(
-        modalData.selectedServices.map((service: any) =>
-          payService({ serviceId: service._id, path })
-        )
+      await payMultipleServices(
+        modalData.selectedServices.map((s: any) => s._id)
       );
 
-      toast.success("Η εξόφληση ολοκληρώθηκε επιτυχώς.");
+      toast.success("Η εξοφλήσεις ολοκληρώθηκαν επιτυχώς.");
     } catch (error) {
       console.error("Error paying off client:", error);
-      toast.error("Η εξόφληση απέτυχε.");
+      toast.error("Η ενέργεια απέτυχε.");
     } finally {
       setLoading(false);
       closeModal();

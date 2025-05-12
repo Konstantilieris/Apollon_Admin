@@ -1,31 +1,31 @@
 "use client";
 import React, { useState } from "react";
 import { useServiceModal } from "@/hooks/use-service-modal";
-import { payService, syncOwesTotal } from "@/lib/actions/service.action";
+import {
+  payMultipleServices,
+  syncOwesTotal,
+} from "@/lib/actions/service.action";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 const ServicePayments = () => {
   const { selectedServices, onClose } = useServiceModal();
-  const path = usePathname();
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
   const handleAction = async () => {
     setLoading(true);
     try {
-      await Promise.all(
-        selectedServices.map((service) =>
-          payService({ serviceId: service._id, path })
-        )
-      );
+      await payMultipleServices(selectedServices.map((s) => s._id));
+
       if (selectedServices.length > 0) {
         const clientId = selectedServices[0].clientId;
-        await syncOwesTotal(clientId);
+        await syncOwesTotal(clientId); // Optional if needed
       }
 
       toast.success("Η εξόφληση ολοκληρώθηκε επιτυχώς.");
@@ -35,7 +35,7 @@ const ServicePayments = () => {
     } finally {
       setLoading(false);
       onClose();
-      window.location.reload();
+      router.refresh();
     }
   };
 

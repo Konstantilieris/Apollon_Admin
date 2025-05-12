@@ -16,6 +16,7 @@ import {
   Pagination,
   Selection,
   Skeleton,
+  Chip,
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
@@ -143,6 +144,29 @@ export default function ServicesList({ client }: ServicesListProps) {
       currency: "EUR",
     }).format(amount);
   };
+  const selectedTotals = React.useMemo(() => {
+    const selectedServices =
+      selectedKeys === "all"
+        ? filteredServices
+        : filteredServices.filter(
+            (service) =>
+              selectedKeys instanceof Set && selectedKeys.has(service._id)
+          );
+
+    const totalRemaining = selectedServices.reduce(
+      (sum, s) => sum + (s.remainingAmount || 0),
+      0
+    );
+    const totalFinal = selectedServices.reduce(
+      (sum, s) => sum + (s.totalAmount || 0),
+      0
+    );
+
+    return {
+      remaining: totalRemaining,
+      final: totalFinal,
+    };
+  }, [selectedKeys, filteredServices]);
   const bottomContent = React.useMemo(() => {
     return (
       <div className="flex items-center justify-between p-2">
@@ -204,6 +228,7 @@ export default function ServicesList({ client }: ServicesListProps) {
               Σύνοψη Υπηρεσιών προς Πληρωμή
             </p>
           </div>
+
           {selectedCount > 0 && (
             <Dropdown backdrop="blur" placement="bottom-end" closeOnSelect>
               <DropdownTrigger>
@@ -312,15 +337,39 @@ export default function ServicesList({ client }: ServicesListProps) {
               </DropdownMenu>
             </Dropdown>
           )}
-          <Button
-            color="default"
-            variant="ghost"
-            startContent={<Icon icon="lucide:plus" className="h-4 w-4" />}
-            className="tracking-wide "
-            onPress={() => openModal("createService", { client })}
-          >
-            Δημιουργία Υπηρεσίας
-          </Button>
+          <div className="flex flex-row items-center gap-2">
+            {selectedCount > 0 && (
+              <div className=" flex gap-4 max-lg:hidden">
+                <Chip
+                  color="warning"
+                  variant="flat"
+                  className="p-4 text-base tracking-widest"
+                  startContent={<Icon icon="lucide:wallet" width={18} />}
+                >
+                  Υπόλοιπο Επιλεγμένων:{" "}
+                  {formatCurrency(selectedTotals.remaining)}
+                </Chip>
+                <Chip
+                  color="success"
+                  variant="flat"
+                  className="p-4 text-base tracking-widest"
+                  startContent={<Icon icon="lucide:euro" width={18} />}
+                >
+                  Τελικό Ποσό Επιλεγμένων:{" "}
+                  {formatCurrency(selectedTotals.final)}
+                </Chip>
+              </div>
+            )}
+            <Button
+              color="default"
+              variant="ghost"
+              startContent={<Icon icon="lucide:plus" className="h-4 w-4" />}
+              className="tracking-wide "
+              onPress={() => openModal("createService", { client })}
+            >
+              Δημιουργία Υπηρεσίας
+            </Button>
+          </div>
         </div>
         <Skeleton isLoaded={!loading}>
           <ServicesSummary services={filteredServices} />

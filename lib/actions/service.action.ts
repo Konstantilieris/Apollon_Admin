@@ -1114,94 +1114,65 @@ export async function partialPayment({
     session.endSession();
   }
 }
-export async function payService({
-  serviceId,
-  path,
-}: {
-  serviceId: string;
-  path: string;
-}) {
+export async function payMultipleServices(serviceIds: string[]) {
   const session = await mongoose.startSession();
   try {
     await session.withTransaction(async () => {
-      // Find the service by ID and ensure it’s unpaid
-      const service = await Service.findOne({
-        _id: serviceId,
+      // Fetch all unpaid services in one go
+      const services = await Service.find({
+        _id: { $in: serviceIds },
         paid: false,
       }).session(session);
 
-      if (!service) {
-        throw new Error("Service not found or already paid.");
-      }
+      let totalPaid = 0;
 
-      const remainingAmount = service.remainingAmount || 0;
+      for (const service of services) {
+        const remainingAmount = service.remainingAmount || 0;
+        if (remainingAmount <= 0) continue;
 
-      if (remainingAmount <= 0) {
-        throw new Error("Service has no remaining amount to pay.");
-      }
+        const payment = new Payment({
+          clientId: service.clientId,
+          amount: remainingAmount,
+          serviceId: service._id,
+          notes: "Πλήρης πληρωμή για το υπόλοιπο ποσό",
+          allocations: [{ serviceId: service._id, amount: remainingAmount }],
+        });
+        await payment.save({ session });
 
-      // Create a new payment record for the remaining amount
-      const payment = new Payment({
-        clientId: service.clientId,
-        amount: remainingAmount,
-        serviceId: service._id,
-        notes: "Πλήρης πληρωμή για το υπόλοιπο ποσό",
-        allocations: [
+        service.paid = true;
+        service.paymentDate = new Date();
+        service.paidAmount = (service.paidAmount || 0) + remainingAmount;
+        service.remainingAmount = 0;
+        service.payments.push(payment._id);
+        await service.save({ session });
+
+        await Client.findByIdAndUpdate(
+          service.clientId,
           {
-            serviceId: service._id,
-            amount: remainingAmount,
+            $pull: { owes: service._id },
+            $inc: {
+              owesTotal: -remainingAmount,
+              totalSpent: remainingAmount,
+              points: remainingAmount,
+            },
           },
-        ], // Record allocation for the payment
-      });
+          { session }
+        );
 
-      await payment.save({ session });
-
-      // Update the service to mark it as paid
-      service.paid = true;
-      service.paymentDate = new Date();
-      service.paidAmount = (service.paidAmount || 0) + remainingAmount;
-      service.remainingAmount = 0;
-      service.payments.push(payment._id); // Link payment to the service
-
-      await service.save({ session });
-
-      // Update the client record
-      const client = await Client.findByIdAndUpdate(
-        service.clientId,
-        {
-          $pull: { owes: service._id },
-          $inc: {
-            owesTotal: -remainingAmount,
-            totalSpent: remainingAmount,
-            points: remainingAmount, // Assuming points are awarded based on payment
-          },
-        },
-        { new: true, session }
-      );
-
-      if (!client) {
-        throw new Error("Client not found or update failed.");
+        totalPaid += remainingAmount;
       }
 
-      // Update the financial summary
       await FinancialSummary.findOneAndUpdate(
-        {}, // Assuming a single financial summary document
-        { $inc: { totalRevenue: remainingAmount } },
-        { upsert: true, session } // Create if it doesn’t exist
+        {},
+        { $inc: { totalRevenue: totalPaid } },
+        { upsert: true, session }
       );
-
-      // Log success
-      console.log("Service fully paid off:", service);
-
-      // Revalidate the page path
-      revalidatePath(path);
     });
 
-    return { success: true, message: "Η υπηρεσία εξοφλήθηκε" };
-  } catch (error) {
-    console.error("Error in payService:", error);
+    return { success: true };
+  } catch (err) {
     await session.abortTransaction();
-    throw error;
+    throw err;
   } finally {
     session.endSession();
   }
@@ -1210,20 +1181,24 @@ export async function syncOwesTotal(clientId: string) {
   await connectToDatabase();
 
   try {
-    // Fetch all unpaid services for the client
+    // Ensure an index on { clientId: 1, paid: 1 } exists in MongoDB for performance
     const unpaidServices = await Service.find({
       clientId,
       paid: false,
     }).select("remainingAmount");
 
-    const totalOwed = unpaidServices.reduce((sum, service) => {
-      return sum + (service.remainingAmount || 0);
-    }, 0);
+    const totalOwed = unpaidServices.reduce(
+      (sum, s) => sum + (s.remainingAmount || 0),
+      0
+    );
 
-    // Update client owesTotal
-    await Client.findByIdAndUpdate(clientId, {
-      owesTotal: totalOwed,
-    });
+    const result = await Client.findByIdAndUpdate(
+      clientId,
+      { owesTotal: totalOwed },
+      { new: true }
+    );
+
+    if (!result) throw new Error("Client not found during owes sync.");
 
     return { success: true, totalOwed };
   } catch (error) {
