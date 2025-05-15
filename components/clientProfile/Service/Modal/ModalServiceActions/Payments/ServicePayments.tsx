@@ -8,20 +8,23 @@ import {
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 const ServicePayments = () => {
   const { selectedServices, onClose } = useServiceModal();
   const router = useRouter();
-
+  const path = usePathname();
   const [loading, setLoading] = useState(false);
 
   const handleAction = async () => {
     setLoading(true);
     try {
-      await payMultipleServices(selectedServices.map((s) => s._id));
+      await payMultipleServices(
+        selectedServices.map((s) => s._id),
+        path
+      );
 
       if (selectedServices.length > 0) {
         const clientId = selectedServices[0].clientId;

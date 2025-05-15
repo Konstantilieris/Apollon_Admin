@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useServiceModal } from "@/hooks/use-service-modal";
-import { formatDate, cn } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import { usePathname } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
