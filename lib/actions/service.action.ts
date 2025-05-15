@@ -1114,7 +1114,7 @@ export async function partialPayment({
     session.endSession();
   }
 }
-export async function payMultipleServices(serviceIds: string[]) {
+export async function payMultipleServices(serviceIds: string[], path: string) {
   const session = await mongoose.startSession();
   try {
     await session.withTransaction(async () => {
@@ -1168,7 +1168,7 @@ export async function payMultipleServices(serviceIds: string[]) {
         { upsert: true, session }
       );
     });
-
+    revalidatePath(path);
     return { success: true };
   } catch (err) {
     await session.abortTransaction();

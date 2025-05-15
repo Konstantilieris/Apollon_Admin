@@ -1,6 +1,6 @@
 import React from "react";
 import { formatDate } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import {
@@ -17,7 +17,7 @@ import { payMultipleServices } from "@/lib/actions/service.action";
 
 const FullPayServices = () => {
   const [loading, setLoading] = React.useState(false);
-
+  const path = usePathname();
   const router = useRouter();
 
   const { modalData, closeModal } = useModalStore();
@@ -47,7 +47,8 @@ const FullPayServices = () => {
 
     try {
       await payMultipleServices(
-        modalData.selectedServices.map((s: any) => s._id)
+        modalData.selectedServices.map((s: any) => s._id),
+        path
       );
 
       toast.success("Η εξοφλήσεις ολοκληρώθηκαν επιτυχώς.");
