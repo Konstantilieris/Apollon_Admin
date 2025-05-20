@@ -14,7 +14,6 @@ import {
   DropdownItem,
   Chip,
   Tooltip,
-  Spinner,
 } from "@heroui/react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -149,258 +148,248 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
         {/* Bulk actions toolbar */}
 
         {/* Table */}
-        <div className="relative">
-          {!initialData && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50">
-              <Spinner size="lg" />
-            </div>
-          )}
 
-          <Table
-            bottomContent={<Pagination totalPages={totalPages} />}
-            aria-label="Payments table"
-            classNames={{
-              th: "font-sans text-base font-semibold tracking-wide",
-              td: "font-sans text-base",
-            }}
-            isStriped
-            selectionMode="multiple"
-            selectedKeys={selectedKeys as string[]}
-            onSelectionChange={setSelectedKeys as any}
+        <Table
+          bottomContent={<Pagination totalPages={totalPages} />}
+          aria-label="Payments table"
+          classNames={{
+            th: "font-sans text-base font-semibold tracking-wide",
+            td: "font-sans text-base",
+          }}
+          isStriped
+          selectionMode="multiple"
+          selectedKeys={selectedKeys as string[]}
+          onSelectionChange={setSelectedKeys as any}
+        >
+          <TableHeader>
+            <TableColumn>
+              <div
+                className="flex cursor-pointer items-center gap-1"
+                onClick={handleSortChange}
+              >
+                Ημ. Πληρωμής
+                <Icon
+                  icon={
+                    sortDirection === "asc"
+                      ? "lucide:arrow-up"
+                      : "lucide:arrow-down"
+                  }
+                  className="text-default-500"
+                  width={16}
+                />
+              </div>
+            </TableColumn>
+            <TableColumn>Ον.πελάτη</TableColumn>
+            <TableColumn>Υπηρεσία</TableColumn>
+            <TableColumn>Ποσό</TableColumn>
+            <TableColumn>Κατανομές</TableColumn>
+            <TableColumn>Σημειώσεις</TableColumn>
+            <TableColumn>Κατάσταση</TableColumn>
+            <TableColumn>Ενέργειες</TableColumn>
+          </TableHeader>
+          <TableBody
+            emptyContent={
+              <div className="py-8 text-center">
+                <Icon
+                  icon="lucide:file-x"
+                  className="mx-auto mb-2 text-default-400"
+                  width={32}
+                />
+                <p>Δεν βρέθηκαν πληρωμές</p>
+                <p className="text-small text-default-400">
+                  Δοκιμάστε να αλλάξετε τα φίλτρα ή να προσθέσετε μια νέα
+                  πληρωμή.
+                </p>
+              </div>
+            }
+            items={initialData}
           >
-            <TableHeader>
-              <TableColumn>
-                <div
-                  className="flex cursor-pointer items-center gap-1"
-                  onClick={handleSortChange}
-                >
-                  Ημ. Πληρωμής
-                  <Icon
-                    icon={
-                      sortDirection === "asc"
-                        ? "lucide:arrow-up"
-                        : "lucide:arrow-down"
-                    }
-                    className="text-default-500"
-                    width={16}
-                  />
-                </div>
-              </TableColumn>
-              <TableColumn>Ον.πελάτη</TableColumn>
-              <TableColumn>Υπηρεσία</TableColumn>
-              <TableColumn>Ποσό</TableColumn>
-              <TableColumn>Κατανομές</TableColumn>
-              <TableColumn>Σημειώσεις</TableColumn>
-              <TableColumn>Κατάσταση</TableColumn>
-              <TableColumn>Ενέργειες</TableColumn>
-            </TableHeader>
-            <TableBody
-              emptyContent={
-                <div className="py-8 text-center">
-                  <Icon
-                    icon="lucide:file-x"
-                    className="mx-auto mb-2 text-default-400"
-                    width={32}
-                  />
-                  <p>Δεν βρέθηκαν πληρωμές</p>
-                  <p className="text-small text-default-400">
-                    Δοκιμάστε να αλλάξετε τα φίλτρα ή να προσθέσετε μια νέα
-                    πληρωμή.
-                  </p>
-                </div>
-              }
-              items={initialData}
-            >
-              {(payment) => (
-                <TableRow key={payment.id}>
-                  <TableCell>{formatDate(payment.date, "el")}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      {payment.clientName}
-                      <Link
-                        href={`/client/${payment.clientId}`} // adjust if your route differs
-                        // eslint-disable-next-line no-irregular-whitespace
+            {(payment) => (
+              <TableRow key={payment.id}>
+                <TableCell>{formatDate(payment.date, "el")}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    {payment.clientName}
+                    <Link
+                      href={`/client/${payment.clientId}`} // adjust if your route differs
+                      // eslint-disable-next-line no-irregular-whitespace
 
-                        className="text-default-500 hover:text-blue-500"
-                      >
-                        <Icon icon="lucide:link-2" width={16} />
-                      </Link>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {payment.service ? (
-                      <Tooltip
-                        content={
-                          <div className="px-1 py-2 font-sans">
-                            <p className="text-base font-bold">
-                              {payment.service.serviceType}
-                            </p>
-                            {payment.service.date &&
-                              payment.service.endDate && (
-                                <p className="text-base text-default-400">
-                                  {formatDate(payment.service.date, "el")} -{" "}
-                                  {formatDate(payment.service.endDate, "el")}
-                                </p>
-                              )}
-                          </div>
-                        }
-                      >
-                        <span className="cursor-help underline decoration-dotted">
-                          {payment.service.serviceType}
-                        </span>
-                      </Tooltip>
-                    ) : (
-                      <span className="text-default-400">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell>{formatCurrency(payment.amount)}</TableCell>
-                  <TableCell>
-                    {payment.allocations.length > 0 ? (
-                      <Tooltip
-                        content={
-                          <div className="px-1 py-2 font-sans ">
-                            <p className="mb-1 text-base font-bold tracking-wide">
-                              ΚΑΤΑΝΟΜΕΣ
-                            </p>
-                            <ul className="space-y-1">
-                              {payment.allocations.map((allocation, index) => (
-                                <li key={index} className="text-base">
-                                  <span className="font-medium">
-                                    {allocation.serviceType}:
-                                  </span>{" "}
-                                  {formatCurrency(allocation.amount)}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        }
-                      >
-                        <div className="flex cursor-help items-center gap-1">
-                          <Icon
-                            icon="lucide:layers"
-                            className="text-default-500"
-                            width={16}
-                          />
-                          <span className="text-small tracking-wide">
-                            {payment.allocations.length}{" "}
-                            {payment.allocations.length === 1
-                              ? "κατανομή"
-                              : "κατανομές"}
-                          </span>
-                        </div>
-                      </Tooltip>
-                    ) : (
-                      <span className="text-default-400">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="max-w-[200px] truncate">
-                      {payment.notes || (
-                        <span className="text-default-400">—</span>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {payment.reversed ? (
-                      <Chip
-                        color="danger"
-                        variant="flat"
-                        size="sm"
-                        className="text-base tracking-wide"
-                      >
-                        ακυρωμένη
-                      </Chip>
-                    ) : (
-                      <Chip
-                        color="success"
-                        variant="flat"
-                        size="sm"
-                        className="text-base tracking-wide"
-                      >
-                        έγκυρη
-                      </Chip>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Dropdown
-                      classNames={{
-                        trigger: "text-base",
-                        content: "font-sans text-base tracking-wide",
-                      }}
+                      className="text-default-500 hover:text-blue-500"
                     >
-                      <DropdownTrigger>
-                        <Button isIconOnly variant="light" size="md">
-                          <Icon icon="lucide:more-vertical" />
-                        </Button>
-                      </DropdownTrigger>
-                      <DropdownMenu aria-label="Actions">
-                        <DropdownItem
-                          key="view-details"
-                          startContent={<Icon icon="lucide:eye" />}
-                          onPress={() =>
-                            openActionModal(payment, "view-details")
-                          }
-                        >
-                          Λεπτομέρειες
-                        </DropdownItem>
-                        <DropdownItem
-                          key="reverse-payment"
-                          startContent={<Icon icon="lucide:rotate-ccw" />}
-                          onPress={() =>
-                            openActionModal(payment, "reverse-payment")
-                          }
-                        >
-                          Ακύρωση
-                        </DropdownItem>
-                        <DropdownItem
-                          key="edit-notes"
-                          startContent={<Icon icon="lucide:edit-3" />}
-                          onPress={() => openActionModal(payment, "edit-notes")}
-                        >
-                          Επεξεργασία Σημειώσεων
-                        </DropdownItem>
-                        <DropdownItem
-                          key="delete-payment"
-                          startContent={<Icon icon="lucide:trash-2" />}
-                          className="text-danger"
-                          color="danger"
-                          onPress={() =>
-                            openActionModal(payment, "delete-payment")
-                          }
-                        >
-                          Διαγραφή
-                        </DropdownItem>
-                      </DropdownMenu>
-                    </Dropdown>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Pagination */}
-
-        {/* Create Payment Modal */}
-        <CreatePaymentModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-        />
-        {/* Bulk action confirmation dialogs */}
-        <BulkActionConfirmation
-          isOpen={showBulkAction !== null}
-          actionType={showBulkAction || ""}
-          count={selectedCount}
-          onConfirm={executeBulkAction}
-          onCancel={() => setShowBulkAction(null)}
-        />
-        <PaymentActionModal
-          isOpen={!!currentAction}
-          onClose={closeActionModal}
-          payment={selectedPayment}
-          action={currentAction}
-        />
+                      <Icon icon="lucide:link-2" width={16} />
+                    </Link>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {payment.service ? (
+                    <Tooltip
+                      content={
+                        <div className="px-1 py-2 font-sans">
+                          <p className="text-base font-bold">
+                            {payment.service.serviceType}
+                          </p>
+                          {payment.service.date && payment.service.endDate && (
+                            <p className="text-base text-default-400">
+                              {formatDate(payment.service.date, "el")} -{" "}
+                              {formatDate(payment.service.endDate, "el")}
+                            </p>
+                          )}
+                        </div>
+                      }
+                    >
+                      <span className="cursor-help underline decoration-dotted">
+                        {payment.service.serviceType}
+                      </span>
+                    </Tooltip>
+                  ) : (
+                    <span className="text-default-400">—</span>
+                  )}
+                </TableCell>
+                <TableCell>{formatCurrency(payment.amount)}</TableCell>
+                <TableCell>
+                  {payment.allocations.length > 0 ? (
+                    <Tooltip
+                      content={
+                        <div className="px-1 py-2 font-sans ">
+                          <p className="mb-1 text-base font-bold tracking-wide">
+                            ΚΑΤΑΝΟΜΕΣ
+                          </p>
+                          <ul className="space-y-1">
+                            {payment.allocations.map((allocation, index) => (
+                              <li key={index} className="text-base">
+                                <span className="font-medium">
+                                  {allocation.serviceType}:
+                                </span>{" "}
+                                {formatCurrency(allocation.amount)}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      }
+                    >
+                      <div className="flex cursor-help items-center gap-1">
+                        <Icon
+                          icon="lucide:layers"
+                          className="text-default-500"
+                          width={16}
+                        />
+                        <span className="text-small tracking-wide">
+                          {payment.allocations.length}{" "}
+                          {payment.allocations.length === 1
+                            ? "κατανομή"
+                            : "κατανομές"}
+                        </span>
+                      </div>
+                    </Tooltip>
+                  ) : (
+                    <span className="text-default-400">—</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="max-w-[200px] truncate">
+                    {payment.notes || (
+                      <span className="text-default-400">—</span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {payment.reversed ? (
+                    <Chip
+                      color="danger"
+                      variant="flat"
+                      size="sm"
+                      className="text-base tracking-wide"
+                    >
+                      ακυρωμένη
+                    </Chip>
+                  ) : (
+                    <Chip
+                      color="success"
+                      variant="flat"
+                      size="sm"
+                      className="text-base tracking-wide"
+                    >
+                      έγκυρη
+                    </Chip>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Dropdown
+                    classNames={{
+                      trigger: "text-base",
+                      content: "font-sans text-base tracking-wide",
+                    }}
+                  >
+                    <DropdownTrigger>
+                      <Button isIconOnly variant="light" size="md">
+                        <Icon icon="lucide:more-vertical" />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Actions">
+                      <DropdownItem
+                        key="view-details"
+                        startContent={<Icon icon="lucide:eye" />}
+                        onPress={() => openActionModal(payment, "view-details")}
+                      >
+                        Λεπτομέρειες
+                      </DropdownItem>
+                      <DropdownItem
+                        key="reverse-payment"
+                        startContent={<Icon icon="lucide:rotate-ccw" />}
+                        onPress={() =>
+                          openActionModal(payment, "reverse-payment")
+                        }
+                      >
+                        Ακύρωση
+                      </DropdownItem>
+                      <DropdownItem
+                        key="edit-notes"
+                        startContent={<Icon icon="lucide:edit-3" />}
+                        onPress={() => openActionModal(payment, "edit-notes")}
+                      >
+                        Επεξεργασία Σημειώσεων
+                      </DropdownItem>
+                      <DropdownItem
+                        key="delete-payment"
+                        startContent={<Icon icon="lucide:trash-2" />}
+                        className="text-danger"
+                        color="danger"
+                        onPress={() =>
+                          openActionModal(payment, "delete-payment")
+                        }
+                      >
+                        Διαγραφή
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
+
+      {/* Pagination */}
+
+      {/* Create Payment Modal */}
+      <CreatePaymentModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
+      {/* Bulk action confirmation dialogs */}
+      <BulkActionConfirmation
+        isOpen={showBulkAction !== null}
+        actionType={showBulkAction || ""}
+        count={selectedCount}
+        onConfirm={executeBulkAction}
+        onCancel={() => setShowBulkAction(null)}
+      />
+      <PaymentActionModal
+        isOpen={!!currentAction}
+        onClose={closeActionModal}
+        payment={selectedPayment}
+        action={currentAction}
+      />
     </div>
   );
 };

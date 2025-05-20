@@ -43,7 +43,7 @@ const Page = async ({
 
   return (
     <div className="h-full px-2 py-1">
-      <Skeleton isLoaded={!!payments || !!totalRevenue}>
+      <Skeleton isLoaded={payments !== undefined && !!totalRevenue}>
         <PaymentsTable
           totalAmount={totalRevenue}
           totalPages={totalPages}
