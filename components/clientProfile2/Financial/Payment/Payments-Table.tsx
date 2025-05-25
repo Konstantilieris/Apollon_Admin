@@ -35,7 +35,9 @@ import { PaymentActionModal } from "./PaymentActionModal";
 
 export const PaymentsTable: React.FC<PaymentsTableProps> = ({
   initialData,
-  totalAmount,
+  monthlyRevenueTrend,
+  yearlyRevenueTrend,
+  totalRevenue, // ➟ new
   totalPages,
   weeklyRevenue,
 }) => {
@@ -130,7 +132,9 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
       {/* Payment summary section */}
       <div className="flex flex-col gap-2 border-b border-divider p-4 ">
         <TableTopContent
-          totalAmount={totalAmount}
+          totalRevenue={totalRevenue}
+          monthlyRevenueTrend={monthlyRevenueTrend}
+          yearlyRevenueTrend={yearlyRevenueTrend}
           selectedIds={selectedKeys}
           openCreatePaymentModal={setIsCreateModalOpen}
           hasSelection={hasSelection}

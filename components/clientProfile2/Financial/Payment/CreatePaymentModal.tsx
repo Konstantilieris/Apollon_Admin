@@ -80,7 +80,7 @@ export const CreatePaymentModal: React.FC<CreatePaymentModalProps> = ({
 
     // Reset form
   };
-  console.log("formData", formData.date.toDate("UTC"));
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="5xl">
       <ModalContent className="p-4 font-sans">

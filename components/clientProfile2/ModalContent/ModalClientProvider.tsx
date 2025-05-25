@@ -4,8 +4,10 @@ import { Modal, ModalContent } from "@heroui/modal";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import DeleteDog from "./delete/DeleteDog";
-import { ServiceDetails } from "./service/EditService/Modal/payments/ServiceDetails";
 
+const ServiceDetails = dynamic(
+  () => import("./service/EditService/Modal/payments/ServiceDetails")
+);
 const ClientEditForm = dynamic(() => import("./info/ClientEditForm"));
 const DogEditView = dynamic(() => import("./info/DogEditView"));
 const CreateServiceView = dynamic(

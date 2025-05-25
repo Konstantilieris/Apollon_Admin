@@ -1,5 +1,5 @@
 import React from "react";
-import { formatDate, cn } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { toast } from "sonner";
@@ -179,13 +179,13 @@ const PartialPayServices = () => {
                 <div className="flex flex-row gap-2">
                   <div>
                     <Chip color="secondary" variant="flat" size="md">
-                      Πληρώθηκε: {service.paidAmount.toFixed(2)}€
+                      Πληρώθηκε: {service?.paidAmount?.toFixed(2)}€
                     </Chip>
                     <Chip color="secondary" variant="flat" size="md">
-                      Υπόλοιπο: {service.remainingAmount.toFixed(2)}€
+                      Υπόλοιπο: {service?.remainingAmount?.toFixed(2)}€
                     </Chip>
                     <Chip color="secondary" variant="flat" size="md">
-                      Έκπτωση: {service.discount.toFixed(2)}€
+                      Έκπτωση: {service?.discount?.toFixed(2)}€
                     </Chip>
                   </div>
                 </div>

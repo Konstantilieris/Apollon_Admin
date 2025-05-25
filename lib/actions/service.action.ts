@@ -537,19 +537,21 @@ export async function discountSelectedServices({
     throw error;
   }
 }
-
-export async function getAllServices({ paid = false }: { paid: boolean }) {
-  connectToDatabase();
-  try {
-    const services = await Service.find({ paid })
-      .sort({ date: -1 })
-      .populate("clientId", "name");
-    return JSON.parse(JSON.stringify(services));
-  } catch (error) {
-    console.error("Error fetching services:", error);
-    throw new Error("Failed to fetch services.");
-  }
+export interface GetServicesFilters {
+  paid?: boolean;
+  query?: string;
+  from?: Date;
+  to?: Date;
+  sortDir?: "asc" | "desc";
+  page?: number;
+  limit?: number;
 }
+
+export interface PagedServices {
+  rows: Array<any>;
+  totalCount: number;
+}
+
 export async function editNonBookingService({
   serviceId,
   path,

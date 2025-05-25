@@ -8,7 +8,7 @@ import { PaymentsList } from "./Paymentlist";
 import { useModalStore } from "@/hooks/client-profile-store";
 import { getServiceView } from "@/lib/actions/service.action";
 
-export function ServiceDetails() {
+const ServiceDetails = () => {
   const { modalData } = useModalStore();
   const { serviceId } = modalData || {};
   const [service, setService] = React.useState<any>(null);
@@ -16,6 +16,7 @@ export function ServiceDetails() {
   useEffect(() => {
     const fetchService = async () => {
       try {
+        if (!serviceId) return;
         const { service, payments } = await getServiceView({ serviceId });
         if (service) {
           const data = JSON.parse(service);
@@ -116,4 +117,5 @@ export function ServiceDetails() {
       <PaymentsList payments={payments || []} serviceId={serviceId} />
     </div>
   );
-}
+};
+export default ServiceDetails;

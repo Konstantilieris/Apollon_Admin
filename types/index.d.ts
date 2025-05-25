@@ -19,6 +19,12 @@ export interface URLProps {
   params: { id: string };
   searchParams: { [key: string]: string | undefined };
 }
+export type RevenueTrend = {
+  value: number;
+  change: string;
+  changeType: "positive" | "neutral" | "negative";
+  trendType: "up" | "neutral" | "down";
+};
 export type Expense = {
   id?: string;
   amount: number;
@@ -212,8 +218,12 @@ export interface Room {
 }
 
 export interface Service {
-  _id: string;
+  id: string;
   serviceType: string;
+  client: {
+    name: string;
+    id: string;
+  };
   date: string;
   endDate: string;
   amount: number;
@@ -434,7 +444,9 @@ export interface RowActionHandlers {
 // Props for the PaymentsTable component
 export interface PaymentsTableProps {
   initialData: PaymentRow[]; // page=1, limit=10
-  totalAmount: number;
+  monthlyRevenueTrend: RevenueTrend;
+  yearlyRevenueTrend: RevenueTrend; // trend data for total revenue
   totalPages: number;
-  weeklyRevenue: any; // sum of all matching payments
+  weeklyRevenue: any;
+  totalRevenue: number; // sum of all matching payments
 }

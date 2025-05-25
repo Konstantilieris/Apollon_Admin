@@ -1,16 +1,18 @@
 // app/payments/page.tsx
+import React from "react";
 import { PaymentsTable } from "@/components/clientProfile2/Financial/Payment/Payments-Table";
-import {
-  getAllPayments,
-  GetPaymentsFilters,
-  getTotalRevenue,
-  getWeeklyRevenue,
-} from "@/lib/actions/payment.action";
+import { GetPaymentsFilters } from "@/lib/actions/payment.action";
+
 import { intToDate } from "@/lib/utils";
 import { Skeleton } from "@heroui/react";
-import React from "react";
 
-export const dynamic = "force-dynamic";
+import {
+  getMonthlyRevenueTrend,
+  getWeeklyRevenue,
+  getAllPayments,
+  getYearlyRevenueTrend,
+  getTotalRevenue,
+} from "@/lib/Query/payment";
 
 const Page = async ({
   searchParams,
@@ -32,20 +34,29 @@ const Page = async ({
     limit: 10,
   };
 
-  const [{ rows: payments, totalCount }, totalRevenue, weeklyRevenue] =
-    await Promise.all([
-      getAllPayments(filters),
-      getTotalRevenue(),
-      getWeeklyRevenue(),
-    ]);
+  const [
+    { rows: payments, totalCount },
+    weeklyRevenue,
+    monthlyRevenueTrend,
+    yearlyRevenueTrend,
+    totalRevenue, // ➟ new
+  ] = await Promise.all([
+    getAllPayments(filters),
+    getWeeklyRevenue(),
+    getMonthlyRevenueTrend(),
+    getYearlyRevenueTrend(),
+    getTotalRevenue(), // ➟ new
+  ]);
 
   const totalPages = Math.ceil(totalCount / 10);
 
   return (
     <div className="h-full px-2 py-1">
-      <Skeleton isLoaded={payments !== undefined && !!totalRevenue}>
+      <Skeleton isLoaded={payments !== undefined}>
         <PaymentsTable
-          totalAmount={totalRevenue}
+          totalRevenue={totalRevenue} // ➟ new
+          monthlyRevenueTrend={monthlyRevenueTrend}
+          yearlyRevenueTrend={yearlyRevenueTrend} // ➟ new
           totalPages={totalPages}
           initialData={payments}
           weeklyRevenue={weeklyRevenue}
