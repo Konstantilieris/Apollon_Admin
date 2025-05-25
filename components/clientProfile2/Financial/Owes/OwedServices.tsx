@@ -149,7 +149,7 @@ export default function ServicesList({ client }: ServicesListProps) {
       selectedKeys === "all"
         ? filteredServices
         : filteredServices.filter(
-            (service) =>
+            (service: any) =>
               selectedKeys instanceof Set && selectedKeys.has(service._id)
           );
 
