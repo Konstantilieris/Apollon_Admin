@@ -1732,3 +1732,161 @@ export async function deleteSelectedService({ service, path, clientId }: any) {
     throw error;
   }
 }
+export async function deleteSelectedServiceTable({
+  service,
+  path,
+}: {
+  service: any;
+  path: string;
+}) {
+  const session = await mongoose.startSession();
+
+  try {
+    await connectToDatabase();
+    session.startTransaction();
+    console.log(
+      "-----------------------------------SERVICE DELETE-----------------------------------",
+      service
+    );
+    // Extract clientId from the service document
+    const clientId = service.client.id;
+
+    const isPetTaxi =
+      service.serviceType === "Pet Taxi (Pick-Up)" ||
+      service.serviceType === "Pet Taxi (Drop-Off)";
+
+    // Case: service has been fully paid
+    if (service.paid) {
+      // Delete related, non-reversed payments
+      await Payment.deleteMany({
+        serviceId: service._id,
+        reversed: false,
+      }).session(session);
+
+      // Decrement client totals
+      await Client.findByIdAndUpdate(
+        clientId,
+        {
+          $inc: {
+            totalSpent: -service.paidAmount,
+            points: -service.paidAmount,
+          },
+        },
+        { new: true, session }
+      );
+
+      // Adjust financial summary
+      await FinancialSummary.findOneAndUpdate(
+        {},
+        { $inc: { totalRevenue: -service.paidAmount } },
+        { session }
+      );
+
+      // Remove the service
+      await Service.findByIdAndDelete(service._id).session(session);
+
+      await session.commitTransaction();
+      session.endSession();
+      revalidatePath(path);
+
+      return { message: "success" };
+    }
+
+    // Case: booking deletion for ΔΙΑΜΟΝΗ
+    if (service.bookingId && service.serviceType === "ΔΙΑΜΟΝΗ") {
+      await deleteBooking({ id: service.bookingId, clientId, path });
+      await session.commitTransaction();
+      session.endSession();
+      revalidatePath(path);
+      return { message: "success" };
+    }
+
+    // Special-case: Pet Taxi should not remove the booking
+    if (isPetTaxi && service.bookingId) {
+      await removePetTaxiService(service, clientId, path, session);
+      await session.commitTransaction();
+      session.endSession();
+      revalidatePath(path);
+      return { message: "success" };
+    }
+
+    // Unpaid services: handle partial payments and allocations
+    {
+      // 1) Gather non-reversed payments linked to this service
+      const payments = await Payment.find({
+        reversed: false,
+        $or: [
+          { serviceId: service._id },
+          { "allocations.serviceId": service._id },
+        ],
+      }).session(session);
+
+      let removedAmount = 0;
+
+      for (const payment of payments) {
+        // Single-service payment
+        if (payment.serviceId?.toString() === service._id.toString()) {
+          removedAmount += payment.amount;
+          await Payment.findByIdAndDelete(payment._id).session(session);
+        } else {
+          // Multi-service allocations
+          const newAllocs: any[] = [];
+          let removedFromThis = 0;
+
+          for (const alloc of payment.allocations || []) {
+            if (alloc.serviceId.toString() === service._id.toString()) {
+              removedFromThis += alloc.amount;
+            } else {
+              newAllocs.push(alloc);
+            }
+          }
+
+          if (removedFromThis > 0) {
+            removedAmount += removedFromThis;
+            payment.amount -= removedFromThis;
+
+            if (payment.amount <= 0 || newAllocs.length === 0) {
+              await Payment.findByIdAndDelete(payment._id).session(session);
+            } else {
+              payment.allocations = newAllocs;
+              await payment.save({ session });
+            }
+          }
+        }
+      }
+
+      // 2) Update client financials
+      const client = await Client.findById(clientId).session(session);
+      if (!client) throw new Error("Client not found");
+
+      client.owes = client.owes.filter(
+        (id: any) => id.toString() !== service._id.toString()
+      );
+      client.owesTotal -= service.remainingAmount;
+      client.totalSpent -= Math.min(removedAmount, service.paidAmount);
+      await client.save({ session });
+
+      // 3) Update financial summary
+      await FinancialSummary.findOneAndUpdate(
+        {},
+        { $inc: { totalRevenue: -removedAmount } },
+        { session }
+      );
+
+      // 4) Delete the service record
+      await Service.findByIdAndDelete(service._id).session(session);
+
+      // 5) Commit transaction and revalidate
+      await session.commitTransaction();
+      session.endSession();
+      revalidatePath(path);
+
+      return { message: "success" };
+    }
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error deleting service:", err);
+    throw err;
+  }
+}

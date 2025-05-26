@@ -28,7 +28,7 @@ const ApplyDiscountToService = () => {
   const router = useRouter();
 
   const { modalData, closeModal } = useModalStore();
-
+  console.log("Modal Data:", modalData);
   const selectedServices = modalData?.selectedServices || [];
 
   const calculatedDiscounts = React.useMemo(() => {

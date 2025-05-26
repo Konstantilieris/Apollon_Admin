@@ -21,7 +21,7 @@ export function TransportationFees() {
       setTransportationFee: state.setTransportationFee,
     })
   );
-  console.log("TransportationFees", transportationFees);
+
   return (
     <Card>
       <CardHeader>

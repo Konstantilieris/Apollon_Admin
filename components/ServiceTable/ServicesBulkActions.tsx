@@ -49,19 +49,11 @@ const ServicesBulkActions: React.FC<ServicesBulkActionsProps> = ({
         >
           Έναντι Πληρωμή
         </Button>
+
         <Button
           size="md"
+          variant="flat"
           color="warning"
-          variant="flat"
-          startContent={<Icon icon="lucide:percent" />}
-          onPress={() => onBulkAction("tax")}
-          isDisabled={selectedCount === 0 || disableAllActions}
-        >
-          ΦΠΑ
-        </Button>
-        <Button
-          size="md"
-          variant="flat"
           startContent={<Icon icon="lucide:tag" />}
           onPress={() => onBulkAction("discount")}
           isDisabled={selectedCount === 0 || disableAllActions}

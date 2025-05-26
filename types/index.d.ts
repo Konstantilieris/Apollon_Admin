@@ -218,7 +218,7 @@ export interface Room {
 }
 
 export interface Service {
-  id: string;
+  _id: string;
   serviceType: string;
   client: {
     name: string;

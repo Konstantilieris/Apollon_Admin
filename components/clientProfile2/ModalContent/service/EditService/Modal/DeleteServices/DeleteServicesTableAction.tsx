@@ -1,27 +1,27 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useServiceModal } from "@/hooks/use-service-modal";
-import { deleteSelectedService } from "@/lib/actions/service.action";
+import { useModalStore } from "@/hooks/client-profile-store";
+
+import { deleteSelectedServiceTable } from "@/lib/actions/service.action";
 import { formatDate } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
-const DeleteServices = ({ client }: any) => {
+const DeleteServicesTableAction = () => {
   const [loading, setLoading] = React.useState(false);
   const path = usePathname();
-
-  const { selectedServices, onClose } = useServiceModal();
+  const router = useRouter();
+  const { modalData, closeModal, isOpen } = useModalStore();
 
   const handleAction = async () => {
     setLoading(true); // Set loading state to true
 
     try {
       await Promise.all(
-        selectedServices.map((service) =>
-          deleteSelectedService({
+        modalData?.selectedServices.map((service: any) =>
+          deleteSelectedServiceTable({
             service,
             path,
-            clientId: client.client._id,
           })
         )
       );
@@ -31,14 +31,17 @@ const DeleteServices = ({ client }: any) => {
       toast.error("Η υπηρεσία δεν διαγράφηκε επιτυχώς");
     } finally {
       setLoading(false); // Set loading to false after completion
-      onClose();
-      window.location.reload();
+      closeModal(); // Close the modal
+      router.refresh();
 
       // Close the modal after success/failure
     }
   };
+  if (!isOpen) {
+    return null; // If the modal is not open, return null
+  }
   // if there are no selected services, display a message
-  if (selectedServices.length === 0) {
+  if (modalData.selectedServices.length === 0) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
         <p className="text-lg">Δεν υπάρχουν επιλεγμένες υπηρεσίες.</p>
@@ -49,11 +52,11 @@ const DeleteServices = ({ client }: any) => {
   return (
     <div className="flex h-full w-full flex-col justify-between">
       <h1 className="text-xl text-light-900 ">Διαγραφή Υπηρεσιών</h1>
-      {selectedServices.length === 0 ? (
+      {modalData.selectedServices.length === 0 ? (
         <p className="text-lg">Δεν υπάρχουν επιλεγμένες υπηρεσίες.</p>
       ) : (
         <ScrollArea className="h-96">
-          {selectedServices.map((service, index) => (
+          {modalData.selectedServices.map((service: any, index: number) => (
             <div
               key={service._id}
               className="mb-4 flex flex-col gap-2 border-b border-gray-300 px-4 pb-4 text-lg"
@@ -79,4 +82,4 @@ const DeleteServices = ({ client }: any) => {
   );
 };
 
-export default DeleteServices;
+export default DeleteServicesTableAction;

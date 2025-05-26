@@ -67,8 +67,7 @@ const PartialPayServices = () => {
         selectedServiceIds,
         path,
       });
-      if (res.message === "success")
-        toast.success("Η μερική πληρωμή ήταν επιτυχής!");
+      if (res.success) toast.success("Η μερική πληρωμή ήταν επιτυχής!");
     } catch (error) {
       console.error("Error applying partial payment:", error);
       toast.error(

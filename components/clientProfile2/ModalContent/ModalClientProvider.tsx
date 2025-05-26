@@ -5,6 +5,13 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import DeleteDog from "./delete/DeleteDog";
 
+const DeleteServicesTableAction = dynamic(
+  () =>
+    import(
+      "./service/EditService/Modal/DeleteServices/DeleteServicesTableAction"
+    )
+);
+
 const ServiceDetails = dynamic(
   () => import("./service/EditService/Modal/payments/ServiceDetails")
 );
@@ -59,6 +66,8 @@ export default function ModalClientProvider() {
         return <EditServiceView />;
       case "deleteServices":
         return <DeleteServices />;
+      case "deleteServicesTableAction":
+        return <DeleteServicesTableAction />;
       case "fullPayServices":
         return <FullPayServices />;
       case "partialPayService":
@@ -79,7 +88,7 @@ export default function ModalClientProvider() {
         return null;
     }
   };
-
+  console.log("Modal Type:", modalType);
   return (
     <Modal
       isOpen={isOpen}

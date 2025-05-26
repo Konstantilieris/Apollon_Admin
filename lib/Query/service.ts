@@ -69,7 +69,7 @@ export async function getAllServices(
   const result = await Service.aggregate(pipeline);
 
   const rows = result[0].rows.map((s: any) => ({
-    id: s._id.toString(),
+    _id: s._id.toString(),
     serviceType: s.serviceType,
     date: s.date,
     endDate: s.endDate,

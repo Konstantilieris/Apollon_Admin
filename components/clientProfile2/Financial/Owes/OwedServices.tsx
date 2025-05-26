@@ -102,6 +102,7 @@ export default function ServicesList({ client }: ServicesListProps) {
       case "print":
         console.log("Printing", selectedServices);
         break;
+
       case "delete":
         openModal("deleteServices", {
           client,

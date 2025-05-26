@@ -21,6 +21,7 @@ type ModalType =
   | "editBooking"
   | "deleteBookings"
   | "viewBooking"
+  | "deleteServicesTableAction"
   | null;
 
 interface ModalState {

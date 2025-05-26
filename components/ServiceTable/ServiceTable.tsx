@@ -72,10 +72,10 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
   const selectedTotalRemaining = React.useMemo(() => {
     const keys =
       selectedKeys === "all"
-        ? new Set(initialData.map((s) => s.id))
+        ? new Set(initialData.map((s) => s._id))
         : selectedKeys;
     return initialData
-      .filter((s) => keys.has(s.id))
+      .filter((s) => keys.has(s._id))
       .reduce((sum, s) => sum + (s.remainingAmount || 0), 0);
   }, [initialData, selectedKeys]);
 
@@ -85,8 +85,8 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
     const selectedServices =
       selectedKeys === "all"
         ? initialData
-        : initialData.filter((s) => (selectedKeys as Set<string>).has(s.id));
-
+        : initialData.filter((s) => (selectedKeys as Set<string>).has(s._id));
+    console.log("Selected Services:", selectedServices);
     switch (action) {
       case "fullPay":
         openModal("fullPayServices", { selectedServices });
@@ -94,14 +94,12 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
       case "partialPay":
         openModal("partialPayService", { selectedServices });
         break;
-      case "tax":
-        openModal("taxService", { selectedServices });
-        break;
+
       case "discount":
         openModal("discountService", { selectedServices });
         break;
       case "delete":
-        openModal("deleteServices", { selectedServices });
+        openModal("deleteServicesTableAction", { selectedServices });
         break;
       case "print":
         console.log("Printing services:", selectedServices);
@@ -142,7 +140,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
               startContent={<Icon icon="lucide:eye" />}
               onPress={() =>
                 openModal("serviceView", {
-                  serviceId: service?.id,
+                  serviceId: service?._id,
                 })
               }
             >
@@ -151,35 +149,43 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
             <DropdownItem
               key="edit"
               startContent={<Icon icon="lucide:edit-3" />}
-              onPress={() => openModal("editService", service)}
+              onPress={() =>
+                openModal("editService", { selectedServices: [service] })
+              }
             >
               Επεξεργασία
             </DropdownItem>
             <DropdownItem
               key="full-pay"
               startContent={<Icon icon="lucide:credit-card" />}
-              onPress={() => openModal("fullPayServices", service)}
+              onPress={() =>
+                openModal("fullPayServices", { selectedServices: [service] })
+              }
             >
               Εξόφληση (100%)
             </DropdownItem>
             <DropdownItem
               key="partial-pay"
               startContent={<Icon icon="lucide:divide" />}
-              onPress={() => openModal("partialPayService", service)}
+              onPress={() =>
+                openModal("partialPayService", { selectedServices: [service] })
+              }
             >
               Μερική Πληρωμή
             </DropdownItem>
             <DropdownItem
               key="tax"
               startContent={<Icon icon="lucide:percent" />}
-              onPress={() => openModal("taxService", service)}
+              onPress={() => openModal("taxService", { service })}
             >
               Εφαρμογή ΦΠΑ
             </DropdownItem>
             <DropdownItem
               key="discount"
               startContent={<Icon icon="lucide:tag" />}
-              onPress={() => openModal("discountService", service)}
+              onPress={() =>
+                openModal("discountService", { selectedServices: [service] })
+              }
             >
               Έκπτωση
             </DropdownItem>
@@ -267,7 +273,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
             emptyContent={<div className="p-4">Δεν βρέθηκαν υπηρεσίες</div>}
           >
             {(service: Service) => (
-              <TableRow key={service.id}>
+              <TableRow key={service._id}>
                 <TableCell>
                   <Link href={`/client/${service.client?.id}` || "#"}>
                     {service.client?.name || "—"}
