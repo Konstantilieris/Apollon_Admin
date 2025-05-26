@@ -195,7 +195,9 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
               className="text-danger"
               color="danger"
               onPress={() =>
-                openModal("deleteServices", { selectedServices: [service] })
+                openModal("deleteServicesTableAction", {
+                  selectedServices: [service],
+                })
               }
             >
               Διαγραφή
