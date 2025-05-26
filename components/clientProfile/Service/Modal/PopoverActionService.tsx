@@ -12,7 +12,6 @@ import PartialPayment from "./ModalServiceActions/Payments/PartialPayment";
 import DeleteServices from "./ModalServiceActions/Payments/DeleteServices";
 import Discount from "./ModalServiceActions/Payments/Discount";
 import TaxService from "./ModalServiceActions/Payments/TaxService";
-import DeleteServicesTableAction from "./ModalServiceActions/Payments/DeleteServicesTable";
 
 const ServiceModal = (client: any) => {
   const { selectedServices, type, onClose } = useServiceModal();
@@ -31,8 +30,7 @@ const ServiceModal = (client: any) => {
         return <TaxService />;
       case "Delete":
         return <DeleteServices client={client} />;
-      case "DeleteServicesTable":
-        return <DeleteServicesTableAction />;
+
       case "Discount":
         return <Discount client={client} />;
       default:
