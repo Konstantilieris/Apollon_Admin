@@ -24,7 +24,7 @@ const page = async ({
   const { data, totalPages, totalAmount } = await getExpenses(q as any);
 
   return (
-    <div className="flex flex-col  p-3 font-sans">
+    <div className="flex h-full  flex-col overflow-y-auto p-3 font-sans">
       <ExpensesCard expenses={total} />
       <ExpensesTable
         initialData={data}

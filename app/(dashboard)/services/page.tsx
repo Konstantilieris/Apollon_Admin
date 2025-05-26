@@ -55,7 +55,7 @@ const Page = async ({
   const totalPages = Math.ceil(totalCount / filters.limit!);
 
   return (
-    <div className="h-full px-2 py-1">
+    <div className="h-full overflow-y-auto px-2 py-1">
       <ModalClientProvider />
       <Skeleton isLoaded={!!services}>
         <ServicesTable
