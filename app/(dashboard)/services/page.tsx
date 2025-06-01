@@ -5,7 +5,7 @@ import {
   getAllServices,
   getOverdueServicesFromLastMonth,
   getRemainingAmountForCurrentMonth,
-  getTopServiceThisWeek,
+  getTotalOutstandingEver,
 } from "@/lib/Query/service";
 import { intToDate, sanitizeQuery } from "@/lib/utils";
 import { Skeleton } from "@heroui/react";
@@ -42,13 +42,13 @@ const Page = async ({
     { rows: services, totalCount },
     redOwedServices,
     totalRemainingThisMonth,
-    topServiceOfWeek,
+    totalOutstandingEver = 0, // default to 0 if not available
   ] = await Promise.all([
     getAllServices(filters),
     getOverdueServicesFromLastMonth(),
-
     getRemainingAmountForCurrentMonth(),
-    getTopServiceThisWeek(),
+    getTotalOutstandingEver(),
+
     // or 14, 30 based on default
   ]);
 
@@ -60,8 +60,8 @@ const Page = async ({
       <Skeleton isLoaded={!!services}>
         <ServicesTable
           redOwedServices={redOwedServices}
+          totalOutstandingEver={totalOutstandingEver}
           totalRemainingThisMonth={totalRemainingThisMonth}
-          topServiceOfWeek={topServiceOfWeek}
           initialData={services}
           totalPages={totalPages}
           isPaidView={paidParam}

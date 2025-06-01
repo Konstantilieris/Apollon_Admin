@@ -41,6 +41,7 @@ interface ServicesTableProps {
   totalRemainingThisMonth?: number; // Optional, if you want to use it later
   topServiceOfWeek?: any; // Optional, if you want to use it later
   barChartData?: any;
+  totalOutstandingEver?: number; // Optional, if you want to use it later
   redOwedServices: any; // Optional, if you want to use it later
 }
 
@@ -48,9 +49,9 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
   initialData,
   totalPages,
   isPaidView = false,
+  totalOutstandingEver, // Optional, if you want to use it later
   redOwedServices, // Optional, if you want to use it later
   totalRemainingThisMonth, // Optional, if you want to use it later
-  topServiceOfWeek, // Optional, if you want to use it later
 
   // Default to false if not provided
 }) => {
@@ -216,7 +217,7 @@ export const ServicesTable: React.FC<ServicesTableProps> = ({
       <div className="flex flex-col gap-2 border-b border-divider p-4">
         <ServiceTopContent
           totalRemainingThisMonth={totalRemainingThisMonth}
-          topService={topServiceOfWeek}
+          totalOutstandingEver={totalOutstandingEver}
           redOwedServices={redOwedServices}
         />
         <FiltersServices />

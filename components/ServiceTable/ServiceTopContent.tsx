@@ -1,9 +1,19 @@
 import React from "react";
-import { Card, CardBody, Skeleton, Divider } from "@heroui/react";
+import {
+  Card,
+  CardBody,
+  Skeleton,
+  Divider,
+  Popover,
+  PopoverTrigger,
+  Button,
+  PopoverContent,
+} from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { formatCurrency } from "@/lib/utils";
+import { OverdueServicesList } from "./OverdueTableList";
 
-type RedOwedService = {
+export type RedOwedService = {
   id: string;
   serviceType: string;
   date: string;
@@ -17,6 +27,7 @@ type RedOwedService = {
 
 interface ServiceTopContentProps {
   totalRemainingThisMonth: number | undefined;
+  totalOutstandingEver?: number; // Optional, if you want to display all-time outstanding
   topService?: {
     name: string;
     totalAmount: number;
@@ -27,7 +38,7 @@ interface ServiceTopContentProps {
 
 export const ServiceTopContent: React.FC<ServiceTopContentProps> = ({
   totalRemainingThisMonth,
-  topService,
+  totalOutstandingEver,
   redOwedServices = [],
 }) => {
   // Calculate total overdue amount
@@ -42,6 +53,32 @@ export const ServiceTopContent: React.FC<ServiceTopContentProps> = ({
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* ALL‑TIME OUTSTANDING KPI */}
+      <Card shadow="sm">
+        <CardBody className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-warning-500">
+            <Icon icon="lucide:alert-octagon" width={24} height={24} />
+            <span className="text-sm font-medium text-default-600">
+              Συνολικό Υπόλοιπο
+            </span>
+          </div>
+          <Divider className="my-1" />
+          <div className="flex items-center justify-between">
+            <div className="text-2xl font-bold text-warning-600">
+              {totalOutstandingEver !== undefined ? (
+                formatCurrency(totalOutstandingEver)
+              ) : (
+                <Skeleton className="h-8 w-24" />
+              )}
+            </div>
+            <div className="flex items-center gap-1 rounded-full bg-warning-100 px-2 py-1 text-base font-medium text-warning-700">
+              <Icon icon="lucide:info" width={14} height={14} />
+              <span>Όλες οι Οφειλές</span>
+            </div>
+          </div>
+        </CardBody>
+      </Card>
+
       {/* Monthly Budget KPI */}
       <Card shadow="sm">
         <CardBody className="flex flex-col gap-2">
@@ -65,40 +102,6 @@ export const ServiceTopContent: React.FC<ServiceTopContentProps> = ({
               <span>Τρέχων μήνας</span>
             </div>
           </div>
-        </CardBody>
-      </Card>
-
-      {/* Top Service KPI */}
-      <Card shadow="sm">
-        <CardBody className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-success-500">
-            <Icon icon="lucide:award" width={24} height={24} />
-            <span className="text-sm font-medium text-default-600">
-              Top Υπηρεσία Εβδομάδας
-            </span>
-          </div>
-          <Divider className="my-1" />
-          {topService ? (
-            <>
-              <div className="text-xl font-bold text-default-800">
-                {topService.name}
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-lg font-semibold text-success-600">
-                  {formatCurrency(topService.totalAmount)}
-                </div>
-                <div className="flex items-center gap-1 rounded-full bg-success-100 px-2 py-1 text-base font-medium text-success-700">
-                  <Icon icon="lucide:trending-up" width={14} height={14} />
-                  <span>Κορυφαία</span>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <Skeleton className="h-6 w-32" />
-              <Skeleton className="h-5 w-24" />
-            </>
-          )}
         </CardBody>
       </Card>
 
@@ -126,6 +129,26 @@ export const ServiceTopContent: React.FC<ServiceTopContentProps> = ({
                   <Icon icon="lucide:alert-triangle" width={14} height={14} />
                   <span>Καθυστερημένες</span>
                 </div>
+                <Popover placement="bottom-end">
+                  <PopoverTrigger>
+                    <Button
+                      variant="light"
+                      color="danger"
+                      size="md"
+                      className="font-medium"
+                    >
+                      Προβολή Λίστας
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="h-full w-full min-w-[60vw] overflow-auto">
+                    <div className="w-full px-1 py-2">
+                      <h4 className="mb-2 font-sans text-medium font-semibold tracking-wide">
+                        Καθυστερημένες Υπηρεσίες
+                      </h4>
+                      <OverdueServicesList services={redOwedServices} />
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </>
           ) : (

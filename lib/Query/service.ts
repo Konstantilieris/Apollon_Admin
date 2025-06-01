@@ -88,64 +88,7 @@ export async function getAllServices(
 
   return { rows, totalCount };
 }
-export async function getServiceDistributionThisMonth() {
-  await connectToDatabase();
 
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-  const result = await Service.aggregate([
-    {
-      $match: {
-        date: { $gte: startOfMonth },
-      },
-    },
-    {
-      $group: {
-        _id: "$serviceType",
-        totalAmount: { $sum: "$totalAmount" },
-      },
-    },
-    {
-      $project: {
-        name: "$_id",
-        value: "$totalAmount",
-        _id: 0,
-      },
-    },
-  ]);
-
-  const categories = result.map((item) => item.name);
-
-  return {
-    chartData: result,
-    categories,
-  };
-}
-export async function getRemainingAmountForCurrentMonth(): Promise<number> {
-  await connectToDatabase();
-
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-  const result = await Service.aggregate([
-    {
-      $match: {
-        date: { $gte: startOfMonth, $lte: endOfMonth },
-        remainingAmount: { $gt: 0 },
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        totalRemaining: { $sum: "$remainingAmount" },
-      },
-    },
-  ]);
-
-  return result[0]?.totalRemaining || 0;
-}
 export async function getTopServiceThisWeek(): Promise<{
   name: string;
   totalAmount: number;
@@ -250,20 +193,114 @@ export async function getWeeklyServiceBreakdown(days = 7) {
     categories,
   };
 }
+
+export async function getTotalOutstandingEver(): Promise<number> {
+  await connectToDatabase();
+
+  const result = await Service.aggregate([
+    {
+      $match: {
+        remainingAmount: { $gt: 0 },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalOutstanding: { $sum: "$remainingAmount" },
+      },
+    },
+  ]);
+
+  return result[0]?.totalOutstanding || 0;
+}
+export async function getRemainingAmountForCurrentMonth(): Promise<number> {
+  await connectToDatabase();
+
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+  const result = await Service.aggregate([
+    {
+      $match: {
+        date: { $gte: startOfMonth, $lte: endOfMonth },
+        remainingAmount: { $gt: 0 },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalRemaining: { $sum: "$remainingAmount" },
+      },
+    },
+  ]);
+
+  return result[0]?.totalRemaining || 0;
+}
+export async function getServiceDistributionThisMonth() {
+  await connectToDatabase();
+
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const result = await Service.aggregate([
+    {
+      $match: {
+        date: { $gte: startOfMonth },
+      },
+    },
+    {
+      $group: {
+        _id: "$serviceType",
+        totalAmount: { $sum: "$totalAmount" },
+      },
+    },
+    {
+      $project: {
+        name: "$_id",
+        value: "$totalAmount",
+        _id: 0,
+      },
+    },
+  ]);
+
+  const categories = result.map((item) => item.name);
+
+  return {
+    chartData: result,
+    categories,
+  };
+}
 export async function getOverdueServicesFromLastMonth() {
   await connectToDatabase();
 
   const now = new Date();
   const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0); // Last day of previous month
+  const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0); // last day of previous month
 
   const result = await Service.aggregate([
+    // 1️⃣ still limit to last-month records with an open balance
     {
       $match: {
         date: { $gte: startOfLastMonth, $lte: endOfLastMonth },
         remainingAmount: { $gt: 0 },
       },
     },
+    // 2️⃣ work out how many days have passed
+    {
+      $addFields: {
+        daysOverdue: {
+          $dateDiff: {
+            startDate: "$date",
+            endDate: "$$NOW",
+            unit: "day",
+          },
+        },
+      },
+    },
+    // 3️⃣ keep only “red debt” (≥ 30-day gap)
+    { $match: { daysOverdue: { $gte: 30 } } },
+
     {
       $lookup: {
         from: "clients",
@@ -272,12 +309,7 @@ export async function getOverdueServicesFromLastMonth() {
         as: "client",
       },
     },
-    {
-      $unwind: {
-        path: "$client",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
+    { $unwind: { path: "$client", preserveNullAndEmptyArrays: true } },
     {
       $project: {
         _id: 1,
@@ -285,12 +317,11 @@ export async function getOverdueServicesFromLastMonth() {
         date: 1,
         totalAmount: 1,
         remainingAmount: 1,
-        client: { name: 1, _id: 1 },
+        daysOverdue: 1, // <-- handy in the UI
+        client: { _id: 1, name: 1 },
       },
     },
-    {
-      $sort: { remainingAmount: -1 }, // Optional: prioritize the most owed
-    },
+    { $sort: { remainingAmount: -1 } },
   ]);
 
   return result.map((s) => ({
@@ -299,6 +330,7 @@ export async function getOverdueServicesFromLastMonth() {
     date: s.date,
     totalAmount: s.totalAmount,
     remainingAmount: s.remainingAmount,
+    daysOverdue: s.daysOverdue,
     client: {
       id: s.client?._id.toString() || null,
       name: s.client?.name || "",
