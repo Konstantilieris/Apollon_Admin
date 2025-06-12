@@ -27,20 +27,15 @@ export const SyncFinancialCard: React.FC<SyncFinancialCardProps> = React.memo(
     }, [loading, onSync]);
 
     return (
-      <Card className="flex min-h-[120px] flex-col items-center justify-center gap-3 border border-transparent px-4 dark:border-default-100">
-        <span className="text-base tracking-widest text-default-500">
-          {title}
-        </span>
-        <div className="flex items-center gap-2">
-          <Skeleton isLoaded={!loading}>
-            <span className="text-large font-semibold">
-              {formatCurrency(amount)}
-            </span>
-          </Skeleton>
-
+      <Card className="flex min-h-[120px] min-w-[270px] flex-col  justify-center  border border-transparent px-4 dark:border-default-100">
+        <div className="flex items-center justify-between">
+          <span className="text-base tracking-wide  text-default-500">
+            {title}
+          </span>
           <Button
             isIconOnly
-            size="sm"
+            size="md"
+            className="self-end"
             variant="light"
             aria-label={`Refresh ${title}`}
             onPress={handleClick}
@@ -53,6 +48,12 @@ export const SyncFinancialCard: React.FC<SyncFinancialCardProps> = React.memo(
             )}
           </Button>
         </div>
+
+        <Skeleton isLoaded={!loading}>
+          <span className="text-2xl font-semibold">
+            {formatCurrency(amount)}
+          </span>
+        </Skeleton>
       </Card>
     );
   }

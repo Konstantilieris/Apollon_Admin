@@ -61,21 +61,58 @@ export async function getAllEvents() {
     console.log(error);
   }
 }
-export async function getEventsInRange(startDate: Date, endDate: Date) {
-  try {
-    await connectToDatabase();
-
-    // Query to find events within the specified date range
-    const events = await Event.find({
-      StartTime: { $gte: new Date(startDate) },
-      EndTime: { $lte: new Date(endDate) },
-    });
-
-    return events ? JSON.parse(JSON.stringify(events)) : [];
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    return [];
+export async function getEventsInRange({
+  start,
+  end,
+}: {
+  start: string;
+  end: string;
+}) {
+  await connectToDatabase();
+  const startDate = new Date(start);
+  let endDate = new Date(end);
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    console.warn("getEventsInRange » bad dates", { start, end });
+    return []; // nothing is better than a CastError
   }
+  if (startDate.getTime() === endDate.getTime()) {
+    // make the window [start, start + 1 day)
+    endDate = new Date(endDate.getTime() + 24 * 60 * 60 * 1000);
+  }
+  // everything that *overlaps* the visible window
+  const pipeline = [
+    {
+      $match: {
+        StartTime: { $lte: endDate },
+        EndTime: { $gte: startDate },
+      },
+    },
+    {
+      $lookup: {
+        from: "services",
+        localField: "bookingId",
+        foreignField: "bookingId",
+        as: "relatedServices",
+      },
+    },
+    {
+      $addFields: {
+        paid: {
+          $cond: [
+            { $eq: [{ $size: "$relatedServices" }, 0] },
+            false,
+            { $allElementsTrue: "$relatedServices.paid" },
+          ],
+        },
+      },
+    },
+    { $project: { relatedServices: 0 } },
+  ];
+
+  const events = await Event.aggregate(pipeline);
+  console.log("________________EVENTS IN RANGE________________");
+  console.log(events);
+  return JSON.parse(JSON.stringify(events));
 }
 
 export async function getEventsByDate({ date }: { date: Date }) {

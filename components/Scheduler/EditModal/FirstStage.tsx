@@ -15,7 +15,7 @@ import React, { Suspense, useRef, useState } from "react";
 import Link from "next/link";
 import { deleteBooking } from "@/lib/actions/booking.action";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+
 import BottomGradient from "@/components/ui/bottom-gradient";
 import { FiArrowRight } from "react-icons/fi";
 
@@ -58,7 +58,8 @@ const FirstStage = ({
       reset();
     }
   };
-
+  console.log("event", event);
+  console.log("pairDate", pairDate);
   return (
     <div
       className="relative flex h-full w-full flex-col gap-4 space-y-2 p-4 text-lg"

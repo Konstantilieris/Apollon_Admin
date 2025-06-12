@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -40,37 +40,67 @@ export default function ConfirmationStage({
     setExtraDayPrice,
     setClient,
     createBooking,
-
     resetStore,
   } = useBookingStore();
-
   const router = useRouter();
-  const [totalBookingFee, setTotalBookingFee] = React.useState(0);
-  const transportFee =
-    client?.serviceFees.find((fee: any) => fee.type === "transportFee")
-      ?.value || 0;
-  const clientBoardingFees = useMemo(() => {
+
+  /** ──────────────────────── memoised fee data ──────────────────── */
+  const transportFee = useMemo<number>(() => {
+    return (
+      client?.serviceFees.find((fee: any) => fee.type === "transportFee")
+        ?.value || 0
+    );
+  }, [client]);
+
+  /** Boarding fees – just the bookingFee fees */
+  const clientBoardingFees = useMemo<any[]>(() => {
     return (
       client?.serviceFees?.filter((fee: any) => fee.type === "bookingFee") || []
     );
   }, [client]);
-  const [selectedBookingFee, setSelectedBookingFee] = React.useState(
-    clientBoardingFees[dogsData.length - 1] ?? clientBoardingFees[0] ?? null
-  );
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("el-GR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }) +
-    " " +
-    date.toLocaleTimeString("el-GR", {
-      hour: "2-digit",
-      minute: "2-digit",
+
+  /** Map from dogCount → fee for O(1) look‑ups */
+  const feeMap = useMemo<Record<number, any>>(() => {
+    const map: Record<number, any> = {};
+    clientBoardingFees.forEach((fee) => {
+      if (typeof fee.dogCount === "number") {
+        map[fee.dogCount] = fee;
+      }
     });
+    return map;
+  }, [clientBoardingFees]);
+
+  /** Selected booking fee defaults to fee that matches dog count, else first fee */
+  const [selectedBookingFee, setSelectedBookingFee] = useState<any>(
+    feeMap[dogsData.length] ?? clientBoardingFees[0] ?? null
+  );
+
+  /** ──────────────────────── prices & totals ────────────────────── */
+  const [totalBookingFee, setTotalBookingFee] = useState(0);
+  const transportTotal =
+    (taxiArrival ? transportFee : 0) + (taxiDeparture ? transportFee : 0);
+
   useEffect(() => {
     setTransportationPrice(transportFee);
-  }, [transportFee]);
+  }, [transportFee, setTransportationPrice]);
+
+  /** Re‑calculate total whenever pricing inputs change */
+  useEffect(() => {
+    const totalPrice = calculateTotalPrice({
+      fromDate: dateArrival ?? new Date(),
+      toDate: dateDeparture ?? new Date(),
+      dailyPrice: selectedBookingFee?.value ?? 0,
+      extraDay,
+    });
+    setTotalBookingFee(totalPrice);
+  }, [selectedBookingFee, dateArrival, dateDeparture, extraDay]);
+
+  /** Push boarding price to global store */
+  useEffect(() => {
+    setBoardingPrice(totalBookingFee);
+  }, [totalBookingFee, setBoardingPrice]);
+
+  /** Sync client meta to store */
   useEffect(() => {
     const clientObject = {
       clientId: client._id,
@@ -84,20 +114,24 @@ export default function ConfirmationStage({
         ? client.location.address
         : "Δεν έχει οριστεί",
       transportFee,
-      bookingFee: selectedBookingFee?.value || 0,
+      bookingFee: selectedBookingFee?.value ?? 0,
     };
-
     setClient(clientObject);
-  }, [client, selectedBookingFee]);
-  const roomOccupancy: Record<string, number> = {};
-  dogsData.forEach((dog) => {
-    if (dog.roomId) {
-      roomOccupancy[dog.roomId] = (roomOccupancy[dog.roomId] || 0) + 1;
-    }
-  });
+  }, [client, selectedBookingFee, transportFee, setClient]);
 
-  const transportTotal =
-    (taxiArrival ? transportFee : 0) + (taxiDeparture ? transportFee : 0);
+  /** ────────────────────── helpers ──────────────────────────────── */
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString("el-GR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }) +
+    " " +
+    date.toLocaleTimeString("el-GR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
   const topContent = useMemo(() => {
     return (
       <div className="mb-4 flex flex-wrap items-center gap-4 p-4">
@@ -105,18 +139,21 @@ export default function ConfirmationStage({
           Επιλογή Ημερήσιας Χρέωσης:
         </h1>
         {dogsData.map((_, index) => {
-          const serviceFee = clientBoardingFees[index];
+          const dogNumber = index + 1;
+          const serviceFee = feeMap[dogNumber];
+          const key = serviceFee?._id ?? `dog-fee-${dogNumber}`;
           const isSelected = selectedBookingFee?._id === serviceFee?._id;
           return (
             <Badge
-              key={index}
-              content={`${index + 1}`}
+              key={key}
+              content={`${dogNumber}`}
               color={isSelected ? "success" : "warning"}
               variant="faded"
               size="lg"
             >
               <Chip
                 onClick={() => {
+                  if (!serviceFee) return; // fee could be missing
                   setSelectedBookingFee(serviceFee);
                   if (extraDay) {
                     setExtraDayPrice(serviceFee?.value ?? 0);
@@ -133,7 +170,7 @@ export default function ConfirmationStage({
         })}
       </div>
     );
-  }, [dogsData, clientBoardingFees, selectedBookingFee]);
+  }, [dogsData, feeMap, selectedBookingFee, extraDay, setExtraDayPrice]);
 
   useEffect(() => {
     const totalPrice = calculateTotalPrice({
@@ -166,6 +203,7 @@ export default function ConfirmationStage({
       router.refresh();
     }
   };
+  if (!dateArrival || !dateDeparture) return null;
   return (
     <div className="mx-auto max-h-[calc(100vh_-_400px)] max-w-4xl space-y-6 overflow-y-auto rounded-lg bg-neutral-950 p-4">
       {/* Client Info */}

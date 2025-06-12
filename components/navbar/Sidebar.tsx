@@ -87,7 +87,7 @@ export function AnimatedSidebar({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "rounded-md flex flex-col md:flex-row",
+        "rounded-md flex flex-col md:flex-row ",
         "bg-neutral-200 dark:bg-neutral-800 w-full flex-1 mx-auto",
         "border border-neutral-500 dark:border-neutral-700 overflow-hidden z-50",
         "h-screen"

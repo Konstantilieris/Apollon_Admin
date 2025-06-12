@@ -24,7 +24,7 @@ export const TrendCard = ({
   trendChipVariant = "light",
 }: TrendCardProps) => {
   return (
-    <Card className=" min-h-[120px] min-w-[270px] border border-transparent dark:border-default-100">
+    <Card className=" min-h-[120px] min-w-[270px] border border-transparent dark:border-default-100 ">
       <div className="flex p-6">
         <div className="flex flex-col gap-y-2">
           <dt className="text-base font-medium text-default-500">{title}</dt>

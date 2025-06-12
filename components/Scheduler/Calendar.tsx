@@ -1,7 +1,13 @@
 /* eslint-disable react/display-name */
 "use client";
 
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import {
   Week,
@@ -39,6 +45,7 @@ import {
 import {
   createEvent,
   deleteEvent,
+  getEventsInRange,
   updateBookingDateChange,
   updateEvent,
   updateEventBookingOnlyTimeChange,
@@ -173,19 +180,26 @@ L10n.load({
 });
 // No dependencies, this will remain the same unless the logic inside changes.
 
-const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
-  appointments,
-  revenueData,
-}) => {
+const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
   const { setPairDate, setStage, setSelectedEvent, toggleOpen, open } =
     useCalendarModal();
-  const scheduleObj = useRef(null);
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const scheduleObj = useRef<any>(null);
+
   const [loading, setLoading] = useState(false);
   const dateRef = useRef(new Date());
   const [isDragging, setIsDragging] = useState(false);
   const [originalStartTime, setOriginalStartTime] = useState<Date | null>(null);
   // eslint-disable-next-line no-undef
-  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const loadWindow = useCallback(async (start: Date, end: Date) => {
+    console.log("Loading events from:", start, "to:", end);
+    const [events] = await Promise.all([
+      getEventsInRange({ start: start.toISOString(), end: end.toISOString() }),
+    ]);
+    console.log("Loaded events:", events);
+    setAppointments(events);
+  }, []);
+  const clickTimeoutRef = useRef<any | null>(null);
   const renderIcon = useCallback((categoryId: number) => {
     switch (categoryId) {
       case 1:
@@ -259,6 +273,17 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
     },
     []
   );
+  useEffect(() => {
+    // Syncfusion already calculated the dates once it mounts
+    const id = setTimeout(() => {
+      const dates = scheduleObj.current?.getCurrentViewDates?.();
+      console.log("Current view dates:", dates);
+      if (dates?.length) {
+        loadWindow(dates[0], dates[dates.length - 1]);
+      }
+    }, 0);
+    return () => clearTimeout(id);
+  }, [loadWindow]);
 
   const tooltip = (props: any) => {
     if (open || isDragging) return null;
@@ -290,6 +315,17 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
       </div>
     );
   };
+  const onActionBegin = (args: any) => {
+    if (args.requestType === "viewNavigate") {
+      loadWindow(args.startDate, args.endDate);
+    }
+  };
+  const refreshCurrentWindow = () => {
+    const dates = scheduleObj.current?.getCurrentViewDates?.();
+    if (dates?.length) {
+      loadWindow(dates[0], dates[dates.length - 1]);
+    }
+  };
   const onActionComplete = async (args: any) => {
     if (open) return;
     if (args.requestType === "eventCreated") {
@@ -299,6 +335,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
     } else if (args.requestType === "eventRemoved") {
       await deleteEvent({ event: args.deletedRecords[0] });
     }
+    await refreshCurrentWindow();
   };
 
   const todayDayOfWeek = useMemo(() => new Date().getDay(), []);
@@ -529,6 +566,7 @@ const Scheduler: React.FC<{ appointments: any; revenueData: any }> = ({
     <ScheduleComponent
       ref={scheduleObj}
       popupOpen={onPopupOpen}
+      actionBegin={onActionBegin}
       rowAutoHeight={true}
       className="h-full w-full rounded-lg"
       width="100%"

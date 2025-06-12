@@ -13,7 +13,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="  relative flex h-full w-full  overflow-x-hidden font-sans">
+    <main className="  relative flex h-full w-full  overflow-x-hidden font-sans ">
       <FloatingSearch />,
       <AnimatedSidebar>
         <ModalProvider />
