@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 "use client";
 
 import React, {
@@ -45,7 +44,7 @@ import {
 import {
   createEvent,
   deleteEvent,
-  getEventsInRange,
+  getEventsWithPairs,
   updateBookingDateChange,
   updateEvent,
   updateEventBookingOnlyTimeChange,
@@ -56,8 +55,9 @@ import "./calendar.css";
 import moment from "moment";
 import useCalendarModal from "@/hooks/use-calendar-modal";
 import { cn, formatTime } from "@/lib/utils";
-import { checkBookingRoomAvailability } from "@/lib/actions/booking.action";
+
 import BarLoader from "../ui/shuffleLoader";
+import { IEvent } from "@/database/models/event.model";
 
 const registerKey = process.env.NEXT_PUBLIC_REGISTER_KEY; // Set a default value if the key is undefined
 registerLicense(registerKey!);
@@ -178,28 +178,105 @@ L10n.load({
     },
   },
 });
+interface CalendarEvent extends IEvent {
+  __shadow?: boolean; // 👈 invisible partner marker
+}
 // No dependencies, this will remain the same unless the logic inside changes.
 
 const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
   const { setPairDate, setStage, setSelectedEvent, toggleOpen, open } =
     useCalendarModal();
-  const [appointments, setAppointments] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<CalendarEvent[]>([]);
   const scheduleObj = useRef<any>(null);
-
+  const [roomOccupancyMap, setRoomOccupancyMap] = useState<
+    Record<string, Set<string>>
+  >({});
   const [loading, setLoading] = useState(false);
   const dateRef = useRef(new Date());
   const [isDragging, setIsDragging] = useState(false);
   const [originalStartTime, setOriginalStartTime] = useState<Date | null>(null);
-  // eslint-disable-next-line no-undef
-  const loadWindow = useCallback(async (start: Date, end: Date) => {
-    console.log("Loading events from:", start, "to:", end);
-    const [events] = await Promise.all([
-      getEventsInRange({ start: start.toISOString(), end: end.toISOString() }),
-    ]);
-    console.log("Loaded events:", events);
-    setAppointments(events);
+  const buildRoomOccupancyMap = (bookings: any[]) => {
+    const map: Record<string, Set<string>> = {};
+    bookings.forEach((booking) => {
+      const from = moment(booking.fromDate || booking.StartTime);
+      const to = moment(booking.toDate || booking.EndTime);
+      const dogs = booking.dogs || booking.dogsData || [];
+      while (from.isSameOrBefore(to, "day")) {
+        const key = from.format("YYYY-MM-DD");
+        if (!map[key]) map[key] = new Set();
+        dogs.forEach((dog: any) => {
+          if (dog.roomId) map[key].add(dog.roomId.toString());
+        });
+        from.add(1, "day");
+      }
+    });
+    return map;
+  };
+  const loadWindow = useCallback(async (start?: Date, end?: Date) => {
+    if (!start || !end) return;
+
+    // ①  fetch events + their mates
+    const raw = await getEventsWithPairs(
+      start.toISOString(),
+      end.toISOString()
+    );
+    const events: CalendarEvent[] =
+      typeof raw === "string" ? JSON.parse(raw) : raw;
+
+    // ②  tag the off-screen ones
+    const viewStart = moment(start).startOf("day");
+    const viewEnd = moment(end).endOf("day");
+    const decorated = events.map((e) => ({
+      ...e,
+      __shadow:
+        moment(e.StartTime).isAfter(viewEnd) ||
+        moment(e.EndTime).isBefore(viewStart),
+    }));
+
+    setAppointments(decorated); // ← KEEP ALL of them
+    setRoomOccupancyMap(buildRoomOccupancyMap(decorated));
   }, []);
+
+  const checkRoomConflictFrontend = (
+    date: Date,
+    draggedEvent: any,
+    pairedEvent: any
+  ): boolean => {
+    const roomIds = draggedEvent.dogsData.map((dog: any) =>
+      dog.roomId.toString()
+    );
+    const isArrival = draggedEvent.isArrival;
+    const from = moment(isArrival ? date : pairedEvent?.StartTime);
+    const to = moment(!isArrival ? date : pairedEvent?.StartTime);
+    while (from.isSameOrBefore(to, "day")) {
+      const dayStr = from.format("YYYY-MM-DD");
+      const occupied = roomOccupancyMap[dayStr] || new Set();
+      if (roomIds.some((id: string) => occupied.has(id))) return true;
+      from.add(1, "day");
+    }
+    return false;
+  };
+
+  const updateRoomOccupancyAfterDrag = (
+    fromDate: Date,
+    toDate: Date,
+    roomIds: string[]
+  ) => {
+    setRoomOccupancyMap((prevMap) => {
+      const updatedMap = { ...prevMap };
+      const from = moment(fromDate);
+      const to = moment(toDate);
+      while (from.isSameOrBefore(to, "day")) {
+        const dayStr = from.format("YYYY-MM-DD");
+        if (!updatedMap[dayStr]) updatedMap[dayStr] = new Set();
+        roomIds.forEach((id) => updatedMap[dayStr].add(id));
+        from.add(1, "day");
+      }
+      return updatedMap;
+    });
+  };
   const clickTimeoutRef = useRef<any | null>(null);
+
   const renderIcon = useCallback((categoryId: number) => {
     switch (categoryId) {
       case 1:
@@ -247,7 +324,9 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
     };
   };
   const eventTemplate = useMemo(
+    // eslint-disable-next-line react/display-name
     () => (props: any) => {
+      if (props.__shadow) return null;
       return (
         <div className="flex w-full gap-2 pl-1 pt-1 text-[1rem] text-white">
           <span
@@ -273,6 +352,31 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
     },
     []
   );
+  const findMate = async (ev: CalendarEvent) => {
+    // a) try local state first
+    let mate = appointments.find(
+      (e) =>
+        e.bookingId?.toString() === ev.bookingId?.toString() &&
+        e.isArrival !== ev.isArrival
+    );
+    if (mate) return mate;
+
+    // b) fallback fetch – tiny window around ev
+    const extraRaw = await getEventsWithPairs(
+      ev.StartTime.toISOString(),
+      ev.EndTime.toISOString()
+    );
+    const extra: any[] =
+      typeof extraRaw === "string" ? JSON.parse(extraRaw) : extraRaw;
+    mate = extra.find(
+      (e: any) =>
+        e.bookingId?.toString() === ev.bookingId?.toString() &&
+        e.isArrival !== ev.isArrival
+    ) as CalendarEvent | undefined;
+
+    if (mate) setAppointments((a) => [...a, mate]); // keep state consistent
+    return mate;
+  };
   useEffect(() => {
     // Syncfusion already calculated the dates once it mounts
     const id = setTimeout(() => {
@@ -322,6 +426,7 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
   };
   const refreshCurrentWindow = () => {
     const dates = scheduleObj.current?.getCurrentViewDates?.();
+    if (!dates[0] || !dates[dates.length - 1]) return;
     if (dates?.length) {
       loadWindow(dates[0], dates[dates.length - 1]);
     }
@@ -347,33 +452,20 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
   const onDragStop = async (args: any) => {
     setIsDragging(false);
     if (open) return;
-
     const draggedEvent = args.data;
-    const { Id, StartTime, EndTime, Type, isArrival, categoryId } =
-      draggedEvent;
-
-    // Only execute logic for specific categories
+    const { StartTime, EndTime, isArrival, categoryId } = draggedEvent;
     if (![2, 3, 4].includes(categoryId)) return;
-
-    // Find the paired event
-    const pairedEvent = appointments.find(
-      (event: any) => event.Id === Id && event.isArrival !== isArrival
-    );
-
+    const pairedEvent = await findMate(draggedEvent);
     if (!pairedEvent) return;
 
-    const { StartTime: pairedStartTime, EndTime: pairedEndTime } = pairedEvent;
-
-    // Validate time constraints
-    if (isArrival && moment(EndTime).isAfter(pairedStartTime)) {
+    if (isArrival && moment(EndTime).isAfter(pairedEvent.StartTime)) {
       alert(
         "Το χρονικό διάστημα της άφιξης δεν μπορεί να είναι μετά την αναχώρηση ή την παράδοση."
       );
       args.cancel = true;
       return;
     }
-
-    if (!isArrival && moment(StartTime).isBefore(pairedEndTime)) {
+    if (!isArrival && moment(StartTime).isBefore(pairedEvent.EndTime)) {
       alert(
         "Η αναχώρηση ή η παράδοση δεν μπορεί να είναι πριν από την άφιξη ή την παραλαβή."
       );
@@ -381,9 +473,8 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
       return;
     }
 
-    setPairDate(isArrival ? pairedStartTime : pairedEndTime);
+    setPairDate(isArrival ? pairedEvent.StartTime : pairedEvent.EndTime);
 
-    // Check if only the time changed (same day)
     if (
       moment(originalStartTime)
         .startOf("day")
@@ -399,16 +490,13 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
       return;
     }
 
-    // If date changed, check room availability
     args.cancel = true;
     setLoading(true);
-
-    const roomAvailability = await checkBookingRoomAvailability({
-      date: StartTime,
-      bookingId: Id,
-      type: Type,
-    });
-
+    const roomAvailability = checkRoomConflictFrontend(
+      StartTime,
+      draggedEvent,
+      pairedEvent
+    );
     if (roomAvailability) {
       alert("Δεν υπάρχει διαθέσιμο δωμάτιο για αυτήν την ημερομηνία.");
       setSelectedEvent(draggedEvent);
@@ -418,12 +506,19 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
       return;
     }
 
-    // Proceed with updating booking date change
     try {
       await updateBookingDateChange({
         event: draggedEvent,
         pairDate: pairedEvent?.StartTime,
       });
+      const roomIds = draggedEvent.dogsData.map((dog: any) =>
+        dog.roomId.toString()
+      );
+      const [from, to] = moment(StartTime).isBefore(pairedEvent.StartTime)
+        ? [moment(StartTime), moment(pairedEvent.StartTime)]
+        : [moment(pairedEvent.StartTime), moment(StartTime)];
+      updateRoomOccupancyAfterDrag(from.toDate(), to.toDate(), roomIds);
+      refreshCurrentWindow();
     } catch (error) {
       console.error(error);
     } finally {
@@ -471,7 +566,7 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
     }
   };
 
-  const handleDoubleClick = (args: any) => {
+  const handleDoubleClick = async (args: any) => {
     const eventData = args.event;
     if (
       eventData?.categoryId === 2 ||
@@ -480,10 +575,8 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
     ) {
       args.cancel = true;
       // Prevent the default popup
-      const pairEvent = appointments.find(
-        (event: any) =>
-          event.Id === args.event.Id && event.isArrival !== args.event.isArrival
-      );
+      const pairEvent = await findMate(eventData);
+      if (!pairEvent) return;
       dateRef.current = eventData.StartTime;
       setPairDate(pairEvent?.StartTime);
       setSelectedEvent(eventData);
@@ -494,7 +587,7 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
     // Handle double click event
   };
 
-  const handleSingleClick = (args: any) => {
+  const handleSingleClick = async (args: any) => {
     if (
       args.event.categoryId === 2 ||
       args.event.categoryId === 3 ||
@@ -503,10 +596,8 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
       args.cancel = true;
       setSelectedEvent(args.event);
 
-      const pairEvent = appointments.find(
-        (event: any) =>
-          event.Id === args.event.Id && event.isArrival !== args.event.isArrival
-      );
+      const pairEvent = await findMate(args.event);
+      if (!pairEvent) return;
       setPairDate(pairEvent?.StartTime);
       setStage(0);
       dateRef.current = args.event.StartTime;

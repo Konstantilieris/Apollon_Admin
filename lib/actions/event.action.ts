@@ -114,7 +114,75 @@ export async function getEventsInRange({
   console.log(events);
   return JSON.parse(JSON.stringify(events));
 }
+export async function getEventsWithPairs(startISO: string, endISO: string) {
+  await connectToDatabase();
 
+  const startDate = new Date(startISO);
+  let endDate = new Date(endISO);
+  if (startDate.getTime() === endDate.getTime()) {
+    endDate = new Date(endDate.getTime() + 24 * 60 * 60 * 1_000);
+  }
+
+  /* ---------- first wave : everything that overlaps [start, end] ---------- */
+  const baseStages = [
+    {
+      $lookup: {
+        from: "services",
+        localField: "bookingId",
+        foreignField: "bookingId",
+        as: "relatedServices",
+      },
+    },
+    {
+      $addFields: {
+        paid: {
+          $cond: [
+            { $eq: [{ $size: "$relatedServices" }, 0] },
+            false,
+            { $allElementsTrue: "$relatedServices.paid" },
+          ],
+        },
+      },
+    },
+    { $project: { relatedServices: 0 } },
+  ];
+
+  const inRange = await Event.aggregate([
+    {
+      $match: {
+        StartTime: { $lte: endDate },
+        EndTime: { $gte: startDate },
+      },
+    },
+    ...baseStages,
+  ]);
+
+  /* ---------- second wave : fetch whichever mates are missing ---------- */
+  const bookings = Array.from(
+    new Set(
+      inRange.filter((e) => e.bookingId).map((e) => e.bookingId.toString())
+    )
+  );
+  if (!bookings.length) return inRange;
+
+  const seen = new Set(inRange.map((e) => e._id.toString()));
+
+  const partners = await Event.aggregate([
+    {
+      $match: {
+        bookingId: {
+          $in: bookings.map((id) => new mongoose.Types.ObjectId(id)),
+        },
+        _id: {
+          $nin: Array.from(seen).map((id) => new mongoose.Types.ObjectId(id)),
+        },
+      },
+    },
+    ...baseStages,
+  ]);
+
+  return JSON.stringify([...inRange, ...partners]);
+}
 export async function getEventsByDate({ date }: { date: Date }) {
   try {
     await connectToDatabase();
