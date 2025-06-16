@@ -375,7 +375,8 @@ const Scheduler: React.FC<{ revenueData: any }> = ({ revenueData }) => {
     ) as CalendarEvent | undefined;
 
     if (mate) {
-      setAppointments((a) => [...a, mate]);
+      const sureMate: CalendarEvent = mate;
+      setAppointments((a) => [...a, sureMate]); // add to local state
     } // keep state consistent
     return mate;
   };
