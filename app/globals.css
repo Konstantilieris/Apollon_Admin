@@ -13,12 +13,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 ::view-transition-old(root),
 ::view-transition-new(root) {
+  position: fixed;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
   animation-duration: 0.3s;
 }
-
+@view-transition {
+  navigation: none;
+}
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
 @layer base {
   :root {
     --chart-1: 12 76% 61%;

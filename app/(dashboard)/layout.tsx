@@ -14,7 +14,7 @@ export default async function Layout({
 }) {
   return (
     <main className="  relative flex h-full w-full  overflow-x-hidden font-sans ">
-      <FloatingSearch />,
+      <FloatingSearch />
       <AnimatedSidebar>
         <ModalProvider />
 
