@@ -364,6 +364,16 @@ export default function ServicesList({ client }: ServicesListProps) {
             <Button
               color="default"
               variant="ghost"
+              startContent={
+                <Icon icon="lucide:calendar-plus" className="h-4 w-4" />
+              }
+              onPress={() => openModal("extraCalendarServices", { client })}
+            >
+              Δημιουργία Εκπαίδευσης / Φροντίδας
+            </Button>
+            <Button
+              color="default"
+              variant="ghost"
               startContent={<Icon icon="lucide:plus" className="h-4 w-4" />}
               className="tracking-wide "
               onPress={() => openModal("createService", { client })}

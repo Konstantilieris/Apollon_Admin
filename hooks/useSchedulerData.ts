@@ -43,11 +43,9 @@ export default function useSchedulerData() {
       const viewStart = moment(start).startOf("day");
       const viewEnd = moment(end).endOf("day");
 
-      const raw = await getEventsWithPairs(startISO, endISO);
-      const events: CalendarEvent[] =
-        typeof raw === "string" ? JSON.parse(raw) : raw;
+      const api = await getEventsWithPairs(startISO, endISO);
 
-      const decorated = events.map((e) => ({
+      const decorated = api.map((e) => ({
         ...e,
         __shadow:
           moment(e.StartTime).isAfter(viewEnd) ||

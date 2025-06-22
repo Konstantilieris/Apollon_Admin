@@ -15,6 +15,10 @@ const DeleteServicesTableAction = dynamic(
 const ServiceDetails = dynamic(
   () => import("./service/EditService/Modal/payments/ServiceDetails")
 );
+const CreateTrainingDailyCareView = dynamic(
+  () =>
+    import("./service/EditService/Modal/payments/CreateTrainingDailyCareView")
+);
 const ClientEditForm = dynamic(() => import("./info/ClientEditForm"));
 const DogEditView = dynamic(() => import("./info/DogEditView"));
 const CreateServiceView = dynamic(
@@ -83,7 +87,9 @@ export default function ModalClientProvider() {
       case "deleteDog":
         return <DeleteDog />; // Replace with actual component for deleting a dog
       case "serviceView":
-        return <ServiceDetails />; // Replace with actual component for service view
+        return <ServiceDetails />;
+      case "extraCalendarServices":
+        return <CreateTrainingDailyCareView />; // Replace with actual component for service view
       default:
         return null;
     }

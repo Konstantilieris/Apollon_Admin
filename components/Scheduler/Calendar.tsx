@@ -59,7 +59,11 @@ import BarLoader from "../ui/shuffleLoader";
 
 import useSchedulerData from "@/hooks/useSchedulerData";
 import { findMateForEvent } from "./utils/scheduler";
-
+import { CATEGORY_META, CATEGORY } from "@/constants";
+import {
+  updateTrainingSessionDates,
+  deleteTrainingSession,
+} from "@/lib/actions/training.action";
 const registerKey = process.env.NEXT_PUBLIC_REGISTER_KEY; // Set a default value if the key is undefined
 registerLicense(registerKey!);
 loadCldr(greekLocale, greekNumbers, greekTime);
@@ -249,16 +253,7 @@ const Scheduler: React.FC = () => {
         return null;
     }
   }, []);
-  const mockCategoryData = useMemo(
-    () => [
-      { text: "Personal", id: 1, color: "#00008B" },
-      { text: "Arrival", id: 2, color: "#4B0082" },
-      { text: "Departure", id: 4, color: "#9d174d" },
-      { text: "Transport", id: 3, color: "#32CD32" },
-      { text: "Training", id: 5, color: "#ea580c" },
-    ],
-    []
-  );
+
   const debounce = (func: Function, delay: number) => {
     let timer: any;
     return (...args: any[]) => {
@@ -357,7 +352,15 @@ const Scheduler: React.FC = () => {
     } else if (args.requestType === "eventChanged") {
       await updateEvent({ event: args.changedRecords[0] });
     } else if (args.requestType === "eventRemoved") {
-      await deleteEvent({ event: args.deletedRecords[0] });
+      const ev = args.deletedRecords[0];
+
+      if ([CATEGORY.TRAINING, CATEGORY.DAILY_CARE].includes(ev.categoryId)) {
+        // Βρες το service στο τοπικό state ή fetch
+
+        await deleteTrainingSession(ev.Id, "/dashboard/calendar");
+      } else {
+        await deleteEvent({ event: ev });
+      }
     }
     await refreshCurrentWindow();
   };
@@ -372,7 +375,18 @@ const Scheduler: React.FC = () => {
     setIsDragging(false);
     if (open) return;
     const draggedEvent = args.data;
-    const { StartTime, EndTime, isArrival, categoryId } = draggedEvent;
+    const {
+      StartTime,
+      EndTime,
+      isArrival,
+      categoryId,
+      Id: serviceId,
+    } = draggedEvent;
+    if ([CATEGORY.TRAINING, CATEGORY.DAILY_CARE].includes(categoryId)) {
+      await updateTrainingSessionDates(serviceId, StartTime);
+      refreshCurrentWindow();
+      return;
+    }
     if (![2, 3, 4].includes(categoryId)) return;
     const pairedEvent = await findMateForEvent(
       draggedEvent,
@@ -605,7 +619,7 @@ const Scheduler: React.FC = () => {
           title="Category"
           name="Categories"
           // Allow single category per event
-          dataSource={mockCategoryData} // Categories for Personal, Booking, Transport
+          dataSource={[...CATEGORY_META]} // Categories for Personal, Booking, Transport
           textField="text"
           idField="id"
           colorField="color"

@@ -119,3 +119,26 @@ export const colors = [
   { label: "HotPink", value: "#FF69B4" },
   { label: "Navy", value: "#000080" },
 ];
+export const CATEGORY = {
+  PERSONAL: 1,
+  ARRIVAL: 2,
+  TRANSPORT: 3,
+  DEPARTURE: 4,
+  TRAINING: 5,
+  DAILY_CARE: 6,
+} as const;
+
+export type CategoryId = (typeof CATEGORY)[keyof typeof CATEGORY];
+
+export const CATEGORY_META = [
+  { text: "Personal", id: CATEGORY.PERSONAL, color: "#00008B" },
+  { text: "Arrival", id: CATEGORY.ARRIVAL, color: "#4B0082" },
+  { text: "Departure", id: CATEGORY.DEPARTURE, color: "#9d174d" },
+  { text: "Transport", id: CATEGORY.TRANSPORT, color: "#32CD32" },
+  { text: "Training", id: CATEGORY.TRAINING, color: "#ea580c" },
+  { text: "Daily Care", id: CATEGORY.DAILY_CARE, color: "#f59e0b" },
+] as const;
+export const SERVICE_TYPE = {
+  TRAINING: "EΚΠΑΙΔΕΥΣΗ",
+  DAILY_CARE: "ΦΡΟΝΤΙΔΑ",
+} as const;

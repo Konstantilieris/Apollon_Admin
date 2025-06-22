@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 import Service from "@/database/models/service.model";
 import Booking from "@/database/models/booking.model";
 import Client from "@/database/models/client.model";
-import { calculateDaysDifference } from "../utils";
+import { calculateDaysDifference, toPlain } from "../utils";
 
 type eventProps = {
   event: {
@@ -163,7 +163,7 @@ export async function getEventsWithPairs(startISO: string, endISO: string) {
       inRange.filter((e) => e.bookingId).map((e) => e.bookingId.toString())
     )
   );
-  if (!bookings.length) return inRange;
+  if (!bookings.length) return inRange.map(toPlain);
 
   const seen = new Set(inRange.map((e) => e._id.toString()));
 
@@ -180,8 +180,10 @@ export async function getEventsWithPairs(startISO: string, endISO: string) {
     },
     ...baseStages,
   ]);
+  const all = [...inRange, ...partners];
+  // console.log("________________EVENTS WITH PAIRS________________");
 
-  return JSON.stringify([...inRange, ...partners]);
+  return all.map(toPlain);
 }
 export async function getEventsByDate({ date }: { date: Date }) {
   try {

@@ -2,7 +2,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import qs from "query-string";
-
+import mongoose from "mongoose";
 import moment from "moment-timezone";
 import { CommandMenuType } from "@/hooks/command-menu-store";
 
@@ -747,4 +747,17 @@ export function getAgeYandM(dateISO: string | Date) {
   }
 
   return { years, months };
+}
+
+export function toPlain(value: any): any {
+  if (value instanceof Date) return value.toISOString();
+  if (value instanceof mongoose.Types.ObjectId) return value.toString();
+
+  if (Array.isArray(value)) return value.map(toPlain);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [k, toPlain(v)])
+    );
+  }
+  return value; // string | number | boolean | null
 }
