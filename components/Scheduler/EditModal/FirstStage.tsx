@@ -15,7 +15,7 @@ import React, { Suspense, useRef, useState } from "react";
 import Link from "next/link";
 import { deleteBooking } from "@/lib/actions/booking.action";
 import { toast } from "sonner";
-
+import { useRouter } from "next/navigation";
 import BottomGradient from "@/components/ui/bottom-gradient";
 import { FiArrowRight } from "react-icons/fi";
 
@@ -36,7 +36,7 @@ const FirstStage = ({
   price,
 }: Props) => {
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const ref = useRef(null);
 
   const handleDelete = async () => {
@@ -50,6 +50,7 @@ const FirstStage = ({
       if (booking) {
         toast.success("Η κράτηση διαγράφηκε επιτυχώς.");
       }
+      router.refresh();
     } catch (error) {
       toast.error("Η διαγραφή της κράτησης απέτυχε.");
     } finally {

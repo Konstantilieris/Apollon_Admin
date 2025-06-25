@@ -57,7 +57,7 @@ import { cn, formatTime } from "@/lib/utils";
 
 import BarLoader from "../ui/shuffleLoader";
 
-import useSchedulerData from "@/hooks/useSchedulerData";
+import useSchedulerData, { CalendarEvent } from "@/hooks/useSchedulerData";
 import { findMateForEvent } from "./utils/scheduler";
 import { CATEGORY_META, CATEGORY } from "@/constants";
 import {
@@ -207,19 +207,26 @@ const Scheduler: React.FC = () => {
   const updateRoomOccupancyAfterDrag = (
     fromDate: Date,
     toDate: Date,
-    roomIds: string[]
+    dragged: CalendarEvent
   ) => {
-    setRoomOccupancyMap((prevMap) => {
-      const updatedMap = { ...prevMap };
+    const eventId = (dragged.Id ?? dragged._id).toString();
+    const roomIds = dragged.dogsData?.map((d) => d.roomId.toString()) ?? [];
+
+    setRoomOccupancyMap((prev) => {
+      const map = { ...prev }; // OccupancyMap clone
       const from = moment(fromDate);
       const to = moment(toDate);
+
       while (from.isSameOrBefore(to, "day")) {
-        const dayStr = from.format("YYYY-MM-DD");
-        if (!updatedMap[dayStr]) updatedMap[dayStr] = new Set();
-        roomIds.forEach((id) => updatedMap[dayStr].add(id));
+        const day = from.format("YYYY-MM-DD");
+        if (!map[day]) map[day] = {}; // {} not Set()
+        roomIds.forEach((rid: any) => {
+          if (!map[day][rid]) map[day][rid] = new Set(); // Set<string>
+          map[day][rid].add(eventId);
+        });
         from.add(1, "day");
       }
-      return updatedMap;
+      return map;
     });
   };
   const clickTimeoutRef = useRef<any | null>(null);
@@ -297,6 +304,13 @@ const Scheduler: React.FC = () => {
       const dates = scheduleObj.current?.getCurrentViewDates?.();
 
       if (dates?.length) {
+        console.log(
+          "Loading initial window:",
+          dates[0],
+          dates[dates.length - 1]
+        );
+        // Load the initial window with the first and last date of the current view
+        // This ensures that the calendar is always loaded with the correct date range
         loadWindow(dates[0], dates[dates.length - 1]);
       }
     }, 0);
@@ -339,11 +353,15 @@ const Scheduler: React.FC = () => {
     }
   };
   const refreshCurrentWindow = () => {
+    // `Date[] | undefined`
     const dates = scheduleObj.current?.getCurrentViewDates?.();
-    if (!dates[0] || !dates[dates.length - 1]) return;
-    if (dates?.length) {
-      loadWindow(dates[0], dates[dates.length - 1]);
-    }
+
+    // ⬅ If the method returned nothing (or an empty array) there’s
+    //    nothing to refresh, so bail out safely.
+    if (!dates?.length) return;
+
+    // We now know `dates` exists and has at least one element
+    loadWindow(dates[0], dates[dates.length - 1]);
   };
   const onActionComplete = async (args: any) => {
     if (open) return;
