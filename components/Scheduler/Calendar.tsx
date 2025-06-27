@@ -466,13 +466,11 @@ const Scheduler: React.FC = () => {
         event: draggedEvent,
         pairDate: pairedEvent?.StartTime,
       });
-      const roomIds = draggedEvent.dogsData.map((dog: any) =>
-        dog.roomId.toString()
-      );
+
       const [from, to] = moment(StartTime).isBefore(pairedEvent.StartTime)
         ? [moment(StartTime), moment(pairedEvent.StartTime)]
         : [moment(pairedEvent.StartTime), moment(StartTime)];
-      updateRoomOccupancyAfterDrag(from.toDate(), to.toDate(), roomIds);
+      updateRoomOccupancyAfterDrag(from.toDate(), to.toDate(), draggedEvent);
       refreshCurrentWindow();
     } catch (error) {
       console.error(error);

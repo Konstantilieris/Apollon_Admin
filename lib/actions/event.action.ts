@@ -123,7 +123,7 @@ export async function getEventsWithPairs(startISO: string, endISO: string) {
     endDate = new Date(endDate.getTime() + 24 * 60 * 60 * 1_000);
   }
 
-  /* ---------- first wave : everything that overlaps [start, end] ---------- */
+  /* ---------------------------------------------------------------- base pipeline */
   const baseStages = [
     {
       $lookup: {
@@ -147,6 +147,7 @@ export async function getEventsWithPairs(startISO: string, endISO: string) {
     { $project: { relatedServices: 0 } },
   ];
 
+  /* ---------------------- 1) slices whose Start/End overlap the view ----------- */
   const inRange = await Event.aggregate([
     {
       $match: {
@@ -157,31 +158,56 @@ export async function getEventsWithPairs(startISO: string, endISO: string) {
     ...baseStages,
   ]);
 
-  /* ---------- second wave : fetch whichever mates are missing ---------- */
-  const bookings = Array.from(
-    new Set(
-      inRange.filter((e) => e.bookingId).map((e) => e.bookingId.toString())
-    )
+  const seenIds = new Set(inRange.map((e) => e._id.toString()));
+  const bookingsWithSlice = new Set(
+    inRange.filter((e) => e.bookingId).map((e) => e.bookingId.toString())
   );
-  if (!bookings.length) return inRange.map(toPlain);
 
-  const seen = new Set(inRange.map((e) => e._id.toString()));
-
-  const partners = await Event.aggregate([
-    {
-      $match: {
-        bookingId: {
-          $in: bookings.map((id) => new mongoose.Types.ObjectId(id)),
-        },
-        _id: {
-          $nin: Array.from(seen).map((id) => new mongoose.Types.ObjectId(id)),
+  /* ---------------------- 2) partner slices of the above ----------------------- */
+  const all = [...inRange];
+  if (bookingsWithSlice.size) {
+    const partners = await Event.aggregate([
+      {
+        $match: {
+          bookingId: {
+            $in: Array.from(bookingsWithSlice).map(
+              (id) => new mongoose.Types.ObjectId(id)
+            ),
+          },
+          _id: {
+            $nin: Array.from(seenIds).map(
+              (id) => new mongoose.Types.ObjectId(id)
+            ),
+          },
         },
       },
-    },
-    ...baseStages,
-  ]);
-  const all = [...inRange, ...partners];
-  // console.log("________________EVENTS WITH PAIRS________________");
+      ...baseStages,
+    ]);
+    all.push(...partners);
+    partners.forEach((p) => seenIds.add(p._id.toString()));
+  }
+
+  /* ---------------------- 3) bridge bookings  (NEW) ---------------------------- */
+  const bridgeBookings = await Booking.find({
+    _id: { $nin: Array.from(bookingsWithSlice) }, // no slice yet
+    fromDate: { $lte: endDate },
+    toDate: { $gte: startDate },
+  }).select("_id");
+
+  if (bridgeBookings.length) {
+    const bridgeIds = bridgeBookings.map((b) => b._id);
+    const bridgeEvents = await Event.aggregate([
+      { $match: { bookingId: { $in: bridgeIds } } },
+      ...baseStages,
+    ]);
+    // de-duplicate just in case
+    bridgeEvents.forEach((ev) => {
+      if (!seenIds.has(ev._id.toString())) {
+        seenIds.add(ev._id.toString());
+        all.push(ev);
+      }
+    });
+  }
 
   return all.map(toPlain);
 }
